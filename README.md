@@ -26,3 +26,20 @@ the algorithm to do that is the following:
 2. train a few different algorithms on top of that (say ddq and rainbow)
 3. compare results with the same model-free algorithms which are trained end-to-end
 4. compare results with some model-based algorithm (say agent51 or something) train in 2 steps and end-to-end
+
+----------------------------------
+
+
+Yes, that is actually a valid problem. Store the frames from a random policy in a large buffer, and then train autoencoder on mini-batches in this buffer. It should give similar effect to hashing & removing frames. Maybe also only store every Nth frame. Better idea is to run multiple agents in parallel, and store each of their experience in a single buffer, and use that to train AE (this is what asynchronous A3C does).
+
+
+Paper-2 is already what I told you before, that directly use AE, instead of VAE, so their suggestions about tweaking learning rate will not help much.
+
+
+3rd way is to train a single AE, using multiple agents run not only on a single game, but variety of games (don't worry about sample efficiency for now). Because I believe everything your trying now won't work, since you are not able to reach many new states using a random policy, since the game ends quite soon. This is exactly the problem tacked by this paper: https://arxiv.org/abs/1901.10995 , and you should rather focus on its extensions or newer papers citing & using this idea.
+
+
+
+Best,
+Divya
+
