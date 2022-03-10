@@ -1,6 +1,13 @@
 # RLmaster
 Chalmers master thesis 
 
+### Task 0 - learn what's going on here
+Learning necesitates reading and writing.
+To kill 2 birds with 1 stone, it's best to write notes in Latex.
+That way they can be used in the Master Thesis text (at least the equations).
+For convenience, RL_notes are put in this repository.
+
+
 ### Task 1 - create autoencoder for Atari games
 1. start with pong only first
 2. create ale-py wrapped in gym environment (so that you can call actions and get new frames), check that you get frames you want
