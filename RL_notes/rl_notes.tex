@@ -1,0 +1,999 @@
+\documentclass{report}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsfonts}
+\usepackage[T1]{fontenc}
+\usepackage{bm}
+\usepackage{array}
+\usepackage{graphicx}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\newcommand{\argmin}{\arg\!\min} 
+\newcommand{\argmax}{\arg\!\max} 
+\usepackage[makeroom]{cancel}
+
+
+\title{Reinforcement learning notes}
+\date{\today}
+\author{Marko Guberina}
+
+\begin{document}
+\pagenumbering{gobble}
+\maketitle
+\newpage
+\pagenumbering{arabic}
+
+\section{Plan}
+Let's stdenomart by reading Sutton's book to get the basic theory down.
+I'll definitely skip some stuff I've passed so far to make it easier to get the ball rolling.
+This will be supplemented by Deep Mind's lectures.
+Once the basic theory is introduced, we'll start going through key papers one by one,
+starting with deep q-learning by DeepMind and continuing until the freshest stuff.
+
+\paragraph{Update}
+Yeah, that did not pan out that way. Turns our Sergey Levine's Berkley course is much more on
+the money for what I need right now --- going straight to function approximation with neural networks 
+and straight to policy gradients after introducing the definitions.
+There are also very nice homeworks to go along with that and it seems like the way to go for now.
+After all, I want to get up to speed with implementations immediately. Once that's covered,
+I'll go back to Sutton's book and learn the proper theory. 
+It seems like those deeper theoretical insigths have are more like a sauce then the meat.
+Of course, they are crucial if one wants to prove things, but proving things in RL is a research frontier,
+and not a backbone for practical usage (at least not for the deep reinforcement learning where the focus seems
+to be intergrating other ML successes in fields like computer vision).
+
+So, to sum up, right now I want to understand the algorithms so that I can understand their code
+so that I can play with their code.
+The focus of the ``playing with the code'' part is to get the algorithms to work on pixels
+and sticking an autoencoder in the right place.
+Because that requires an understanding of how the current deep reinforcement learning algorithms work,
+that's step 1.
+Implementing a few algorithms for practise (and then reading good implementations) is step 2.
+Only then in step 3 do I get to implement what I'm tasked with.
+
+\paragraph{Purpose}
+These notes serve multiple purposes:
+firstly, of course, is gaining the necessary theoretical knowledge to even describe what's going on.
+Secondly, it will enable generating hypothesis about new possible algorithms.
+Finally, they will serve as a reference - a reinforcement learning handbook if you will.
+
+
+\chapter{Berkley AI class}
+\section{Immitation learning}
+skip lel, pls do it if you go for the classes' homeworks tho
+
+\section{Formal setting}
+\subsection{Markov chain}
+\begin{itemize}
+\item $\mathcal{M} = \{\mathcal{S}, \mathcal{T}\}$
+\item $\mathcal{S}$ - state space, $s \in \mathcal{S}$ (discrete or continuous)
+\item $\mathcal{T}$ - transition operator --- for  $p(s_{t+1} | s_t)$ let 
+		$\mu_{t,i} = p(s_t =i), \mathcal{T}_{i,j} = p(s_{t+1} = i  | s_t = j)$. 
+		Then $\overrightarrow{\mu}_t$ is a vector of probabilities and 
+		$\overrightarrow{\mu}_{t+1} = \mathcal{T} \overrightarrow{\mu}_t$
+\item we have the markov property ofc
+\end{itemize}
+If we add actions and rewards:
+\subsection{Markov decision process}
+\begin{itemize}
+		\item $\mathcal{M} = \{\mathcal{S}, \mathcal{A}, \mathcal{T}, r\}$
+\item $\mathcal{S}$ - state space, $s \in \mathcal{S}$ (discrete or continuous)
+\item $\mathcal{A}$ - action space, $a \in \mathcal{A}$ (discrete or continuous)
+\item $\mathcal{T}$ - transition operator is now a tensor ---
+		let $\mu_{t,j} = p(s_t = j), \xi_{t,k} = p(a_t = k), \mathcal{T}_{i,j,k} = p(s_{t+1} = i | s_t =j, a_t =k) $
+		and we get $\mu_{t+1,i} = \sum_{j,k}^{} \mathcal{T}_{i,j,k} \mu_{t,j} \xi_{t,k}$
+\item so the tensor version of the operator is still linear
+\item $r$ - reward function ($r(s_t, a_t)$), $r : \mathcal{S} \times \mathcal{A} \to \mathbb{R}$
+\end{itemize}
+And if we don't have access to full states, but only partial observations of states:
+
+\subsection{Partially observed Markov decision process}
+\begin{itemize}
+		\item $\mathcal{M} = \{\mathcal{S}, \mathcal{A}, \mathcal{O}, \mathcal{T}, \mathcal{E}, r\}$
+\item $\mathcal{S}$ - state space, $s \in \mathcal{S}$ (discrete or continuous)
+\item $\mathcal{A}$ - action space, $a \in \mathcal{A}$ (discrete or continuous)
+\item $\mathcal{P}$ - observation space, $o \in \mathcal{O}$ (discrete or continuous)
+\item $\mathcal{T}$ - transition operator (like before)
+\item $\mathcal{E}$ - emission probability $p(o_t|s_t)$
+\item $r$ - reward function ($r(s_t, a_t)$), $r : \mathcal{S} \times \mathcal{A} \to \mathbb{R}$
+\end{itemize}
+
+\subsubsection{The goal of reinforcement learning}
+Let's deal with the finite horizon case for now.
+\begin{equation}
+\underbrace{p_\theta(\bm{s}_1, \bm{a}_1, \dots, \bm{s}_T, \bm{a}_T)}_{p_\theta(\tau)} = p(\bm{s}_1) \prod^{T}_{t=1} 
+\underbrace{\pi_{\theta} (\bm{a}_t | \bm{s}_t) p (\bm{s}_{t+1} | \bm{s}_t, \bm{a}_t)}_{\text{Markov chain on} (\bm{s}, \bm{a})}
+\end{equation}
+A bit more explicitely:
+\begin{equation}
+p((\bm{s}_{t+1}, \bm{a}_{t+1}) | (\bm{s}_t, \bm{a}_t)) = 
+p((\bm{s}_{t+1}| (\bm{s}_t, \bm{a}_t)) \pi_\theta (\bm{a}_{t+1} | \bm{s}_{t+1})
+\end{equation}
+
+This will allow us to define the objective a bit more conveniently.
+We'll use marginalisation ( $p_\theta (\bm{s}_t, \bm{a}_t)$ is the state-action marginal) (will be useful for infinite horizon case):
+\begin{align}
+		\theta^\star &= \argmax_{\theta} E_{\tau \sim p_\theta(\tau)} \left[ \sum_{t}^{} r(\bm{s}_t, \bm{a}_t) \right] \\
+	 &= \argmax_{\theta} \sum_{t}^{T} E_{(\bm{s}_t, \bm{a}_t) \sim p_\theta(\bm{s}_t, \bm{a}_t)} \left[  r(\bm{s}_t, \bm{a}_t) \right]
+\end{align}
+
+OK, let's do the infinite horizon case ($T = \infty $) with a stationary distribution.
+One way is to do it with a discount rate $\gamma \in (0,1)$.
+Does $p(\bm{s}_t, \bm{a}_t)$ convege to a stationary distribution?
+It does under the ergodicity (if you can get from any state to any other state) and if the chain is aperiodic.
+In symbols stationarity is $\mu = \mathcal{T}\mu$ which you get from $(\mathcal{T} - \bm{I})\mu = 0$.
+Here $\mu$ is the eingenvector of $\mathcal{T}$ with eigenvalue 1 (which always exists under some regularity conditions).
+\paragraph{Note} In RL we care about \textit{expectations}.
+Because of this our goals are smooth and differentiable and we get do gradient descent on them.
+
+\subsection{Value functions}
+Let's start with the expectation which we are trying to maximize w.r.t. $\theta$.
+We'll write it out recursively (by using the chain rule of probability), obtaining nested expectations:
+\begin{align}
+		E_{\tau \sim p_\theta(\tau)} & \left[ \sum_{t}^{} r(\bm{s}_t, \bm{a}_t) \right] \\
+		E_{\tau \sim p_\theta(\bm{s}_1)} & \left[ E_{\bm{a}_1 \sim \pi(\bm{a}_1|\bm{s}_1)}
+		\left[ r(\bm{s}_1, \bm{a}_1) + E_{\bm{s}_2  \sim p(\bm{s}_2 | \bm{s}_1, \bm{a}_1)} 
+\left [				E_{\bm{a}_2 \sim \pi(\bm{a}_2|\bm{s}_2)}
+				\left[ r(\bm{s}_2, \bm{a}_2) + \dots | \bm{s}_2 \right] | \bm{s}_1, \bm{a}_1
+\right] | \bm{s}_1  \right] \right ]
+\end{align}
+
+Enter the Q-functions:
+\begin{equation}
+		Q(\bm{s}_1, \bm{a}_1) = 
+r(\bm{s}_1, \bm{a}_1) + E_{\bm{s}_2  \sim p(\bm{s}_2 | \bm{s}_1, \bm{a}_1)} 
+\left [				E_{\bm{a}_2 \sim \pi(\bm{a}_2|\bm{s}_2)}
+				\left[ r(\bm{s}_2, \bm{a}_2) + \dots | \bm{s}_2 \right] | \bm{s}_1, \bm{a}_1
+\right]
+\end{equation}
+If we knew $Q(\bm{s}_1, \bm{a}_1)$, it would be easy to modify $\pi_\theta (\bm{s}_1, \bm{a}_1)$:
+\begin{equation}
+	E_{\tau \sim p_\theta(\tau)} \left[  \sum_{t=1}^{T} r(\bm{s}_t, \bm{a}_t) \right] 	
+	= E_{\bm{s}_1 \sim p_\theta(\bm{s}_1)}
+	\left[  E_{\bm{a}_1 \sim \pi(\bm{a}_1|\bm{s}_1)} \left[ Q(\bm{s}_1, \bm{a}_1) |\bm{s}_1 \right]   \right] 
+\end{equation}
+For example we could just do $\pi(\bm{s}_1, \bm{a}_1) = 1$ 
+if $\bm{a}_1 = \argmax_{\bm{a}_1} Q(\bm{s}_1, \bm{a}_1)$.
+
+\paragraph{Definition: Q-function}
+\begin{equation}
+		Q^\pi (\bm{s}_t, \bm{a}_t) = \sum_{t'=t}^{T} E_{\pi_\theta}
+		\left[ r(\bm{s}_{t'}, \bm{a}_{t'} )| \bm{s}_t, \bm{a}_t \right] 
+\end{equation}
+thus denoting the total reward from taking $\bm{a}_t$ in $\bm{s}_t$.
+
+\paragraph{Definition: value function}
+\begin{equation}
+		V^\pi (\bm{s}_t) = \sum_{t'=t}^{T} E_{\pi_\theta}
+		\left[ r(\bm{s}_{t'}, \bm{a}_{t'} | \bm{s}_t) \right] 
+\end{equation}
+thus denoting the total (average/expected) reward from $\bm{s}_t$.
+
+The connection between the 2 is the following:
+\begin{equation}
+		V^\pi (\bm{s}_t) = E_{\bm{a}_t \sim \pi(\bm{s}_t, \bm{a}_t)}
+		\left[ Q^\pi(\bm{s}_t, \bm{a}_t) \right] 
+\end{equation}
+And we can also write the RL objective as:
+\begin{equation}
+		E_{\bm{s}_1 \sim p(\bm{s}_1)}
+		\left[ V^\pi (\bm{s}_1) \right] 
+\end{equation}
+
+How can we use Q-functions and value functions?
+One idea is the following: if we have $\pi$ and we know $Q^\pi(\bm{s}, \bm{a})$,
+then we can improve $\pi$:
+\begin{itemize}
+		\item set $\pi'(\bm{a}|\bm{s}) = 1$ is $\bm{a} = \argmax_{\bm{a}} Q^\pi(\bm{s}, \bm{a})$
+		\item this policy is at least as good as $\pi$ and is probabily better (easily provable)
+		\item it does not matter what $\pi$ is, this is always true
+\end{itemize}
+
+Another idea is to compute the gradient to increase the probability of good actions $\bm{a}$:
+if $ Q^\pi(\bm{s}, \bm{a}) > V^\pi(\bm{s})$ then $\bm{a}$ is \textit{better than average} (recall definition of $V^\pi(\bm{s})$ under $\pi(\bm{a}|\bm{s}) $  ).
+We can then modify $\pi(\bm{a}|\bm{s})$ to increase the probabily of $\bm{a}$ if $ Q^\pi(\bm{s}, \bm{a}) > V^\pi(\bm{s})$
+
+
+\section{Policy gradients}
+\paragraph{The idea} We are going to directly formalize the concept of trial-and-error learning.
+
+
+ A trajectory distribution in MDP setting is:
+ \begin{equation}
+ 		\underbrace{p_\theta(\bm{s}_1, \bm{a}_1, \dots, \bm{s}_T, \bm{a}_T)}_{p_\theta(\tau)} = p(\bm{s}_1) \prod^{T}_{t=1} \pi_{\theta} (\bm{a}_t | \bm{s}_t) p (\bm{s}_{t+1} | \bm{s}_t, \bm{a}_t)
+ \end{equation}
+The right side is the chain rule of probabilities
+
+The objective of reinforcement learning is:
+\begin{equation}
+		\theta^\star = \argmax_\theta E_{\tau \sim p_\theta (\tau)} \left [ \sum_t r(\bm{s}_t, \bm{a}_t) \right ]
+\end{equation}
+
+We can push out the sum via the linearity of expectation.
+This can then be expanded with a marginal for the infinite horizon.
+Infinite case (can be achieved with value functions):
+\begin{equation}		
+		\theta^\star = \argmax_\theta E_{(\bm{s}, \bm{a}) \sim p_\theta (\bm{s}, \bm{a})} \left [r(\bm{s}, \bm{a}) \right]
+\end{equation}
+
+Finite horizon case:
+\begin{equation}		
+		\theta^\star = \argmax_\theta \sum^{T}_{t=1}  E_{(\bm{s}_t, \bm{a}_t) \sim p_\theta (\bm{s}_t, \bm{a}_t)} \left [ r(\bm{s}_t, \bm{a}_t) \right]
+\end{equation}
+
+
+Let's talk about evaluating the reinforcement learning objective.
+First let's introduce a notational shorthand:
+
+\begin{equation}
+		\theta^\star = \argmax_\theta \underbrace{E_{\tau \sim p_\theta (\tau)} \left [ \sum_t r(\bm{s}_t, \bm{a}_t) \right ]}_{J(\theta)}
+\end{equation}
+
+We estimate $J(\theta)$ by making rollouts from the policy (below $i$ is the sample index and $i,t$ is the $t^{th}$ timestep
+in the $i^{th}$ sample):
+\begin{equation}
+		J(\theta) = E_{\tau \sim p_\theta(\tau)} \left [ \sum_t r(\bm{s}_t, \bm{a}_t) \right ] \approx 
+		\frac{1}{N} \sum_i \sum_t r(\bm{s}_{i,t}, \bm{a}_{i,t})
+\end{equation}
+
+Let's directly differentiate the policy.
+But first some more notational shorthands:
+\begin{equation}
+		J(\theta) = E_{\tau \sim p_\theta(\tau)} \underbrace{[r(\tau)]}_{\sum^{T}_{t=1} r(\bm{s}_t, \bm{a}_t)} = 
+		\int_{{}}^{} {p_\theta(\tau)r(\tau)} \: d{\tau} {}
+\end{equation}
+
+Now we start working on the derivative:
+\begin{equation}
+		\nabla_\theta J(\theta) = \int_{{}}^{{}} {\nabla_\theta p_\theta (\tau) r(\tau)} \: d{\tau} {}
+\end{equation}
+
+We'll need to use a convenient identity because we don't know $p_\theta(\tau)$ (nor its gradient):
+\begin{equation}
+	p_\theta(\tau) \nabla_\theta \log p_\theta(\tau) =
+	p_\theta (\tau) \frac{\nabla_\theta p_\theta(\tau)}{p_\theta(\tau)} =
+	\nabla_\theta p_\theta(\tau)
+\end{equation}
+So now:
+\begin{equation}
+		\nabla_\theta J(\theta) = \int_{{}}^{{}} {\nabla_\theta p_\theta (\tau) r(\tau)} \: d{\tau} {}
+		=
+		\int_{{}}^{{}} {p_\theta(\tau) \nabla_\theta \log  p_\theta(\tau) r(\tau) } \: d{\tau} =
+		E_{\tau \sim p_\theta(\tau)} [\nabla_\theta \log p_\theta(\tau)r(\tau)]
+\end{equation}
+THERE ARE MISTAKES BELOW, PLEASE COME BACK AND CORRECT THEM!!!!!!!!
+
+We can evaluate expectations with samples so we're on a good track.
+We can log $p_\theta(\tau)$ on both sides of the equation and get a summation instead of a product.
+Let's see what we get from that:
+\begin{equation}
+		\nabla_\theta \log p_\theta(\tau)r(\tau) =
+\nabla_\theta \left [\cancel{\log p(\bm{s}_1)} + \sum^{T}_{t=1} \log \pi_\theta (\bm{a}_t | \bm{s}_t) + \cancel{\log p(\bm{s}_{t+1} | \bm{s}_t, \bm{a}_t)} \right ]
+\end{equation}
+And now what's left is:
+\begin{equation}
+		\nabla_\theta J(\theta) = E_{\tau \sim p_\theta(\tau)} 
+		\left [ \left ( \sum_{t=1}^{T} \nabla_\theta \log \pi_\theta (\bm{a}_t | \bm{s}_t ) \right )
+		\left ( \sum_{t=1}^{T} r(\bm{s}_t, \bm{a}_t) \right ) \right ]
+\end{equation}
+
+To evaluate the policy gradient we can sample:
+\begin{equation}
+		\nabla_\theta J(\theta) \approx \frac{1}{N}  \sum_{i=1}^{N} 
+		\left ( \sum_{t=1}^{T} \nabla_\theta \log \pi_\theta (\bm{a}_{i,t} | \bm{s}_{i,t} ) \right )
+		\left ( \sum_{t=1}^{T} r(\bm{s}_{i,t}, \bm{a}_{i,t}) \right )
+\end{equation}
+Once we have the gradient we can do a step of gradient ascent and we good to go!
+This is the REINFORCE algorithm:
+\begin{enumerate}
+		\item sample $\{\tau^i\}$ from $\pi_\theta(\bm{a}_t | \bm{s}_t)$(run policy)
+		\item $\nabla_\theta J(\theta) \approx   \sum_{i=1}^{} 
+		\left ( \sum_{t=1}^{T} \nabla_\theta \log \pi_\theta (\bm{a}_{i,t} | \bm{s}_{i,t} ) \right )
+		\left ( \sum_{t=1}^{T} r(\bm{s}_{i,t}, \bm{a}_{i,t}) \right )$
+\item $\theta \leftarrow \theta + \alpha \nabla_\theta J(\theta) $
+\end{enumerate}
+
+
+If you implement this as-is, it won't work (well).
+Let's discuss the algorithm a bit more.
+But first, even simpler:
+\begin{align}
+		\nabla_\theta J(\theta) &\approx \frac{1}{N}  \sum_{i=1}^{T} 
+		\left ( \sum_{t=1}^{T} \nabla_\theta \log \pi_\theta (\bm{a}_{i,t} | \bm{s}_{i,t} ) \right )
+		\left ( \sum_{t=1}^{T} r(\bm{s}_{i,t}, \bm{a}_{i,t}) \right ) \\
+		&\approx \frac{1}{N} \sum_{i=1}^{N} \nabla_\theta \log \pi_\theta (\tau_i)r(\tau_i)
+\end{align}
+Maximum likelihood:
+\begin{equation}
+		\nabla_\theta J_{ML}(\theta) \approx \frac{1}{N} \sum_{i=1}^{N} \nabla_\theta \log \pi_\theta (\tau_i) 
+\end{equation}
+
+In practise, we have finite samples. We also get really high variance with rewards.
+Thus we need some strategy to lower the variance.
+
+\subsection{Reducing variance}
+\paragraph{Causality} policy at time $t'$ cannot affect reward at time $t$ when $t<t'$.
+Our algorithm thus not use this fact. Let's make it use it.
+First let's rewrite the policy gradient (just used distributive property):
+\begin{equation}
+		\nabla_\theta J(\theta) \approx 
+		\frac{1}{N} \sum_{i=1}^{N} \sum_{t=1}^{T} \nabla_\theta \log \pi_\theta (\bm{a}_{i,t}| \bm{s}_{i,t})
+		\left ( \sum_{t'=1}^{T} r (\bm{s}_{i,t}, \bm{a}_{i,t}) \right )
+\end{equation}
+
+Let's change the log-probability of the action at every time step,
+based on whether than action led to better actions in future, present and past.
+But the past rewards will have to average out to 0 because they don't matter for future rewards.
+So just sum from $t'$ to $T$ and make this unbiased:
+\begin{equation}
+		\label{eq:reward_to_go}
+		\nabla_\theta J(\theta) \approx 
+		\frac{1}{N} \sum_{i=1}^{N} \sum_{t=1}^{T} \nabla_\theta \log \pi_\theta (\bm{a}_{i,t}| \bm{s}_{i,t})
+		\underbrace{\left ( \sum_{t'=t}^{T} r (\bm{s}_{i,t}, \bm{a}_{i,t}) \right )}_{\text{"reward to go"}}
+\end{equation}
+
+"Reward to go" refers to the same estimate as the Q-function!
+So we can write:
+\begin{equation}
+		\nabla_\theta J(\theta) \approx 
+		\frac{1}{N} \sum_{i=1}^{N} \sum_{t=1}^{T} \nabla_\theta \log \pi_\theta (\bm{a}_{i,t}| \bm{s}_{i,t})
+		\hat{Q}_{i,t} 
+\end{equation}
+This will be further discussed later.
+
+\subsubsection{Baselines}
+If the good actions yield positive rewards and the bad actions yield negative rewards,
+the policy gradient will decrease the probability of bad actions and increase the probability 
+of good actions.
+But what if all the rewards are positive?
+Then all actions' probabilities will be increased, only by different amounts.
+And that's not really what we want --- we want to increase only the probability of good actions,
+and decrease the probability of bad actions.
+How do we do that if the rewards are all positive?
+The below is what we'd like:
+\begin{align}
+		\nabla_\theta J(\theta) &\approx 
+		\frac{1}{N} \sum_{i=1}^{N}
+		\nabla_\theta \log p_\theta (\tau) [ r(\tau) - b] \\
+		b &= \frac{1}{N} \sum_{i=1}^{N} r(\tau)
+\end{align}
+Here $b$ is the average reward and thus we'd increase the probability of
+actions which are better than average.
+But are we allowed to do that?
+Well, one can show that substracting a number will not change the gradient in expectation,
+but it will change its variance (so the estimator will be unbiased for any b).
+
+\begin{align}
+E \left [ \nabla_\theta \log p_\theta (\tau) b \right ] &=
+\int{p_\theta \nabla_\theta \log p_\theta (\tau) b}  \: d{\tau}  \\
+ & =
+\int{ \nabla_\theta p_\theta (\tau) b } d{\tau}  \\
+ &= 
+b \nabla_\theta \int { p_\theta (\tau) b } d{\tau} = b \nabla_\theta 1 = 0
+\end{align}
+
+For a finite number of samples, it won't be 0 so it will alter the variance!
+Also, this is not a perfect baseline (it's good tho) . 
+We will derive the perfect baseline for the knowledge gains, even though it's rarely used in practise.
+
+\begin{align}
+		\text{Var} [x] &= E[x^2] - E[x]^2 \\
+		\nabla_\theta J(\theta) &= E_{\tau \sim p_\theta(\tau)} 
+		\left [ \nabla_\theta \log p_\theta(\tau) (r(\tau) - b))^2 \right ]
+		- E_{\tau \sim p_\theta(\tau)} 
+		\underbrace{\left [ \nabla_\theta \log p_\theta(\tau) r(\tau) - b) \right ]^2}_
+		{\text{is just} E_{\tau \sim p_\theta(\tau)} \left [ \nabla_\theta \log p_\theta(\tau) r(\tau) \right ]}  \\
+		\frac{d \text{Var}}{db} &= \frac{d}{db} E[g(\tau)^2(r(\tau) - b)^2]
+		= \frac{d}{db} (\cancel{E[g(\tau)^2r(\tau)^2]} - 2E[g(\tau)^2r(\tau)b ] + b^2 E[g(\tau)^2]) \\
+								&= -2E[g(\tau)^2r(\tau)b ] + b^2 E[g(\tau)^2]) = 0\\
+b &= \frac{E[g(\tau)^2r(\tau)b ]}{E[g(\tau)^2])} 
+\end{align}
+So this is the optimal $b$ (the baseline which minimizes the variance).
+You'll have a different baseline for every parameter as
+this is just the expected reward, by weigthed by gradient magnitudes.
+
+\subsection{Off-policy gradients}
+Let's first discuss why policy gradients are an on-policy method (the classic one in fact).
+\begin{equation}
+		\nabla_\theta J(\theta) = \underbrace{E_{\tau \sim p_\theta(\tau)}}_{\text{this is the trouble!}} [\nabla_\theta p_\theta(\tau)r(\tau)]
+\end{equation}
+We need samples according to $\theta$ and hence we can't retain data from other policies, or even 
+the previous versions of our own policy (we can't skip step 1 in the REINFORCE algorithm).
+Neural networks require small gradients ('cos they are nonlinear).
+So if generating samples is expensive, this will be bad (on the other hand,
+if they're not, this will be nice).
+
+What if we don't have samples from $p_\theta(\tau)$, but we have let's say
+$\bar{p}(\tau)$.
+Well, we can use importance sampling.
+\paragraph{Importance sampling}
+\begin{align}
+		E_{x \sim p(x)} [f(x)]  
+		&= \int_{{}}^{{}} {p(x)f(x)} \: d{x} \\
+		&= \int_{{}}^{{}} {\frac{q(x)}{q(x)}  p(x)f(x)} \: d{x} \\
+		&= \int_{{}}^{{}} { q(x) \frac{p(x)}{q(x)}  f(x)} \: d{x} \\
+		&= E_{x \sim p(x)} \left [ \frac{p(x)}{q(x)} f(x) \right ]
+\end{align}
+This is all exact (in expectation).
+
+The importance-sampled version of the RL objective is then:
+\begin{equation}
+		J(\theta) = E_{\tau \sim \bar{p}(\tau)} \left [ \frac{p_\theta(\tau)}{\bar{p}(\tau)} r(\tau) \right ]
+\end{equation}
+Let's write out the trajectory probability distribution and see what we get:
+\begin{align}
+		p_\theta(\tau) &= p(\bm{s}_1) \prod_{t=1}^{T} \pi_\theta(\bm{a}_t | \bm{s}_t) p(\bm{s}_{t+1}|\bm{s}_t, \bm{a}_t) \\
+		\frac{p_\theta(\tau)}{\bar{p}(\tau)} &=
+		\frac{\cancel{p(\bm{s}_1)} \prod_{t=1}^{T} \pi_\theta(\bm{a}_t | \bm{s}_t) \cancel{p(\bm{s}_{t+1}|\bm{s}_t, \bm{a}_t)} }
+		{\cancel{p(\bm{s}_1)} \prod_{t=1}^{T} \bar{\pi}_\theta(\bm{a}_t | \bm{s}_t) \cancel{p(\bm{s}_{t+1}|\bm{s}_t, \bm{a}_t)} } \\
+	&= \frac{ \prod_{t=1}^{T} \pi_\theta(\bm{a}_t | \bm{s}_t)  }
+		{ \prod_{t=1}^{T} \bar{\pi}_\theta(\bm{a}_t | \bm{s}_t)  }
+\end{align}
+
+Now we will derive the policy gradient with importance sampling.
+Let's do a quick recap of where we're at:
+\begin{align}
+		\theta^\star  &= \argmax_\theta J(\theta) \\
+		J(\theta) &= E_{\tau \sim p_\theta(\tau)} \left[ r(\tau) \right] 
+\end{align}
+
+and we want:
+\begin{align}
+		J(\theta') &= E_{\tau \sim p_\theta(\tau)} \left[ \frac{p_{\theta'}(\tau)}{p_\theta} r(\tau)  \right] \\
+		\nabla_{\theta'}	J(\theta') &= E_{\tau \sim p_\theta(\tau)} \left[ \frac{\nabla_{\theta'} p_{\theta'}(\tau)}{p_\theta} r(\tau)  \right] \\
+	   &= E_{\tau \sim p_\theta(\tau)} \left[  \frac{p_{\theta'}(\tau)}{p_\theta(\tau)} \nabla_{\theta'} \log p_{\theta'}(\tau)r(\tau) \right] 
+\end{align}
+If you estimate locally, at $\theta = \theta'$: 
+\begin{equation}
+\nabla_\theta J(\theta)  = E_{\tau \sim p_\theta(\tau)} \left[ \nabla_\theta \log p_\theta(\tau)r(\tau) \right] 
+\end{equation}
+thus getting the same gradient.
+But if they're not the same:
+
+\begin{align}
+		\nabla_{\theta} J(\theta') &= E_{\tau \sim p_\theta(\tau)} \left[ \frac{p_{\theta'}(\tau)}{p_\theta} 
+				\nabla_{\theta'} (\tau)
+		r(\tau)  \right] \text{  when } \theta \neq \theta' \\
+	=& E_{\tau \sim p_\theta(\tau)}
+	\left[ 
+			\left( \prod_{t=1}^{T} \frac{\pi_{\theta'} (\bm{a}_t | \bm{s}_t)}{\pi_\theta(\bm{a}_t | \bm{s}_t)}   \right) 
+			\left( \sum_{t=1}^{T} \nabla_{\theta'} \log \pi_{\theta'}(\bm{a}_t | \bm{s}_t) \right) 
+			\left( \sum_{t=1}^{T} r(\bm{s}_t, \bm{a}_t) \right) 
+	\right] \\
+	=& E_{\tau \sim p_\theta(\tau)}
+	\left[ 
+			\sum_{t=1}^{T} \nabla_{\theta'} \log \pi_{\theta'}(\bm{a}_t | \bm{s}_t)
+			\left( \prod_{t'=1}^{t} \frac{\pi_{\theta'} (\bm{a}_{t'} | \bm{s}_{t'})}{\pi_\theta(\bm{a}_{t'} | \bm{s}_{t'})}   \right) 
+			\left( \sum_{t=1}^{T} r(\bm{s}_{t'}, \bm{a}_{t'}) 
+					\left( \prod_{t''=t}^{t'} \frac{\pi_{\theta'}(\bm{a}_{t''}|\bm{s}_{t''})}{\pi_{\theta}(\bm{a}_{t''}|\bm{s}_{t''})}  \right) 
+			\right) 
+	\right] 
+\end{align}
+where for the last equality we used the fact that future actions don't affect the current weight.
+
+If we ignore $\prod_{t''=t}^{t'} \frac{\pi_{\theta'}(\bm{a}_{t''}|\bm{s}_{t''})}{\pi_{\theta}(\bm{a}_{t''}|\bm{s}_{t''})} $,
+we get a policy iteration algorithm (will be covered later).
+Then we won't have gradient, but we'll still improve our policy.
+
+The problem lies in $\prod_{t'=1}^{t} \frac{\pi_{\theta'} (\bm{a}_{t'} | \bm{s}_{t'})}{\pi_\theta(\bm{a}_{t'} | \bm{s}_{t'})}$.
+The reason is that it is exponential in $T$.
+Let's say that the importance weights are all less than 1 (totally plausible).
+Then their product will go to 0 exponentially fast and that's bad for numerical reasons.
+So let's write the objective a bit differently.
+The on-policy policy gradient is:
+\begin{equation}
+		\nabla_\theta J(\theta) \approx
+		\frac{1}{N} \sum_{i=1}^{N} \sum_{t=1}^{T} \nabla_\theta \log \pi_\theta(\bm{a}_{i,t}|\bm{s}_{i,t} \hat{Q}_{i,t} )
+\end{equation}
+where $(\bm{s}_{t,i}, \bm{a}_{t,i}) \sim \pi_\theta(\bm{s}_{t,i}, \bm{a}_{t,i})$
+The a different Off-policy policy gradient would be:
+\begin{equation}
+		\nabla_{\theta'} J(\theta') \approx
+		\frac{1}{N} \sum_{i=1}^{N} \sum_{t=1}^{T} 
+		\frac{\pi_{\theta'}(\bm{s}_{i,t}, \bm{a}_{i,t})}{\pi_{\theta}(\bm{s}_{i,t}, \bm{a}_{i,t})} 
+		\nabla_{\theta'} \log \pi_{\theta'} (\bm{s}_{i,t}, \bm{a}_{i,t}) 
+		\hat{Q}_{i,t} 
+\end{equation}
+Not useful 'cos you can't calculate probabilities of the marginals.
+But we can split it via chain rule and ignore the state marginals:
+\begin{equation}
+		\nabla_{\theta'} J(\theta') \approx
+		\frac{1}{N} \sum_{i=1}^{N} \sum_{t=1}^{T}
+		\cancel{\frac{\pi_{\theta'}(\bm{s}_{i,t})}{\pi_{\theta}(\bm{s}_{i,t})}  }
+		\frac{\pi_{\theta'}( \bm{a}_{i,t} | \bm{s}_{i,t})}{\pi_{\theta}( \bm{a}_{i,t} | \bm{s}_{i,t})} 
+		\nabla_{\theta'} \log \pi_{\theta'} (\bm{s}_{i,t}, \bm{a}_{i,t}) 
+		\hat{Q}_{i,t} 
+\end{equation}
+This does not in general give the correct policy gradient, but its reasonable
+in the sense that it gives bounded error is $\pi_{\theta'}$ is no too different form $\pi_\theta$.
+But that will be discussed later.
+
+\subsubsection{Policy gradient with automatic differentiation}
+We don't want to calculate the grad for every state-action pair 'cos neural nets have a lot of 
+parameters.
+Typically we want to use the backpropagation algorithm.
+Thus we need to set our computational graph so that its gradient is the policy gradient.
+So we'll implement a ``pseudo-loss'' as a weighet maximum likelihood:
+\begin{equation}
+		\tilde{J}(\theta) \approx \frac{1}{N} \sum_{i=1}^{N} \sum_{t=1}^{T} \log \pi_\theta(\bm{a}_{i,t} | \bm{s}_{i,t}) \hat{Q}_{i,t}
+\end{equation}
+This equation means nothing, but it will give us the gradient that we want (lol).
+
+\subsubsection{Policy gradients in practice}
+\begin{itemize}
+		\item gradient has high variance, so use very large batch sizes (in the thousands)
+		\item tweaking learning rates is very hard (ADAM can be OK-ish), we'll do specific stuff on this later.
+\end{itemize}
+
+\subsection{Advanced policy gradients}
+(There will be more on this later (even more advanced policy gradients (lol)).
+We have the following problem: some parameters change probabilities a lot more than others!
+We'd like to increase the changes made by parameters that make small changes, and decrease
+the effect of the parameters which make the larger changes.
+To see why this is necessary, imagine a vector field which does not point directly to the goal because
+a certain direction is too dominant.
+This problem is also similar to that of poor-performing gradient descent --- the one which goes zig-zag instead of going
+straight to the goal. In short, we're dealing with a common problem in optimization.
+
+The idea is to rescale the gradient so that that doesn't happen.
+So instead of doing
+\begin{equation}
+		\theta' \leftarrow \argmax_{\theta'} (\theta' - \theta)^T \nabla_{\theta}J(\theta) \text{ s.t. } ||\theta' - \theta||^2 \leq \epsilon
+\end{equation}
+we can do
+\begin{equation}
+		\theta' \leftarrow \argmax_{\theta'} (\theta' - \theta)^T \nabla_{\theta}J(\theta) \text{ s.t. } D(\pi_{\theta'}, \pi_\theta) \leq \epsilon
+\end{equation}
+where $D(\pi_{\theta'}, \pi_\theta)$ is the parametrization-independent divergence measure.
+usually the KL-divergence:
+\begin{equation}
+		D_{KL} (\pi_{\theta'}||\pi_\theta) = E_{\pi_{\theta'}} \left[ \log \pi_\theta - \log \pi_{\theta'} \right]  
+		\approx (\theta' - \theta)^T \bm{F} (\theta' - \theta)
+\end{equation}
+where $\bm{F}$ is the Fisher-information matrix which can be estimated with samples:
+\begin{equation}
+		\bm{F} = E_{\pi_{\theta}} \left[ \nabla_{\theta} \log \pi_\theta(\bm{a}|\bm{s}) \nabla_{\theta} \log \pi_\theta(\bm{a}|\bm{s})^T \right] 
+\end{equation}
+
+So for the natural gradient pick $\alpha$.
+For trust region policy optimization pick $\epsilon$.
+Then solve for optimal $\alpha$ while solving $\bm{F}^{-1} \nabla_\theta J(\theta)$.
+Here conjugate gradint works well.
+
+
+\section{Actor-critic algorithms}
+
+\begin{equation}
+		\nabla_\theta J(\theta) \approx 
+		\frac{1}{N} \sum_{i=1}^{N} \sum_{t=1}^{T} \nabla_\theta \log \pi_\theta (\bm{a}_{i,t}| \bm{s}_{i,t})
+		\underbrace{\underbrace{\left ( \sum_{t'=t}^{T} r (\bm{s}_{i,t}, \bm{a}_{i,t}) \right )}_{\text{"reward to go"}}}_{\hat{Q}_{i,t}}
+\end{equation}
+
+$\hat{Q}_{i,t}$ estimates the expected reward if we take $\bm{a}_{i,t}$ in state $\bm{s}_{i,t}$.
+Can we get a better estimate? This is just a single-run Monte-Carlo estimate.
+Could we get the full expectation?
+In math, can we replace $\hat{Q}_{i,t} \approx  \sum_{t'=t}^{T} r (\bm{s}_{i,t}, \bm{a}_{i,t}) $ with 
+$\hat{Q}_{i,t} \approx  \sum_{t'=t}^{T} E_{\pi_\theta} \left[ r(\bm{s}_{t'}, \bm{a}_{t'}) |\bm{s}_{t}, \bm{a}_{t}  \right]   $?
+
+Having the correct full expectation (the correct Q-function), we'd have much lower variance policy gradient.
+We can also apply a baseline to this:
+\begin{align}
+		Q(\bm{s}_{t}, \bm{a}_{t}) &= \sum_{t'=t}^{T} E_{\pi_\theta} \left[ r(\bm{s}_{t'}, \bm{a}_{t'}) |\bm{s}_{t}, \bm{a}_{t}  \right] \text{ true \textit{expected} reward-to-go} \\
+		\nabla_\theta J(\theta) &\approx \frac{1}{N} \sum_{i=1}^{N} \sum_{t=1}^{T} \nabla_\theta \log \pi_\theta (\bm{a}_{i,t}| \bm{s}_{i,t})
+( Q(\bm{s}_{i,t}, \bm{a}_{i,t}) - b) \\
+		b_t &= \frac{1}{N} \sum_{i}^{} Q(\bm{s}_{i,t}, \bm{a}_{i,t})
+\end{align}
+If we make the baseline depend on the action, that will lead to bias.
+But it can depend on the state.
+So we can use
+\begin{equation}
+		V(\bm{s}_t) = E_{\bm{a}_t \sim \pi_\theta (\bm{s}_{t}, \bm{a}_{t})} [Q(\bm{s}_{t}, \bm{a}_{t})]
+\end{equation}
+Then we can substract the value function from the Q-value and we get an estimate of how much
+an action is better than the average.
+This difference is so important that we call it the \textbf{advantage function}.
+So,
+\begin{align}
+Q^\pi (\bm{s}_{t}, \bm{a}_{t}) & = \sum_{t'=t}^{T} E_{\pi_\theta} \left[ r(\bm{s}_{t'}, \bm{a}_{t'})|\bm{s}_t, \bm{a}_t \right] \text{ total reward from } \bm{a}_t \text{ in } \bm{s}_t\\
+V^\pi (\bm{s}_t) &= E_{\bm{a}_t \sim \pi_\theta(\bm{a}_t|\bm{s}_t)} \left[ Q^\pi (\bm{s}_{t}, \bm{a}_{t}) \right]  \text{ total reward from } \bm{s}_t\\
+A^\pi (\bm{s}_{t}, \bm{a}_{t}) &= Q^\pi (\bm{s}_{t}, \bm{a}_{t}) - V^\pi (\bm{s}_t)\text{ how much better } \bm{a}_t \text{ is } \\
+\nabla_\theta J(\theta) & \approx \frac{1}{N} \sum_{i=1}^{N} \sum_{t=1}^{T} \nabla_{\theta} \log \pi_\theta(\bm{s}_{i,t}, \bm{a}_{i,t}) A^\pi(\bm{s}_{i,t}, \bm{a}_{i,t})
+\end{align}
+The better the estimate of the advantage, the lower the variance will be.
+However, since it is only approximate, it will introduce a bias. But we're OK with this tradeoff.
+To repeat, the below is the unbiased, but high variance single-sample estimate.
+
+\begin{equation}
+\nabla_\theta J(\theta)  \approx \frac{1}{N} \sum_{i=1}^{N} \sum_{t=1}^{T} \nabla_{\theta} \log \pi_\theta(\bm{s}_{i,t}, \bm{a}_{i,t}) 
+\left( \sum_{t'=1}^{T} r(\bm{s}_{i,t'}, \bm{a}_{i,t'}) -b \right) 
+\end{equation}
+
+But should we fit $Q^\pi, V^\pi$ or $A^\pi$?
+One option:
+\begin{align}
+Q^\pi (\bm{s}_{t}, \bm{a}_{t})  &= r(\bm{s}_{t'}, \bm{a}_{t'}) + \underbrace{\sum_{t'=t+1}^{T} E_{\pi_\theta} \left[ r(\bm{s}_{t'}, \bm{a}_{t'})|\bm{s}_t, \bm{a}_t \right]}_{V^\pi(\bm{s}_{t+1})} \\
+Q^\pi (\bm{s}_{t}, \bm{a}_{t})  &= r(\bm{s}_{t}, \bm{a}_{t}) + E_{\bm{s}_{t+1} \sim p(\bm{s}_{t+1}|\bm{s}_t, \bm{a}_t)} \left[ V^\pi (\bm{s}_{t+1}) \right] 
+\end{align}
+
+Another option:
+\begin{align}
+		Q^\pi (\bm{s}_{t}, \bm{a}_{t})  &\approx r(\bm{s}_{t}, \bm{a}_{t}) + V^\pi (\bm{s}_{t+1}) \\
+		A^\pi (\bm{s}_{t}, \bm{a}_{t})  &\approx r(\bm{s}_{t}, \bm{a}_{t}) + V^\pi (\bm{s}_{t+1})  - V^\pi(\bm{s}_t)
+\end{align}
+We like the second option because we need to learn $V^\pi(\bm{s})$ because it depends only on the state.
+Since there are less states than state-actions, it should be easier to learn.
+There are methods which go for option 1, but we'll dicuss those later.
+
+OK, how do we learn $V^\pi(\bm{s})$ (it will be a neural net ofc).
+We need to evaluate the policy.
+
+\subsection{Policy evaluation}
+\begin{align}
+		V^\pi(\bm{s}_t) &= \sum_{t'=t}^{T} E_{\pi_\theta} \left[ r(\bm{s}_{t}, \bm{a}_{t})\bm{s}_t \right] \\
+		J(\theta) &= E_{\bm{s}_1 \sim p(\bm{s}_1} \left[ V^\pi (\bm{s}_1) \right] 
+\end{align}
+
+How can we perform policy evaluation? 
+Use Monte Carlo policy evaluation (this is what policy gradient does), i.e.
+\begin{align}
+		V^\pi (\bm{s}_t) &\approx \sum_{t'=t}^{T} r(\bm{s}_{t'}, \bm{a}_{t'})\\
+V^\pi (\bm{s}_t) &\approx \frac{1}{N} \sum_{i=1}^{N} \sum_{t'=t}^{T} r(\bm{s}_{t'}, \bm{a}_{t'})
+\end{align}
+Unfortunatelly, we can't do the second thing in general (as you'd need to reset the simulator and obtain 
+another trajectory from that state (and in general we can only reset to the inital state)).
+Fortunatelly, if we use a neural network to fit the value function, the network will generalize between similar states ---
+similar states will have similar values. This is especially cool when we're working in continuous settings.
+So $V^\pi (\bm{s}_t) \approx \sum_{t'=t}^{T} r(\bm{s}_{t'}, \bm{a}_{t'})$ will still be pretty good.
+
+Thus we do the following: we run the policy and get the training data:
+\begin{equation}
+		\left\{ \left( \bm{s}_{i,t}, \underbrace{\sum_{t'=t}^{T} r(\bm{s}_{i,t}, \bm{a}_{i,t})}_{y_{i,t}} \right)  \right\} 
+\end{equation}
+We then do supervised regresion:
+\begin{equation}
+		\mathcal{L}(\phi) = \frac{1}{2} \sum_{i}^{} ||\hat{V}^\pi_\phi (\bm{s}_i) - y_i||^2
+\end{equation}
+
+But can we do even better (here we substitute the reward-to-go from the $\bm{s}_{t+1}$ with the appropriate value function):
+\begin{equation}
+		\text{ideal target } y_{i,t} = \sum_{t'=t}^{T} E_{\pi_\theta} \left[ r(\bm{s}_{t'}, \bm{a}_{t'})|\bm{s}_{i,t}\right] + V^\pi(\bm{s}_{i,t+1})  
+		\approx r(\bm{s}_{i,t}, \bm{a}_{i,t}) + \hat{V}^\pi_\phi(\bm{s}_{i,t+1}) 
+\end{equation}
+
+Thus we get a bootstrapped estimate.
+Our training data becomes:
+\begin{equation}
+		\left\{ \left( \bm{s}_{i,t}, \underbrace{r(\bm{s}_{i,t}, \bm{a}_{i,t}) + \hat{V}^\pi_\phi(\bm{s}_{i,t+1}) }_{y_{i,t}} \right)  \right\} 
+\end{equation}
+We then again do supervised regresion:
+\begin{equation}
+		\mathcal{L}(\phi) = \frac{1}{2} \sum_{i}^{} ||\hat{V}^\pi_\phi (\bm{s}_i) - y_i||^2
+\end{equation}
+So again we have lower variance and higher bias (because $\hat{V}^\pi_\phi$ can (will) be incorrect).
+
+The value functions are very intuitive. For example, in board games,
+it tells you how likely you are to win in a given board state.
+Also, in this particular example it is very easy to restart from a given board state 
+and get better estimates for the value function in that state.
+
+\subsection{From evaluation to actor-critic}
+Basic example actor-critic algorithm:
+\begin{enumerate}
+		\item sample $\left\{ \bm{s}_i, \bm{a}_i \right\}$  from  $\pi_\theta (\bm{a}|\bm{s})$ (run policy)
+		\item fit $ \hat{V}^\pi_\theta(\bm{s})$ to sampled reward sums
+		\item evaluate $\hat{A}^\pi (\bm{s}_{i}, \bm{a}_{i}) = r(\bm{s}_{i}, \bm{a}_{i}) + \hat{V}^\pi_\theta(\bm{s}_i') - \hat{V}^\pi_\theta(\bm{s}_i) $
+		\item $\nabla_\theta J(\theta) \approx \sum_{i}^{} \nabla_{\theta} \log \pi_\theta (\bm{a}_i|\bm{s}_i) \hat{A}^\pi (\bm{s}_{i}, \bm{a}_{i})$
+		\item $\theta \leftarrow \theta + \alpha \nabla_\theta J(\theta)$
+\end{enumerate}
+
+\subsection{Aside: discount factors}
+In infinite-episode length the value-function can get infinitely large.
+So we'll discount the reward from states with $\gamma, \gamma \in [0,1]$,
+\begin{equation}
+		y_{i,t} \approx r(\bm{s}_{i,t}, \bm{a}_{i,t}) + \gamma \hat{V}^\pi_\theta(\bm{s}_{i, t+1})
+\end{equation}
+Can we do the same for (Monte Carlo) policy gradients?:
+\begin{align}
+\text{option 1: } & \nabla_\theta J(\theta) \approx \frac{1}{N} \sum_{i=1}^{N} \sum_{t=1}^{T} \nabla_{\theta} \log \pi_\theta(\bm{s}_{i,t}, \bm{a}_{i,t})
+\left( \sum_{t'=t}^{T} \gamma^{t'-t} r(\bm{s}_{i,t'}, \bm{a}_{i,t'}) \right) \\ 
+\text{option 2: } & \nabla_\theta J(\theta) \approx \frac{1}{N} \sum_{i=1}^{N}  \left( \sum_{t=1}^{T} \nabla_{\theta} \log \pi_\theta(\bm{s}_{i,t}, \bm{a}_{i,t}) \right)
+\left( \sum_{t=1}^{T} \gamma^{t-1} r(\bm{s}_{i,t'}, \bm{a}_{i,t'}) \right) \\
+				  &
+\nabla_\theta J(\theta) \approx \frac{1}{N} \sum_{i=1}^{N}   \sum_{t=1}^{T} \nabla_{\theta} \log \pi_\theta(\bm{s}_{i,t}, \bm{a}_{i,t}) 
+\left( \sum_{t'=t}^{T} \gamma^{t-1} r(\bm{s}_{i,t'}, \bm{a}_{i,t'}) \right)\\
+				  &
+				  \nabla_\theta J(\theta) \approx \frac{1}{N} \sum_{i=1}^{N}   \sum_{t=1}^{T} \gamma^{t-1} \nabla_{\theta} \log \pi_\theta(\bm{s}_{i,t}, \bm{a}_{i,t}) 
+\left( \sum_{t'=t}^{T} \gamma^{t'-t} r(\bm{s}_{i,t'}, \bm{a}_{i,t'}) \right)
+\end{align}
+So the second option also discounts the importance of a decision in later steps (i.e. it discounts future gradients as well),
+which makes it more correct if we want to do discounts.
+But do we want the later steps to matter less?
+In practise we use option 1 more often  because we don't really want the discounted problem,
+we just want to use the discount to get finite values for our value functions.
+That also makes our variance smaller.
+We actually want the average reward, but that's impractical and that's why we use the discount factor.
+
+%if we had a critic we'd get:
+%\begin{equation}
+%		\nabla_\theta J(\theta) \approx \frac{1}{N} \sum_{i=1}^{N} \sum_{t=1}^{T} \nabla_{\theta} \log \pi_\theta(\bm{s}_{i,t}, \bm{a}_{i,t})
+%		\left( r(\bm{s}_{i,t}, \bm{a}_{i,t}) + \gamma \hat{V}^\pi_\theta(\bm{s}_{i,t+1}) - \hat{V}^\pi_\theta(\bm{s}_{i,t}) \right) 
+%\end{equation}
+
+Let's now create an online actor-critic algorithm:
+\begin{enumerate}
+		\item take action $\bm{a} \sim \pi_\theta(\bm{a}|\bm{s})$, get $(\bm{s}, \bm{a},\bm{s'},r)$
+		\item update $\hat{V}^\pi_\theta$ using target $r + \gamma \hat{V}^\pi_\theta(\bm{s'})$
+		\item evaluate $\hat{A}^\pi(\bm{s}_{}, \bm{a}_{})  = r(\bm{s}_{}, \bm{a}_{}) + \gamma \hat{V}^\pi_\theta(\bm{s'}) - \hat{V}^\pi_\theta(\bm{s})$
+		\item $\nabla_\theta J(\theta) \approx \nabla_{\theta} \log \pi_\theta(\bm{a}|\bm{s})\hat{A}^\pi(\bm{s}_{}, \bm{a}_{})$
+		\item $\theta \leftarrow \theta  + \alpha \nabla_\theta J(\theta)$
+\end{enumerate}
+
+\subsection{Actor-critic design choises}
+
+We can do a two network design: one for the value function $\bm{s} \to \hat{V}^\pi_\theta(\bm{s})$ and one for the policy 
+$\bm{s} \to \pi_\theta(\bm{a}|\bm{s})$.
+The good thing about this is simple and stable. The bad thing is that it has no shared features between the actor and the critic.
+Alternatively, you can go for the shared network desing (have a single network for both).
+It will probably need more hyperparameter tuning, but it is in principle more efficient.
+
+\subsection{Online actor-critic in practise}
+In practice (due to the properties of neural networks) we want to update with batches and not do a single sample gradient.
+One way to get a batch is to use multiple works, i.e. do the synchronized parallel actor-critic.
+This way you'll get n\_workers-sized batches.
+The alternative is to do the asynchronous parallel actor-critic.
+In general you'll get samples from different actors with approach (there is some lag in different threads).
+This makes it mathematically incorrect, but in practise this leads to overall performance benefits (because the actors are not that different,
+because the lag is not so large (all workers are running the same program after all (if they don't hang up that is lol))).
+
+Cool. But it could be even better to use an off-policy actor-critic.
+However, to do so we need to modify the algorithm.
+We'd do this:
+\begin{enumerate}
+		\item take action $\bm{a} \sim \pi_\theta(\bm{a}|\bm{s})$, get $(\bm{s}, \bm{a},\bm{s'},r)$, store in $\mathcal{R}$ (replay buffer)
+		\item sample a batch $\left\{  (\bm{s}_i, \bm{a}_i,\bm{s'}_i,r_i) \right\} $ from buffer $\mathcal{R}$
+		\item update $\hat{V}^\pi_\theta$ using target $y_i = r_i + \gamma \hat{V}^\pi_\theta(\bm{s'}_i)$
+		\item evaluate $\hat{A}^\pi(\bm{s}_{i}, \bm{a}_{i})  = r(\bm{s}_{i}, \bm{a}_{i}) + \gamma \hat{V}^\pi_\theta(\bm{s}_i') - \hat{V}^\pi_\theta(\bm{s}_i)$
+		\item $\nabla_\theta J(\theta) \approx  \frac{1}{N} \sum_{i}^{}  \nabla_{\theta} \log \pi_\theta(\bm{a}_i|\bm{s}_i)\hat{A}^\pi(\bm{s}_{i}, \bm{a}_{i})$
+		\item $\theta \leftarrow \theta  + \alpha \nabla_\theta J(\theta)$
+\end{enumerate}
+where  $\mathcal{L}(\phi) = \frac{1}{N} \sum_{i}^{} || \hat{V}^\pi_\theta(\bm{s}_i) - y_i||^2 $.
+
+Unfortunatelly, this algorithm is broken!
+Firstly, $y_i = r_i + \gamma \hat{V}^\pi_\theta(\bm{s'}_i)$ will not give you the target value 
+of the current actor, but a past actor: $\bm{a}_i$ did not come from $\pi_\theta$
+and therefore $\bm{s}_i'$ didn't either.
+Likewise, the policy gradient $\nabla_{\theta} \log \pi_\theta(\bm{a}_i|\bm{s}_i)$ is also wrong for the same reason.
+To solve this, we could use importance sampling (or something else (soon...)).
+Let's first fix the value function.
+Well, the value function tells us the expected reward if we start in state $\bm{s}_t$ and the follow the policy $\pi$ onward,
+the Q-function tells you the expected reward if you start in state $\bm{s}_t$ and take action $\bm{a}_t$ and then 
+follow the policy $\pi$.
+Notice that in the Q-function it doesn't matter if $\bm{a}_t$ was taken from policy $\pi$.
+Thus it is valid for any action, it's just that in all subsequent steps $\pi$ needs to be followed.
+So to solve the problem, we'll learn $Q^\pi(\bm{s}_{t}, \bm{a}_{t})$ instead of $V^\pi(\bm{s}_t)$.
+We do this by updating $\hat{Q}^\pi_\phi $ using the targets
+$y_i = r_i + \gamma \hat{V}^\pi_\theta(\bm{s}') \forall \bm{s}_i, \bm{a}_i$.
+We still need $\hat{V}$ for the target values however.
+But we can use:
+\begin{equation}
+		V^\pi(\bm{s}_t) = \sum_{t'=t}^{T} E_{\pi\theta} \left[ r(\bm{s}_{t'}, \bm{a}_{t'})|\bm{s}_t \right] = E_{\bm{a} \sim \pi(\bm{a}_t | \bm{s}_t)} \left[ Q(\bm{s}_{t}, \bm{a}_{t}) \right] 
+\end{equation}
+
+Now we can update $\hat{Q}^\pi_\phi$ using
+\begin{align}
+		y_i &= r_i + \gamma \hat{V}^\pi_\theta(\bm{s}')\forall \bm{s}_i, \bm{a}_i \\
+			&= r_i + \gamma \hat{Q}^\pi_\phi(\bm{s}_{i}', \underbrace{\underbrace{\bm{a}_{i}'}_{  \text{not from replay buffer }\mathcal{R}}}_{\bm{a}_i' \sim \pi_\theta(\bm{a}_i'|\bm{s}_i')})
+\end{align}
+This works because you don't need to interact with the simulator to ask which action your current network would have taken 
+if it found itself in this (old) state (even though it never got there itself).
+
+Now we'll deal with the policy gradient and we'll do the same trick, but for $\bm{a}_i$ instead of $\bm{a}_i'$
+Thus we'll sample $\bm{a}_i^\pi \sim \pi_\theta(\bm{a}|\bm{s}_i)$ and get the following gradient:
+\begin{equation}
+		\nabla_\theta J(\theta) \approx \frac{1}{N} \sum_{i}^{} \nabla_{\theta}\log \pi_\theta(\bm{a}_i^\pi|\bm{s}_i) \hat{A}^\pi (\bm{s}_{i}, \bm{a}_{i}^\pi)
+\end{equation}
+where $\bm{a}_i^\pi$ is not from the replay buffer $\mathcal{B}$.
+But in practice we don't actually use advantages:
+\begin{equation}
+		\nabla_\theta J(\theta) \approx \frac{1}{N} \sum_{i}^{} \nabla_{\theta}\log \pi_\theta(\bm{a}_i^\pi|\bm{s}_i) \hat{Q}^\pi (\bm{s}_{i}, \bm{a}_{i}^\pi)
+\end{equation}
+This will lead to higher variance, but we don't really care because we don't need to interact the simulator
+and we can thus lower the variance by generating more samples (just run the network a few more times, no need for more state).
+
+There are still problems with the current version of our off-policy actor-critic algorithm.
+Namely, $\bm{s}_i$ didn't come from $p_\theta(\bm{s})$. Unfortunatelly, we
+can't do anything about this.
+Fortunatelly, we'll get an optimal policy on a broader distribution. Yes, it will be more work 
+due to the higher variance, but the final result will be better.
+So in total we're left with:
+\begin{enumerate}
+		\item take action $\bm{a} \sim \pi_\theta(\bm{a}|\bm{s})$, get $(\bm{s}, \bm{a},\bm{s'},r)$, store in $\mathcal{R}$ (replay buffer)
+		\item sample a batch $\left\{  (\bm{s}_i, \bm{a}_i,\bm{s'}_i,r_i) \right\} $ from buffer $\mathcal{R}$
+		\item update $\hat{Q}^\pi_\theta$ using target $y_i = r_i + \gamma \hat{Q}^\pi_\theta(\bm{s}_i', \bm{a}_i') \forall \bm{s}_i, \bm{a}_i$
+		\item $\nabla_\theta J(\theta) \approx  \frac{1}{N} \sum_{i}^{}  \nabla_{\theta} \log \pi_\theta(\bm{a}^\pi_i|\bm{s}_i)\hat{Q}^\pi(\bm{s}_{i}, \bm{a}^\pi_{i})$,
+				where $\bm{a}_i^\pi \sim \pi_\theta(\bm{a} | \bm{s}_i)$
+		\item $\theta \leftarrow \theta  + \alpha \nabla_\theta J(\theta)$
+\end{enumerate}
+In practise, people use the reparametrization trick in the gradient estimate and get a better estimate with it.
+Furthermore, there are a lot of fancier ways to fit Q-functions (for example soft actor-critic (SAC)).
+
+\subsection{Critics as state-dependent baselines}
+Let's first restate the actor-critic policy gradient:
+\begin{equation}
+	\nabla_\theta J(\theta) \approx \frac{1}{N} \sum_{i=1}^{N} \sum_{t=1}^{T} \nabla_{\theta} \log \pi_\theta(\bm{s}_{i,t}, \bm{a}_{i,t})
+		\left( r(\bm{s}_{i,t}, \bm{a}_{i,t}) + \gamma \hat{V}^\pi_\theta(\bm{s}_{i,t+1}) - \hat{V}^\pi_\theta(\bm{s}_{i,t}) \right) 
+\end{equation}
+and the policy gradient:
+\begin{equation}
+		\nabla_\theta J(\theta) \approx \frac{1}{N} \sum_{i=1}^{N} \sum_{t=1}^{T} \nabla_{\theta} \log \pi_\theta(\bm{s}_{i,t}, \bm{a}_{i,t})
+		\left( \left( \sum_{t'=t}^{T} \gamma^{t' -t} r(\bm{s}_{i,t'}, \bm{a}_{i,t'}) \right) -b \right) 
+\end{equation}
+More recap: the actor-critic policy gradient has much lower variance (due to the critic), but it is biased (if the critic is not perfect).
+On the other hand, the policy gradient has no bias, but it has high variance (because it uses a single-sample estimate).
+Now a question: can we have an ubiased policy gradient and still use the critic to reduce the variance?
+The way to do this is to use a state-dependent baseline, namely:
+\begin{equation}
+		\nabla_\theta J(\theta) \approx \frac{1}{N} \sum_{i=1}^{N} \sum_{t=1}^{T} \nabla_{\theta} \log \pi_\theta(\bm{s}_{i,t}, \bm{a}_{i,t})
+		\left( \left( \sum_{t'=t}^{T} \gamma^{t' -t} r(\bm{s}_{i,t'}, \bm{a}_{i,t'}) \right)  - \hat{V}^\pi_\theta(\bm{s}_{i,t}) \right) 
+\end{equation}
+Exercise: use a previous proof to derive this (will do such things when I circle back to this when I do Sutton's book).
+Anyway, this does not lower the variane as much as the actor-critic, but it's certainly substantially better than the vannila policy gradient with a constant baseline.
+Next question: can we make the baseline depend on not just the state, but the action as well? Would that lead to even lower variance?
+Yes, but it is complicating life.
+State and action dependent baselines are sometimes refered to as ``controlled variance'' in the literature.
+So let's create the following advantige function estimate:
+\begin{equation}
+		\hat{A}^\pi (\bm{s}_{i}, \bm{a}_{i}) = \sum_{t=t}^{\infty} \gamma^{t'-t} r(\bm{s}_{t'}, \bm{a}_{t'}) - V^\pi_\theta(\bm{s}_t)
+\end{equation}
+This has no bias and higher variance due to the single-sample estimate.
+We could  try:
+\begin{equation}
+		\hat{A}^\pi (\bm{s}_{i}, \bm{a}_{i}) = \sum_{t=t}^{\infty} \gamma^{t'-t} r(\bm{s}_{t'}, \bm{a}_{t'}) - Q^\pi_\theta(\bm{s}_t, \bm{a}_t)
+\end{equation}
+This goes to 0 in expectation if the critic is correct, but the critic is not correct.
+If we incorporate both the state and action dependency and also account for the error we get:
+\begin{equation}
+		\nabla_\theta J(\theta) \approx \frac{1}{N} \sum_{i=1}^{N} \sum_{t=1}^{T} \nabla_{\theta} \log \pi_\theta(\bm{a}_{i,t}|\bm{s}_{i,t})
+		\left( \hat{Q}_{i,t} - Q^\pi_\phi (\bm{s}_{i,t}, \bm{a}_{i,t})  \right) 
+		+ \frac{1}{N} \sum_{i=1}^{N} \sum_{t=1}^{T} \nabla_{\theta}
+		E_{\bm{a} \sim \pi_\theta(\bm{a}_t|\bm{s}_{i,t})}
+		\left[ Q^\pi_\phi (\bm{s}_{i,t}, \bm{a}_{t}) \right] 
+\end{equation}
+This is a valid estimate for the policy gradient.
+It is much better in some cases, providing you can evaluate the second term in the expression.
+
+Let's cook up some more options with different tradeoffs.
+
+\subsubsection{Eligibility traces and n-step returns}
+Thus far we've had
+\begin{equation}
+\hat{A}^\pi_C (\bm{s}_{t}, \bm{a}_{t}) =
+r(\bm{s}_{t}, \bm{a}_{t}) + \gamma \hat{V}^\pi_\theta(\bm{s}_{t+1}) - \hat{V}^\pi_\theta(\bm{s}_t)
+\end{equation}
+which had lower variane and higher bias,
+and we've had the Monte Carlo advantage estimate:
+\begin{equation}
+		\hat{A}^\pi_{MC} (\bm{s}_{t}, \bm{a}_{t}) =
+		\sum_{t'=t}^{\infty}  \gamma^{t'-t} r(\bm{s}_{t'}, \bm{a}_{t'})  - \hat{V}^\pi_\theta(\bm{s}_t)
+\end{equation}
+which had no bias and higher variance.
+
+So we've used the information about the next step only $\hat{A}^\pi_C$ and information about 
+the whole trajectory $\hat{A}^\pi_{MC}$.
+Can we do something in between (like 5 timesteps)?
+Here note that the variance between nearby timesteps will be smaller than those which are far away.
+Thus it makes sence to cut off with the value estimate after some n number of timesteps after the current state.
+This is called the n-step return estimator:
+\begin{equation}
+		\hat{A}^\pi_n (\bm{s}_{t}, \bm{a}_{t}) =
+		\sum_{t'=t}^{t+n} \gamma{t'-t} r(\bm{s}_{t'}, \bm{a}_{t'})
+		- \hat{V}^\pi_\theta(\bm{s}_t) + \gamma^n \hat{V}^\pi_\theta(\bm{s}_{t+n})
+\end{equation}
+Using $n>1$ often works better! Actually, in most cases
+the sweet spot is somewhere between 1 and $\infty$.
+
+Let's do one more trick:
+\subsubsection{Generalied advantage estimation (GAE)}
+How about we construct all possible n-step return estimators and average them together?:
+\begin{equation}
+\hat{A}^\pi_{GAE} (\bm{s}_{t}, \bm{a}_{t}) =
+\sum_{n=1}^{\infty} w_n \hat{A}^\pi_n (\bm{s}_{t}, \bm{a}_{t})
+\end{equation}
+where $w_n \propto \lambda^{n-1}$ is the exponential falloff.
+Here i'm skipping writing the above eq out (one boring eq) and will just provide the reduced form:
+\begin{equation}
+\hat{A}^\pi_{GAE} (\bm{s}_{t}, \bm{a}_{t}) =
+\sum_{n=1}^{\infty} (\gamma \lambda)^{t'-t}\delta_{t'}
+\end{equation}
+where $\delta_{t'} = r(\bm{s}_{t'}, \bm{a}_{t'}) + \gamma \hat{V}^\pi_\theta(\bm{s}_{t'+1})  - \hat{V}^\pi_\theta(\bm{s}_{t'})$
+Here larger $\lambda$ looks further in the future and vice-versa.
+This has a similar effect as a discount.
+
+\section{Value function methods}
+\subsubsection{Can we omit policy gradient completely?}
+We already have $A^\pi(\bm{s}_{t}, \bm{a}_{t})$.
+So let's just use $ \argmax_{\bm{a}_t} A^\pi(\bm{s}_{t}, \bm{a}_{t}) $,
+\begin{equation}
+		\pi'(\bm{s}_{t}| \bm{a}_{t}) = \left\{ 
+\begin{matrix}
+		1 & \text{ if } \bm{a}_t = \argmax_{\bm{a}_t} A^\pi (\bm{s}_{t}, \bm{a}_{t}) 		 \\
+		0 & \text{ otherwise}
+\end{matrix}
+		\right.
+\end{equation}
+
+So the policy is this implicit argmax policy. This is the idea behind:
+\subsection{Policy iteration}
+On a high level the policy iteration algorithm is:
+\begin{enumerate}
+		\item evaluate $A^\pi (\bm{s}_{}, \bm{a}_{}) $
+		\item set $\pi \leftarrow \pi'$
+\end{enumerate}
+
+Now we need to figure out how to evaluate $A^\pi (\bm{s}_{}, \bm{a}_{}) $.
+\subsubsection{Dynamic programming}
+%Let's assume we know $p(\bm{s}'|\bm{s}, \bm{a})$ where 
+Skipping explaining this from a single Sergey slide, Sutton did it better.
+Plus even then I can only pretend to know the full depth.
+So let's just get to how we use it for policy iteration.
+
+\subsubsection{Policy iteration with dynamic programming}
+\begin{equation}
+		V^\pi (\bm{s}) \leftarrow r(\bm{s}, \pi(\bm{s})) + \gamma E_{\bm{s}' \sim p(\bm{s}', \pi(\bm{s}))}
+				\left[ V^\pi(\bm{s}') \right] 
+\end{equation}
+
+
+\subsubsection{Even simpler dynamic programming}
+Looking at the argmax of the advantage function:
+\begin{equation}
+		A^\pi (\bm{s}_{}, \bm{a}_{}) = r(\bm{s}_{}, \bm{a}_{}) + \gamma E \left[ V^\pi(\bm{s}') \right]- V^\pi(\bm{s})  
+\end{equation}
+\begin{equation}
+		\argmax_{\bm{a}_t} A^\pi (\bm{s}_{t}, \bm{a}_{t}) = 
+		\argmax_{\bm{a}_t} Q^\pi (\bm{s}_{t}, \bm{a}_{t}) 
+\end{equation}
+\begin{equation}
+		Q^\pi(\bm{s}_{}, \bm{a}_{}) = r (\bm{s}_{}, \bm{a}_{}) + \gamma E \left[ V^\pi(\bm{s}')\right]
+\end{equation}
+So we can skip the policy and compute the values directly.
+With this we get the value  iteration algorithm:
+\begin{enumerate}
+		\item set $Q(\bm{s}, \bm{a}) \leftarrow r (\bm{s}, \bm{a}) + \gamma E[V(\bm{s}']$
+		\item set $V(\bm{s}) \leftarrow \max_{\bm{a}} Q(\bm{s}, \bm{a})$
+\end{enumerate}
+You can even plug step 2 into step 1 lel.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\end{document}
