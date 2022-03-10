@@ -1,0 +1,26 @@
+\BOOKMARK [1][-]{section.0.1}{Plan}{}% 1
+\BOOKMARK [2][-]{subsection.0.1.1}{TODOs}{section.0.1}% 2
+\BOOKMARK [0][-]{chapter.1}{Berkley AI class}{}% 3
+\BOOKMARK [1][-]{section.1.1}{Immitation learning}{chapter.1}% 4
+\BOOKMARK [1][-]{section.1.2}{Formal setting}{chapter.1}% 5
+\BOOKMARK [2][-]{subsection.1.2.1}{Markov chain}{section.1.2}% 6
+\BOOKMARK [2][-]{subsection.1.2.2}{Markov decision process}{section.1.2}% 7
+\BOOKMARK [2][-]{subsection.1.2.3}{Partially observed Markov decision process}{section.1.2}% 8
+\BOOKMARK [2][-]{subsection.1.2.4}{Value functions}{section.1.2}% 9
+\BOOKMARK [1][-]{section.1.3}{Policy gradients}{chapter.1}% 10
+\BOOKMARK [2][-]{subsection.1.3.1}{Reducing variance}{section.1.3}% 11
+\BOOKMARK [2][-]{subsection.1.3.2}{Off-policy gradients}{section.1.3}% 12
+\BOOKMARK [2][-]{subsection.1.3.3}{Advanced policy gradients}{section.1.3}% 13
+\BOOKMARK [1][-]{section.1.4}{Actor-critic algorithms}{chapter.1}% 14
+\BOOKMARK [2][-]{subsection.1.4.1}{Policy evaluation}{section.1.4}% 15
+\BOOKMARK [2][-]{subsection.1.4.2}{From evaluation to actor-critic}{section.1.4}% 16
+\BOOKMARK [2][-]{subsection.1.4.3}{Aside: discount factors}{section.1.4}% 17
+\BOOKMARK [2][-]{subsection.1.4.4}{Actor-critic design choises}{section.1.4}% 18
+\BOOKMARK [2][-]{subsection.1.4.5}{Online actor-critic in practise}{section.1.4}% 19
+\BOOKMARK [2][-]{subsection.1.4.6}{Critics as state-dependent baselines}{section.1.4}% 20
+\BOOKMARK [1][-]{section.1.5}{Value function methods}{chapter.1}% 21
+\BOOKMARK [2][-]{subsection.1.5.1}{Policy iteration}{section.1.5}% 22
+\BOOKMARK [2][-]{subsection.1.5.2}{From Q-iteration to Q-learning}{section.1.5}% 23
+\BOOKMARK [2][-]{subsection.1.5.3}{Value function in theory}{section.1.5}% 24
+\BOOKMARK [1][-]{section.1.6}{Deep RL with Q-functions}{chapter.1}% 25
+\BOOKMARK [2][-]{subsection.1.6.1}{Target networks}{section.1.6}% 26

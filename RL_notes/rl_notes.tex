@@ -11,6 +11,8 @@
 \newcommand{\argmin}{\arg\!\min} 
 \newcommand{\argmax}{\arg\!\max} 
 \usepackage[makeroom]{cancel}
+\usepackage{hyperref}
+
 
 
 \title{Reinforcement learning notes}
@@ -50,6 +52,15 @@ Because that requires an understanding of how the current deep reinforcement lea
 that's step 1.
 Implementing a few algorithms for practise (and then reading good implementations) is step 2.
 Only then in step 3 do I get to implement what I'm tasked with.
+
+\subsection{TODOs}
+\begin{enumerate}
+		\item go through berkley lectures again, see whether you understand everything and CORRECT THE MISTAKES
+		\item replace enum algorithms with something nicer (some box or something) or alternatively write the algorithms as pseudocode (probably better).
+				for the second case you can check out \href{https://www.overleaf.com/learn/latex/Algorithms}{overleaf algorithms page}
+		\item create index with nice links around the pdf, use \href{https://www.overleaf.com/learn/latex/Hyperlinks}{overleaf hyperlinks page} to get there
+		\item (optional for now) clean language
+\end{enumerate}
 
 \paragraph{Purpose}
 These notes serve multiple purposes:
@@ -911,8 +922,11 @@ This has a similar effect as a discount.
 
 \section{Value function methods}
 \subsubsection{Can we omit policy gradient completely?}
-We already have $A^\pi(\bm{s}_{t}, \bm{a}_{t})$.
+We have $A^\pi(\bm{s}_{t}, \bm{a}_{t})$.
+It tells us how much better $\bm{a}_t$ is than the average action according to $\pi$ 
+and it is at least as good as any $\bm{a}_t \sim \pi(\bm{a}_t|\bm{s}_t)$
 So let's just use $ \argmax_{\bm{a}_t} A^\pi(\bm{s}_{t}, \bm{a}_{t}) $,
+which gives the best action from $\bm{s}_t$ if we then follow $\pi$:
 \begin{equation}
 		\pi'(\bm{s}_{t}| \bm{a}_{t}) = \left\{ 
 \begin{matrix}
@@ -921,8 +935,10 @@ So let's just use $ \argmax_{\bm{a}_t} A^\pi(\bm{s}_{t}, \bm{a}_{t}) $,
 \end{matrix}
 		\right.
 \end{equation}
+So the policy is this implicit argmax policy (does not require a neural net to generate actions)
+and we know how to improve it.
+This is the idea behind:
 
-So the policy is this implicit argmax policy. This is the idea behind:
 \subsection{Policy iteration}
 On a high level the policy iteration algorithm is:
 \begin{enumerate}
@@ -930,22 +946,32 @@ On a high level the policy iteration algorithm is:
 		\item set $\pi \leftarrow \pi'$
 \end{enumerate}
 
-Now we need to figure out how to evaluate $A^\pi (\bm{s}_{}, \bm{a}_{}) $.
+Now we need to figure out how to evaluate $A^\pi (\bm{s}_{}, \bm{a}_{}) $ (and whether
+we'll fit $Q^\pi$ or $V^\pi$).
 \subsubsection{Dynamic programming}
 %Let's assume we know $p(\bm{s}'|\bm{s}, \bm{a})$ where 
 Skipping explaining this from a single Sergey slide, Sutton did it better.
 Plus even then I can only pretend to know the full depth.
 So let's just get to how we use it for policy iteration.
+We're in the tabular setting.
+For now the only point is that it gives the bootstrapped update:
+\begin{equation}
+V^\pi(\bm{s}) \leftarrow E_{\bm{a} \sim \pi(\bm{a}|\bm{s})} \left[ r(\bm{s}_{}, \bm{a}_{}) + \gamma E_{\bm{s}' \sim p(\bm{s}' |\bm{a},\bm{s}  )} [V^\pi(\bm{s}') ] \right] 
+\end{equation}
+which we can than use to calculate the advantage $A^\pi (\bm{s}_{t}, \bm{a}_{t})$ and update the policy.
 
 \subsubsection{Policy iteration with dynamic programming}
+We evaluate $V^\pi(\bm{s})$ by doing
 \begin{equation}
-		V^\pi (\bm{s}) \leftarrow r(\bm{s}, \pi(\bm{s})) + \gamma E_{\bm{s}' \sim p(\bm{s}', \pi(\bm{s}))}
+		V^\pi (\bm{s}) \leftarrow r(\bm{s}, \pi(\bm{s})) + 
+		\gamma E_{\bm{s}' \sim p(\bm{s}'| \bm{s}, \pi(\bm{s}))}
 				\left[ V^\pi(\bm{s}') \right] 
 \end{equation}
 
 
 \subsubsection{Even simpler dynamic programming}
-Looking at the argmax of the advantage function:
+Looking at the argmax of the advantage function (specifically looking at 
+what's relevant in the argmax):
 \begin{equation}
 		A^\pi (\bm{s}_{}, \bm{a}_{}) = r(\bm{s}_{}, \bm{a}_{}) + \gamma E \left[ V^\pi(\bm{s}') \right]- V^\pi(\bm{s})  
 \end{equation}
@@ -956,30 +982,232 @@ Looking at the argmax of the advantage function:
 \begin{equation}
 		Q^\pi(\bm{s}_{}, \bm{a}_{}) = r (\bm{s}_{}, \bm{a}_{}) + \gamma E \left[ V^\pi(\bm{s}')\right]
 \end{equation}
-So we can skip the policy and compute the values directly.
+So we can skip the policy and compute the values directly!
 With this we get the value  iteration algorithm:
 \begin{enumerate}
 		\item set $Q(\bm{s}, \bm{a}) \leftarrow r (\bm{s}, \bm{a}) + \gamma E[V(\bm{s}']$
 		\item set $V(\bm{s}) \leftarrow \max_{\bm{a}} Q(\bm{s}, \bm{a})$
 \end{enumerate}
 You can even plug step 2 into step 1 lel.
+Again, this is simpler because we don't have to recover the indeces --- no need to do the whole table lookup,
+just do the max.
 
+\subsubsection{Fitted value iteration and Q-iteration}
+Now we're using function approximators instead of tables to map states to values.
+This is done to combat the curse of dimensionality.
+We'll do least-squares regression on the target values (which are $\argmax_{\bm{a}} Q(\bm{s}, \bm{a})$).
+Then the fitted value iteration algorithm is:
+\begin{enumerate}
+		\item set $ \bm{y}_i \leftarrow \max_{\bm{a}_i} \left( r (\bm{s}_{i}, \bm{a}_{i}) + \gamma E \left[ V_\phi (\bm{s}_i')  \right]  \right)     $ 
+		\item set $ \phi \leftarrow \argmin_\phi \frac{1}{2} \sum_{i}^{} ||   V_\phi (\bm{s}_i)  - \bm{y}_i ||^2 $
+\end{enumerate}
+The problem is that we're required to know the transition dynamics:
+in step 1, we need to evaluate the expectation, but also be able to try out different actions in a state, which we can't do in general.
 
+Let's replace $V^\pi$ with $Q^\pi$ in policy evaluation, getting:
+\begin{equation}
+		Q^\pi (\bm{s}_{}, \bm{a}_{}) \leftarrow r(\bm{s}_{}, \bm{a}_{}) + 
+		\gamma E_{\bm{s}' \sim p(\bm{s}'| \bm{s}, \bm{a})}
+		\left[ Q^\pi(\bm{s}', \pi(\bm{s}')) \right] 
+\end{equation}
+Now we fit $ Q^\pi(\bm{s}_{}, \bm{a}_{}) $ by sampling $(\bm{s}, \bm{a}, \bm{s}')$
+and we don't need to know the transition dynamics.
+But now we need to simplify policy iteration to value iteration again (via the ``max'' trick).
 
+Our current Q iteration algorithm looks like this:
+\begin{enumerate}
+		\item set $ \bm{y}_i \leftarrow r(\bm{s}_{i}, \bm{a}_{i}) + \gamma E \left[ V_\phi (\bm{s}_i') \right]      $
+		\item set $  \phi \leftarrow \argmin_\phi \frac{1}{2} \sum_{i}^{} || Q_\phi (\bm{s}_{i}, \bm{a}_{i}) - \bm{y}_i||^2      $
+\end{enumerate}
+where we'll approximate the expectation $ E \left[ V(\bm{s}_i')  \right] \approx \max_{\bm{a}'} Q_\phi(\bm{s}_{i}, \bm{a}_{i})   $.
+This doesn't require simulation of actions, only the acquired samples.
+It works even for off-policy samples (unlike actor-critic).
+There's only one network (the Q-function estimator).
+Unfortunatelly, there are no convegence guarantees for non-linear function approximation (lmao).
 
+We're now able to give the full fitted Q-iteration algorithm:
+\begin{enumerate}
+		\label{eq:fitted_q_iteration_algorithm}
+		\item collect dataset $ \left\{ \left( \bm{s}_i, \bm{a}_i, \bm{s}_i', r_i \right)  \right\}  $ using policy
+		\item set $ \bm{y}_i \leftarrow r(\bm{s}_{i}, \bm{a}_{i})+ \gamma \max_{\bm{a}_i'} Q_\phi (\bm{s}_{i}', \bm{a}_{i}')   $
+		\item set $\phi \leftarrow \argmin_\phi \frac{1}{2} \sum_{i}^{} || Q_\phi (\bm{s}_{i}, \bm{a}_{i}) - \bm{y}_i||^2 $
+\end{enumerate}
+The simplest way to design a Q network is to input both states and actions and to output a single scalar value.
+A common design for Q networks in discrete spaces is to input the state $\bm{s}$ and output Q values for every possible action.
+The parameters here are the dataset size $N$, the collection policy, 
+the number of iterations $K$ (how much you go from step 3 back to step 2) the number of gradient steps $S$ .
 
+\subsection{From Q-iteration to Q-learning}
+\subsubsection{Why is this algorithm off-policy}
+The one place where the policy is used is when using the Q-function (in step 2 in the algorithm under the max).
+The Q-function functions as kind of a model which tells us which actions will do what (in terms of reward).
+Really you have a dataset of transitions and you're fitting your Q-function on it.
+Let's write out the error in step 3:
+\begin{equation}
+		\mathcal{E} = \frac{1}{2} E_{(\bm{s}_{}, \bm{a}_{}) \sim \beta}
+		\left[ \left( Q_\phi (\bm{s}_{}, \bm{a}_{}) - \left[ r(\bm{s}_{}, \bm{a}_{}) + \gamma \max_{\bm{a}'}Q_\phi(\bm{s}_{}', \bm{a}_{}')  \right]  \right)^2  \right] 
+\end{equation}
+if $\mathcal{E} =0 $, then $ Q_\phi(\bm{s}_{}, \bm{a}_{}) = r(\bm{s}_{}, \bm{a}_{}) + \gamma \max_{\bm{a}'}Q_\phi(\bm{s}_{}', \bm{a}_{}')$.
+This is an \textit{optimal} Q-function, corresponding to optimal policy $\pi'$.
 
+Let's write out a basic online on-policy Q-iteration algorithm:
+\begin{enumerate}
+\label{eq:online_q_iteration_algorithm}
+\item take some action $\bm{a}_i$ and observe $\left( \bm{s}_i, \bm{a}_i, \bm{s}_i', r_i \right) $
+\item $ \bm{y}_i = r(\bm{s}_{i}, \bm{a}_{i}) + \gamma \max_{\bm{a}'} Q_\phi (\bm{s}_{i}', \bm{a}_{i}') $
+\item $ \phi \leftarrow \phi  - \alpha \frac{d Q_\phi}{d\phi} (\bm{s}_{i}, \bm{a}_{i}) \left( Q_\phi(\bm{s}_{i}, \bm{a}_{i}) - \bm{y}_i \right)  $
+\end{enumerate}
+where in step 3 we applied the chain rule in the arg.
+What policy to use here? In the end we'll just do the greedy policy.
+We don't what that while learning because it is deterministic and we'll forever be stuck using bad actions (bad exploration).
+One common choise is the classic \textbf{epsilon-greedy} policy:
+\begin{equation}
+\pi(\bm{a}_{t}| \bm{s}_{t}) = 
+\left\{
+		\begin{array}{ll}
+				1 - \epsilon & \text{if } \bm{a}_t = \argmax_{\bm{a}_t} Q_\phi(\bm{s}_{t}, \bm{a}_{t}) \\
+				\frac{\epsilon}{|\mathcal{A}| - 1} & \text{otherwise}
+\end{array}
+		\right.
+\end{equation}
+You can reduce $\epsilon$ over time, thus getting more exploration early on, and nailing the best actions later.
+Another exploration rule is the \textbf{Boltzmann exploration} rule
+\begin{equation}
+\pi(\bm{a}_{t}| \bm{s}_{t}) \propto \exp \left( Q_\phi(\bm{s}_{t}, \bm{a}_{t}) \right) 
+\end{equation}
+Here there's a roughly same probability to take actions which are roughly equally good
 
+\subsection{Value function in theory}
+Let's dicuss why there are no convergence guarantees.
+The value iteration (tabular) algorithm is:
+\begin{enumerate}
+		\item set $Q(\bm{s}_{}, \bm{a}_{}) \leftarrow r(\bm{s}_{}, \bm{a}_{}) + \gamma E[V(\bm{s}')] $
+		\item set $V(\bm{s}) \leftarrow \max_{\bm{a}} Q(\bm{s}_{}, \bm{a}_{})$
+\end{enumerate}
+Let's define the Bellman operator:
+\begin{equation}
+		\mathcal{B}: \mathcal{B}V = \max_{\bm{a}} r_{\bm{a}} + \gamma \mathcal{T}_{\bm{a}}V
+\end{equation}
+where $r_{\bm{a}}$ is the stacked vector of rewards at all states for action $\bm{a}$,
+and $\mathcal{T}_{\bm{a},i,j} = p (\bm{s}' = i | \bm{s} = j, \bm{a}) $ is the matrix of transitions for the corresponding action $\bm{a}$  
+With this we've written the Bellman backup so that it looks like value iteration
 
+Now $V^\star$ is a \textit{fixed point} of $\mathcal{B}$, 
+meaning that if we recover it we get the optimal policy:
+\begin{equation}
+		V^\star(\bm{s}) = \max_{\bm{a}} r(\bm{s}_{}, \bm{a}_{}) + \gamma E[V^\star(\bm{s}')], \text{ so } V^\star = \mathcal{B}V^\star
+\end{equation}
+It's possible to show that $V^\star$ always exists, is unique and corresponds to the optimal policy.
+Will we reach it? (Yes)
+We can prove that $\mathcal{B}$ is a \textit{contraction} which means that for any $V$, $\bar{V}$ we have:
+\begin{equation}
+		|| \mathcal{B}V - \mathcal{B}\bar{V}||_\infty \leq \underbrace{\gamma}_{\text{gap always gets smaller by } \gamma \text{ w.r.t. } \infty \text{-norm}} || V - \bar{V}||_\infty
+\end{equation}
 
+Let's now check the fitted value iteration algorithm.
+To recap, it's
+\begin{enumerate}
+		\item set $ \bm{y}_i \leftarrow \max_{\bm{a}_i} \left( r (\bm{s}_{i}, \bm{a}_{i}) + \gamma E \left[ V_\phi (\bm{s}_i')  \right]  \right)     $ 
+		\item set $ \phi \leftarrow \argmin_\phi \frac{1}{2} \sum_{i}^{} ||   V_\phi (\bm{s}_i)  - \bm{y}_i ||^2 $
+\end{enumerate}
+Step 1. is just the definition of $\mathcal{B}V$
+What does 2. do?
+\begin{equation}
+		V' \leftarrow \argmin_{V' \in \Omega} \frac{1}{2} \sum_{}^{} ||V'(\bm{s}) - (\mathcal{B}V)(\bm{s})||^2
+\end{equation}
+where $\Omega$ is the hypothesis space (in this case the space of all weights of our neural network architecture)
+$V'$ will be a projection of $\mathcal{B}V$ back to $\Omega$.
+Let's introduce an operator for this projection:
+\begin{equation}
+		\Pi : \Pi V = \argmin_{V' \in \Omega} \frac{1}{2} \sum_{}^{} ||V'(\bm{s}) - V(\bm{s})||^2
+\end{equation}
 
+So the fitter value iteration algorithm is:
+\begin{enumerate}
+		\item $V \leftarrow \Pi \mathcal{B} V$
+\end{enumerate}
+and here $\mathcal{B}$ is a contraction (w.r.t. $\infty$-norm (``max'' norm)),
+$\Pi$ is a contraction w.r.t. $l_2$-norm (Euclidean distance), but
+$\Pi \mathcal{B}$ is not a contraction of any kind!
 
+Thus the sad conclusion is that fitted value iteration does not converge in general
+and it often does not converge in practise.
+In fitter Q-iteration, we get the same thing:
+define:
+\begin{equation}
+		\mathcal{B}: \mathcal{B} Q = r + \gamma \mathcal{T} \max_{\bm{a}} Q
+\end{equation}
+the operator:
+\begin{equation}
+		\Pi : \Pi Q = \argmin_{Q' \in \Omega} \frac{1}{2} \sum_{}^{} || Q'(\bm{s}_{}, \bm{a}_{}) - Q(\bm{s}_{}, \bm{a}_{})||^2
+\end{equation}
+turn the algorithm into
+\begin{enumerate}
+		\item $Q \leftarrow \Pi \mathcal{B} Q$
+\end{enumerate}
+and get that $\mathcal{B}$ and $\Pi$ are contractions (in the same spaces) and
+that $\Pi\mathcal{B}$ is not a contraction of any kind.
+Of course, this also applies to Q-learning.
 
+This is weird given how similar Q-learning is to gradient descent.
+But Q-learning is not gradient descent!
+That's because:
+\begin{equation}
+	 \phi \leftarrow \phi - \alpha \frac{d Q_\phi}{d\phi} (\bm{s}_{i}, \bm{a}_{i}) \left( Q_\phi(\bm{s}_{i}, \bm{a}_{i}) - 
+	 \underbrace{\left[ r(\bm{s}_{i}, \bm{a}_{i}) + \gamma \max_{\bm{a}'} Q_\phi (\bm{s}_{i}', \bm{a}_{i}') \right] }_{\text{no gradient through target value}}
+\right)  	
+\end{equation}
+the target Q-values themselves depend of Q-values.
+Now we could turn this algorithm into a gradient descent algorithm, but 
+the resulting ``residual algorithm'' has very bad numerical properties and performs very poorly in practise.
 
+\subsubsection{A sad corollary}
+The batch actor-critic algorithm is also not guaranteed to converge under function approximation :(
+\newline
+The reasons for this are the same.
 
+Fortunatelly, we can actually make these algorithms work very well in practise (ML amirite).
+And now we'll do that:
 
+\section{Deep RL with Q-functions}
+To recap look at \ref{eq:fitted_q_iteration_algorithm} and \ref{eq:online_q_iteration_algorithm} (NOTE: these links are bad as they don't link to the 
+enumerated algorithms, solving that is a TODO for later).
 
+There's another problem with the online Q-learning algorithm.
+The sequential states we observe are strongly correlated. 
+Thus we are likely to overfit to local transitions.
+This is made worse by the fact that the target value is always changing.
+So the algorithm is designed to overfit to what it has seen last and it doesn't really learn
+properly accross the entire state-action trajectory as it should.
+One practical way to mitigate this is to use multiple workers (running multiple simulators with our agent at the same time).
+This can be done in both the synchronized and the asynchronous fashion.
+But there is another solution: using replay buffers.
 
+\subsubsection{Replay buffers}
+Q-learning with a replay buffer:
+\begin{enumerate}
+		\item sample a batch $\left( \bm{s}_i, \bm{a}_i, \bm{s}_i', r_i \right) $ from $\mathcal{B}$
+		\item $  \phi \leftarrow \phi  - \alpha \frac{d Q_\phi}{d\phi} (\bm{s}_{i}, \bm{a}_{i}) \left( Q_\phi(\bm{s}_{i}, \bm{a}_{i}) - 
+			\left[ r(\bm{s}_{i}, \bm{a}_{i}) + \gamma \max_{\bm{a}'} Q_\phi (\bm{s}_{i}', \bm{a}_{i}') \right] 	\right) $ 
+\end{enumerate}
+The benefits: the samples are no longer correlated and there are multiple samples in the batch (low-variance gradient).
+How do we fill the replay buffer?
+We should be refilling it with new transitions because the initial batch of them are probably bad because they were collected with a bad policy (ex. epsilon-greedy 
+on a freshly initialized Q-network).
+OK, now the full Q-learning with a replay buffer looks like:
+\begin{enumerate}
+		\item collect dataset $\left\{ \left( \bm{s}_i, \bm{a}_i, \bm{s}_i', r_i \right)  \right\} $ using some policy, add it to $\mathcal{B}$
+		\item sample a batch  $\left( \bm{s}_i, \bm{a}_i, \bm{s}_i', r_i \right)$ in i.i.d. fashion from $\mathcal{B}$
+		\item $  \phi \leftarrow \phi  - \alpha \sum_{i}^{}  \frac{d Q_\phi}{d\phi} (\bm{s}_{i}, \bm{a}_{i}) \left( Q_\phi(\bm{s}_{i}, \bm{a}_{i}) - 
+			\left[ r(\bm{s}_{i}, \bm{a}_{i}) + \gamma \max_{\bm{a}'} Q_\phi (\bm{s}_{i}', \bm{a}_{i}') \right] 	\right) $ 
+\end{enumerate}
+where we repeat going from 3. to 2. K times.
+
+\subsection{Target networks}
+There is another problem we haven't tackled yet,
+in particular the fact that Q-learning is not gradient descent and it has a moving target 
+which makes it very hard to converge.
+So what does Q-learning really have to do with regression?
 
 
 
