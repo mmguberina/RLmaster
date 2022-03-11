@@ -12,6 +12,12 @@
 \newcommand{\argmax}{\arg\!\max} 
 \usepackage[makeroom]{cancel}
 \usepackage{hyperref}
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric, arrows}
+\tikzstyle{rec} = [rectangle,  minimum width=2cm, minimum height=1cm, text centered, draw=black]
+\tikzstyle{arrow} = [thick,->,>=stealth]
+\tikzstyle{arrow_red} = [thick,->,>=stealth, color=red]
+
 
 
 
@@ -572,7 +578,7 @@ where $\bm{F}$ is the Fisher-information matrix which can be estimated with samp
 So for the natural gradient pick $\alpha$.
 For trust region policy optimization pick $\epsilon$.
 Then solve for optimal $\alpha$ while solving $\bm{F}^{-1} \nabla_\theta J(\theta)$.
-Here conjugate gradint works well.
+Here conjugate gradient works well.
 
 
 \section{Actor-critic algorithms}
@@ -1774,6 +1780,171 @@ OK. What about learning directly in observation spaces,
 i.e. directly learning $p(\bm{o}_{t+1}| \bm{o}_{t}, \bm{s}_{t})$
 
 \section{Model-based policy learning}
+While our MBRL algorithm ver 1.5 makes open-loop predictions and then replans on every timestep, 
+it's still open-loop overall because it can't plan to make other decisions in the future in responce to other informaton 
+that will be revealed in the future.
+It's really doing (this is recap but still):
+\begin{equation}
+		p_\theta ( \bm{s}_{1}, \dots , \bm{s}_{T} \bm{a}_{1}, \dots , \bm{a}_{T}) =
+		p(\bm{s}_{1}) \prod_{t=1}^{T} p(\bm{s}_{t+1} | \bm{s}_{t}, \bm{a}_{t}) 
+\end{equation}
+\begin{equation}
+		\bm{a}_{1}, \dots , \bm{a}_{T} = \argmax_{\bm{a}_{1}, \dots , \bm{a}_{T}} E \left[ 
+		\sum_{t}^{} r (\bm{s}_{t}, \bm{a}_{t} )| \bm{a}_{1}, \dots , \bm{a}_{T})\right] 
+\end{equation}
+This is suboptimal when compared to learning a policy, which is a closed-loop mechanism (because it knows
+what respone it will make for anything that can happen, which effectively makes it reactive to random events).
+Thus a closed-loop looks like:
+\begin{equation}
+		p(\bm{s}_{1}, \bm{a}_{1}, \dots, \bm{s}_{T}, \bm{a}_{T}) =
+		p(\bm{s}_{1}) \prod_{t=1}^{T} \pi(\bm{a}_{t}| \bm{s}_{t}) p(\bm{s}_{t+1}| \bm{s}_{t}, \bm{a}_{t} 
+\end{equation}
+\begin{equation}
+		\pi = \argmax_\pi E_{\tau \sim p(\tau)} \left[ \sum_{t}^{} r (\bm{s}_{t}, \bm{a}_{t} ) \right] 
+\end{equation}
+And this is the big difference between open-loop and closed-loop control.
+In deep RL $\pi$ is a neural net which is global in scope.
+You could also have a local, time-varying linear controller like LQR: $\bm{K}_{t}\bm{s}_{t} + \bm{k}_{t}$.
+
+One thing we can if we want to train a policy using a learned dynamics model is the obvious thing:
+write down the total reward you get from the policy and the dynamics and do backprop to optimize it.
+If we assume everything is deterministic (both model and policy), we can set up a computational graph
+which represents the total reward of the policy.
+\begin{figure}[htpb]
+\begin{center}
+\begin{tikzpicture}[scale=1, transform shape, node distance=1.5cm]
+		\node (action1) [rec] {$\bm{a}_{t} = \pi_\theta(\bm{s}_{t})$};
+		\node (reward1) [rec, above of=action1] {$r (\bm{s}_{t}, \bm{a}_{t} )$};
+		\draw [arrow] (action1) -- (reward1);
+		\draw [arrow_red, xshift=0.5cm]  (reward1.320) -- (action1.40);
+		\node (next_state1) [rec, right of=action1, xshift=2cm] {$\bm{s}_{t+1} = f (\bm{s}_{t}, \bm{a}_{t} ) $};
+		\draw [arrow] (action1) -- (next_state1);
+		\draw [arrow_red, xshift=0.5cm]  (next_state1.170) -- node[midway, above, color=red, font=\footnotesize] {backprop}  (action1.13);
+		\node (action2) [rec, right of=next_state1, xshift=2cm] {$\bm{a}_{t} = \pi_\theta(\bm{s}_{t})$};
+		\draw [arrow] (next_state1) -- (action2);
+		\draw [arrow_red, xshift=0.5cm]  (action2.170) -- (next_state1.8);
+		\node (reward2) [rec, above of=action2] {$r (\bm{s}_{t}, \bm{a}_{t} )$};
+		\draw [arrow] (action2) -- (reward2);
+		\draw [arrow_red, xshift=0.5cm]  (reward2.320) -- (action2.40);
+		\node (next_state2) [rec, right of=action2, xshift=2cm] {$\bm{s}_{t+1} = f (\bm{s}_{t}, \bm{a}_{t} ) $};
+		\draw [arrow] (action2) -- (next_state2);
+		\draw [arrow_red, xshift=0.5cm]  (next_state2.170) -- (action2.13);
+\end{tikzpicture}
+\end{center}
+\end{figure}
+So we can just computer the derivative of the total reward w.r.t. policy parameters,
+run backpropagation to find that derivative and just do gradient ascent on that derivative (in the diagram above
+the red arrows are backprop arrows).
+This can be easily done in Pytorch and TensorFlow.
+It's easy to do for deterministic policies, but it's also possible to implement for stochastic policies.
+But it is problematic.
+That's because you'll get big gradients on the actions in the first timesteps and the actions on the last timestep towards the end,
+due to the fact that earlier actions lead to bigger difference in the trajectories later on.
+Thus the first-order methods are poorly conditioned.
+There are similar parameter sensitivity probles as shooting methods. 
+Also no dynamic programming is possible because the policy parameters couple all time steps.
+Overall the problems are similar to those when training RNNs with very long time sequences (vanishing and exploding gradients).
+However, unlike LSTMs, we can't just ``choose'' a simple dynamics to control the gradients --- nature chose our dynamics.
+So all in all this is bad for model-based reinforcement learning.
+
+\subsubsection{What's the solution?}
+\paragraph{First class of solutions}
+Use derivative-free (model-free) RL algorithms with using the model not in the real world, but on the model to generate synthetic samples.
+Altough it seems strange to use the model to train model-free algorithms, it works well in practise.
+It's essentially model-based acceleration for model-free RL.
+\paragraph{Second class of solutions}
+Use simpler policies than neural networks, ex. LQR with learned models (LQR-FLM (fitted local models)).
+Then use those models to train local policies to solve simple(r) tasks and the combine the local policies
+into a global policy via some supervised learning procedure.
+
+\subsection{Model-free learning with a model}
+Basically use the model-free algorithm to make use of the virtually infinite synthetic data you can get from your model.
+This can be really good if, for example, you use policy gradients because the fact that you have many samples will lead to lower variance. 
+The policy gradient
+\begin{equation}
+		\nabla_{\theta} J(\theta) \approx
+		\frac{1}{N} \sum_{i=1}^{N} \sum_{t=1}^{T} \nabla_{\theta} \log \pi_\theta (\bm{a}_{i,t}| \bm{s}_{i,t}) \hat{Q}^\pi_{i,t}
+\end{equation}
+is also the gradient of the total reward with respect to policy parameters.
+So it's also computing the derivative through the dynamics, it just doesn't require knowing the functional form of
+the dynamics log probability for this.
+Backprop (pathwise) gradient:
+\begin{equation}
+		\nabla_{\theta} J(\theta) =
+		\frac{1}{N} \sum_{t=1}^{T} \frac{dr_t}{d\bm{s}_{t}} \prod_{t'=2}^{t} \frac{d\bm{s}_{t'}}{d\bm{a}_{t'-1}} \frac{d\bm{a}_{t'-1}}{d\bm{s}_{t'-1}}  
+\end{equation}
+Thus there 2 gradients represent the same quantity.
+So policy gradient might be more stable (if enough samples are used) because it does not require multiplying many Jacobians.
+
+\subsubsection{Dyna}
+Let's first cover the original method from Sutton's paper.
+It's an iterative online procedure.
+\begin{enumerate}
+		\item given state $s$, pick action $a$ using exploration policy
+		\item observe $s'$ and $r$ to get transition $(s,a,s',r) $
+		\item update model $\hat{p}(s'|s,a)$ and $\hat(s,a)$ using $(s,a,s')$
+		\item Q-update: $Q(s,a) \leftarrow Q(s,a) + \alpha E_{s',r} \left[ r+ \max_{a'} Q(s',a') - Q(s,a) \right] $
+		\item repeat $K$ times:
+		\item sample $(s,a) \sim \mathcal{B}$ from buffer of past states and actions
+		\item Q-update: $Q(s,a) \leftarrow Q(s,a) + \alpha E_{s',r} \left[ r+ \max_{a'} Q(s',a') - Q(s,a) \right] $. after $K $ repetitions go
+				collect more samples
+\end{enumerate}
+The original version suggests you take an action from the dataset, but it makes more sense take actions from a new policy.
+And this is how modern versions do this.
+
+\paragraph{General ``Dyna-style'' model-based RL recipe}
+\begin{enumerate}
+		\item collect some data, constisting of transitions $(s,a,s',r)$
+		\item use that data to learn a model $\hat{p}(s'|s,a)$ (using whatever supervise learning technique), 
+		and also learn the reward model $\hat{r}(s,a)$ if you don't know it
+\item repeat $K$ times:
+\item sample $s \sim \mathcal{B}$ from buffer
+\item choose action $a$ (from $\mathcal{B}$ (bad part: closer to the dataset distribution), 
+		from $\pi$ (bad part: incurs distributional shift in model) , or random (bad 'cos it's random)
+\item simulate $s' \sim \hat{p}(s'|s,a)$ (and r = $\hat{r}(s,a)$ if needed)
+\item train on $(s,a,s',r)$ with model-free RL (everything but MC policy gradients works well)
+\item (optional) take $N$ more model-based steps
+\end{enumerate}
+The advantages are: that only short rollouts are required (as few as one step). 
+This is good because distributional shift gets higher the longer the rollout is.
+You get to see diverse states.
+There are 3 algorithms which use this (sorted by age): 
+\begin{itemize}
+		\item model-based acceleration (MBA)
+		\item model-based value expansion (MVE)
+		\item model-based policy optimiation (MBPO)
+\end{itemize}
+Here's the model ML-y version of the algorithm:
+\begin{enumerate}
+		\item take some action $\bm{a}_{i}$ and observe $ \left( \bm{s}_{i}, \bm{a}_{i}, \bm{s}_{i}', r_i \right)   $ and add it to $ \mathcal{B}  $
+		\item sample mini-batch $ \left\{  \bm{s}_{j}, \bm{a}_{j}, \bm{s}_{j}', r_j \right\}   $ uniformly
+		\item use  $ \left\{  \bm{s}_{j}, \bm{a}_{j}, \bm{s}_{j}' \right\}   $ to update model $\hat{p} (\bm{s}_{}'|\bm{s}_{},\bm{a}_{})$
+		\item sample $\left\{ \bm{s}_{j} \right\} $ from $ \mathcal{B}  $
+		\item for each $\bm{s}_{j}$, perform model-based rollout with $\bm{a}_{} = \pi(\bm{s})$
+		\item use all transtitions $ \left( \bm{s}_{}, \bm{a}_{}, \bm{s}_{}', r \right)   $ along rollout to update Q-function
+\end{enumerate}
+
+\subsubsection{Local models}
+Super interesting actually, but will skip atm
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
