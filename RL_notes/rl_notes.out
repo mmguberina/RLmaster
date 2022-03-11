@@ -29,5 +29,10 @@
 \BOOKMARK [2][-]{subsection.1.7.1}{Double Q-learning}{section.1.7}% 29
 \BOOKMARK [2][-]{subsection.1.7.2}{Q-learning with continuous actions}{section.1.7}% 30
 \BOOKMARK [2][-]{subsection.1.7.3}{Implementation tips and examples}{section.1.7}% 31
-\BOOKMARK [1][-]{section.1.8}{Optimal control and planning}{chapter.1}% 32
-\BOOKMARK [2][-]{subsection.1.8.1}{Trajectory optimization with derivatives}{section.1.8}% 33
+\BOOKMARK [1][-]{section.1.8}{Even more advanced policy gradients \(PPO and TRPO\)}{chapter.1}% 32
+\BOOKMARK [1][-]{section.1.9}{Optimal control and planning}{chapter.1}% 33
+\BOOKMARK [2][-]{subsection.1.9.1}{Trajectory optimization with derivatives}{section.1.9}% 34
+\BOOKMARK [1][-]{section.1.10}{Model-based reinforcement learning}{chapter.1}% 35
+\BOOKMARK [2][-]{subsection.1.10.1}{Uncertainty in model-based RL}{section.1.10}% 36
+\BOOKMARK [2][-]{subsection.1.10.2}{Model-based reinforcement learning with images}{section.1.10}% 37
+\BOOKMARK [1][-]{section.1.11}{Model-based policy learning}{chapter.1}% 38

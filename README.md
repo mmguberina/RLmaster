@@ -6,6 +6,10 @@ Learning necesitates reading and writing.
 To kill 2 birds with 1 stone, it's best to write notes in Latex.
 That way they can be used in the Master Thesis text (at least the equations).
 For convenience, RL_notes are put in this repository.
+Right now, the idea is to go through Berkley course on RL with Sergey Levine,
+get up to speed ASAP (and write notes on it) and go to task 1.
+What's skipped can be dealth with further along.
+
 
 
 ### Task 1 - create autoencoder for Atari games

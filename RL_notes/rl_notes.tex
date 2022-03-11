@@ -26,6 +26,7 @@
 \pagenumbering{arabic}
 
 \section{Plan}
+\paragraph{Old plan, look at update}
 Let's stdenomart by reading Sutton's book to get the basic theory down.
 I'll definitely skip some stuff I've passed so far to make it easier to get the ball rolling.
 This will be supplemented by Deep Mind's lectures.
@@ -61,6 +62,7 @@ Only then in step 3 do I get to implement what I'm tasked with.
 		\item create index with nice links around the pdf, use \href{https://www.overleaf.com/learn/latex/Hyperlinks}{overleaf hyperlinks page} to get there
 		\item (optional for now) clean language
 		\item (optional) read papers Sergey recommended at the end of lectures and put notes on those here (there's plenty, start with most relevant ones)
+		\item (optional) go back to skipped lectures and watch them and make notes
 \end{enumerate}
 
 \paragraph{Purpose}
@@ -1356,7 +1358,7 @@ but it loses reparametrizational power.
 
 \paragraph{Option 3}
 We can also learn an approximate maximizer, i.e. learn another network to estimate the (arg)max.
-This method can be interpreted as a ``deterministc'' actor-critic,
+This method can be interpreted as a ``deterministic'' actor-critic,
 or as approximate Q-learning.
 \begin{equation}
 		\max_{\bm{a}}= Q_\phi(\bm{s}_{}, \bm{a}_{})= Q_\phi(\bm{s}, \argmax_{\bm{a}} Q_\phi(\bm{s}_{}, \bm{a}_{}))
@@ -1400,6 +1402,10 @@ Double Q-learning helps a lot in practise and has no downsides.
 N-step returns help a lot (particularly in the beginning), but introduce bias.
 Reducing learning rates over time also help, Adam optimizer can help too.
 Also, it's very important to run different random seeds as the algorithm is quite inconsistent between runs.
+
+\section{Even more advanced policy gradients (PPO and TRPO)}
+Skipping this as it's not the highest priority at the moment, but will come back to it eventually (maybe).
+This is the entire lecture 9.
 
 \section{Optimal control and planning}
 I'll be mostly skipping this as it is mostly re-doing what I've written already.
@@ -1504,6 +1510,285 @@ Here $N$ is the number of times a state has been visited and $Q$ is the return o
 Of course, you can do MCTS with RL and use value functions to do the estimated values for leaf nodes (ex. AlphaGo).
 
 \subsection{Trajectory optimization with derivatives}
+Skipping this as it's mostly about LQR which I won't be using soon (because right now I'm working with pixels).
+This is lecture 10, parts 3, 4 and 5.
+
+\section{Model-based reinforcement learning}
+We'll mostly be working with deterministic model of form $f (\bm{s}_{t}, \bm{a}_{t} ) = \bm{s}_{t+1} $,
+because they're easier to deal with and many results go over to the stochastic case 
+$p(\bm{s}_{t+1} | \bm{s}_t, \bm{a}_t)$
+as well. When needed, the distinction will be made explicit.
+
+Let's learn $ f (\bm{s}_{t}, \bm{a}_{t} )$ from data, and \textit{plan} through it.
+Model-based reinforcement learning version 0.5:
+\begin{enumerate}
+		\item run base policy $ \pi_0 (\bm{a}_t| \bm{s}_t)  $ (e.g. random policy) to collect $ \mathcal{D} = \left\{ \left( \bm{s}_{}, \bm{a}_{}, \bm{s}_{}' \right)_i  \right\}  $ 
+		\item learn dynamics model $f(\bm{s}_{}, \bm{a}_{})$ to minimize $ \sum_{i}^{} || f (\bm{s}_{i}, \bm{a}_{i} ) - \bm{s}_{i}'||^2$ 
+				(for discrete states use ex. cross-entropy loss, if continous ex. square-error loss, most generally you'd use negative log-likelihood loss)
+		\item plan through $f(\bm{s}_{}, \bm{a}_{})$ to choose actions
+\end{enumerate}
+
+Does this basic recipe work? Yes...
+This is how system identification works in classical robotics, i.e.
+this is the problem of using data to fit unknown parameters in a model (most likely a physics model).
+So it's system identification, not system learning.
+Here some care should be taken to design a good base policy.
+This approach is particurly effective if you can hand-engineer a dynamics representation using
+the knowledge of physics and just fit a few parameters.
+
+In general this approach doesn't work with high capacity models like neural networks.
+To show why, imagine you're learning to walk on a mountain and you want to reach the top.
+You learn that some direction gets you higher and then you fall of a cliff on the top becuase you've only
+learned to follow that direction.
+More concretely, your planning algorithm works only within the model. But your model is incomplete.
+Thus you experience distributional shift:
+\begin{equation}
+		p_{\pi_f} (\bm{s}_{t}) \neq p_{\pi_0} (\bm{s}_{t})
+\end{equation}
+The distribution mismatch problem because exacerbated as you use more expressive model classes.
+It's really hard to hard-overfit 3 numbers, but it's different for millions of numbers.
+Can we do better? Can we make
+\begin{equation}
+		p_{\pi_0} (\bm{s}_{t}) = p_{\pi_f} (\bm{s}_{t})
+\end{equation}
+Now the model-based reinforcement learning algorithm version 1.0 is:
+\begin{enumerate}
+		\item run base policy $ \pi_0 (\bm{a}_t| \bm{s}_t)  $ (e.g. random policy) to collect $ \mathcal{D} = \left\{ \left( \bm{s}_{}, \bm{a}_{}, \bm{s}_{}' \right)_i  \right\}  $ 
+		\item learn dynamics model $f(\bm{s}_{}, \bm{a}_{})$ to minimize $ \sum_{i}^{} || f (\bm{s}_{i}, \bm{a}_{i} ) - \bm{s}_{i}'||^2$ 
+		\item plan through $f(\bm{s}_{}, \bm{a}_{})$ to choose actions
+		\item execute those actions and add the resulting data $\left\{ \left( \bm{s}_{}, \bm{a}_{}, \bm{s}_{}' \right)_j  \right\}  $ to $\mathcal{D}$ and go back to 2.
+\end{enumerate}
+This is like DAgger for models.
+
+What if we make a mistake?
+Asymptotically, the model will get update and the issue will be solved?
+But can we fix the mistake immediately?
+Enter model-based reinforcement learning algorithm version 1.5:
+\begin{enumerate}
+		\item run base policy $ \pi_0 (\bm{a}_t| \bm{s}_t)  $ (e.g. random policy) to collect $ \mathcal{D} = \left\{ \left( \bm{s}_{}, \bm{a}_{}, \bm{s}_{}' \right)_i  \right\}  $ 
+		\item learn dynamics model $f(\bm{s}_{}, \bm{a}_{})$ to minimize $ \sum_{i}^{} || f (\bm{s}_{i}, \bm{a}_{i} ) - \bm{s}_{i}'||^2$ 
+		\item plan through $f(\bm{s}_{}, \bm{a}_{})$ to choose actions
+		\item execute the first planned action, observe resulting $ \bm{s}_{}' $ (MPC)
+		\item append $\left\{ \left( \bm{s}_{}, \bm{a}_{}, \bm{s}_{}' \right)  \right\}  $ to $\mathcal{D}$ and go back to 3 (and replan). every $N$ steps go back to 2.
+\end{enumerate}
+This works better, but it is much more computationally expensive.
+Essentially, the more you replan, the less perfect each individual plan needs to be.
+We use shorter horizons here.
+And even random sampling can work well here.
+
+\subsection{Uncertainty in model-based RL}
+There is a performance gap in model-based RL (when compared to model-free RL).
+The problem is that model is overfitting when it has little data and it needs not to to get good results later (they get stuck).
+If the model is broken somehow, the planner will exploit that.
+Uncertainty estimation can help. Just estimating the confidence interval around the reward expectation can be
+used in avoiding uncertain areas.
+To crete an uncertainty-aware RL model-based algorithm, we just need to change step 3
+so that only the actions which are deemed to be high reward in expectation are taken. This avoids ``exploiting'' the model.
+The model will then adapt and get better.
+There are a few caveats tho.
+We need to explore to get better. Thus too much caution could lead to never exploring the high reward regions.
+Furthermore, expected value is not the same as pessimistic value nor the optimistic value,
+it's just a good start.
+
+\subsubsection{Uncertainty-aware neural network models}
+\paragraph{Idea 1:} use output entropy. This is a bad idea.
+ex:
+\begin{equation}
+		(\bm{s}_{t}, \bm{a}_{t} ) \to \text{network} \to p( \bm{s}_{t+1}| \bm{s}_{t}, \bm{a}_{t})
+\end{equation}
+Why is this not enough? Because the optimizer can exploit errors to optimize against our model.
+Then it will be finding out of distribution actions which lead to out of distinction states which means
+that our model will have to make predictions on states it was not trained on.
+The out-of-distribution predictions will result in both wrong means and variances.
+That's because the uncertainty of the neural network output is the wrong kind of uncertainty (not neural network specific).
+This is because this measure of entropy is not trying to predict the uncertainty about the model,
+it's trying to predict how noisy the environment dynamics are.
+
+There are 2 types of uncertainty:
+\begin{enumerate}
+		\item \textit{aleatoric} or \textit{statistical} uncertainty (will not go down over time if the environment is random)
+		\item \textit{epistemic} or \textit{model} uncertainty (should go down over time because you don't know what the model is)
+\end{enumerate}
+
+\paragraph{Idea 2:} estimate model uncertainty --- `` the model is certain about the data, but we are not certain about the model.''
+
+\begin{equation}
+		(\bm{s}_{t}, \bm{a}_{t} ) \to \text{network} \to p( \bm{s}_{t+1}| \bm{s}_{t}, \bm{a}_{t}), \text{parameters } \theta
+\end{equation}
+Usually we estimate
+\begin{equation}
+\argmax_\theta \log p(\theta | \mathcal{D}) = \argmax_\theta \log (\mathcal{D}| \theta)
+\end{equation}
+but can we instead estimate $p(\theta|\mathcal{D})$ ? The entropy of this tells us the model uncertainty.
+Then we'd predict according to 
+\begin{equation}
+		\int_{}^{} p(\bm{s}_{t+1}| \bm{s}_{t}, \bm{a}_{t}, \theta) p(\theta|\mathcal{D}) d\theta
+\end{equation}
+
+\subsubsection{Quick overview of Bayesian neural networks}
+Just the high-level idea here, we'll get back to this.
+In Bayesian neural networks, there's a distribution over every weight.
+If you want a prediction, you can sample over every weight (thus sampling a network from a distribution of neural networks)
+and ask it for its prediction. You can also get a posterior distribution by samplin a net, then predicting, sampling a net again and predicting and repeating
+this until you get enough samples to form an idea of the posterior.
+Of course, neural nets are highly dimensional so this is expensive. Thus some common approximations are introduced:
+\begin{equation}
+		p(\theta| \mathcal{D}) = \prod_{i}^{} p(\theta_i|\mathcal{D}) 
+\end{equation}
+this is not particularly good because it's so crude, but it is very simple and tracktable approximation so its used often.
+Another option is
+\begin{equation}
+		p(\theta_i|\mathcal{D}) = \mathcal{N}(\mu_i, \sigma_i)
+\end{equation}
+Thus introducing 2 numbers for each weight which gives you the uncertainty of each weight.
+Check papers if you want to know more about this (some will be covered in the variational inference lecture too).
+Let's talk about a simpler method.
+
+\subsubsection{Bootstrap ensembles}
+What instead of training a Bayesian neural net, we instead train many different nets and diversify them.
+Ideally they'd do similar and accurate things on the training data, but they'd all make different mistakes outside of training data.
+The dispersion of their votes would then give us an estimate of their uncertainty.
+Formally:
+\begin{equation}
+		p(\theta|\mathcal{D}) \approx \frac{1}{N} \sum_{i}^{} \delta(\theta_i)
+\end{equation}
+So this is a mixture of Dirac $\delta$ functions, where each $\delta$ function is centered at a parameter vector
+in the corresponding network ensemble.
+So train multiple models and see whether they agree. Formally you average over the models:
+\begin{equation}
+\int_{}^{} p(\bm{s}_{t+1}| \bm{s}_{t}, \bm{a}_{t}, \theta) p(\theta | \mathcal{D})d\theta	
+\approx \frac{1}{N} \sum_{i}^{} p(\bm{s}_{t+1}| \bm{s}_{t}, \bm{a}_{t}, \theta_i)
+\end{equation}
+We're mixing the probabilites, not the means (so treat this as a mixture of Gaussians).
+How do we train this?
+Need to generate ``independent'' dataset to get ``independent'' models, of course sample from the same dataset.
+If we have a large amount of data, we can just split the dataset into $N$ datasets and train on that.
+Of course that's data-inefficient.
+Instead we could train $\theta_i$ on $\mathcal{D}_i$, sampled \textit{with replacement} form $\mathcal{D}$.
+This means that each slot in $\mathcal{D}_i$ is obtained by randomly picking an element from $\mathcal{D}$.
+In practise it's even easier. We do $<10$ models as they're expensive to trian.
+Also, just by training with stochastic gradient descent is often enough diversity and you don't 
+even need to resample with replacement (even though that's still important for theoretical results).
+
+\subsubsection{How to plan with uncertainty}
+Before:
+\begin{equation}
+		J(\bm{a}_{1}, \dots, \bm{a}_{H}) = \sum_{t=1}^{H} r (\bm{s}_{t}, \bm{a}_{t} ), \text{ where } \bm{s}_{t+1} = f (\bm{s}_{t}, \bm{a}_{t} )
+\end{equation}
+and now:
+\begin{equation}
+		J(\bm{a}_{1}, \dots, \bm{a}_{H}) = \frac{1}{N}  \sum_{i=1}^{N} \sum_{t=1}^{H} r (\bm{s}_{t,i}, \bm{a}_{t,i} ), \text{ where } \bm{s}_{t+1,i} = 
+		\underbrace{f_i (\bm{s}_{t,i}, \bm{a}_{t,i} )}_{\text{distribution over deterministic models}}
+\end{equation}
+
+In general, for candidate action sequence $ \bm{a}_{1}, \dots , \bm{a}_{H}$:
+\begin{enumerate}
+		\item sample $\theta \sim p(\theta|\mathcal{D})$
+		\item at each time step $t$, sample $\bm{s}_{t+1} \sim p(\bm{s}_{t+1}| \bm{s}_{t}, \bm{a}_{t}, \theta)$
+		\item calculate $R = \sum_{t}^{} r (\bm{s}_{t}, \bm{a}_{t} )$
+		\item repeat steps 1 and 3 to accumulate the average reward
+\end{enumerate}
+\paragraph{Other options:} moment matching, more complex posterior estimation with BNNs, etc.
+NOTE: there is a gazillion of papers to read here and you should do it if you're serious about all this.
+
+\subsection{Model-based reinforcement learning with images}
+We had $f (\bm{s}_{t}, \bm{a}_{t} )= \bm{s}_{t+1}$.
+But this is particularly hard or images because:
+\begin{itemize}
+		\item they're high dimensional
+		\item a lot of information is redundand (think of Pong)
+		\item there's partial observability
+\end{itemize}
+We'd like to learn the transition dynamics in the state space (images are observations of course), 
+but we don't even know what the state space is .
+How about separately learning $p(\bm{o}_{t}| \bm{s}_{t})$ (high-demensional but not dynamic) 
+and $p(\bm{s}_{t+1}|\bm{s}_{t}, \bm{a}_{t})$ (low dimensional but dynamic)?
+We'll discuss this and learning dynamics straight from the images.
+Let's start with state space (latent space models) models.
+
+\subsubsection{State space (latent space models)}
+Notation: 
+\begin{itemize}
+		\item $p(\bm{o}_{t}|\bm{s}_{t})$ - observation model
+		\item $p(\bm{s}_{t+1}|\bm{s}_{t}, \bm{a}_{t})$ - dynamics model
+		\item $p(r_t|\bm{s}_{t}, \bm{a}_{t})$ - reward model
+\end{itemize}
+How do we train this? 
+If we had the standard (fully observed) model, we'd train it with maximum likelihood:
+\begin{equation}
+		\max_\phi \frac{1}{N} \sum_{i=1}^{N} \sum_{t=1}^{T} \log p_\phi ( \bm{s}_{t+1,1}| \bm{s}_{t,i}, \bm{a}_{t,i})
+\end{equation}
+In a latent space model we do (we need want to add the reward model in there if we want one ):
+\begin{equation}
+		\max_\phi \frac{1}{N} \sum_{i=1}^{N} \sum_{t=1}^{T} 
+		E_{(\bm{s}_{t}, \bm{s}_{t+1}) \sim p(\bm{s}_{t}, \bm{s}_{t+1}|\bm{o}_{1:T}, \bm{a}_{1:T}) } \left[ \log p_\phi ( \bm{s}_{t+1,1}| \bm{s}_{t,i}, \bm{a}_{t,i}) 
+		+ \log p_\phi (\bm{o}_{t,i}| \bm{s}_{t,i}) \right] 
+\end{equation}
+The problem is that we don't know what $\bm{s}_{}$ is so we need to do the expected log likelihood objective,
+where the expectation is taken over the distinction over the unknown states in our training trajectories.
+How to do this then?
+Learn \textit{approximate} posterior $q_\psi (\bm{s}_{t}|\bm{o}_{1:T}, \bm{a}_{1:T})$ which is called the ``encoder''.
+There's many other choises for appropriate posterior, like a neural net which gives you
+\begin{equation}
+		q_\psi (\bm{s}_{t}, \bm{s}_{t+1}|\bm{o}_{1:T}, \bm{a}_{1:T})
+\end{equation}
+This called the full smoothing posterior and it's the best, most complex and refined thing you can do, but it's also the most difficult to train.
+On the other end you could ask for just
+\begin{equation}
+		q_\psi (\bm{s}_{t}| \bm{p}_{t})
+\end{equation}
+This is called the single-step encoder, it's the easiest posterior to train, but also the worst in the sence that using it is the furtherst from what you really want.
+Training this requires understanding of variational inference.
+
+Anyway, let's talk about the single step encoder.
+A simple special case: $q(\bm{s}_{t}|\bm{o}_{t})$ is \textit{deterministic}. Then 
+\begin{equation}
+		q_\psi (\bm{s}_{t}|\bm{o}_{t}) =
+		\delta (\bm{s}_{t} = g_\psi (\bm{o}_{t})) \implies \bm{s}_{t} = g_\psi (\bm{o}_{t})
+\end{equation}
+With this we can remove the expectation from the loss, getting:
+\begin{equation}
+		\max_{\phi, \psi} \frac{1}{N} \sum_{i=1}^{N} \sum_{t=1}^{T} \log p_\phi (g_\psi (\bm{o}_{t+1,i}) | g_\psi(\bm{o}_{t,i}), \bm{a}_{t,i})
+		+ \log p_\phi (\bm{o}_{t,i}|g_\psi(\bm{o}_{t,i}))
+\end{equation}
+The full version with the reward model looks like:
+\begin{equation}
+		\max_{\phi, \psi} \frac{1}{N} \sum_{i=1}^{N} \sum_{t=1}^{T} 
+		\underbrace{\log p_\phi (g_\psi (\bm{o}_{t+1,i}) | g_\psi(\bm{o}_{t,i}), \bm{a}_{t,i})}_{\text{latent space dynamics}}
+		+ 
+		\underbrace{\log p_\phi (\bm{o}_{t,i}|g_\psi(\bm{o}_{t,i}))}_{\text{image reconstruction}}
+		+
+		\underbrace{\log p_\phi (r_{t,i} | g_\psi (\bm{o}_{t,i}))}_{\text{reward model}}
+\end{equation}
+
+Let's write out a model-based RL algorithm which uses this:
+\begin{enumerate}
+		\item run base policy $ \pi_0 (\bm{a}_t| \bm{o}_t)  $ (e.g. random policy) to collect $ \mathcal{D} = \left\{ \left( \bm{o}_{}, \bm{a}_{}, \bm{o}_{}' \right)_i  \right\}  $ 
+		\item learn $p_\phi \left( \bm{s}_{t+1}| \bm{s}_{t}, \bm{a}_{t} \right) , p_\phi(r_t|\bm{s}_{t}), p(\bm{o}_{t}|\bm{s}_{t}), g_\psi(\bm{o}_{t})$
+		\item plan through the model to choose actions
+		\item execute the first planned action, observe resulting $ \bm{o}_{}' $ (MPC)
+		\item append $\left\{ \left( \bm{o}_{}, \bm{a}_{}, \bm{o}_{}' \right)  \right\}  $ to $\mathcal{D}$ and go back to 3 (and replan). every $N$ steps go back to 2.
+\end{enumerate}
+
+OK. What about learning directly in observation spaces,
+i.e. directly learning $p(\bm{o}_{t+1}| \bm{o}_{t}, \bm{s}_{t})$
+
+\section{Model-based policy learning}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
