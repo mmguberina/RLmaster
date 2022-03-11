@@ -24,3 +24,10 @@
 \BOOKMARK [2][-]{subsection.1.5.3}{Value function in theory}{section.1.5}% 24
 \BOOKMARK [1][-]{section.1.6}{Deep RL with Q-functions}{chapter.1}% 25
 \BOOKMARK [2][-]{subsection.1.6.1}{Target networks}{section.1.6}% 26
+\BOOKMARK [2][-]{subsection.1.6.2}{A general view of Q-learning}{section.1.6}% 27
+\BOOKMARK [1][-]{section.1.7}{Improving Q-learning}{chapter.1}% 28
+\BOOKMARK [2][-]{subsection.1.7.1}{Double Q-learning}{section.1.7}% 29
+\BOOKMARK [2][-]{subsection.1.7.2}{Q-learning with continuous actions}{section.1.7}% 30
+\BOOKMARK [2][-]{subsection.1.7.3}{Implementation tips and examples}{section.1.7}% 31
+\BOOKMARK [1][-]{section.1.8}{Optimal control and planning}{chapter.1}% 32
+\BOOKMARK [2][-]{subsection.1.8.1}{Trajectory optimization with derivatives}{section.1.8}% 33

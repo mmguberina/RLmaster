@@ -60,6 +60,7 @@ Only then in step 3 do I get to implement what I'm tasked with.
 				for the second case you can check out \href{https://www.overleaf.com/learn/latex/Algorithms}{overleaf algorithms page}
 		\item create index with nice links around the pdf, use \href{https://www.overleaf.com/learn/latex/Hyperlinks}{overleaf hyperlinks page} to get there
 		\item (optional for now) clean language
+		\item (optional) read papers Sergey recommended at the end of lectures and put notes on those here (there's plenty, start with most relevant ones)
 \end{enumerate}
 
 \paragraph{Purpose}
@@ -1207,9 +1208,302 @@ where we repeat going from 3. to 2. K times.
 There is another problem we haven't tackled yet,
 in particular the fact that Q-learning is not gradient descent and it has a moving target 
 which makes it very hard to converge.
-So what does Q-learning really have to do with regression?
+Also training to convergence on a moving target is not really what we want anyway ('cos that leads to local overfitting).
+%So what does Q-learning really have to do with regression?
+Let's do Q-learning with a replay buffer and a target network:
+\begin{enumerate}
+		\item save target network parameters: $\phi' \leftarrow \phi$
+		\item collect dataset $\left\{ \left( \bm{s}_i, \bm{a}_i, \bm{s}_i', r_i \right)  \right\} $ using some policy, add it to $\mathcal{B}$
+		\item sample a batch  $\left( \bm{s}_i, \bm{a}_i, \bm{s}_i', r_i \right)$ in i.i.d. fashion from $\mathcal{B}$
+		\item $  \phi \leftarrow \phi  - \alpha \sum_{i}^{}  \frac{d Q_\phi}{d\phi} (\bm{s}_{i}, \bm{a}_{i}) \left( Q_\phi(\bm{s}_{i}, \bm{a}_{i}) - 
+				\left[ r(\bm{s}_{i}, \bm{a}_{i}) + \gamma \max_{\bm{a}'} Q_{\phi'} (\bm{s}_{i}', \bm{a}_{i}') \right] 	\right) $ 
+				and go back to previous step K times. after that go N times back to step 2. finally return to step 1.
+\end{enumerate}
+Thus targets don't change in the inner loop. This makes steps 2.-4. into supervised regression.
+Some example back-of-the-envelope numbers are $K=4$ and $N=10000$.
+This algorithm is the ``classic'' deep Q-learning algorithm (DQN).
+It's really the above, but with $K=1$.
+Let's write it out again, a bit clearer and with more ML-ly language:
+\begin{enumerate}
+		\item take some action $\bm{a}_i$,  observe $\left( \bm{s}_i, \bm{a}_i, \bm{s}_i', r_i \right)$ and add it to $\mathcal{B}$
+		\item sample a mini-batch  $\left( \bm{s}_j, \bm{a}_j, \bm{s}_j', r_j \right)$  from $\mathcal{B}$ uniformly
+		\item compute $y_j = r_j + \gamma \max_{\bm{a}_j'} Q_{\phi'} (\bm{s}_{j}', \bm{a}_{j}')$ using \textit{target} network $Q_{\phi'}$
+		\item $  \phi \leftarrow \phi  - \alpha \sum_{j}^{}  \frac{d Q_\phi}{d\phi} (\bm{s}_{j}, \bm{a}_{j}) \left( Q_\phi(\bm{s}_{i}, \bm{a}_{i}) - 
+				y_j 	\right) $ 
+		\item update $\phi'$: copy $\phi$ every $N$ steps
+\end{enumerate}
 
+It is worth to experiment with alternative target networks.
+When we update $\phi' \leftarrow \phi$, we get the moving target problem again.
+It's not too bad because $N$ is usually large, but it might make
+more sense to have the same lag all the time.
+The popular alternative is a variant of Polyak averaging:
+\begin{equation}
+		\text{update } \phi' : \phi' \leftarrow \tau \phi' + (1 - \tau) \phi
+\end{equation}
+where $\tau = 0.999$ works well.
+This feels bad because we're linearly interpolating neural network parameters (which are nonlinear function).
+It works because $\phi'$ and $\phi$ are similar and there are \textit{some} theoretical justifications for this.
 
+\subsection{A general view of Q-learning}
+
+It's important to note that process in step 1 and process in step 3 are quite separate - you can run them in parallel and they
+don't really need to care about each other (but of course they shouldn't be too divergent because then Q-learning won't really work).
+
+\section{Improving Q-learning}
+\subsubsection{Are Q-values accurate?}
+Q-values help us select a good policy, but they are also a prediction of future rewards.
+So do they predict Q-values accurately?
+[nice graphs on average returns and corresponding average Qs on Atari games where you can see that the Q values increase almost monotonically,
+but the average rewards are much noisier. However, both Q and average returns increase with training time.]
+But why are Q-values overestimating?
+\begin{equation}
+		\text{target value } y_j = r_j + \gamma \underbrace{ \max_{\bm{a}_j'} Q_{\phi'}(\bm{s}_{j}', \bm{a}_{j}')}_{\text{herein lies the problem}}
+\end{equation}
+Let's explain this in simple terms.
+Image we have 2 random variables $X_1$ and $X_2$ and let's say they represent a true value plus some noise.
+Proveably,
+\begin{equation}
+		E \left[ \max (X_1, X_2) \right] \geq \max	\left( E[X_1], E[X_2] \right) 
+\end{equation}
+The relation to Q-learning is the following.
+If we imagine that $Q_{\phi'}(\bm{s}_{}', \bm{a}_{}')$ is not perfect because it has added noise,
+we get exactly the situation in the inequality --- the max over the actions and the expectation
+over it will lead to systematic overestimation.
+Thus $\max_{\bm{a}'} Q_{\phi'}(\bm{s}_{}', \bm{a}_{}')$ \textit{overestimates} the next value.
+Note that $\max_{\bm{a}'} Q_{\phi'}(\bm{s}_{}', \bm{a}_{}') = Q_{\phi'} (\bm{s}', \argmax_{\bm{a}'}Q_{\phi'}(\bm{s}', \bm{a}'))$ .
+If we can somehow decorrelate the noise in the action selection mechanism and the noise in the value evaluation
+mechanism, this problem will go away (so let's not get both actions and values from $Q_{\phi'}$).
+This is done in:
+
+\subsection{Double Q-learning}
+Double Q-learning uses two networks:
+\begin{align}
+		Q_{\phi_A}(\bm{s}_{}, \bm{a}_{}) &\leftarrow r + \gamma Q_{\phi_B} \left( \bm{s}', \argmax_{\bm{a}'}Q_{\phi_A}(\bm{s}_{}', \bm{a}_{}') \right) \\
+		Q_{\phi_B}(\bm{s}_{}, \bm{a}_{}) &\leftarrow r + \gamma Q_{\phi_A} \left( \bm{s}', \argmax_{\bm{a}'}Q_{\phi_B}(\bm{s}_{}', \bm{a}_{}') \right) 
+\end{align}
+if we assume that $Q_{\phi_A}$ and $Q_{\phi_B}$ are decorrelated, the noise will be different and we won't overestimate.
+
+\subsubsection{Double Q-learning in practise}
+We already have 2 networks, $Q_\phi$ and $Q_{\phi'}$!
+So in standard Q-learning we do:
+\begin{equation}
+		y = r + \gamma Q_{\phi'}\left( \bm{s}', \argmax_{\bm{a}'}Q_{\phi'}(\bm{s}_{}', \bm{a}_{}') \right)
+\end{equation}
+and in double Q-learning we do:
+\begin{equation}
+		y = r + \gamma Q_{\phi'}\left( \bm{s}', \argmax_{\bm{a}'}Q_{\phi}(\bm{s}_{}', \bm{a}_{}') \right)
+\end{equation}
+so we just use the current network (not the target network) to evaluate action
+and we still use the target network to evaluate value.
+Of course, $Q_\phi$ and $Q_{\phi'}$ are periodically set to be the same (and are not too different to begin with), 
+so this is far from the perfect solution, 
+but it works well in practise nonetheless.
+
+\subsubsection{Multi-step returns}
+The Q-learning target is:
+\begin{equation}
+y_{j,t} = r_{j,t} + \gamma Q_{\phi'}\left( \bm{s}', \argmax_{\bm{a}_{j,t+1}}Q_{\phi'}(\bm{s}_{j,t+1}', \bm{a}_{j,t+1}') \right)
+\end{equation}
+Where does the signal come from?
+In the beginning, $Q_{\phi'}$ is bad so most signal comes from $r_{j,t}$ ($Q_{\phi'}$ is just additional noise).
+Later, it's mostly $Q_{\phi'}$ tho.
+Could we construct multi-step target like in actor critic (the Monte Carlo estimate)?
+Yes,
+\begin{equation}
+		y_{j,t} = \sum_{t'=t}^{t+N-1} \gamma^{t-t'}    r_{j,t'} + \gamma^N  \max_{\bm{a}_{j,t+N}}Q_{\phi'}(\bm{s}_{j,t+N}, \bm{a}_{j,t+N}) 
+\end{equation}
+This is sometimes called the n-step return estimator and the tradeoff is the same as in actor-critic (you get lower bias
+and higher variance).
+
+\subsubsection{Q-learning with N-step returns}
+Less bias target values when Q-values are inaccurate,
+typically faster learning (especially early on), but only actually correct when learning on-policy (because you use action
+your new policy might not have taken).
+
+How do we fix the issue?
+Ignore it (often works well (lmao ofc)), cut the trace (dynamically choose $N$ to get only on-policy data),
+do importance sampling and the mystery solution where Q is conditioned on something else which Sergey says is homework.
+
+\subsection{Q-learning with continuous actions}
+How do we select continuous actions when we have to do the argmax to select the action?
+We also have to do the max to calculate the target values.
+Well, we can do optimization (e.g., SGD), or do stochastic optimization.
+\paragraph{Option 1}
+Simple solution
+\begin{equation}
+		\max_{\bm{a}} Q(\bm{s}_{}, \bm{a}_{}) \approx \max \left\{ Q(\bm{s}_{}, \bm{a}_{1}), \dots,Q(\bm{s}_{}, \bm{a}_{N})  \right\} 
+\end{equation}
+where $(\bm{a}_1, \dots, \bm{a}_N)$ are sampled from some distribution (e.g. uniform).
+This is simple, efficiently parallelizable, but not very accurate.
+We can do the more accurate cross-entropy method (CEM) which is simple iterative stochastic optimization (it refines the distribution and then re-samples)
+This can also be fast.
+Or do CMA-ES which is substantially less simple iterative stochastic optimization but is more accurate.
+Anyhow CEM works OK for up to 40 dimensions of the actions space.
+
+\paragraph{Option 2}
+Use a function class that is easy to optimize:
+\begin{equation}
+		Q_\phi (\bm{s}_{}, \bm{a}_{}) = - \frac{1}{2} (\bm{a} - \mu_\phi(\bm{s}))^T P_\phi (\bm{s}) (\bm{a} - \mu_\phi(\bm{s})) + V_\phi (\bm{s})
+\end{equation}
+Because for a given state the fuction is quadratic, we have a normalized advantage function (NAF):
+\begin{align}
+		\argmax_{\bm{a}} Q_\phi (\bm{s}_{}, \bm{a}_{}) &= \mu_\phi(\bm{s}) \\
+		\max_{\bm{a}} Q_\phi (\bm{s}_{}, \bm{a}_{}) &= V_\phi(\bm{s})
+\end{align}
+With this there are no changes to the algorithm and it's just as efficient as Q-learning,
+but it loses reparametrizational power.
+
+\paragraph{Option 3}
+We can also learn an approximate maximizer, i.e. learn another network to estimate the (arg)max.
+This method can be interpreted as a ``deterministc'' actor-critic,
+or as approximate Q-learning.
+\begin{equation}
+		\max_{\bm{a}}= Q_\phi(\bm{s}_{}, \bm{a}_{})= Q_\phi(\bm{s}, \argmax_{\bm{a}} Q_\phi(\bm{s}_{}, \bm{a}_{}))
+\end{equation}
+So train another network $\mu_\theta(\bm{s})$ such that $\mu_\theta(\bm{s}) \approx \argmax_{\bm{a}} Q_\phi(\bm{s}_{}, \bm{a}_{})$
+How? Just solve $\theta \leftarrow \argmax_{\theta} Q_\theta(\bm{s}_{}, \mu_\theta (\bm{s}))$.
+Then $ \frac{d Q_\phi}{d\theta} = \frac{d\bm{a}}{d\theta} \frac{dQ_\phi}{d\bm{a}}    $.
+The new target is then
+\begin{equation}
+		y_j = r_j + \gamma Q_{\phi'}(\bm{s}_j', \mu_\theta (\bm{s}_j')) \approx
+		r_j + \gamma Q_{\phi'} (\bm{s}_{j}', \argmax_{\bm{a}'}Q_{\phi'} (\bm{s}_{j}', \bm{a}_{j}'))
+\end{equation}
+If we do this, we get DDPG
+\subsubsection{DDPG}
+\begin{enumerate}
+		\item take action $\bm{a}_i$ and observe $\left( \bm{s}_i, \bm{a}_i, \bm{s}_i', r_i \right)  $, add it to $\mathcal{B}$
+		\item sample a mini-batch  $\left( \bm{s}_j, \bm{a}_j, \bm{s}_j', r_j \right)$  from $\mathcal{B}$ uniformly
+		\item compute $y_j = r_j + \gamma Q_{\phi'}(\bm{s}_j', \mu_\theta (\bm{s}_j'))$ using \textit{target} networks $Q_{\phi'}$ and $\mu_{\theta'}$
+		\item $\phi \leftarrow \phi  - \alpha \sum_{j}^{}  \frac{d Q_\phi}{d\phi} (\bm{s}_{j}, \bm{a}_{j}) \left( Q_\phi(\bm{s}_{j}, \bm{a}_{j}) - 
+				y_j 	\right)$
+		\item $\theta \leftarrow \theta + \beta \sum_{j}^{} \frac{d\mu}{d\theta} (\bm{s}_j, \mu(\bm{s}_j))$
+		\item update $\phi'$ and $\theta'$ (e.g. Polyak averaging)
+\end{enumerate}
+
+\subsection{Implementation tips and examples}
+Q-learning takes some care to stabilize --- test on easy and reliable tasks first --- you want to get through debugging first and then do the hyperparameter tuning.
+Also, Q-learning much differently on different tasks. Namely, there's a huge difference between stability. It can even happen that some runs works fine
+and other fail completely.
+\paragraph{Tips} Large replay buffers help improve stability (as it looks more like fitted Q-iteration).
+It takes time --- it might be no better than random for a while. To remedy this somewhat, start with high exploration and gradually reduce it.
+Bellman error gradients can be big so clip gradients or use Huber loss:
+\begin{equation}
+		L(x) = \left\{
+				\begin{array}{ll}
+						\frac{x^2}{2} & \text{if } |x|\leq \delta \\
+						\delta|x| - \frac{\delta^2}{2} & \text{otherwise}
+				\end{array}
+				\right .
+\end{equation}
+Double Q-learning helps a lot in practise and has no downsides.
+N-step returns help a lot (particularly in the beginning), but introduce bias.
+Reducing learning rates over time also help, Adam optimizer can help too.
+Also, it's very important to run different random seeds as the algorithm is quite inconsistent between runs.
+
+\section{Optimal control and planning}
+I'll be mostly skipping this as it is mostly re-doing what I've written already.
+
+\paragraph{The objective}
+Can be expressed as a optimization problem:
+\begin{equation}
+		\min_{\bm{a}_1, \dots, \bm{a}_T} \sum_{t=1}^{T} c(\bm{s}_{t}, \bm{a}_{t}) \text{ s.t. } \bm{s} = f (\bm{s}_{t-1}, \bm{a}_{t-1} ) 
+\end{equation}
+Equivalently, in terms of rewards we get:
+\begin{equation}
+		\bm{a}_1, \dots, \bm{a}_T = \argmax_{\bm{a}_1, \dots, \bm{a}_T} \sum_{t=1}^{T} r (\bm{s}_{t}, \bm{a}_{t} ) 
+		\text{ s.t. } \bm{s}_{t+1} = f (\bm{s}_{t}, \bm{a}_{t} )
+\end{equation}
+
+All good in the deterministic case, but what about the stochastic?
+\begin{equation}
+p_\theta \left( \bm{s}_1, \dots, \bm{s}_T |  \bm{a}_1, \dots, \bm{a}_T \right) 
+= p(\bm{s}_1) \prod_{t=1}^{T} p(\bm{s}_{t+1}| (\bm{s}_{t}, \bm{a}_{t} ) 
+\end{equation}
+
+Now we do:
+\begin{equation}
+		\bm{a}_1, \dots, \bm{a}_T = \argmax_{\bm{a}_1, \dots, \bm{a}_T} E \left[ 
+		\sum_{t}^{} r (\bm{s}_{t}, \bm{a}_{t} ) | \bm{a}_1, \dots, \bm{a}_T \right] 
+\end{equation}
+However, this can be very suboptimal. Namely, open-loop planning in stochastic settings is horrible.
+Reinforcement learning typically solves things in a closed-loop fashion (it tells the agent what to do at every possible state,
+and it continuously observes  states and acts on them as they come).
+
+\subsubsection{Stochastic optimization}
+Let's abstract away optimal control/planning (the optimization problem is a black box):
+\begin{equation}
+		\bm{a}_1, \dots, \bm{a}_T = \argmax_{\bm{a}_1, \dots, \bm{a}_T} \underbrace{J(\bm{a}_1, \dots, \bm{a}_T)}_{\text{don't care what this is}}
+\end{equation}
+also let $ \bm{A} = \bm{a}_1, \dots, \bm{a}_T =  \argmax_{\bm{A}} = J(\bm{A}) $.
+The simplest method is to guess and check:
+\begin{enumerate}
+		\item pick $\bm{A}_1, \dots, \bm{A}_N $ from some distribution (e.g. uniform)
+		\item choose $\bm{A}_i$ based on $\argmax_i J(\bm{A}_i)  $
+\end{enumerate}
+This is also called ``random shooting method''.
+In practise this can work well for small problems.
+The main benefit is that it is super simple. It is also quite fast to evaluate on modern hardware.
+The disadvantage is that you might not pick good actions (it's luck based after all).
+
+A better way to do black-box optimization is
+\subsubsection{Cross-entropy method (CEM)}
+\begin{enumerate}
+		\item pick $\bm{A}_1, \dots, \bm{A}_N $ \underline{from some distribution} (e.g. uniform)
+		\item choose $\bm{A}_i$ based on $\argmax_i J(\bm{A}_i)  $
+\end{enumerate}
+In cross-entropy method, we'll be a bit smarter about picking the distribution.
+We'll do an iterative process of progressively refining the probability distribution from which we pick actions 
+which we evaluate.
+So we'll generate some samples from a broad distribution, use the results they provide to 
+create a new narower distribution which is centered around the best-performing samples from the previous step
+and then draw new samples from this distribution. We then repeat this process.
+With continuous action this would be:
+\begin{enumerate}
+		\item sample $\bm{A}_1, \dots, \bm{A}_T $ from $p(\bm{A})$
+		\item evaluate $J(\bm{A}_1), \dots, J(\bm{A}_N)$
+		\item pick the \textit{elites} $\bm{A}_{i_1}, \dots, \bm{A}_{i_M} $ with the highest value, where $M < N$
+		\item refit $p(\bm{A})$ to the elites $\bm{A}_{i_1}, \dots, \bm{A}_{i_M} $ and go back to 1.
+\end{enumerate}
+This method has a number of nice properties: it guarantees to find the optimum (provided enough samples of course)
+and it is also relatively fast.
+Typically the Gaussian distribution is used.
+For a fancier version check out CMA-ES (which is sort of like CEM with momentum) whose benefit 
+is better results with smaller populations.
+
+In total, the benefits are that these methods are fast if parallelized and they're super simple, 
+and the drawbacks are that they suffer from a very harsh dimensionality limit (top limit 30-60 depending on the problem)
+and are available only for open-loop planning. Generally 10 dimensions and 15 timesteps is what you can expect from this.
+
+\subsubsection{Discrete case: Monte Carlo tree search (MCTS)}
+(Can actually be used for continuous problems, but eh).
+This shined in Go and poker.
+Anyhow, tree search blows up exponentially.
+But could we approximate a value of some node without expanding it?
+We could get that approximation by following some baseline policy (even a random policy) from that state onward 
+and using the obtained return as the approximate value.
+In practise, this algorithm is quite good for many problems and of course it gets better the more you expand.
+
+Here's a generic sketch of MCTS:
+\begin{enumerate}
+		\item find a leaf $s_l$ using TreePolicy($s_1$)
+		\item evalute the leaf using DefaultPolicy($s_l$)
+		\item update all value in the tree between $s_1$ and $s_l$. then go back to 1.
+\end{enumerate}
+Finally take best action from $s_1$.
+
+A common choise for the TreePolicy is the UCT TreePolicy($s_t$)
+which goes as follows. If $s_t$ is not fully expanded, choose new $a_t$. Else 
+choose child with best Score($s_{t+1}$).
+The score in UCT is (the choise of score is non-trivial, this is just one option):
+\begin{equation}
+		\text{Score}(s_t) = \frac{Q(s_t)}{N(s_t)} + 2C \sqrt{ \frac{2 \ln N(s_{t-1}}{N(s_t)}  } 
+\end{equation}
+So we give a bonus for rarely visited nodes (states in tree terminology I assume).
+Here $N$ is the number of times a state has been visited and $Q$ is the return obtained.
+Of course, you can do MCTS with RL and use value functions to do the estimated values for leaf nodes (ex. AlphaGo).
+
+\subsection{Trajectory optimization with derivatives}
 
 
 
