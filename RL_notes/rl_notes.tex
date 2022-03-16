@@ -861,14 +861,14 @@ Anyway, this does not lower the variane as much as the actor-critic, but it's ce
 Next question: can we make the baseline depend on not just the state, but the action as well? Would that lead to even lower variance?
 Yes, but it is complicating life.
 State and action dependent baselines are sometimes refered to as ``controlled variance'' in the literature.
-So let's create the following advantige function estimate:
+So let's create the following advantage function estimate:
 \begin{equation}
-		\hat{A}^\pi (\bm{s}_{i}, \bm{a}_{i}) = \sum_{t=t}^{\infty} \gamma^{t'-t} r(\bm{s}_{t'}, \bm{a}_{t'}) - V^\pi_\theta(\bm{s}_t)
+		\hat{A}^\pi (\bm{s}_{i}, \bm{a}_{i}) = \sum_{t'=t}^{\infty} \gamma^{t'-t} r(\bm{s}_{t'}, \bm{a}_{t'}) - V^\pi_\theta(\bm{s}_t)
 \end{equation}
 This has no bias and higher variance due to the single-sample estimate.
 We could  try:
 \begin{equation}
-		\hat{A}^\pi (\bm{s}_{i}, \bm{a}_{i}) = \sum_{t=t}^{\infty} \gamma^{t'-t} r(\bm{s}_{t'}, \bm{a}_{t'}) - Q^\pi_\theta(\bm{s}_t, \bm{a}_t)
+		\hat{A}^\pi (\bm{s}_{i}, \bm{a}_{i}) = \sum_{t'=t}^{\infty} \gamma^{t'-t} r(\bm{s}_{t'}, \bm{a}_{t'}) - Q^\pi_\theta(\bm{s}_t, \bm{a}_t)
 \end{equation}
 This goes to 0 in expectation if the critic is correct, but the critic is not correct.
 If we incorporate both the state and action dependency and also account for the error we get:
@@ -1781,7 +1781,7 @@ i.e. directly learning $p(\bm{o}_{t+1}| \bm{o}_{t}, \bm{s}_{t})$
 
 \section{Model-based policy learning}
 While our MBRL algorithm ver 1.5 makes open-loop predictions and then replans on every timestep, 
-it's still open-loop overall because it can't plan to make other decisions in the future in responce to other informaton 
+it's still open-loop overall because it can't plan to make other decisions in the future in responce to other information 
 that will be revealed in the future.
 It's really doing (this is recap but still):
 \begin{equation}
@@ -1927,18 +1927,91 @@ Here's the model ML-y version of the algorithm:
 \subsubsection{Local models}
 Super interesting actually, but will skip atm
 
+\section{Exploration algorithms}
+Skipped writing about bandits, but the point is that you can get provably correct (Bayesian based) strategies only in the simplest settings,
+and even then stuff's intractable. But they do provide boudaries the effectiveness of much simpler strategies, which is useful for us.
+Also, thankfully, the simpler strategies work quite well. We'll discuss some now.
 
+\subsubsection{Optimistic exploration}
+Keep track of average reward $\hat{\mu}_a$ for each action $a$.
+For exploitation pick $a = \argmax \hat{\mu}_a$.
+The optimistic estimate is $a = \argmax \hat{\mu}_a + C \sigma_a$,
+where $C \sigma_a$ is some sort of variance estimate.
+The idea is to try something until you are sure it's not great.
+In the bandit case, try each arm until you're sure it's not great.
+For example, do 
+\begin{equation}
+		a = \argmax \hat{\mu}_a + \sqrt{ \frac{2 \ln T}{N(a)} }
+\end{equation}
+where $N(a)$ is the number of times you picked that action.
+With this algorithm, you get $\text{Reg}(T)$ to be $O(\log T)$, which is provably as good as any algorithm.
+However, it's not the best in practise.
 
+\subsubsection{Probability matching/posterior sampling}
+Assume $ r(a_i) \sim p_{\theta_i} (r_i)  $. This defines POMDP with $ \bm{s}_{} = \left[ \theta_1, \dots, \theta_n \right]   $.
+The belief state is $\hat{p}(\theta_1, \dots, \theta_n)$, i.e. this is a \textit{model} of our bandit.
+The idea is to sample $ \theta_1, \dots, \theta_n  \sim \hat{p}(\theta_1, \dots, \theta_n)$. Pretend
+the model $   \theta_1, \dots, \theta_n$ is correct and take the optimal action.
+Then you update the model and repeat.
+This is called posterior or Thompson sampling and it's kind greedy.
+It's harder to analyze theoretically, but can work very well empirically.
 
+\subsubsection{Information gain}
+This is based on Bayesian experimental design.
+Say we want to determine some latent variable $z$. Which action do we take?
+Let $\mathcal{H}(\hat{p}(z))$ be the current entropy of our $z$ estimate.
+Let $ \mathcal{H}(\hat{p}(z)|y)  $ be the entropy of our $z$ estimate after observation $y$ (e.g. $y$ can be $r(a)$).
+The lower the entropy, the more precisely we know $z$.
+Thus the information gain is:
+\begin{equation}
+		IG(z, y) = E_y \left[ \mathcal{H}(\hat{p}(z) - \mathcal{H}(\hat{p}(z)|y) \right] 
+\end{equation}
+This will then quantify how much we want to observe $y$.
+It typically depends on an action, so we have $IG(z,y|a)$.
+Hence we are estimating how much we learn about $z$ from action $a$, given our current belifs:
+\begin{equation}
+		IG(z, y|a) = E_y \left[ \mathcal{H}(\hat{p}(z) - \mathcal{H}(\hat{p}(z)|y)|a \right] 
+\end{equation}
 
+This is used in a Russo \& Van Roy paper ``Learning to optimize via information-directed sampling''.
+The algorithm they use is the following one. Let $y=r_a$, $ z = \theta_a  $ (parameters of model $p(r_a)$).
+Let $g(a) = IG(\theta_a, r_a|a)$  be the information gain of $a$. Further, let
+$\Delta(a) = E \left[ r(a^\star) - r(a) \right] $ be the expected suboptimality of $a$.
+Then choose $a$ according to $ \argmin_a \frac{\Delta (a)^2}{g(a)}   $.
+Here $g(a)$ in the denominator tells to not bother with taking actions if you won't learn anything
+and $\Delta (a)^2$ tells to not take actions that you're sure are suboptimal.
 
+\subsubsection{General themes}
+Upper confidence bound (UCB) or optimistic exploration :
+\begin{equation}
+		a = \argmax \hat{\mu}_a + \sqrt{ \frac{2\ln T}{N(a)}  }
+\end{equation}
+Thompson sampling:
+\begin{gather}
+		\theta_1, \dots, \theta_n \sim \hat{p} 	(\theta_1, \dots, \theta_n) \\
+		a = \argmax_a E_{\theta_a} \left[ r(a) \right] 
+\end{gather}
+Information gain:
+\begin{equation}
+		IG(z,y|a)
+\end{equation}
+Most exploration strategies require some kind of uncertainty estimate (even if it's naive (like UCB)).
+They usually assume some value to new information:
+UCB assumes unknown = good (optimism), assuming that sample = truth (Thompson sampling) or
+assuming that information gain = good (information gain).
+These assumptions seem arbitrary, but in tractable bandit settings they are provably good.
 
+The reason we care about bandits is because they are easier to analyze and understand and
+we can use that to derive foundations for exploration methods and apply them in more complicated settings.
+We didn't cover contextual bandits (bandits with state), optimal exploration in small MDPs,
+Bayesian model-based reinforcement learning (similar to information gain) and probably approximately correct (PAC) exploration.
+That goes more into the theory.
 
-
-
-
-
-
+\subsection{Exploration in deep reinforcement learning}
+We now carry over the exploration methods we talked about in the bandit case over to the DRL case.
+How can we use UCB in RL?
+Do count-based exploration:
+use $N\left( \bm{s}_{}, \bm{a}_{} \right)$ or $N(\bm{s}_{})$ to add \textit{exploration bonus}.
 
 
 

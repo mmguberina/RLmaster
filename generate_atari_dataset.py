@@ -4,8 +4,10 @@ import torch
 import cv2
 from PIL import Image
 import imagehash
+from atari_wrapper import WarpFrame
 
 env = gym.make('PongNoFrameskip-v4')
+env = WarpFrame(env)
 env.reset()
 #env.render()
 
