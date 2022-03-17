@@ -2012,18 +2012,56 @@ We now carry over the exploration methods we talked about in the bandit case ove
 How can we use UCB in RL?
 Do count-based exploration:
 use $N\left( \bm{s}_{}, \bm{a}_{} \right)$ or $N(\bm{s}_{})$ to add \textit{exploration bonus}.
+Use $ r^+ (\bm{s}_{}, \bm{a}_{}) = r(\bm{s}_{}, \bm{a}_{}) + \mathcal{B} (N(\bm{s}_{}))  $,
+where $\mathcal{B}(N(\bm{s}_{}))$ should decrease with $N(\bm{s}_{})$.
+This is a simple addition to any RL algorithm. The drawback is the fact that you need to tune the bonus weight and how to do the counting.
+How do you even do counting in complex MDPs? Consider Montezuma's revenge. 
+You get a combinatorial explosion of states for de facto equivalent states (the skull moves, the guy moves a bit,
+it's all the same but it's not the same exact state).
+So we need so density model to patch these similar states together.
+\subsubsection{Fitting generative models}
+The idea is to fit a density model $ p_\theta(\bm{s}_{})  $ or $ p_\theta (\bm{s}_{}, \bm{a}_{})  $.
+As mentioned, we don't want to have high $ p_\theta(\bm{s}_{})  $ for similar states.
+Could we use it as a ``pseudocount''?
+In small MPDs we had:
+\begin{equation}
+		P\left( \bm{s}_{} \right) = \frac{N(\bm{s}_{}) \leftarrow \text{ count of times in that state}}{n \leftarrow \text{ total states visited}} 
+\end{equation}
+and after seeing $ \bm{s}_{}  $again, we have:
+\begin{equation}
+		P'\left( \bm{s}_{} \right) = \frac{N(\bm{s}_{}) +1 }{n  +1 } 
+\end{equation}
+can we get $ p_\theta(\bm{s}_{})  $ and $ p_{\theta'}(\bm{s}_{})  $ to obey these equations?
+The algorithm would go like this:
+\begin{enumerate}
+		\item fit model $ p_{\theta}(\bm{s}_{})  $ to all states $ \mathcal{D}  $seen so far
+		\item take a step $i$ and observe $ \bm{s}_{i}  $
+		\item fit new model $ p_{\theta'}(\bm{s}_{})  $ to $ \mathcal{D}  \cup \bm{s}_{i}$ 
+		\item use $ p_{\theta}(\bm{s}_{i})  $ and $ p_{\theta'}(\bm{s}_{i})  $ to estimate $ \hat{N}(\bm{s}_{})  $
+		\item set $ r^+_i = r_i + \mathcal{B}(\hat{N}(\bm{s}_{}))  $
+\end{enumerate}
+How do we $ \hat{ N}(\bm{s}_{})$?
+Use:
+\begin{gather}
+		p_\theta(\bm{s}_{i}) = \frac{\hat{N}(\bm{s}_{i})}{\hat{n}} \\
+		p_{\theta'}(\bm{s}_{i}) = \frac{\hat{N}(\bm{s}_{i})+1}{\hat{n}+1} 
+\end{gather}
 
+We have 2 equations and 2 unknowns, so:
+\begin{gather}
+		\hat{N}(\bm{s}_{i}) = \hat{n}p_{\theta}(\bm{s}_{i}) \\
+		\hat{n} = \frac{1 - p_{\theta'}(\bm{s}_{i})}{p_{\theta'}(\bm{s}_{i}) - p_{\theta}(\bm{s}_{i})} p_{\theta}(\bm{s}_{i})
+\end{gather}
 
+\subsubsection{What kind of bonus to use?}
+Also, what density to use?
+There are a lot of functions in the literature, check slides, whatever.
 
-
-
-
-
-
-
-
-
-
+\paragraph{What kind of model to use?}
+Don't really need to sample from it, doesn't really need to be normalized either (so no need for GANs or VAEs).
+You just want the output densities. 
+Some papers use CTS, stochastic neural networks, compression length, EX2 (whatever).
+Then Sergey goes over papers which use these, don't really need those details here.
 
 
 

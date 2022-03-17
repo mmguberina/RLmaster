@@ -1,0 +1,36 @@
+\documentclass{article}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsfonts}
+\usepackage[T1]{fontenc}
+\usepackage{bm}
+\usepackage{array}
+\usepackage{graphicx}
+\usepackage[utf8]{inputenc}
+
+\title{Deep reinforcement learning knowledge nuggets}
+\date{\today}
+\author{Marko Guberina 19970821-1256}
+
+\begin{document}
+\maketitle
+\section{How to get to a good method}
+Start by trying to solve the full problem.
+Write out the most complete and most accurate solution.
+Then find some number of approximations of that method.
+Looking at these approximations and thinking about what you really want out of this,
+try to answer the question of ``what is the most minimal, yet clear signal I want to extract''.
+Answer that question by constructing the simplest,
+most computationally efficient thing you can think of that could work.
+If it works, that's your method. 
+\textbf{Always leverage getting the neural network to generalize and do that in the most computationally efficient
+manner possible, so that you can then leverage infinite compute (in RL you also get data through compute) to get it to work.}
+Example: exploration bonuses.
+Ideally you want a Bayesian approach, but that's of course intractable.
+You construct some counting method which approximates the Bayesian approach.
+You realize you don't even care about conting, just somehow differentiating novel states.
+You use some loss you already have lying around and say that high loss indicates novel territory.
+You compute even more than you did before and you get a better result on benchmarks.
+
+
+\end{document}
