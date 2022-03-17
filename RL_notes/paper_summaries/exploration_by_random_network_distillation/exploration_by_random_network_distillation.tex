@@ -61,9 +61,53 @@ This method predicts the output of a fixed randomly initialized (deterministic) 
 The method augments PPO so that it uses two value heads for the two reward streams.
 
 \subsection{Method}
+\subsubsection{Random network distillation (RND)}
+You want to measure novely of states and use that to create ``intrinsic reward'' which is just added
+to the usual extrinsic reward.
+Other approaches do counts, but that's complicated and costly.
+The short version of this method is the following:
+instantiate a random network which tries to predict observations and keep it fixed.
+That's the \textit{target} network and it sets (creates out of thin air) the prediction problem.
+It's inputs are observations and the output is some vector.
+Thus the target network provides an embedding $f: \mathcal{O} \to \mathbb{R}^k$.
+Then create another network and train it to predict the outputs of the first network.
+That network is the \textit{predictor} $\hat{f}: \mathcal{O} \to \mathbb{R}^k$
+and is trained on the MSE loss $ ||\hat{f}(x;\theta) - f(x)||^2  $ with respect to
+the parameters $ \theta_f  $.
+If the loss of the predictor is high, the state is novel and if it's not
+then the state is not novel.
+What useful properties does this have over counting?
+Of course, it's faster, but it also solves the problem of dealing with similar states for free.
+Namely, the target neural network will have a similar output for similar observations by default ---
+that's just how neural networks are.
+
+Let's look at specific causes of prediction error and see more clearly why this approach works:
+\begin{enumerate}
+		\item \textit{epistemic uncertainty} ---  amount of training data --- higher error when there are few samples
+		\item \textit{aleatoric uncertainty} --- the prediction error is high because the target function is stochastic.
+				Stochastic transitions are a source of error in forward dynamics models.
+		\item \textit{model specification} --- necessary information is missing, or the 
+				model is too limited to fit the complexity of the target function
+		\item \textit{learning dynamics} --- the optimizer fails to find a good predictor in the given model class
+\end{enumerate}
+You really want only the first factor to contribute to the exploration bonus, 
+but of course the prediction error will be the combination of all factors.
+There are costly ways to deal with 2 and 3, but RND ameliorates them by using
+a deterministic target network which is in the same class as the predictor network.
 
 
 
+There's a connection between RND and uncertainty quantification introduced in another paper.
+Basically it's connected to regression in a Bayesian setting.
+
+It's better not to give extrinsic reward at the end of episodes,
+but instead to do non-episodic returns.
+Also train prediction the values of extrinsic and intrinsic returns in the same network,
+but on different heads. Some reasonable but hand-wavy explanations for this.
+Also it's necessary to normalize (and clip) observations if you want this to work.
+
+\subsection{Other stuff}
+Look at the paper if you want to check out best discount rates, algorithm pseudocode etc.
 
 
 

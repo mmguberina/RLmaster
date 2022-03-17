@@ -14,6 +14,7 @@
 
 \begin{document}
 \maketitle
+
 \section{How to get to a good method}
 Start by trying to solve the full problem.
 Write out the most complete and most accurate solution.
@@ -31,6 +32,18 @@ You construct some counting method which approximates the Bayesian approach.
 You realize you don't even care about conting, just somehow differentiating novel states.
 You use some loss you already have lying around and say that high loss indicates novel territory.
 You compute even more than you did before and you get a better result on benchmarks.
+
+\section{Testing and debugging}
+Always start with the simplest possible setting, i.e. the simplest possible environment.
+Test your thing on Carpole, Pong etc.
+Compare how your method fared against other methods --- if it stinks, something is broken.
+
+\section{Testing non-RL elements of an idea}
+If you want to see wether something neural network, supervised learning or whatever else related
+works, first test in on super simple standard test datasets or cases.
+For example, if you want to know how an autoencoder would deal with a certain scenario,
+create a mock of that scenario on MNIST.
+
 
 
 \end{document}

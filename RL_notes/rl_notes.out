@@ -39,3 +39,6 @@
 \BOOKMARK [2][-]{subsection.1.11.1}{Model-free learning with a model}{section.1.11}% 39
 \BOOKMARK [1][-]{section.1.12}{Exploration algorithms}{chapter.1}% 40
 \BOOKMARK [2][-]{subsection.1.12.1}{Exploration in deep reinforcement learning}{section.1.12}% 41
+\BOOKMARK [2][-]{subsection.1.12.2}{Posterior sampling in deep RL}{section.1.12}% 42
+\BOOKMARK [2][-]{subsection.1.12.3}{Information gain in DRL}{section.1.12}% 43
+\BOOKMARK [2][-]{subsection.1.12.4}{Exploration with model errors}{section.1.12}% 44
