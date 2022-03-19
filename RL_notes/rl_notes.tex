@@ -28,8 +28,7 @@
 \begin{document}
 \pagenumbering{gobble}
 \maketitle
-\newpage
-\pagenumbering{arabic}
+\newpage \pagenumbering{arabic}
 
 \tableofcontents
 
@@ -1412,8 +1411,427 @@ Reducing learning rates over time also help, Adam optimizer can help too.
 Also, it's very important to run different random seeds as the algorithm is quite inconsistent between runs.
 
 \section{Even more advanced policy gradients (PPO and TRPO)}
-Skipping this as it's not the highest priority at the moment, but will come back to it eventually (maybe).
-This is the entire lecture 9.
+we had the REINFORCE algorithm:
+\begin{enumerate}
+		\item sample $ \left\{ \tau^{ i } \right\}   $ from $ \pi_{ \theta } (\bm{a}_{t}| \bm{s}_{t} )  $ (run the policy)
+		\item $ \nabla_{ \theta } J (\theta) \approx \sum_{i}^{} \left( \sum_{t=1}^{T} \nabla_{ \theta } \log \pi_{ \theta } (\bm{a}_{t}^{ i }| \bm{s}_{t}^{ i } )
+		\sum_{t'=t}^{T} r (\bm{s}_{t'}^{ i }, \bm{a}_{t'}^{ i } ) \right)   $
+\item $ \theta \leftarrow \theta + \alpha \nabla_{ \theta } J (\theta)  $ and repeat from 1.
+\end{enumerate}
+where we could have also written
+\begin{equation}
+		\nabla_{ \theta } J (\theta) \approx \frac{1}{N} \sum_{i=1}^{N} \sum_{t=1}^{T} \nabla_{ \theta } \log \pi_{ \theta } (\bm{a}_{i,t}| \bm{s}_{i,t} ) \hat{Q}_{ i,t }^{ \pi }
+\end{equation}
+where $ \hat{Q}_{ i,t }^{ \pi }  $ is the ``reward to go'' (and we could use function approximation here).
+
+Why does policy gradient work?
+More generally we're estimating the advantage:
+\begin{equation}
+		\nabla_{ \theta } J (\theta) \approx \frac{1}{N} \sum_{i=1}^{N} \sum_{t=1}^{T} \nabla_{ \theta }\log \pi_{ \theta } (\bm{a}_{i,t}| \bm{s}_{i,t} ) \hat{A}_{ i,t }^{ \pi }
+\end{equation}
+and more conceptually:
+\begin{enumerate}
+		\item estimate $ \hat{A}^{ \pi } (\bm{s}_{t}, \bm{a}_{t} )  $ for the current policy (using MC, value function estimates, whatever)
+		\item use $ \hat{A}^{ \pi } (\bm{s}_{t}, \bm{a}_{t} )  $ to get \textit{improved} policy $ \pi'  $ and repeat from 1.
+\end{enumerate}
+This looks like the policy iteration algorithm:
+\begin{enumerate}
+		\item evaluate $ A^{ \pi } (\bm{s}_{}, \bm{a}_{} )  $
+		\item set $ \pi \leftarrow \pi'  $
+\end{enumerate}
+So in a sense, the policy gradient algorithm is a bit gentler than the policy iteration algorithm.
+This is desireable if the advantage estimator is not perfect. Then you cna collect more samples
+and imporve the advatage estimator.
+
+Let's reinterpret policy gradient as policy iteration.
+\subsubsection{Policy gradient as policy iteration}
+$ J (\theta)  $ represent the reinforcement learning objective:
+\begin{equation}
+		J (\theta) = E_{ \tau \sim p_{ \theta }(\tau )} \left[ \sum_{t}^{} \gamma^{ t } r (\bm{s}_{t}, \bm{a}_{t} ) \right] 
+\end{equation}
+(here we start from $t=1$ despite the fact that we don't use it in practise, but it will make for nicer calculation.)
+The claim we want to show is:
+\begin{equation}
+J (\theta') - J (\theta) =  
+E_{ \tau \sim p_{ \theta' } (\tau) } \left[ \sum_{t}^{} \gamma^{ t } A^{ \pi_{ \theta } } (\bm{s}_{t}, \bm{a}_{t} ) \right] 
+\end{equation}
+If we can make this difference large w.r.t $ \theta'  $, then we're improving the policy a lot.
+The real goal is to show that if we're maximizing the right hand of the equation,
+then we're maximizing $J (\theta') - J (\theta)$, which means we're maximizing $ J (\theta')  $
+which is actually what we want.
+Let's prove this claim.
+The explanation is below the expression.
+\begin{align}
+		J (\theta') - J (\theta) &= 
+J (\theta') - E_{ \bm{s}_{0} \sim p (\bm{s}_{0}) } \left[ V^{ \pi_{ \theta } } (\bm{s}_{0}) \right] \\
+&= 
+J (\theta') - E_{ \tau \sim p_{ \theta' } (\tau) } \left[ V^{ \pi_{ \theta } } (\bm{s}_{0}) \right] \\
+&= 
+J (\theta') - E_{ \tau \sim p_{ \theta' } (\tau) } \left[
+\sum_{t=0}^{\infty} \gamma^{ t } V^{ \pi_{ \theta } } (\bm{s}_{t}) - \sum_{t=1}^{\infty} \gamma^{ t } V^{ \pi_{ \theta } } (\bm{s}_{t})
+\right] \\
+&= 
+J (\theta') + E_{ \tau \sim p_{ \theta' } (\tau) } \left[
+\sum_{t=0}^{\infty} \gamma^{ t } \left(    V^{ \pi_{ \theta } } (\bm{s}_{t+1}) - V^{ \pi_{ \theta } } (\bm{s}_{t}) \right)
+\right] \\
+&=
+E_{ \tau \sim p_{ \theta' } (\tau) } \left[ \sum_{t=0}^{\infty} \gamma^{ t } r (\bm{s}_{t}, \bm{a}_{t} ) \right] 
++
+E_{ \tau \sim p_{ \theta' } (\tau) } 
+\left( \sum_{t=0}^{\infty} \gamma^{ t } \left( \gamma V^{ \pi_{ \theta } } (\bm{s}_{t+1}) - V^{ \pi_{ \theta } } (\bm{s}_{t}) \right)  \right)  \\
+E_{ \tau \sim p_{ \theta' } (\tau) }
+\left[ 
+\sum_{t=0}^{\infty} \gamma^{ t } \left( 
+r (\bm{s}_{t}, \bm{a}_{t} ) + \gamma V^{ \pi_{ \theta } } (\bm{s}_{t+1})
+- V^{ \pi_{ \theta } } (\bm{s}_{t})
+\right) 
+\right] \\
+&=
+E_{ \tau \sim p_{ \theta' } (\tau) }
+\left[ \sum_{t=0}^{\infty} \gamma^{ t } A^{ \pi_{ \theta } } (\bm{s}_{t}, \bm{a}_{t} ) \right] 
+\end{align}
+First we're just substituting.
+We're starting in $ p (\bm{s}_{0})  $ because that doesn't depend on $ \theta  $ (that's all in the expectation and not in the distribution over which 
+the expectation is taken (and we can of course do this because we're staring in $ \bm{s}_{0}  $)).
+What that means that we can take the distribution over the expectation to be any distribution  whose
+the marginal over the state is $ p (\bm{s}_{0})  $, thus any $ p_{ \text{any  } \theta} (\tau) $.
+We're taking $ p_{ \theta' }  $ so that we can get the expectation we want.
+Then we do the telescoping sums trick.
+Then we rearrange the terms a bit.
+Next we substitute the definition of $ J (\theta')  $.
+Now we can group these expectation and do so. Now we recognize the definition of the advantage function.
+And we've proved that policy iterations does the right thing.
+Hence we have:
+\begin{equation}
+J(\theta') - J (\theta) = 
+\underbrace{E_{ \tau \sim p_{ \theta' } (\tau) } }_{ \text{expectation under } \pi_{ \theta' } }
+\left[ \sum_{t}^{} \gamma^{ t } 
+		\underbrace{A^{ \pi_{ \theta } } }_{ \text{advantage under } \pi_{ \theta }}
+(\bm{s}_{t}, \bm{a}_{t} ) \right] 
+\end{equation}
+
+We can write:
+\begin{align}
+E_{ \tau \sim p_{ \theta' } (\tau) } 
+\left[ \sum_{t}^{} \gamma^{ t } 
+A^{ \pi_{ \theta } } 
+(\bm{s}_{t}, \bm{a}_{t} ) \right] &=
+\sum_{t}^{} E_{ \bm{s}_{t} \sim p_{ \theta' } (\bm{s}_{t}) }
+\left[ 
+E_{ \bm{a}_{t} \sim \pi_{ \theta' } (\bm{a}_{t}| \bm{s}_{t} ) }
+\left[ 
+\gamma^{ t } A^{ \pi_{ \theta } } (\bm{s}_{t}, \bm{a}_{t} )
+\right] 
+\right] \\
+								  &=
+\sum_{t}^{} E_{ \bm{s}_{t}\sim p_{ \theta' } (\bm{s}_{t}) }
+\left[ 
+E_{ \bm{a}_{t} \sim \pi_{ \theta } (\bm{a}_{t}| \bm{s}_{t} ) }
+\left[ 
+		\frac{\pi_{\theta'} (\bm{a}_{t}| \bm{s}_{t} )}{\pi_{ \theta }(\bm{a}_{t}| \bm{s}_{t} )}
+		\gamma^{ t } A^{ \pi_{ \theta } } (\bm{s}_{t}, \bm{a}_{t} )
+\right] 
+\right] 
+\end{align}
+where in the last step we added in importance sampling.
+But we can't use $ \pi_{ \theta' } (\bm{s}_{t})  $ and we need to somehow ignore that fact
+and instead get away with use states sampled from $ \pi_{ \theta } (\bm{s}_{t})  $.
+\begin{equation}
+		\begin{split}
+\sum_{t}^{} E_{ \bm{s}_{t}\sim p_{ \theta' } (\bm{s}_{t}) }
+\left[ 
+E_{ \bm{a}_{t} \sim \pi_{ \theta } (\bm{a}_{t}| \bm{s}_{t} ) }
+\left[ 
+		\frac{\pi_{\theta'} (\bm{a}_{t}| \bm{s}_{t} )}{\pi_{ \theta }(\bm{a}_{t}| \bm{s}_{t} )}
+		\gamma^{ t } A^{ \pi_{ \theta } } (\bm{s}_{t}, \bm{a}_{t} )
+\right] 
+\right] 
+\approx \\
+\underbrace{\sum_{t}^{} E_{ \bm{s}_{t} \sim p_{ \theta } (\bm{s}_{t}) }
+\left[ 
+E_{ \bm{a}_{t} \sim \pi_{ \theta } (\bm{a}_{t}| \bm{s}_{t} ) }
+\right] 
+\left[ 
+\frac{\pi_{ \theta' }(\bm{a}_{t}| \bm{s}_{t} )}{pi_{ \theta }(\bm{a}_{t}| \bm{s}_{t} )} 
+\gamma^{ t } A^{ \pi_{ \theta } } (\bm{s}_{t}, \bm{a}_{t} )
+\right]}_{ \bar{A} (\theta') } 
+		\end{split}
+\end{equation}
+If we can show that
+\begin{equation}
+		J (\theta') - J (\theta) \approx \bar{A} (\theta') \implies
+		\theta' \leftarrow \argmax_{\theta'} \bar{A} (\theta)
+\end{equation}
+we'd be good.
+Claim: $ p_{ \theta } (\bm{s}_{t})  $ is \textit{close} to $ p_{ \theta' } (\bm{s}_{t})  $
+when $ \pi_{ \theta }  $ is \textit{close} to $ \pi_{ \theta' } $.
+This is not trivial to prove.
+
+Let's start with the simple case:
+assume $ \pi_{ \theta }  $ is a \textit{deterministic} policy $ \bm{a}_{t} = \pi_{ \theta } (\bm{s}_{t})  $.
+$ \pi_{ \theta' }  $ is \textit{close} to $ pi_{ \theta }  $ if
+$ \pi_{ \theta' } (\bm{a}_{t} \neq  \pi_{ \theta } (\bm{s}_{t})|\bm{s}_{t}) \leq \epsilon $
+If this is the case, then we can write the state marginal
+\begin{equation}
+		p_{ \theta' } (\bm{s}_{t}) = 
+		\underbrace{		(1 -\epsilon )^{ t } p_{ \theta } (\bm{s}_{t}) + (1 - (1 - \epsilon)^{ t }) }_{ \text{probability we made no mistakes} }
+		\underbrace{p_{ \text{mistake}} (\bm{s}_{t}) }_{ \text{some other distribution} }
+\end{equation}
+We can write the total variation divergence as:
+\begin{equation}
+		\left| p_{ \theta' } (\bm{s}_{t}) - p_{ \theta } (\bm{s}_{t}) \right| =
+		(1 - (1 - \epsilon)^{ t }) \left| p_{ \text{mistake} } (\bm{s}_{t}) - p_{ \theta } (\bm{s}_{t}) \right| 
+		\leq 2 (1 - (1 -\epsilon )^{ t }) \leq 2\epsilon t
+\end{equation}
+A useful identity:
+\begin{equation}
+		(1 - \epsilon)^{ t } \geq 1 - \epsilon t \text{ for } \epsilon [0,1]
+\end{equation}
+While this is not a great bound, it's something.
+
+Now let's do the general case where $ \pi_{ \theta }  $ is an arbitrary distribution.
+Here we claim that $ \pi_{ \theta' }  $ is \textit{close} to $ \pi_{ \theta }  $ if 
+$ \left| pi_{ \theta' } (\bm{a}_{t}| \bm{s}_{t} ) - \pi_{ \theta } (\bm{a}_{t}| \bm{s}_{t} ) \right| \leq \epsilon \forall \bm{s}_{t}   $.
+We used the pointwise bound, but it will also be true if the bound is in expectation.
+
+A useful lemma:
+if
+$   		\left| p_{ X } (x) - p_{ Y} (x) \right| = \epsilon $
+then $ \exists p(x,y)  $ such that $ p(x) = p_{ X }  $ and $ p(y) = p_{ Y }(y)  $ and
+$ p(x=y) = 1 - \epsilon  $,
+where $ \left|    p_{ X }(x)  \right|$ denotes the total varitional distribution.
+This is useful because we can use it to generalize the deterministic policy case to the stochastic policy case.
+Anyhow, the statement $ p_{ X }(x)  $ ``agrees'' with $ p_{ Y }(y)  $ with probability $ \epsilon  $
+in our case translates into:
+$ \pi_{ \theta' } (\bm{a}_{t}| \bm{s}_{t} )  $ takes a different action thatn $ \pi_{ \theta } (\bm{a}_{t}| \bm{s}_{t} )  $ with 
+probability at most $ \epsilon  $.
+With this lemma, we can restate the previous result on variation divergence to
+\begin{equation}
+		\left| p_{ \theta' } (\bm{s}_{t}) - p_{ \theta }(\bm{s}_{t}) \right|
+		= (1 - (1-\epsilon)^{ t })  
+		\left| p_{ \text{mistake} } (\bm{s}_{ t }) - p_{ \theta } (\bm{s}_{t}) \right| 
+		\leq 2(1 - (1-\epsilon)^{ t }) \leq 2 \epsilon t
+\end{equation}
+
+\subsubsection{Bounding the objective value}
+Again, we have the claim that 
+$ \pi_{ \theta' }  $ is \textit{close} to $ \pi_{ \theta }  $ if $ \left| \pi_{ \theta' } (\bm{a}_{t}| \bm{s}_{t} ) - \pi_{ \theta } (\bm{a}_{t}| \bm{s}_{t} ) \right|
+\leq \epsilon \forall \bm{s}_{t} $
+and we have the result $ \left| p_{ \theta' } (\bm{s}_{t}) - p_{ \theta } (\bm{s}_{t}) \right| \leq 2 \epsilon t  $.
+Now we want to relate the two results and express them in terms of advantage values.
+To do this we'll do another calculation:
+\begin{align}
+		E_{ p_{ \theta' } (\bm{s}_{t}) } \left[ f(\bm{s}_{t}) \right] &=
+		\sum_{\bm{s}_{t}}^{} p_{ \theta' } (\bm{s}_{t}) f (\bm{s}_{t}) \\
+	  &\geq
+		\sum_{\bm{s}_{t}}^{} p_{ \theta } (\bm{s}_{t}) f (\bm{s}_{t}) - \left| p_{ \theta } (\bm{s}_{t}) - p_{ \theta' } (\bm{s}_{t}) \right| \max_{\bm{s}_{t}} f (\bm{s}_{t}) \\
+	  &\geq
+	  E_{ p_{ \theta } (\bm{s}_{t}) } \left[ f (\bm{s}_{t}) \right] - 2 \epsilon t \max_{\bm{s}_{t}} f (\bm{s}_{t})
+\end{align}
+So we can get:
+\begin{gather}
+\sum_{t}^{} E_{ \bm{s}_{t} \sim p_{ \theta' } (\bm{s}_{t}) }
+\left[ 
+E_{ \bm{a}_{t}\sim \pi_{ \theta } (\bm{a}_{t}| \bm{s}_{t} ) }
+\left[ \frac{\pi_{ \theta' (\bm{a}_{t}| \bm{s}_{t} ) }}{\pi_{ \theta }(\bm{a}_{t}| \bm{s}_{t} )} \gamma^{ t }A^{ \pi_{ \theta } } (\bm{s}_{t}, \bm{a}_{t} )  \right] 
+\right] \\
+\sum_{t}^{} E_{ \bm{s}_{t} \sim p_{ \theta } (\bm{s}_{t}) }
+\left[ 
+E_{ \bm{a}_{t}\sim \pi_{ \theta } (\bm{a}_{t}| \bm{s}_{t} ) }
+\left[ \frac{\pi_{ \theta' (\bm{a}_{t}| \bm{s}_{t} ) }}{\pi_{ \theta }(\bm{a}_{t}| \bm{s}_{t} )} \gamma^{ t }A^{ \pi_{ \theta } } (\bm{s}_{t}, \bm{a}_{t} )  \right] 
+\right] 
+- \sum_{t}^{} 2 \epsilon t C
+\end{gather}
+where $ C  $ is the largest quantity that can happen inside the brackets.
+Inside the brackets is some expected value of an advantage (which is the sum of rewards over time).
+Thus $ C \sim O(T r_{ \text{max} }  \text{or} O(\frac{r_{ \text{max} }}{1 - \gamma} ) $ 
+Note: $ \frac{1}{1 - \gamma}   $ is the time horizon in the infinite horizon case (the effective time
+you're summing rewards over).
+Anyway, maxizing the last result maximizes a bound on what we want.
+
+In total, we arrive at:
+\begin{gather}
+		\theta' \leftarrow
+		\argmax_{\theta'} \sum_{t}^{} E_{ \bm{s}_{t}\sim p_{ \theta } (\bm{s}_{t}) }
+		\left[ E_{ \bm{a}_{t}\sim \pi_{ \theta } (\bm{a}_{t}| \bm{s}_{t} ) } \right]
+		\left[ \frac{\pi_{ \theta' }(\bm{a}_{t}| \bm{s}_{t} )}{\pi_{ \theta }(\bm{a}_{t}| \bm{s}_{t} )} 
+		\gamma^{ t } A^{ \pi_{ \theta } } (\bm{s}_{t}, \bm{a}_{t} )\right]  \\
+		\text{such that } \left| \pi_{ \theta' } (\bm{a}_{t}| \bm{s}_{t} ) - \pi_{ \theta } (\bm{a}_{t}| \bm{s}_{t} ) \right| \leq \epsilon 
+\end{gather}
+for small enough $ \epsilon  $, this is guaranteed to improve $ J (\theta') - J (\theta)  $
+
+\subsection{Policy gradients with constraints}
+To use this in practise, we want a more convenient bound.
+That would be:
+\begin{equation}
+		\pi_{ \theta' } (\bm{a}_{t}| \bm{s}_{t} ) - \pi_{ \theta } (\bm{a}_{t}| \bm{s}_{t} ) \leq
+		\sqrt{\frac{1}{2} D_{ KL } (\pi_{ \theta' }(\bm{a}_{t}| \bm{s}_{t} )||\pi_{ \theta }(\bm{a}_{t}| \bm{s}_{t} ))}
+\end{equation}
+$  D_{ KL } (\pi_{ \theta' }(\bm{a}_{t}| \bm{s}_{t} )||\pi_{ \theta }(\bm{a}_{t}| \bm{s}_{t} )) $ bounds
+the state marginal difference.
+The definition is:
+\begin{equation}
+		D_{ KL } (p_{ 1 }(x) || p_{ 2 } (x)) 
+		= E_{ x \sim p_{ 1 }(x) } \left[ \log \frac{p_{ 1 } (x)}{p_{ 2 } ( x)}  \right] 
+\end{equation}
+KL divergence has some very convient properties that make it much easier to approximate.
+
+So now we optimize the objective by:
+\begin{gather}
+		\theta' \leftarrow
+		\argmax_{\theta'} \sum_{t}^{} E_{ \bm{s}_{t}\sim p_{ \theta } (\bm{s}_{t}) }
+		\left[ E_{ \bm{a}_{t}\sim \pi_{ \theta } (\bm{a}_{t}| \bm{s}_{t} ) } \right]
+		\left[ \frac{\pi_{ \theta' }(\bm{a}_{t}| \bm{s}_{t} )}{\pi_{ \theta }(\bm{a}_{t}| \bm{s}_{t} )} 
+		\gamma^{ t } A^{ \pi_{ \theta } } (\bm{s}_{t}, \bm{a}_{t} )\right]  \\
+		\text{such that } 
+D_{ KL } (\pi_{ \theta' } (\bm{a}_{t}| \bm{s}_{t} ) || \pi_{ \theta }(\bm{a}_{t}| \bm{s}_{t} ))
+		\leq \epsilon 
+\end{gather}
+and for small enough $ \epsilon  $, this is guaranteed to improve $ J (\theta') - J (\theta)  $.
+
+\subsubsection{How do we enforce the constraint}
+There are a number of ways to do this.
+One way is to write the objective and the constraint in terms of the Lagrangian:
+\begin{equation}
+		\begin{split}
+\mathcal{L} (\theta', \lambda) =
+\sum_{t}^{} E_{ \bm{s}_{t}\sim p_{ \theta } (\bm{s}_{t})}
+\left[ E_{ \bm{a}_{t} \sim \pi_{ \theta }(\bm{a}_{t}| \bm{s}_{t} ) } 
+\left[ \frac{\pi_{ \theta' }(\bm{a}_{t}| \bm{s}_{t} )}{\pi_\theta} (\bm{a}_{t}| \bm{s}_{t} )\gamma^{ t } A^{ \pi_{ \theta } } (\bm{s}_{t}, \bm{a}_{t} ) \right] 
+\right] \\
+- \lambda \left( 
+D_{ KL } (\pi_{ \theta' } (\bm{a}_{t}| \bm{s}_{t} ) || \pi_{ \theta }(\bm{a}_{t}| \bm{s}_{t} ) )
+ - \epsilon \right) 
+		\end{split}
+\end{equation}
+With this we could iterate the following two steps:
+\begin{enumerate}
+		\item maximize $ \mathcal{L} (\theta', \lambda)  $ with respect to $ \theta'  $
+		\item $ \lambda \leftarrow \lambda + \alpha (D_{ KL } (\pi_{ \theta' } (\bm{a}_{t}| \bm{s}_{t} ) || \pi_{ \theta }(\bm{a}_{t}| \bm{s}_{t} )) -\epsilon)  $
+\end{enumerate}
+Intuitively, we should raise $ \lambda   $ is the constraint is violated too much
+and otherwise we should lower it.
+This procedure is called \textit{dual gradient descent}.
+While doing this, you don't have to perform maximization in the first step until convergence,
+but only a few gradient steps.
+
+\subsection{Natural gradient}
+Now we'll approximate the constraint in another way which is more approximate,
+but leads to a nice algorithm.
+First let's introduce a shorthand:
+\begin{equation}
+		\bar{A} (\theta') =
+\sum_{t}^{} E_{ \bm{s}_{t}\sim p_{ \theta } (\bm{s}_{t}) }
+		\left[ E_{ \bm{a}_{t}\sim \pi_{ \theta } (\bm{a}_{t}| \bm{s}_{t} ) } \right]
+		\left[ \frac{\pi_{ \theta' }(\bm{a}_{t}| \bm{s}_{t} )}{\pi_{ \theta }(\bm{a}_{t}| \bm{s}_{t} )} 
+		\gamma^{ t } A^{ \pi_{ \theta } } (\bm{s}_{t}, \bm{a}_{t} )\right]
+\end{equation}
+How about we do a first-order Taylor expansion of this,
+and get an easy function to optimize?
+Of course, it would be totally incorrect, but if we do this only within
+a smaller trusted region, the original function would also improve.
+Then we can repeat this process to solve the original problemtimize?
+Of course, it would be totally incorrect, but if we do this only within
+a smaller trusted region in which the approximation is good, the original function would also improve.
+Then we can repeat this process to solve the original problem.
+Here we can easily form the trusted region 
+because we already have a constraint!
+So let's do
+\begin{gather}
+		\theta' \argmax_{\theta'} \nabla_{ \theta } \bar{A} (\theta)^{ T } (\theta' - \theta) \\
+		\text{such that } D_{ KL } \left( 
+\pi_{ \theta' } (\bm{a}_{t}| \bm{s}_{t} ) ||
+\pi_{ \theta } (\bm{a}_{t}| \bm{s}_{t} ) 
+		\right) \leq \epsilon
+\end{gather}
+We have:
+\begin{equation}
+\nabla_{ \theta' } \bar{A} (\theta') = 
+\sum_{t}^{} E_{ \bm{s}_{t}\sim p_{ \theta } (\bm{s}_{t})} \left[ 
+E_{ \bm{a}_{t} \sim \pi_{ \theta }(\bm{a}_{t}| \bm{s}_{t} ) }
+\left[ 
+\frac{\pi_{ \theta' }(\bm{a}_{t}| \bm{s}_{t} )}{\pi_{ \theta }(\bm{a}_{t}| \bm{s}_{t} )}
+\gamma^{ t } \nabla_{ \theta' } \log \pi_{ \theta' } (\bm{a}_{t}| \bm{s}_{t} )
+A^{ \pi_{ \theta } } (\bm{s}_{t}, \bm{a}_{t} )
+\right] 
+\right] 
+\end{equation}
+and if we evaluate this at $ \theta' = \theta  $ then
+$\frac{\pi_{ \theta }(\bm{a}_{t}| \bm{s}_{t} )}{\pi_{ \theta }(\bm{a}_{t}| \bm{s}_{t} )}$ cancels out
+and we're left with
+\begin{equation}
+\nabla_{ \theta' } \bar{A} (\theta') = 
+\sum_{t}^{} E_{ \bm{s}_{t}\sim p_{ \theta } (\bm{s}_{t})} \left[ 
+E_{ \bm{a}_{t} \sim \pi_{ \theta }(\bm{a}_{t}| \bm{s}_{t} ) }
+\left[ 
+\gamma^{ t } \nabla_{ \theta' } \log \pi_{ \theta' } (\bm{a}_{t}| \bm{s}_{t} )
+A^{ \pi_{ \theta } } (\bm{s}_{t}, \bm{a}_{t} )
+\right] 
+\right] = \nabla_{ \theta } J (\theta)
+\end{equation}
+Could we just use gradient ascent then?
+The problem is that as we change $ \theta  $,
+different probabilities $ \pi_{ \theta }(\bm{a}_{t}| \bm{s}_{t} )  $ will change 
+by different amounts because some parameters change probabilities a lot more
+than others.
+We claim that gradient ascent solve the following contrained
+optimization problem:
+\begin{gather}
+\theta' \argmax_{\theta'} \nabla_{ \theta } J (\theta)^{ T } (\theta' - \theta) \\
+\text{such that } ||\theta - \theta'||^{ 2 } \leq \epsilon
+\end{gather}
+So gradient ascent imposes a constraint on the difference not in policy space,
+but in parameter space.
+The learning rate in gradient ascent can be obtained as the Lagrangian multiplier
+for the constraint:
+\begin{equation}
+		\theta' = \theta + \sqrt{\frac{\epsilon}{||\nabla_{ \theta } J(\theta)||^{ 2 }} } \nabla_{ \theta } J (\theta) 
+\end{equation}
+So this constaint forms a ball.
+Could we elongate it into a elipse in the direction 
+of parameters which affect the policy the most?
+We'll construct an approximation to the $ D_{ KL }  $ divergence contraint by using its
+second order Taylor expansion:
+\begin{equation}
+		D_{ KL } (\pi_{ \theta' } || \pi_{ \theta })
+		\approx \frac{1}{2} (\theta' -\theta)^{ T } \bm{F}_{} (\theta' -\theta)
+\end{equation}
+where $ \bm{F}_{}  $ is the Fisher-information matrix which is given by:
+\begin{equation}
+		\bm{F}_{} = E_{ \pi_{ \theta } } \left[ 
+		\nabla_{ \theta } \log 
+		\pi_{ \theta } (\bm{a}_{}| \bm{s}_{} ) \nabla_{ \theta } \log \pi_{ \theta } (\bm{a}_{}| \bm{s}_{} )^{ T }
+\right] 
+\end{equation}
+and this is cool because it is an expectation which means we can approximate it with samples.
+Moreover, we can use the samples we used to estimate the policy gradient.
+With this we have the \textbf{natural gradient}
+\begin{equation}
+		\theta' = \theta + \alpha \bm{F}_{}^{ -1 } \nabla_{ \theta } J (\theta)
+\end{equation}
+where
+\begin{equation}
+		\alpha = \sqrt{\frac{2\epsilon}{\nabla_{ \theta } J (\theta)^{ T } \bm{F}_{} \nabla_{ \theta } J (\theta)} }
+\end{equation}
+
+\paragraph{Do these results carry over in practise?}
+Remember the example in the policy gradient section where the policy gradient was ill conditioned.
+Again, we solved an ill-conditioned optimization problem into a better conditioned optimization problem.
+
+\subsection{Practical methods and notes}
+\paragraph{Natural policy gradient}
+Generally a good choise to stabilize policy gradient trainig.
+Check paper Peters, Schaal ``Reinforcement learning of motor skills with policy gradients'' for more details.
+Also the paper Schulman et al ``Trust region policy optimization'',
+it has many useful non-trivial tricks.
+\paragraph{Trust region policy optimization}
+Check mentioned paper for a nice use case of dual gradient descent.
+\paragraph{Just using importance sampling objective directly}
+Important to use regularization to stay close to the old policy.
+Check the ``Proximal policy optimization'' paper for this.
+
+
+
 
 \section{Optimal control and planning}
 I'll be mostly skipping this as it is mostly re-doing what I've written already.
@@ -2445,17 +2863,24 @@ where the problem is that
 		\frac{\cancel{p(\bm{s}_{1}) \prod_{t}^{} p(\bm{s}_{t+1}| \bm{s}_{t}, \bm{a}_{t})} \pi_\theta (\bm{a}_{t}| \bm{s}_{t} ) }
 		{\cancel{p(\bm{s}_{1}) \prod_{t}^{} p(\bm{s}_{t+1}| \bm{s}_{t}, \bm{a}_{t})} \pi_\beta (\bm{a}_{t}| \bm{s}_{t} ) } 	
 \end{equation}
-
-
-
-
-
-
-
-
-
-
-
+is exponential in T (vanishing gradient problem)
+so the weights are likely to degenerate as T becomes large.
+We can't fix this the same way as in off-policy RL because now $\pi_{ \beta }$ and $\pi_{ \text{new} }$ are not similar!
+Let's rewrite our gradient approximation.
+\begin{equation}
+\nabla_{ \theta } J (\theta) \approx \frac{1}{N} \sum_{i=1}^{N} \sum_{t=0}^{T} 
+\left( \prod_{t'=0}^{t-1} \frac{\pi_{ \theta } (\bm{a}_{t',i}|\bm{s}_{t',i})}{\pi_{ \beta } (\bm{a}_{t',i}|\bm{s}_{t',i})}   \right) 
+\nabla_{ \theta } \gamma^{ t }  \log \pi_{ \theta } (\bm{a}_{t,i}| \bm{s}_{t,i} )
+\left( \prod_{t'=t}^{T} \frac{\pi_{ \theta } (\bm{a}_{t',i}| \bm{s}_{t',i} )}{\pi_{ \beta }(\bm{a}_{t',i}| \bm{s}_{t',i} )}   \right)
+\hat{Q} (\bm{s}_{t,i}, \bm{a}_{t,i} )
+\end{equation}
+where $ \prod_{t'=0}^{t-1} \frac{\pi_{ \theta } (\bm{a}_{t',i}|\bm{s}_{t',i})}{\pi_{ \beta } (\bm{a}_{t',i}|\bm{s}_{t',i})}  $
+acocunts for the difference in probability of landing in $ \bm{s}_{t,i}  $.
+We have $ \bm{s}_{t}\sim d^{ \pi_{ \beta } }  (\bm{s}_{t})$, but we want
+$ \bm{s}_{t}\sim d^{ \pi_{ \theta } }  \bm{s}_{t}$.
+Also, $ \prod_{t'=t}^{T} \frac{\pi_{ \theta } (\bm{a}_{t',i}| \bm{s}_{t',i} )}{\pi_{ \beta }(\bm{a}_{t',i}| \bm{s}_{t',i} )}  $
+accounts for having the incorrect $ \hat{Q} (\bm{s}_{t,i}, \bm{a}_{t,i} )  $.
+The classic on-policy techniques disregard the first product.
 
 
 

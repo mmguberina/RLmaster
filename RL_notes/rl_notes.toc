@@ -62,51 +62,61 @@
 \contentsline {subsection}{\numberline {1.7.3}Implementation tips and examples}{31}{subsection.1.7.3}%
 \contentsline {paragraph}{Tips}{31}{section*.33}%
 \contentsline {section}{\numberline {1.8}Even more advanced policy gradients (PPO and TRPO)}{32}{section.1.8}%
-\contentsline {section}{\numberline {1.9}Optimal control and planning}{32}{section.1.9}%
-\contentsline {paragraph}{The objective}{32}{section*.34}%
-\contentsline {subsubsection}{Stochastic optimization}{32}{section*.35}%
-\contentsline {subsubsection}{Cross-entropy method (CEM)}{33}{section*.36}%
-\contentsline {subsubsection}{Discrete case: Monte Carlo tree search (MCTS)}{33}{section*.37}%
-\contentsline {subsection}{\numberline {1.9.1}Trajectory optimization with derivatives}{34}{subsection.1.9.1}%
-\contentsline {section}{\numberline {1.10}Model-based reinforcement learning}{34}{section.1.10}%
-\contentsline {subsection}{\numberline {1.10.1}Uncertainty in model-based RL}{36}{subsection.1.10.1}%
-\contentsline {subsubsection}{Uncertainty-aware neural network models}{36}{section*.38}%
-\contentsline {paragraph}{Idea 1:}{36}{section*.39}%
-\contentsline {paragraph}{Idea 2:}{36}{section*.40}%
-\contentsline {subsubsection}{Quick overview of Bayesian neural networks}{37}{section*.41}%
-\contentsline {subsubsection}{Bootstrap ensembles}{37}{section*.42}%
-\contentsline {subsubsection}{How to plan with uncertainty}{38}{section*.43}%
-\contentsline {paragraph}{Other options:}{38}{section*.44}%
-\contentsline {subsection}{\numberline {1.10.2}Model-based reinforcement learning with images}{38}{subsection.1.10.2}%
-\contentsline {subsubsection}{State space (latent space models)}{39}{section*.45}%
-\contentsline {section}{\numberline {1.11}Model-based policy learning}{40}{section.1.11}%
-\contentsline {subsubsection}{What's the solution?}{41}{section*.46}%
-\contentsline {paragraph}{First class of solutions}{41}{section*.47}%
-\contentsline {paragraph}{Second class of solutions}{41}{section*.48}%
-\contentsline {subsection}{\numberline {1.11.1}Model-free learning with a model}{42}{subsection.1.11.1}%
-\contentsline {subsubsection}{Dyna}{42}{section*.49}%
-\contentsline {paragraph}{General ``Dyna-style'' model-based RL recipe}{43}{section*.50}%
-\contentsline {subsubsection}{Local models}{43}{section*.51}%
-\contentsline {section}{\numberline {1.12}Exploration algorithms}{44}{section.1.12}%
-\contentsline {subsubsection}{Optimistic exploration}{44}{section*.52}%
-\contentsline {subsubsection}{Probability matching/posterior sampling}{44}{section*.53}%
-\contentsline {subsubsection}{Information gain}{44}{section*.54}%
-\contentsline {subsubsection}{General themes}{45}{section*.55}%
-\contentsline {subsection}{\numberline {1.12.1}Exploration in deep reinforcement learning}{45}{subsection.1.12.1}%
-\contentsline {subsubsection}{Fitting generative models}{46}{section*.56}%
-\contentsline {subsubsection}{What kind of bonus to use?}{46}{section*.57}%
-\contentsline {paragraph}{What kind of model to use?}{46}{section*.58}%
-\contentsline {subsection}{\numberline {1.12.2}Posterior sampling in deep RL}{47}{subsection.1.12.2}%
-\contentsline {subsection}{\numberline {1.12.3}Information gain in DRL}{47}{subsection.1.12.3}%
-\contentsline {subsection}{\numberline {1.12.4}Exploration with model errors}{48}{subsection.1.12.4}%
-\contentsline {subsection}{\numberline {1.12.5}Unsupervised exploration}{48}{subsection.1.12.5}%
-\contentsline {subsubsection}{Information theoretic quantities in RL}{48}{section*.59}%
-\contentsline {section}{\numberline {1.13}Unsupervised reinforcement learning (sketches)}{49}{section.1.13}%
-\contentsline {subsubsection}{Aside: exploration with intrinsic motivation}{50}{section*.60}%
-\contentsline {subsection}{\numberline {1.13.1}Learning diverse skills}{50}{subsection.1.13.1}%
-\contentsline {subsubsection}{Diversity-promoting reward function}{51}{section*.61}%
-\contentsline {section}{\numberline {1.14}Generalisation gap}{51}{section.1.14}%
-\contentsline {paragraph}{What makes modern machine learning work}{51}{section*.62}%
-\contentsline {subsubsection}{Why is offline RL hard?}{52}{section*.63}%
-\contentsline {subsubsection}{Where does RL suffer from distributional shift?}{53}{section*.64}%
-\contentsline {subsection}{\numberline {1.14.1}Batch RL via importance sampling}{53}{subsection.1.14.1}%
+\contentsline {subsubsection}{Policy gradient as policy iteration}{32}{section*.34}%
+\contentsline {subsubsection}{Bounding the objective value}{35}{section*.35}%
+\contentsline {subsection}{\numberline {1.8.1}Policy gradients with constraints}{36}{subsection.1.8.1}%
+\contentsline {subsubsection}{How do we enforce the constraint}{36}{section*.36}%
+\contentsline {subsection}{\numberline {1.8.2}Natural gradient}{36}{subsection.1.8.2}%
+\contentsline {paragraph}{Do these results carry over in practise?}{38}{section*.37}%
+\contentsline {subsection}{\numberline {1.8.3}Practical methods and notes}{38}{subsection.1.8.3}%
+\contentsline {paragraph}{Natural policy gradient}{38}{section*.38}%
+\contentsline {paragraph}{Trust region policy optimization}{38}{section*.39}%
+\contentsline {paragraph}{Just using importance sampling objective directly}{38}{section*.40}%
+\contentsline {section}{\numberline {1.9}Optimal control and planning}{38}{section.1.9}%
+\contentsline {paragraph}{The objective}{38}{section*.41}%
+\contentsline {subsubsection}{Stochastic optimization}{39}{section*.42}%
+\contentsline {subsubsection}{Cross-entropy method (CEM)}{39}{section*.43}%
+\contentsline {subsubsection}{Discrete case: Monte Carlo tree search (MCTS)}{40}{section*.44}%
+\contentsline {subsection}{\numberline {1.9.1}Trajectory optimization with derivatives}{41}{subsection.1.9.1}%
+\contentsline {section}{\numberline {1.10}Model-based reinforcement learning}{41}{section.1.10}%
+\contentsline {subsection}{\numberline {1.10.1}Uncertainty in model-based RL}{42}{subsection.1.10.1}%
+\contentsline {subsubsection}{Uncertainty-aware neural network models}{42}{section*.45}%
+\contentsline {paragraph}{Idea 1:}{42}{section*.46}%
+\contentsline {paragraph}{Idea 2:}{43}{section*.47}%
+\contentsline {subsubsection}{Quick overview of Bayesian neural networks}{43}{section*.48}%
+\contentsline {subsubsection}{Bootstrap ensembles}{44}{section*.49}%
+\contentsline {subsubsection}{How to plan with uncertainty}{44}{section*.50}%
+\contentsline {paragraph}{Other options:}{45}{section*.51}%
+\contentsline {subsection}{\numberline {1.10.2}Model-based reinforcement learning with images}{45}{subsection.1.10.2}%
+\contentsline {subsubsection}{State space (latent space models)}{45}{section*.52}%
+\contentsline {section}{\numberline {1.11}Model-based policy learning}{46}{section.1.11}%
+\contentsline {subsubsection}{What's the solution?}{48}{section*.53}%
+\contentsline {paragraph}{First class of solutions}{48}{section*.54}%
+\contentsline {paragraph}{Second class of solutions}{48}{section*.55}%
+\contentsline {subsection}{\numberline {1.11.1}Model-free learning with a model}{48}{subsection.1.11.1}%
+\contentsline {subsubsection}{Dyna}{48}{section*.56}%
+\contentsline {paragraph}{General ``Dyna-style'' model-based RL recipe}{49}{section*.57}%
+\contentsline {subsubsection}{Local models}{50}{section*.58}%
+\contentsline {section}{\numberline {1.12}Exploration algorithms}{50}{section.1.12}%
+\contentsline {subsubsection}{Optimistic exploration}{50}{section*.59}%
+\contentsline {subsubsection}{Probability matching/posterior sampling}{50}{section*.60}%
+\contentsline {subsubsection}{Information gain}{50}{section*.61}%
+\contentsline {subsubsection}{General themes}{51}{section*.62}%
+\contentsline {subsection}{\numberline {1.12.1}Exploration in deep reinforcement learning}{51}{subsection.1.12.1}%
+\contentsline {subsubsection}{Fitting generative models}{52}{section*.63}%
+\contentsline {subsubsection}{What kind of bonus to use?}{52}{section*.64}%
+\contentsline {paragraph}{What kind of model to use?}{53}{section*.65}%
+\contentsline {subsection}{\numberline {1.12.2}Posterior sampling in deep RL}{53}{subsection.1.12.2}%
+\contentsline {subsection}{\numberline {1.12.3}Information gain in DRL}{53}{subsection.1.12.3}%
+\contentsline {subsection}{\numberline {1.12.4}Exploration with model errors}{54}{subsection.1.12.4}%
+\contentsline {subsection}{\numberline {1.12.5}Unsupervised exploration}{54}{subsection.1.12.5}%
+\contentsline {subsubsection}{Information theoretic quantities in RL}{55}{section*.66}%
+\contentsline {section}{\numberline {1.13}Unsupervised reinforcement learning (sketches)}{55}{section.1.13}%
+\contentsline {subsubsection}{Aside: exploration with intrinsic motivation}{56}{section*.67}%
+\contentsline {subsection}{\numberline {1.13.1}Learning diverse skills}{57}{subsection.1.13.1}%
+\contentsline {subsubsection}{Diversity-promoting reward function}{57}{section*.68}%
+\contentsline {section}{\numberline {1.14}Generalisation gap}{57}{section.1.14}%
+\contentsline {paragraph}{What makes modern machine learning work}{57}{section*.69}%
+\contentsline {subsubsection}{Why is offline RL hard?}{58}{section*.70}%
+\contentsline {subsubsection}{Where does RL suffer from distributional shift?}{59}{section*.71}%
+\contentsline {subsection}{\numberline {1.14.1}Batch RL via importance sampling}{59}{subsection.1.14.1}%

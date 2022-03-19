@@ -30,20 +30,23 @@
 \BOOKMARK [2][-]{subsection.1.7.2}{Q-learning with continuous actions}{section.1.7}% 30
 \BOOKMARK [2][-]{subsection.1.7.3}{Implementation tips and examples}{section.1.7}% 31
 \BOOKMARK [1][-]{section.1.8}{Even more advanced policy gradients \(PPO and TRPO\)}{chapter.1}% 32
-\BOOKMARK [1][-]{section.1.9}{Optimal control and planning}{chapter.1}% 33
-\BOOKMARK [2][-]{subsection.1.9.1}{Trajectory optimization with derivatives}{section.1.9}% 34
-\BOOKMARK [1][-]{section.1.10}{Model-based reinforcement learning}{chapter.1}% 35
-\BOOKMARK [2][-]{subsection.1.10.1}{Uncertainty in model-based RL}{section.1.10}% 36
-\BOOKMARK [2][-]{subsection.1.10.2}{Model-based reinforcement learning with images}{section.1.10}% 37
-\BOOKMARK [1][-]{section.1.11}{Model-based policy learning}{chapter.1}% 38
-\BOOKMARK [2][-]{subsection.1.11.1}{Model-free learning with a model}{section.1.11}% 39
-\BOOKMARK [1][-]{section.1.12}{Exploration algorithms}{chapter.1}% 40
-\BOOKMARK [2][-]{subsection.1.12.1}{Exploration in deep reinforcement learning}{section.1.12}% 41
-\BOOKMARK [2][-]{subsection.1.12.2}{Posterior sampling in deep RL}{section.1.12}% 42
-\BOOKMARK [2][-]{subsection.1.12.3}{Information gain in DRL}{section.1.12}% 43
-\BOOKMARK [2][-]{subsection.1.12.4}{Exploration with model errors}{section.1.12}% 44
-\BOOKMARK [2][-]{subsection.1.12.5}{Unsupervised exploration}{section.1.12}% 45
-\BOOKMARK [1][-]{section.1.13}{Unsupervised reinforcement learning \(sketches\)}{chapter.1}% 46
-\BOOKMARK [2][-]{subsection.1.13.1}{Learning diverse skills}{section.1.13}% 47
-\BOOKMARK [1][-]{section.1.14}{Generalisation gap}{chapter.1}% 48
-\BOOKMARK [2][-]{subsection.1.14.1}{Batch RL via importance sampling}{section.1.14}% 49
+\BOOKMARK [2][-]{subsection.1.8.1}{Policy gradients with constraints}{section.1.8}% 33
+\BOOKMARK [2][-]{subsection.1.8.2}{Natural gradient}{section.1.8}% 34
+\BOOKMARK [2][-]{subsection.1.8.3}{Practical methods and notes}{section.1.8}% 35
+\BOOKMARK [1][-]{section.1.9}{Optimal control and planning}{chapter.1}% 36
+\BOOKMARK [2][-]{subsection.1.9.1}{Trajectory optimization with derivatives}{section.1.9}% 37
+\BOOKMARK [1][-]{section.1.10}{Model-based reinforcement learning}{chapter.1}% 38
+\BOOKMARK [2][-]{subsection.1.10.1}{Uncertainty in model-based RL}{section.1.10}% 39
+\BOOKMARK [2][-]{subsection.1.10.2}{Model-based reinforcement learning with images}{section.1.10}% 40
+\BOOKMARK [1][-]{section.1.11}{Model-based policy learning}{chapter.1}% 41
+\BOOKMARK [2][-]{subsection.1.11.1}{Model-free learning with a model}{section.1.11}% 42
+\BOOKMARK [1][-]{section.1.12}{Exploration algorithms}{chapter.1}% 43
+\BOOKMARK [2][-]{subsection.1.12.1}{Exploration in deep reinforcement learning}{section.1.12}% 44
+\BOOKMARK [2][-]{subsection.1.12.2}{Posterior sampling in deep RL}{section.1.12}% 45
+\BOOKMARK [2][-]{subsection.1.12.3}{Information gain in DRL}{section.1.12}% 46
+\BOOKMARK [2][-]{subsection.1.12.4}{Exploration with model errors}{section.1.12}% 47
+\BOOKMARK [2][-]{subsection.1.12.5}{Unsupervised exploration}{section.1.12}% 48
+\BOOKMARK [1][-]{section.1.13}{Unsupervised reinforcement learning \(sketches\)}{chapter.1}% 49
+\BOOKMARK [2][-]{subsection.1.13.1}{Learning diverse skills}{section.1.13}% 50
+\BOOKMARK [1][-]{section.1.14}{Generalisation gap}{chapter.1}% 51
+\BOOKMARK [2][-]{subsection.1.14.1}{Batch RL via importance sampling}{section.1.14}% 52
