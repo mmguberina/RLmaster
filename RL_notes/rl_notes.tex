@@ -31,6 +31,8 @@
 \newpage
 \pagenumbering{arabic}
 
+\tableofcontents
+
 \section{Plan}
 \paragraph{Old plan, look at update}
 Let's stdenomart by reading Sutton's book to get the basic theory down.
@@ -637,7 +639,7 @@ Q^\pi (\bm{s}_{t}, \bm{a}_{t})  &= r(\bm{s}_{t}, \bm{a}_{t}) + E_{\bm{s}_{t+1} \
 
 Another option:
 \begin{align}
-		Q^\pi (\bm{s}_{t}, \bm{a}_{t})  &\approx r(\bm{s}_{t}, \bm{a}_{t}) + V^\pi (\bm{s}_{t+1}) \\
+		Q^{\pi} (\bm{s}_{t}, \bm{a}_{t})  &\approx r(\bm{s}_{t}, \bm{a}_{t}) + V^\pi (\bm{s}_{t+1}) \\
 		A^\pi (\bm{s}_{t}, \bm{a}_{t})  &\approx r(\bm{s}_{t}, \bm{a}_{t}) + V^\pi (\bm{s}_{t+1})  - V^\pi(\bm{s}_t)
 \end{align}
 We like the second option because we need to learn $V^\pi(\bm{s})$ because it depends only on the state.
@@ -2132,6 +2134,344 @@ for example using an autoencoder to get a latent space representation and the us
 loss as an exploration bonus.
 Using errors and models as an exploration bonus is a heavily studied area even though it's
 not always tied to information gain.
+
+\subsection{Unsupervised exploration}
+We'll use information theory for this.
+The idea is to learn about the world without an explicit goal.
+Let's set the notation first.
+The distribution over states (or observations) is:
+\begin{equation}
+		p(\bm{x}_{})
+\end{equation}
+The entropy of $ p(\bm{x}_{})  $is:
+\begin{equation}
+		\mathcal{H}(p(\bm{x}_{})) = - E_{\bm{x}_{} \sim p(\bm{x}_{})} \left[ \log p(\bm{x}_{}) \right] 
+\end{equation}
+Intuitively, entropy is the width of the distribution.
+Mutual information is defined as:
+\begin{align}
+		\mathcal{I}(\bm{x}_{};\bm{y}_{}) &= D_{KL}(p(\bm{x}_{}, \bm{y}_{})||p(\bm{x}_{})p(\bm{y}_{})) \\
+										 &=
+		E_{(\bm{x}_{}, \bm{y}_{}) \sim p(\bm{x}_{}, \bm{y}_{})}  \left[ \log \frac{p(\bm{x}_{},\bm{y}_{})}{p(\bm{x}_{})p(\bm{y}_{})}  \right] \\
+ &= \mathcal{H}(p(\bm{y}_{})) - \mathcal{H}(p(\bm{y}_{}|\bm{x}_{}))
+\end{align}
+
+\subsubsection{Information theoretic quantities in RL}
+The state \textit{marginal} distribution of policy $ \pi  $:
+\begin{equation}
+		\pi(\bm{s}_{})
+\end{equation}
+The state \textit{marginal} entropy of policy $ \pi  $ is:
+\begin{equation}
+		\mathcal{H}\pi(\bm{s}_{})
+\end{equation}
+It quantifies coverage that the policy gets.
+This can come in, for example, the following setting.
+``Empowerement'' is defined as the mutual information between the next state and the current action:
+\begin{equation}
+		\mathcal{I}(\bm{s}_{t+1}; \bm{a}_{t}) = 
+		\mathcal{H}(\bm{s}_{t+1}) - \mathcal{H}(\bm{s}_{t+1}|\bm{a}_{t})
+\end{equation}
+
+\section{Unsupervised reinforcement learning (sketches)}
+Let's say you have a generative model. Then
+you can sample from it and make the sample be a goal.
+Then use the data you gather to improve both the policy and the model.
+A sketch of that algorithm would look something like this:
+\begin{enumerate}
+		\item propose goal: $ z_g \sim p(z), x_g \sim p_\theta (x_g|z_g)  $
+		\item attempt to reach goal using $ \pi(a|x,x_g)  $, reach $ \bar{x}  $
+		\item use data to update $ \pi  $
+		\item use data to update $ p_\theta(x_g|z_g), q_\phi(z_g|x_g)  $
+\end{enumerate}
+
+But since the generative model is trained on the data it has seen,
+it will generate data similar to what it has seen!
+So this is bad for exploration.
+To ameliorate this, you could replace the standard maximum likelihood estimation (MLE):
+\begin{equation}
+		\theta, \phi \leftarrow \argmax_{\theta, \phi} E \left[ \log p(\bar{x}) \right] 
+\end{equation}
+with a weighted MLE:
+\begin{equation}
+		\theta, \phi \leftarrow \argmax_{\theta, \phi} E \left[ w(\bar{x}) \log p(\bar{x}) \right] 
+\end{equation}
+
+The gerative model should be able to give us a density score:
+\begin{equation}
+		w(\bar{x}) = p_\theta(\bar{x})^\alpha
+\end{equation}
+where $ \alpha \in [-1,0>  $.
+Then $ \mathcal{H}(p_\theta(x))  $ will increase!
+In the limit we'll get a uniform distribution over valid states.
+So we'll get nice diverse goals with this scheme.
+
+But what's the objective of this scheme (what are we maximizing)?
+Well, we'll maximizing $ \max \mathcal{H}(p(G))  $.
+The RL is trying to train $ \pi(a|S,G)  $ to reach $ G  $.
+This means that $ p(G|S)  $ becomes more deterministic.
+Thus our policy is capable to deterministically reach it's goal,
+i.e. the better the policy is, the easier it is to predict $G$ from $S$.
+So we're doing:
+\begin{equation}
+		\max \mathcal{H}(p(G)) - \mathcal{H}(p(G|S)) = \max \mathcal{I}(S;G)
+\end{equation}
+In short, maximizing the mutual information between $ S  $ and $ G  $ leads to
+good exploration $ \mathcal{H}(p(G))  $ and effective goal reaching $\mathcal{H}(p(G|S))  $
+
+\subsubsection{Aside: exploration with intrinsic motivation}
+Just doing some form of pseudocounting to incentivise exploration won't cut it.
+Imagine the followign procedure:
+\begin{enumerate}
+		\item update $ \pi(\bm{a}_{}|\bm{s}_{})  $ to maximize $ E_\pi \left[ \tilde{r}(\bm{s}_{}) \right]   $
+		\item update $ p_\pi(\bm{s}_{})  $ to fit the state marginal and repeat.
+\end{enumerate}
+If there's no reward at all, the density estimator will fit whatever the policy did,
+the policy will do something else, and so on.
+While (the state density estimator will be good,
+The policy you'll end up with will be some arbitrary mess.
+Let's construct the reward
+\begin{equation}
+		\tilde{r}(\bm{s}_{}) = \log p^\star (\bm{s}_{}) - \log p_\pi (\bm{s}_{})
+\end{equation}
+The RL algorithm is not aware that the reward depends on the policy.
+So this won't perform marginal matching --- 
+the policy will jump around the state space and that's all it'll do.
+Let's sketch the algorithm out anyway, fixing it will be later then:
+\begin{enumerate}
+		\item learn $ \pi^k (\bm{a}_{}|\bm{s}_{})  $ to maximize $ E_\pi \left[ \tilde{r}^k(\bm{s}_{}) \right]   $
+		\item update $ p_{\pi^k}(\bm{s}_{})  $ to fit the state marginal
+\end{enumerate}
+To fix this we should change 2. to
+update $ p_{\pi^k}(\bm{s}_{})  $ to fit \textit{all states seen so far}.
+Another change is to return a mixture policy $ \pi^\star (\bm{a}_{}|\bm{s}_{})  = \sum_{k}^{} \pi^k(\bm{a}_{}|\bm{s}_{}) $
+instead of the latest policy.
+This mixture is a mixture model of all the policies seen so far.
+So you'll choose a random policy you've seen during learning.
+We do this because we then do perform marginal matching.
+To explain this we need a bit of game theory.
+Namely,
+\begin{equation}
+		p_\pi(\bm{s}_{}) = p^\star (\bm{s}_{}) 
+\end{equation}
+is the Nash equilibrium of a two player game.
+The players are the state density estimator $ p_{\pi^k}  $and the policy $\pi^k$.
+The way to reach the algorithm is to start anywhere and always play best responce,
+which for the density mathing is to actually fit the density an for the policy
+it is to maximize $ \tilde{r}  $.
+But just doing this won't yield the mixed Nash equilibrium --- the average over all
+of the final results of the game will thought.
+And that's why we're averaging the mixture.
+
+\subsection{Learning diverse skills}
+Let's say you have $n$ policies for $n$ skills.
+Most generally you could have:
+\begin{equation}
+		\pi(\bm{a}_{}|\bm{s}_{},z)
+\end{equation}
+i.e. a policy conditioned on $z$ which denotes the task index.
+However, reaching diverse \textbf{goals} is not the same as performing diverse \textbf{tasks}
+and not all behaviors can be captured by \textbf{goal-reaching}.
+The intuition is that different \textbf{skills} should visit different \textbf{state-space regions}.
+
+\subsubsection{Diversity-promoting reward function}
+\begin{equation}
+		\pi(\bm{a}_{}|\bm{s}_{},z) = \argmax_\pi \sum_{z}^{} E_{\bm{s}_{} \sim \pi(\bm{s}_{}|z)} \left[ r(\bm{s}_{},z) \right] 
+\end{equation}
+With this you can reward states that are unlikely for other $ z' \neq z  $.
+One way to do this is to have the reward function be a classifier which tries to see which $z$ you're doing
+based on which state you're in, ex:
+\begin{equation}
+		r(\bm{s}_{}, z) = \log p(z|\bm{s}_{})
+\end{equation}
+There's a connection to mutual information:
+\begin{equation}
+		I(z, \bm{s}_{}) = H(z) - H(z|\bm{s}_{})
+\end{equation}
+which is again maximized here
+because $H(z)$ is maximized by using a uniform prior and 
+$H(z|s)$ is minimized by maximizing $\log p(z|\bm{s}_{})$.
+
+\section{Generalisation gap}
+RL methods do not generalize as well as supervised learning techniques.
+Maybe we need more scaling and more variety in data?
+The problem is we're doing fundametally online learning (be it on or off policy).
+\paragraph{What makes modern machine learning work}
+Data.
+So can we develop data-driven RL methods?
+Enter off-policy reinforcement learning.
+The idea is that some policy collected the data beforehand.
+Would be cool if we could gather data once with some policy and then reuse it, otherwise we're stuck
+with needed to generate our own data every time.
+
+Let's formalize offline RL. First let's get some notation:
+\begin{itemize}
+		\item dataset: $ \mathcal{D} = \left\{ \left( \bm{s}_{i}, \bm{a}_{i}, \bm{s}_{i}', r_i \right)  \right\}   $
+		\item states: $ \bm{s}_{} \sim d^{\pi \beta}(\bm{s}_{})  $
+		\item actions $ \bm{a}_{} \sim \pi_\beta(\bm{a}_{}|\bm{s}_{})$
+		\item next states: $ \bm{s}_{}' \sim p(\bm{s}_{}'|\bm{s}_{}, \bm{a}_{})$
+		\item rewards: $r /leftarrow r(\bm{s}_{}, \bm{a}_{})$
+\end{itemize}
+and the RL objective is:
+\begin{equation}
+		\max_\pi \sum_{t=0}^{T} E_{\bm{s}_{t} \sim d^\pi(\bm{s}_{}), \bm{a}_{t} \sim \pi(\bm{a}_{}|\bm{s}_{})} \left[ \gamma^t r (\bm{s}_{t}, \bm{a}_{t} ) \right] 
+\end{equation}
+
+Let's talk about off-policy evaluation.
+Given $ \mathcal{D} $, estimate $ J(\pi) = E_{\pi} \left( \sum_{t=1}^{T} r (\bm{s}_{t}, \bm{a}_{t} ) \right)  $.
+Offine reinforcement learning, also called batch RL and sometimes fully off-policy RL.
+Given $ \mathcal{D} $, learn the best possible policy $ \pi_\theta $.
+This is not the best possible policy for the MDP, but the best policy given your dataset.
+
+What should a good offline RL algorithm do?
+\begin{enumerate}
+		\item find the ``good stuff'' in a dataset with both good and bad behaviors
+		\item generalize --- realize that good behavior in one place may also be good in another place
+		\item do ``stiching'' --- combine parts of good behaviors into a superior behavior 
+				(if one goes from A to B well and another from B to C, combine into optimal path from A to C)
+\end{enumerate}
+
+What do we expect offline RL methods to do?
+Not do imitation learning! It should be provably better.
+Instead, it should be able to extract order from chaos by stiching and generalizing.
+Thus it should be able to achieve amazing performance even from poor data.
+
+An example: have data of a robot that pick an object from a drawer and open a drawer.
+Ask it to do both even if it has never seen that before and it should be able to do so.
+This is superior to standard RL where the policy only works from known starting states.
+
+\subsubsection{Why is offline RL hard?}
+There's a fundametal problem of counterfactual queries.
+Say a policy generates some action which wasn't in the dataset.
+We have no way of knowing wether it's good or bad. In online RL,
+the policy would try that action, see that it was bad, and never repeat it again.
+But we'd like offline RL methods to somehow account for these unseen
+``out-of-distribution'' actions, ideally in a safe way.
+And we'd still like the generalization to happen!
+So it's a complicated tradeoff.
+In statistics this is called \textbf{distribution shift},
+i.e. the problem of training under one distribution and need to perform under another distribution,
+leading to bad performance.
+For example, let's say you're doing supervised learning:
+\begin{equation}
+		\theta \leftarrow \argmin_\theta E_{\bm{x}_{} \sim p(\bm{x}_{}), y \sim p(y|\bm{x}_{})} 
+		\left[ (f_\theta(\bm{x}_{}) - y)^2 \right] 
+\end{equation}
+where $y  $ is the ground truth we're regressing onto.
+The examples come from $ p(\bm{x}_{}) $ and $y$s come from $ p(y|\bm{x}) $.
+This is called empirical risk minimization (ERM)
+ (the given equation is the actual risk).
+
+ Question: given some $ \bm{x}_{}^\star $, is $ f_\theta(\bm{x}_{}^\star )$ correct?
+ Well, if you didn't overfit,
+ \begin{equation}
+E_{\bm{x}_{} \sim p(\bm{x}_{}), y \sim p(y|\bm{x}_{})} 
+		\left[ (f_\theta(\bm{x}_{}) - y)^2 \right]
+\end{equation} 
+is low.
+But 
+\begin{equation}
+   	 E_{\bm{x}_{} \sim \bar{p}(\bm{x}_{}), y \sim p(y|\bm{x}_{})} 
+   	\left[ (f_\theta(\bm{x}_{}) - y)^2 \right]
+\end{equation} 
+is not for general $ \bar{p}(\bm{x}) \neq p(\bm{x}_{}) $.
+What if $ \bm{x}_{}^\star \sim p(\bm{x}_{}) $?
+Not necessarily.
+But shouldn't neural networks generalize and overcome this problem?
+That could happen, but if
+$ \bm{x}_{}^\star \leftarrow \argmax_{\bm{x}} f_\theta(\bm{x}_{}) $?
+Well then we have a problem.
+This is what happens with adversarial examples.
+
+\subsubsection{Where does RL suffer from distributional shift?}
+Let's look at Q-learning:
+\begin{equation}
+		Q (\bm{s}_{}, \bm{a}_{} ) \leftarrow
+		r (\bm{s}_{}, \bm{a}_{} ) + \max_{\bm{a}_{}'} Q (\bm{s}_{}', \bm{a}_{}' )
+\end{equation}
+we could equivalently write this as:
+\begin{equation}
+		Q (\bm{s}_{}, \bm{a}_{} ) \leftarrow
+		\underbrace{r (\bm{s}_{}, \bm{a}_{} ) + E_{\bm{a}_{}' \sim \pi_{\text{new}}} \left[    Q (\bm{s}_{}', \bm{a}_{}' )\right]}_{y (\bm{s}_{}, \bm{a}_{} )}
+\end{equation}
+So the objective is:
+\begin{equation}
+	\min_{Q} E_{(\bm{s}_{}, \bm{a}_{} )\sim \pi_{\beta}(\bm{s}_{}, \bm{a}_{} )}
+	\left[ \left( Q (\bm{s}_{}, \bm{a}_{} ) - y (\bm{s}_{}, \bm{a}_{} ) \right)^{2}  \right] 
+\end{equation}
+where $ \pi_{\beta}  $ is the behavioral policy and
+$ y (\bm{s}_{}, \bm{a}_{} ) $ is the target value.
+We expect good accuracy when $ \pi_{\beta} (\bm{a}_{}|\bm{s}_{}) = \pi_{\text{new}} (\bm{a}_{}|\bm{s}_{})  $.
+But that's not going to happen beucase we want $ \pi_{\text{new}}  $
+to be better.
+Even worse,
+\begin{equation}
+		\pi_{\text{new}} = \argmax_{\pi} E_{\bm{a}_{}\sim p(\bm{a}_{}|\bm{s}_{}) } \left[ Q (\bm{s}_{}, \bm{a}_{} ) \right] 
+\end{equation}
+so we exactly have distributional shift.
+We are explicity finding adversarial examples when training $ \pi_{\text{new}}  $
+Furthermore, the issues with generalization which are correct in the online
+setting are not correct in the offline setting.
+So existing challenges with sampling error and function approximation error in standar RL
+become much more severe in offline RL.
+
+\subsection{Batch RL via importance sampling}
+The classic, pre-deep learning offline learning methods.
+Let's do what we did when we derived off-policy policy gradients.
+The RL objective is:
+\begin{equation}
+		\max_{\pi} \sum_{t=0}^{T} E_{\bm{s}_{t}\sim d^{\pi}, \bm{a}_{t}\sim \pi (\bm{a}_{}|\bm{s}_{})}
+		\left[ \gamma^{t} r (\bm{s}_{t}, \bm{a}_{t} ) \right] 
+\end{equation}
+The policy gradient is:
+\begin{align}
+		\nabla_{\theta} J(\theta) &= E_{\tau \sim \pi_{\theta}(\tau)}
+\left[ \sum_{t=0}^{T} \nabla_{\theta} \gamma^{t} \log \pi_{\theta} (\bm{a}_{t}| \bm{s}_{t} ) \hat{Q} (\bm{s}_{t}, \bm{a}_{t} ) \right]  \\
+  &\approx \sum_{i=1}^{N} \sum_{t=0}^{T} \nabla_{\theta} \gamma^{t} \log \pi_{\theta} (\bm{a}_{t,i}| \bm{s}_{t,i} )
+  \hat{Q} (\bm{s}_{t,i}, \bm{a}_{t,i} )
+\end{align}
+where we can't sample from $ \pi_{\theta}  $ because we only
+have samples from $ \pi_{\beta}  $ so we do importance sampling:
+\begin{equation}
+\nabla_{\theta} J(\theta) \approx 
+\frac{1}{N} \sum_{i=1}^{N} 
+\underbrace{\frac{\pi_{\theta}(\tau_i)}{\pi_\beta(\tau_i)} }_{\text{importance weight}}
+\sum_{t=0}^{T} 
+\nabla_{\theta} \gamma^t \log \pi_\theta (\bm{a}_{t,i}| \bm{s}_{t,i} ) \hat{Q} (\bm{s}_{t,i}, \bm{a}_{t,i} )
+\end{equation}
+where the problem is that
+\begin{equation}
+		\frac{\pi_\theta(\tau)}{\pi_\beta(\tau)} =
+		\frac{\cancel{p(\bm{s}_{1}) \prod_{t}^{} p(\bm{s}_{t+1}| \bm{s}_{t}, \bm{a}_{t})} \pi_\theta (\bm{a}_{t}| \bm{s}_{t} ) }
+		{\cancel{p(\bm{s}_{1}) \prod_{t}^{} p(\bm{s}_{t+1}| \bm{s}_{t}, \bm{a}_{t})} \pi_\beta (\bm{a}_{t}| \bm{s}_{t} ) } 	
+\end{equation}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

@@ -42,3 +42,8 @@
 \BOOKMARK [2][-]{subsection.1.12.2}{Posterior sampling in deep RL}{section.1.12}% 42
 \BOOKMARK [2][-]{subsection.1.12.3}{Information gain in DRL}{section.1.12}% 43
 \BOOKMARK [2][-]{subsection.1.12.4}{Exploration with model errors}{section.1.12}% 44
+\BOOKMARK [2][-]{subsection.1.12.5}{Unsupervised exploration}{section.1.12}% 45
+\BOOKMARK [1][-]{section.1.13}{Unsupervised reinforcement learning \(sketches\)}{chapter.1}% 46
+\BOOKMARK [2][-]{subsection.1.13.1}{Learning diverse skills}{section.1.13}% 47
+\BOOKMARK [1][-]{section.1.14}{Generalisation gap}{chapter.1}% 48
+\BOOKMARK [2][-]{subsection.1.14.1}{Batch RL via importance sampling}{section.1.14}% 49
