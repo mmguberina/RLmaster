@@ -1,0 +1,58 @@
+\documentclass{article}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsfonts}
+\usepackage[T1]{fontenc}
+\usepackage{bm}
+\usepackage{array}
+\usepackage{graphicx}
+\usepackage[utf8]{inputenc}
+
+\title{Paper summary: Never give up: learning directed exploration strategies}
+
+\begin{document}
+\maketitle
+
+
+\section{Idea in few sentances}
+
+
+
+\section{Explanation of the central concept}
+
+
+
+
+\section{Methodology}
+
+
+\section{Initial rambly notes}
+
+
+\subsection{Abstract}
+A RL designed to solve hard exploration problems is proposed.
+The idea is to learn a range of directed exploratory policies. 
+An episodic memory-based intrinsic reward is constructed using k-nearest neighbors over the agent's recent experience.
+That reward is used to train the directed exploratory policies, thereby ecouraging the agent to
+repeatedly revisit all states in its environment.
+A self-supervised inverse dynamics model is used to train the embedding of the nearest neighbor lookup
+so that the novelty is biased toward what the agent can control.
+Universal value function approximators (UVFA) are used to simultaneously learn the different directed
+exploratory policies within the same neural network.
+
+Apparently i need to go over transfer and inverse reinforcement learning to read this...................
+Well
+back to the berkley lectures then.
+
+\subsection{Introduction}
+
+\subsection{Method}
+
+\subsection{Other stuff}
+
+
+
+
+
+
+\end{document}
