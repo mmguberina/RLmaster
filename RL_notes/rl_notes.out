@@ -35,18 +35,19 @@
 \BOOKMARK [2][-]{subsection.1.8.3}{Practical methods and notes}{section.1.8}% 35
 \BOOKMARK [1][-]{section.1.9}{Optimal control and planning}{chapter.1}% 36
 \BOOKMARK [2][-]{subsection.1.9.1}{Trajectory optimization with derivatives}{section.1.9}% 37
-\BOOKMARK [1][-]{section.1.10}{Model-based reinforcement learning}{chapter.1}% 38
-\BOOKMARK [2][-]{subsection.1.10.1}{Uncertainty in model-based RL}{section.1.10}% 39
-\BOOKMARK [2][-]{subsection.1.10.2}{Model-based reinforcement learning with images}{section.1.10}% 40
-\BOOKMARK [1][-]{section.1.11}{Model-based policy learning}{chapter.1}% 41
-\BOOKMARK [2][-]{subsection.1.11.1}{Model-free learning with a model}{section.1.11}% 42
-\BOOKMARK [1][-]{section.1.12}{Exploration algorithms}{chapter.1}% 43
-\BOOKMARK [2][-]{subsection.1.12.1}{Exploration in deep reinforcement learning}{section.1.12}% 44
-\BOOKMARK [2][-]{subsection.1.12.2}{Posterior sampling in deep RL}{section.1.12}% 45
-\BOOKMARK [2][-]{subsection.1.12.3}{Information gain in DRL}{section.1.12}% 46
-\BOOKMARK [2][-]{subsection.1.12.4}{Exploration with model errors}{section.1.12}% 47
-\BOOKMARK [2][-]{subsection.1.12.5}{Unsupervised exploration}{section.1.12}% 48
-\BOOKMARK [1][-]{section.1.13}{Unsupervised reinforcement learning \(sketches\)}{chapter.1}% 49
-\BOOKMARK [2][-]{subsection.1.13.1}{Learning diverse skills}{section.1.13}% 50
-\BOOKMARK [1][-]{section.1.14}{Generalisation gap}{chapter.1}% 51
-\BOOKMARK [2][-]{subsection.1.14.1}{Batch RL via importance sampling}{section.1.14}% 52
+\BOOKMARK [2][-]{subsection.1.9.2}{LQR for stochastic and nonlinear systems}{section.1.9}% 38
+\BOOKMARK [1][-]{section.1.10}{Model-based reinforcement learning}{chapter.1}% 39
+\BOOKMARK [2][-]{subsection.1.10.1}{Uncertainty in model-based RL}{section.1.10}% 40
+\BOOKMARK [2][-]{subsection.1.10.2}{Model-based reinforcement learning with images}{section.1.10}% 41
+\BOOKMARK [1][-]{section.1.11}{Model-based policy learning}{chapter.1}% 42
+\BOOKMARK [2][-]{subsection.1.11.1}{Model-free learning with a model}{section.1.11}% 43
+\BOOKMARK [1][-]{section.1.12}{Exploration algorithms}{chapter.1}% 44
+\BOOKMARK [2][-]{subsection.1.12.1}{Exploration in deep reinforcement learning}{section.1.12}% 45
+\BOOKMARK [2][-]{subsection.1.12.2}{Posterior sampling in deep RL}{section.1.12}% 46
+\BOOKMARK [2][-]{subsection.1.12.3}{Information gain in DRL}{section.1.12}% 47
+\BOOKMARK [2][-]{subsection.1.12.4}{Exploration with model errors}{section.1.12}% 48
+\BOOKMARK [2][-]{subsection.1.12.5}{Unsupervised exploration}{section.1.12}% 49
+\BOOKMARK [1][-]{section.1.13}{Unsupervised reinforcement learning \(sketches\)}{chapter.1}% 50
+\BOOKMARK [2][-]{subsection.1.13.1}{Learning diverse skills}{section.1.13}% 51
+\BOOKMARK [1][-]{section.1.14}{Generalisation gap}{chapter.1}% 52
+\BOOKMARK [2][-]{subsection.1.14.1}{Batch RL via importance sampling}{section.1.14}% 53

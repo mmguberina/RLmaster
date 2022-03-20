@@ -1936,8 +1936,335 @@ Here $N$ is the number of times a state has been visited and $Q$ is the return o
 Of course, you can do MCTS with RL and use value functions to do the estimated values for leaf nodes (ex. AlphaGo).
 
 \subsection{Trajectory optimization with derivatives}
-Skipping this as it's mostly about LQR which I won't be using soon (because right now I'm working with pixels).
-This is lecture 10, parts 3, 4 and 5.
+Let's try to tackle continous action spaces.
+This is in the domain of \textit{optimal control} and these people traditionally
+denote states with $ \bm{x}_{t}  $ and actions with $ \bm{u}_{t}  $.
+Then an optimal control problem is an optimization problem of the form:
+\begin{equation}
+		\min_{\bm{u}_{1}, \dots, \bm{u}_{T}} \sum_{t=1}^{T} c(\bm{x}_{t}, \bm{u}_{t} ) \text{ s.t. } \bm{x}_{t} = f (\bm{x}_{t-1}, \bm{u}_{t-1} )
+\end{equation}
+which can be written in unconstrained form as:
+\begin{equation}
+		\min_{\bm{u}_{1}, \dots, \bm{u}_{T}} 
+		c (\bm{x}_{1}, \bm{u}_{1} ) + c (f(\bm{x}_{1}, \bm{u}_{1} ), \bm{u}_{2}) + \cdots + c ( f  (f ( \dots) \dots), \bm{u}_{T}) 
+\end{equation}
+Which we solve by differantiation through backpropagation and optimization.
+Thus we need to use the chain rule and know the relevant derivatives.
+In practise, $ 2^{ \text{nd} }  $ order methods make a huge difference.
+
+There are two types of methods:
+\textbf{shooting methods} and \textbf{collocation}.
+Shooting methods optimize over actions only. They generate 
+trajectories that can be taken to approximatelly optimal results ---
+after picking the first action they ``shoot'' into the state space and see where it lands.
+Collocation methods optimize over actions and states, with constraints.
+So they define plenty of points over the trajectory and thus provide finer control
+over the whole trajectory.
+They are more complex, but are better conditioned than shooting methods.
+
+\subsubsection{Linear case: LQR}
+We're looking at the problem written in unconstrained form.
+Let's look at the deterministic linear controller
+\begin{equation}
+f (\bm{x}_{t}, \bm{u}_{t} ) = \bm{F}_{t} \begin{bmatrix} \bm{x}_{t} \\ \bm{u}_{t} \end{bmatrix} + \bm{f}_{t}
+\end{equation}
+and assume that the constraints are quadratic:
+\begin{equation}
+c (\bm{x}_{t}, \bm{u}_{t} ) = \frac{1}{2} \begin{bmatrix} \bm{x}_{t} \\ \bm{u}_{t} \end{bmatrix}^{ T } 
+\bm{C}_{t} \begin{bmatrix} \bm{x}_{t} \\ \bm{u}_{t} \end{bmatrix} + \begin{bmatrix} \bm{x}_{t} \\ \bm{u}_{t} \end{bmatrix}^{ T } \bm{c}_{t}
+\end{equation}
+And this is why this is called the linear quadratic regulator.
+While this is a linear regulator, it's a different linear regulator at every timestep.
+Let's first solve the base case, i.e. solving for $ \bm{u}_{T}  $ only.
+The total portion of the objective that depends on the last action is:
+\begin{equation}
+		Q (\bm{x}_{T}, \bm{u}_{T} ) = \text{const} + \frac{1}{2} \begin{bmatrix} \bm{x}_{T} \\ \bm{u}_{T} \end{bmatrix}^{ T } 
+\bm{C}_{T} \begin{bmatrix} \bm{x}_{T} \\ \bm{u}_{T} \end{bmatrix} + \begin{bmatrix} \bm{x}_{T} \\ \bm{u}_{T} \end{bmatrix}^{ T } \bm{c}_{T}
+\end{equation}
+Let's break $ \bm{C}_{T}  $ into:
+\begin{equation}
+		\bm{C}_{T} = 
+		\begin{bmatrix} 
+				\bm{C}_{\bm{x}_{T}, \bm{x}_{T}} &  \bm{C}_{\bm{x}_{T}, \bm{u}_{T}} \\
+				\bm{C}_{\bm{u}_{T}, \bm{x}_{T}} & \bm{C}_{\bm{u}_{T}, \bm{u}_{T}}
+		\end{bmatrix} 
+\end{equation}
+and
+\begin{equation}
+		\bm{c}_{T} = \begin{bmatrix} \bm{c}_{\bm{x}_{T}} \\ \bm{c}_{\bm{u}_{T}} \end{bmatrix} 
+\end{equation}
+The derivative w.r.t $ \bm{u}_{T}  $is:
+\begin{equation}
+\nabla_{ \bm{u}_{T} } Q (\bm{x}_{T}, \bm{u}_{T} ) = 
+\bm{C}_{ \bm{u}_{T}, \bm{x}_{T} } \bm{x}_{T} + 
+\bm{C}_{ \bm{u}_{T}, \bm{u}_{T} } \bm{u}_{T} +
+\bm{c}_{\bm{u}_{T}}^{ T } = 0
+\end{equation}
+Let's group the linear terms, thus obtaining the solution for $ \bm{u}_{T}  $:
+\begin{equation}
+\bm{u}_{T} = - \bm{C}_{\bm{u}_{T}, \bm{u}_{T} }^{ -1 } \left( \bm{C}_{\bm{u}_{T}, \bm{x}_{T}}\bm{x}_{T} + \bm{c}_{\bm{u}_{T}} \right) 	
+\end{equation}
+we can simplify this into:
+\begin{equation}
+		\bm{u}_{T} = \bm{K}_{T} \bm{x}_{T} + \bm{k}_{T}
+\end{equation},
+where $ \bm{K}_{T} =- \bm{C}_{\bm{u}_{T}, \bm{u}_{T} }^{ -1 }  \bm{C}_{\bm{u}_{T}, \bm{x}_{T}}   $
+and $ \bm{k}_{T} =  - \bm{C}_{\bm{u}_{T}, \bm{u}_{T} }^{ -1 } \bm{c}_{\bm{u}_{T}} $
+but the problem is that the solution depends on the state.
+However, since $ \bm{u}_{T}  $ is fully determined by $ \bm{x}_{T}  $, we can eliminate it via substitution:
+\begin{equation}
+V (\bm{x}_{T}) = \text{const} + \frac{1}{2} \begin{bmatrix} \bm{x}_{T} \\ \bm{K}_{T} \bm{x}_{T} + \bm{k}_{T} \end{bmatrix}^{ T } 
+\bm{C}_{T} \begin{bmatrix} \bm{x}_{T} \\ \bm{K}_{T} \bm{x}_{T} + \bm{k}_{T} \end{bmatrix} + \begin{bmatrix} \bm{x}_{T} \\ \bm{K}_{T} \bm{x}_{T} + \bm{k}_{T} \end{bmatrix}^{ T } \bm{c}_{T}
+\end{equation}
+this is now the value function, denoting the case where
+you start in the state $ \bm{x}_{T}  $ and follow the action that minimizes cost.
+Still a quadratic term.
+We can do the matrix algebra and get the following result (I'm skipping a bit of this as it's so nasty and not really important):
+\begin{align}
+V (\bm{x}_{T}) &= \text{const} + \frac{1}{2} \bm{x}_{T}^{ T } \bm{V}_{T} \bm{x}_{T} + \bm{x}_{T}^{ T }\bm{v}_{T} \\
+\bm{V}_{T} &= \bm{C}_{\bm{x}_{T}, \bm{u}_{T}} + \bm{C}_{\bm{x}_{T}, \bm{u}_{T}} \bm{K}_{T} 
++ \bm{K}_{T}^{ T } \bm{C}_{\bm{u}_{T}, \bm{x}_{T}} + \bm{K}_{T}^{ T } \bm{C}_{\bm{u}_{T},\bm{u}_{T} }\bm{K}_{T}\\
+\bm{v}_{T} &= \bm{c}_{\bm{x}_{T}} + \bm{C}_{\bm{x}_{T}, \bm{u}_{T}} \bm{k}_{T} + \bm{K}_{T}^{ T } \bm{C}_{\bm{u}_{T}} +
+\bm{K}_{T}^{ T } \bm{C}_{\bm{u}_{T}, \bm{u}_{T}} \bm{k}_{T}
+\end{align}
+While this is ugly, it's mathematically simple (linear and quadratic terms only).
+Let's now solve for $ \bm{u}_{T-1}  $ in terms of $ \bm{x}_{T-1}  $.
+Note that $ \bm{u}_{T-1}  $ affects $ \bm{x}_{T}  $ and that of course
+depends on the dynamics:
+\begin{equation}
+f (\bm{x}_{T-1}, \bm{u}_{T-1}) = \bm{x}_{T} = \bm{F}_{T-1} 
+\begin{bmatrix} \bm{x}_{T-1} \\ \bm{u}_{T-1} \end{bmatrix}  + \bm{f}_{T-1}
+\end{equation}
+Now the Q-value at $ T-1  $ looks like:
+\begin{equation}
+Q (\bm{x}_{T-1}, \bm{u}_{T-1}) =
+\text{const } + \frac{1}{2} 
+\begin{bmatrix} \bm{x}_{T-1} \\ \bm{u}_{T-1} \end{bmatrix}^{ T } \bm{C}_{T-1}
+\begin{bmatrix} \bm{x}_{T-1} \\ \bm{u}_{T-1} \end{bmatrix} + 
+\begin{bmatrix} \bm{x}_{T-1} \\ \bm{u}_{T-1} \end{bmatrix}^{ T } \bm{c}_{T-1} +
+V (f (\bm{x}_{T-1}, \bm{u}_{T-1}))
+\end{equation}
+and now we'll substitute our linear equation for $ \bm{x}_{T}  $ in place of $ f  $ 
+and substiture the quadratic expression for $ \bm{x}_{T}  $ in place of $ V  $ (the things we arrived at at the end
+of the derivation for optimal $ \bm{u}_{T}  $).
+This is again too ugly to write tbh.
+But after this step we collect the quadratic and the linear terms:
+\begin{align}
+Q (\bm{x}_{T-1}, \bm{u}_{T-1}) &= \text{const } + \frac{1}{2} 
+\begin{bmatrix} \bm{x}_{T-1} \\ \bm{u}_{T-1} \end{bmatrix}^{ T } Q_{ T-1 } +
+\begin{bmatrix} \bm{x}_{T-1} \\ \bm{u}_{T-1} \end{bmatrix}^{ T } \bm{q}_{T-1} \\
+Q_{ T-1 } &= C_{ T-1 } + F_{ T-1 }^{ T }V_{ T }F_{ T-1 }\\
+q_{ T-1 } &= c_{ T-1 } + F_{ T-1 }^{ T }V_{ T }f_{ T-1 } + \bm{F}_{T-1}^{ T }\bm{v}_{T}
+\end{align}
+and now we can write the derivative of $ Q (\bm{x}_{T-1}, \bm{u}_{T-1})  $:
+\begin{equation}
+\nabla_{ \bm{u}_{T-1} } Q (\bm{x}_{T-1}, \bm{u}_{T-1}) =
+\bm{Q}_{\bm{u}_{T-1}, \bm{x}_{T-1}}\bm{x}_{T-1} +
+\bm{Q}_{\bm{u}_{T-1}, \bm{u}_{T-1}}\bm{u}_{T-1} + \bm{q}_{\bm{u}_{T-1}}^{ T } = 0
+\end{equation}
+The form of this is identical to the previos one, which means that the solution will be identical:
+\begin{equation}
+\bm{u}_{T-1} = \bm{K}_{T-1}\bm{x}_{T-1} + \bm{k}_{T-1}
+\end{equation}
+where 
+\begin{align}
+\bm{K}_{T-1} &= - \bm{Q}_{\bm{u}_{T-1}, \bm{u}_{T-1}}^{-1 } \bm{Q}_{\bm{u}_{T-1}, \bm{x}_{T-1}} \\
+\bm{k}_{T-1} = - \bm{Q}_{\bm{u}_{T-1}, \bm{u}_{T-1}}^{-1 } \bm{q}_{\bm{u}_{T-1}}
+\end{align}
+Clearly, we can express our solution as a backward recursion from the last timestep.
+
+For $ t=T  $ to $ 1  $:
+\begin{align}
+Q_{ t } &= C_{ t } + F_{ t }^{T}V_{ t+1 }F_{ t }\\
+q_{ t } &= c_{ t } + F_{ t }^{T}V_{ t+1 }f_{ t } + \bm{F}_{t}^{ t+1 }\bm{v}_{t+1}\\
+Q (\bm{x}_{t}, \bm{u}_{t}) &= \text{const } + \frac{1}{2} 
+\begin{bmatrix} \bm{x}_{t} \\ \bm{u}_{t} \end{bmatrix}^{ T } \bm{Q}_{ t }
+\begin{bmatrix} \bm{x}_{t} \\ \bm{u}_{t} \end{bmatrix} 
++\begin{bmatrix} \bm{x}_{t} \\ \bm{u}_{t} \end{bmatrix}^{ T }\bm{q}_{t} \\
+\bm{u}_{t} &\leftarrow \argmin_{\bm{u}_{t}} Q (\bm{x}_{t}, \bm{u}_{t} ) =
+\bm{K}_{t} \bm{x}_{t} + \bm{k}_{t}\\
+\bm{K}_{t} &= - \bm{Q}_{\bm{u}_{t}, \bm{u}_{t}}^{-1 } \bm{Q}_{\bm{u}_{t}, \bm{x}_{t}} \\
+\bm{k}_{t} &= - \bm{Q}_{\bm{u}_{t}, \bm{u}_{t}}^{-1 } \bm{q}_{\bm{u}_{t}}\\
+\bm{V}_{t} &=
+\bm{Q}_{\bm{x}_{t}, \bm{x}_{t}} + \bm{Q}_{\bm{x}_{t}, \bm{u}_{t}} \bm{K}_{t} +
+\bm{K}_{t}^{ T } \bm{Q}_{\bm{u}_{t}, \bm{x}_{t}} +
+\bm{K}_{t} \bm{Q}_{\bm{u}_{t}, \bm{u}_{t}}\bm{K}_{t} \\
+\bm{v}_{t} &=
+\bm{q}_{\bm{x}_{t}} + \bm{Q}_{\bm{x}_{t}, \bm{u}_{t}} \bm{k}_{t} +
+\bm{K}_{t}^{ T } \bm{Q}_{\bm{u}_{t}, \bm{u}_{t}} \bm{k}_{t} \\
+V (\bm{x}_{t}) &= \text{const} + \frac{1}{2} 
+\bm{x}_{t}^{ T } \bm{V}_{t}\bm{x}_{t} +\bm{x}_{t}^{ T }\bm{v}_{t}\\
+& \text{and now repeat for the next t}
+\end{align}
+
+Once we get to $ t=1  $, we
+can then compute the forward recursion:
+
+for $ t=1  $ to $ T  $:
+\begin{align}
+		\bm{u}_{t} &= \bm{K}_{t}\bm{x}_{t} + \bm{k}_{t} \\
+		\bm{x}_{t+1} &= f (\bm{x}_{t}, \bm{u}_{t} )
+\end{align}
+Here the $ Q (\bm{x}_{t}, \bm{u}_{t} ) $ and $ V (\bm{x}_{t})  $ functions really are the
+value functions we're familiar with.
+
+\subsection{LQR for stochastic and nonlinear systems}
+Let's start with the special case where the noise is multivariate Gaussian.
+Then the system looks like this:
+\begin{align}
+f (\bm{x}_{t}, \bm{u}_{t} ) &= \bm{F}_{t} \begin{bmatrix} \bm{x}_{t} \\ \bm{u}_{t} \end{bmatrix} + \bm{f}_{t} \\
+\bm{x}_{t+1} &\sim p (\bm{x}_{t+1}| \bm{x}_{t}, \bm{u}_{t}) \\
+p (\bm{x}_{t+1}| \bm{x}_{t}, \bm{u}_{t}) &= 
+\mathcal{N} \left( \bm{F}_{t} \begin{bmatrix} \bm{x}_{t} \\ \bm{u}_{t} \end{bmatrix} + \bm{f}_{t}, \Sigma_{ t }  \right) 
+\end{align}
+In this case it turns out that the determinstic control law is still optimal.
+Hence, the solution is to choose actions accordint to $ \bm{u}_{t} = \bm{K}_{t}\bm{x}_{t} + \bm{k}_{t}  $.
+We're not going to derive this here, 
+but the intuition is that the Gaussian is symmetric so the noise cancels out.
+However, adding noise changes the states we find ourselves in.
+Beucase of this, you can't derive an open-loop control law, but you can treat
+the expression for the optimal action as a controller, i.e. as a policy $ \bm{u}_{t} = \bm{K}_{t}\bm{x}_{t} + \bm{k}_{t}  $.
+Also, convenietly, the expectation of a quadratic under a Gaussian has an analytic solution.
+Also, $ \bm{x}_{t} \sim p (\bm{x}_{t})  $ will be Gaussian.
+But again, importantly, you're not getting a sequence of actions, but a closed loop control law.
+Also, the controller is potentially different at every timestep.
+
+But let's now talk about the nonlinear case:
+
+\subsubsection{Nonlinear case: differential dynamic programming (DDP)/ iterative LQR}
+The first thing to do is, of course,
+ask whether we can \textit{approximate} a nonlinear system as a linear-quadratic system?
+And, of course, we'll use the Taylor expansion:
+\begin{align}
+f (\bm{x}_{t}, \bm{u}_{t} ) &\approx f (\hat{\bm{x}}_{t}, \hat{\bm{u}}_{t} ) + 
+\nabla_{ \bm{x}_{t}, \bm{u}_{t} } f (\hat{\bm{x}}_{t}, \hat{\bm{u}}_{t} ) 
+\begin{bmatrix} \bm{x}_{t} - \hat{\bm{x}_{t}}\\ \bm{u}_{t} - \hat{\bm{u}_{t}} \end{bmatrix} \\
+c (\bm{x}_{t}, \bm{u}_{t} ) &\approx
+c (\hat{\bm{x}}_{t}, \hat{\bm{u}}_{t} ) + \nabla_{ \bm{x}_{t}, \bm{u}_{t} } c (\hat{\bm{x}}_{t}, \hat{\bm{u}}_{t} )
+\begin{bmatrix} \bm{x}_{t} - \hat{\bm{x}_{t}}\\ \bm{u}_{t} - \hat{\bm{u}_{t}} \end{bmatrix}
++ \frac{1}{2} \begin{bmatrix} \bm{x}_{t} - \hat{\bm{x}_{t}}\\ \bm{u}_{t} - \hat{\bm{u}_{t}} \end{bmatrix}^{ T }
+\nabla_{ \bm{x}_{t}, \bm{u}_{t} }^{ T } c (\hat{\bm{x}}_{t}, \hat{\bm{u}}_{t} ) \begin{bmatrix} \bm{x}_{t} - \hat{\bm{x}_{t}}\\ \bm{u}_{t} - \hat{\bm{u}_{t}} \end{bmatrix}
+\end{align}
+where the hats are the best states found so far (so we're linearizing around them).
+With this we can express the dynamics and the cost function around
+the linearized points as:
+\begin{align}
+\bar{f} (\delta\bm{x}_{t}, \delta\bm{u}_{t} ) &= \bm{F}_{t} \begin{bmatrix} \delta\bm{x}_{t} \\ \delta\bm{u}_{t} \end{bmatrix} \\
+\bar{c} (\delta\bm{x}_{t}, \delta\bm{u}_{t} ) &=
+\frac{1}{2} \begin{bmatrix} \delta\bm{x}_{t} \\ \delta\bm{u}_{t} \end{bmatrix}^{ T }
+\bm{C}_{t} \begin{bmatrix} \delta\bm{x}_{t} \\ \delta\bm{u}_{t} \end{bmatrix} +
+\begin{bmatrix} \delta\bm{x}_{t} \\ \delta\bm{u}_{t} \end{bmatrix}^{ T } \bm{c}_{t}
+\end{align}
+and how we have deviations from $ (\hat{\bm{x}}_{}, \hat{\bm{u}}_{} )  $,
+which are:
+\begin{align}
+\delta \bm{x}_{t} = \bm{x}_{t} - \hat{\bm{x}_{t}} \\
+\delta \bm{u}_{t} = \bm{u}_{t} - \hat{\bm{u}_{t}} \\
+\end{align}
+Now we can plug this into the regular LQR algorithm and we're good to go,
+i.e. use LQR with dynamics $ \bar{f}  $, cost $ \bar{c}  $,
+state $ \delta\bm{x}_{t}   $ and action $ \delta \bm{u}_{t}  $.
+Once we solve that, we get a new $ (\hat{\bm{x}}_{t}, \hat{\bm{u}}_{t} )  $
+and we repeat.
+
+This algorithm is called \textbf{iterative LQR} and here's the pseudocode:
+run until convergence:
+\begin{enumerate}
+\item $ \bm{F}_{t} = \nabla_{ \bm{x}_{t}, \bm{u}_{t} } f (\hat{\bm{x}}_{t}, \hat{\bm{u}}_{t} )  $
+\item $ \bm{c}_{t} = \nabla_{ \bm{x}_{t}, \bm{u}_{t} } c (\hat{\bm{x}}_{t}, \hat{\bm{u}}_{t} )  $
+\item $ \bm{C}_{t} = \nabla_{ \bm{x}_{t}, \bm{u}_{t} }^{ 2 } c (\hat{\bm{x}}_{t}, \hat{\bm{u}}_{t} )  $
+\item run LQR backward pass on state $ \delta\bm{x}_{t} = \bm{x}_{t} - \hat{\bm{x}_{t}}  $
+		and action $ \delta \bm{u}_{t} = \bm{u}_{t} - \hat{\bm{u}_{t}}  $
+\item run forward pass with real nonlinear dynamics and $ \bm{u}_{t} =
+		\bm{K}_{t} (\bm{x}_{t} - \hat{\bm{x}_{t}}) + \bm{k}_{t} + \hat{\bm{u}}_{t}$
+\item update $ \hat{\bm{x}_{t}}  $ and $ \hat{\bm{u}_{t}}  $ based on states
+		and actions in forward pass. then repeat from 1.
+\end{enumerate}
+Why does this work?
+Let's compare this algorithm with Newton's method for
+computing $ \min_{\bm{x}_{}} g(\bm{x}_{})  $.
+That looks like:
+\begin{enumerate}
+		\item $ \bm{g}_{} = \nabla_{ \bm{x}_{} } g (\hat{\bm{x}_{}})  $
+		\item $\bm{H}_{} = \nabla_{ \bm{x}_{} }^{ 2 } g (\hat{\bm{x}_{}})   $
+		\item $ \hat{x} \leftarrow \argmin_{\bm{x}_{}} \frac{1}{2} 
+				(\bm{x}_{} - \hat{\bm{x}_{}})^{ T } \bm{H}_{} (\bm{x}_{} -\hat{\bm{x}_{}})
+				+ \bm{g}_{}^{ T } (\bm{x}_{} -\hat{\bm{x}_{}})$
+\end{enumerate}
+Iterative LQR (iLQR) is the same idea:
+locally approximate a nonlinear function ia Taylor expansion.
+In fact, iLQR is an approximation of Newton's method for solving:
+\begin{equation}
+\min_{\bm{1}_{}, \dots, \bm{u}_{T}} c (\bm{x}_{1}, \bm{u}_{1} )
++ c (f (\bm{x}_{1}, \bm{u}_{1} ), \bm{u}_{2}) + \cdots + c
+(f (f (\dots) \dots), \bm{u}_{T})
+\end{equation}
+
+To get Newton's method, you need to use the \textit{second order} dynamics approximation:
+\begin{equation}
+f (\bm{x}_{t}, \bm{u}_{t} ) \approx +
+\nabla_{ \bm{x}_{t}, \bm{u}_{t} } f (\hat{\bm{x}}_{t}, \hat{\bm{u}}_{t} )
+\begin{bmatrix} \delta \bm{x}_{t} \\ \delta \bm{u}_{t} \end{bmatrix} + \frac{1}{2}
+\left( \nabla_{ \bm{x}_{t}, \bm{u}_{t} }^{ T } f (\hat{\bm{x}}_{t}, \hat{\bm{u}}_{t} )
+\cdot  \begin{bmatrix} \delta \bm{x}_{t} \\ \delta \bm{u}_{t} \end{bmatrix}\right) 
+\begin{bmatrix} \delta \bm{x}_{t} \\ \delta \bm{u}_{t} \end{bmatrix}
+\end{equation}
+and that's what differential dynamic programming (DDP) does,
+but in practise you don't need to go that far.
+
+Why would doing the Newton method update be a bad idea?
+\begin{equation}
+		 \hat{x} \leftarrow \argmin_{\bm{x}_{}} \frac{1}{2} 
+				(\bm{x}_{} - \hat{\bm{x}_{}})^{ T } \bm{H}_{} (\bm{x}_{} -\hat{\bm{x}_{}})
+				+ \bm{g}_{}^{ T } (\bm{x}_{} -\hat{\bm{x}_{}})
+\end{equation}
+If you overshoot the optimum, you have a problem.
+In iLQR we can easily control how much we deviate from the point from which we're starting LQR by 
+adding a $ \alpha  $ parameter to the constant term in forward pass, getting:
+\begin{enumerate}
+\item $ \bm{F}_{t} = \nabla_{ \bm{x}_{t}, \bm{u}_{t} } f (\hat{\bm{x}}_{t}, \hat{\bm{u}}_{t} )  $
+\item $ \bm{c}_{t} = \nabla_{ \bm{x}_{t}, \bm{u}_{t} } c (\hat{\bm{x}}_{t}, \hat{\bm{u}}_{t} )  $
+\item $ \bm{C}_{t} = \nabla_{ \bm{x}_{t}, \bm{u}_{t} }^{ 2 } c (\hat{\bm{x}}_{t}, \hat{\bm{u}}_{t} )  $
+\item run LQR backward pass on state $ \delta\bm{x}_{t} = \bm{x}_{t} - \hat{\bm{x}_{t}}  $
+		and action $ \delta \bm{u}_{t} = \bm{u}_{t} - \hat{\bm{u}_{t}}  $
+\item run forward pass with real nonlinear dynamics and $ \bm{u}_{t} =
+		\bm{K}_{t} (\bm{x}_{t} - \hat{\bm{x}_{t}}) + \alpha \bm{k}_{t} + \hat{\bm{u}}_{t}$
+\item update $ \hat{\bm{x}_{t}}  $ and $ \hat{\bm{u}_{t}}  $ based on states
+		and actions in forward pass. then repeat from 1.
+\end{enumerate}
+You can search over $ \alpha  $ until improvement is achieved. Often
+some version of line search is used here.
+
+\subsubsection{Nonlinear model-predictive control}
+Comes from paper ``Synthesis and stabilization of complex behaviors through online trajectory optimization''.
+Idea is to at every time step:
+\begin{enumerate}
+		\item observe the state $ \bm{x}_{t}  $
+		\item use iLQR to plan $ \bm{u}_{t}, dots, \bm{u}_{T}  $ to minimize $ \sum_{t'=t}^{t+T} c (\bm{x}_{t'}, \bm{u}_{t'} )  $
+		\item execute action $ \bm{u}_{t}  $, discard $ \bm{u}_{t+1}, \dots, \bm{u}_{t+T}  $
+\end{enumerate}
+It enables us to use a model-based planner even when the states are unpredictable.
+Model predictive control is a fancy way of saying let's predict again at every timestep.
+The cool thing here is that this algorithm can discover behaviors and also
+be robust to perturbations.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 \section{Model-based reinforcement learning}
 We'll mostly be working with deterministic model of form $f (\bm{s}_{t}, \bm{a}_{t} ) = \bm{s}_{t+1} $,
@@ -2728,7 +3055,7 @@ Let's formalize offline RL. First let's get some notation:
 		\item states: $ \bm{s}_{} \sim d^{\pi \beta}(\bm{s}_{})  $
 		\item actions $ \bm{a}_{} \sim \pi_\beta(\bm{a}_{}|\bm{s}_{})$
 		\item next states: $ \bm{s}_{}' \sim p(\bm{s}_{}'|\bm{s}_{}, \bm{a}_{})$
-		\item rewards: $r /leftarrow r(\bm{s}_{}, \bm{a}_{})$
+		\item rewards: $r \leftarrow r(\bm{s}_{}, \bm{a}_{})$
 \end{itemize}
 and the RL objective is:
 \begin{equation}
