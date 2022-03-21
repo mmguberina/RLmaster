@@ -1,0 +1,61 @@
+\BOOKMARK [1][-]{section.0.1}{Plan}{}% 1
+\BOOKMARK [2][-]{subsection.0.1.1}{TODOs}{section.0.1}% 2
+\BOOKMARK [1][-]{section.0.2}{Immitation learning}{}% 3
+\BOOKMARK [1][-]{section.0.3}{Formal setting}{}% 4
+\BOOKMARK [2][-]{subsection.0.3.1}{Markov chain}{section.0.3}% 5
+\BOOKMARK [2][-]{subsection.0.3.2}{Markov decision process}{section.0.3}% 6
+\BOOKMARK [2][-]{subsection.0.3.3}{Partially observed Markov decision process}{section.0.3}% 7
+\BOOKMARK [2][-]{subsection.0.3.4}{Value functions}{section.0.3}% 8
+\BOOKMARK [1][-]{section.0.4}{Policy gradients}{}% 9
+\BOOKMARK [2][-]{subsection.0.4.1}{Reducing variance}{section.0.4}% 10
+\BOOKMARK [2][-]{subsection.0.4.2}{Off-policy gradients}{section.0.4}% 11
+\BOOKMARK [2][-]{subsection.0.4.3}{Advanced policy gradients}{section.0.4}% 12
+\BOOKMARK [1][-]{section.0.5}{Actor-critic algorithms}{}% 13
+\BOOKMARK [2][-]{subsection.0.5.1}{Policy evaluation}{section.0.5}% 14
+\BOOKMARK [2][-]{subsection.0.5.2}{From evaluation to actor-critic}{section.0.5}% 15
+\BOOKMARK [2][-]{subsection.0.5.3}{Aside: discount factors}{section.0.5}% 16
+\BOOKMARK [2][-]{subsection.0.5.4}{Actor-critic design choises}{section.0.5}% 17
+\BOOKMARK [2][-]{subsection.0.5.5}{Online actor-critic in practise}{section.0.5}% 18
+\BOOKMARK [2][-]{subsection.0.5.6}{Critics as state-dependent baselines}{section.0.5}% 19
+\BOOKMARK [1][-]{section.0.6}{Value function methods}{}% 20
+\BOOKMARK [2][-]{subsection.0.6.1}{Policy iteration}{section.0.6}% 21
+\BOOKMARK [2][-]{subsection.0.6.2}{From Q-iteration to Q-learning}{section.0.6}% 22
+\BOOKMARK [2][-]{subsection.0.6.3}{Value function in theory}{section.0.6}% 23
+\BOOKMARK [1][-]{section.0.7}{Deep RL with Q-functions}{}% 24
+\BOOKMARK [2][-]{subsection.0.7.1}{Target networks}{section.0.7}% 25
+\BOOKMARK [2][-]{subsection.0.7.2}{A general view of Q-learning}{section.0.7}% 26
+\BOOKMARK [1][-]{section.0.8}{Improving Q-learning}{}% 27
+\BOOKMARK [2][-]{subsection.0.8.1}{Double Q-learning}{section.0.8}% 28
+\BOOKMARK [2][-]{subsection.0.8.2}{Q-learning with continuous actions}{section.0.8}% 29
+\BOOKMARK [2][-]{subsection.0.8.3}{Implementation tips and examples}{section.0.8}% 30
+\BOOKMARK [1][-]{section.0.9}{Even more advanced policy gradients \(PPO and TRPO\)}{}% 31
+\BOOKMARK [2][-]{subsection.0.9.1}{Policy gradients with constraints}{section.0.9}% 32
+\BOOKMARK [2][-]{subsection.0.9.2}{Natural gradient}{section.0.9}% 33
+\BOOKMARK [2][-]{subsection.0.9.3}{Practical methods and notes}{section.0.9}% 34
+\BOOKMARK [1][-]{section.0.10}{Optimal control and planning}{}% 35
+\BOOKMARK [2][-]{subsection.0.10.1}{Trajectory optimization with derivatives}{section.0.10}% 36
+\BOOKMARK [2][-]{subsection.0.10.2}{LQR for stochastic and nonlinear systems}{section.0.10}% 37
+\BOOKMARK [1][-]{section.0.11}{Model-based reinforcement learning}{}% 38
+\BOOKMARK [2][-]{subsection.0.11.1}{Uncertainty in model-based RL}{section.0.11}% 39
+\BOOKMARK [2][-]{subsection.0.11.2}{Model-based reinforcement learning with images}{section.0.11}% 40
+\BOOKMARK [1][-]{section.0.12}{Model-based policy learning}{}% 41
+\BOOKMARK [2][-]{subsection.0.12.1}{Model-free learning with a model}{section.0.12}% 42
+\BOOKMARK [1][-]{section.0.13}{Exploration algorithms}{}% 43
+\BOOKMARK [2][-]{subsection.0.13.1}{Exploration in deep reinforcement learning}{section.0.13}% 44
+\BOOKMARK [2][-]{subsection.0.13.2}{Posterior sampling in deep RL}{section.0.13}% 45
+\BOOKMARK [2][-]{subsection.0.13.3}{Information gain in DRL}{section.0.13}% 46
+\BOOKMARK [2][-]{subsection.0.13.4}{Exploration with model errors}{section.0.13}% 47
+\BOOKMARK [2][-]{subsection.0.13.5}{Unsupervised exploration}{section.0.13}% 48
+\BOOKMARK [1][-]{section.0.14}{Unsupervised reinforcement learning \(sketches\)}{}% 49
+\BOOKMARK [2][-]{subsection.0.14.1}{Learning diverse skills}{section.0.14}% 50
+\BOOKMARK [1][-]{section.0.15}{Generalisation gap}{}% 51
+\BOOKMARK [2][-]{subsection.0.15.1}{Batch RL via importance sampling}{section.0.15}% 52
+\BOOKMARK [2][-]{subsection.0.15.2}{Batch RL via linear fitted value functions}{section.0.15}% 53
+\BOOKMARK [1][-]{section.0.16}{Reinforcement learning as an inference problem}{}% 54
+\BOOKMARK [2][-]{subsection.0.16.1}{Optimal control as a model of human behavior}{section.0.16}% 55
+\BOOKMARK [2][-]{subsection.0.16.2}{Control as inference}{section.0.16}% 56
+\BOOKMARK [2][-]{subsection.0.16.3}{Policy computation}{section.0.16}% 57
+\BOOKMARK [2][-]{subsection.0.16.4}{Forward messages}{section.0.16}% 58
+\BOOKMARK [2][-]{subsection.0.16.5}{Control as variational inference}{section.0.16}% 59
+\BOOKMARK [2][-]{subsection.0.16.6}{Algorithms for RL as inference}{section.0.16}% 60
+\BOOKMARK [1][-]{section.0.17}{Inverse reinforcement learning}{}% 61

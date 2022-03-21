@@ -81,7 +81,6 @@ Secondly, it will enable generating hypothesis about new possible algorithms.
 Finally, they will serve as a reference - a reinforcement learning handbook if you will.
 
 
-\chapter{Berkley AI class}
 \section{Immitation learning}
 skip lel, pls do it if you go for the classes' homeworks tho
 
@@ -3692,6 +3691,160 @@ We had the following graph for $ p (\bm{s}_{1:T}, \bm{a}_{1:T}|\mathcal{O}_{ 1:T
 
 and now the graph of our approximate version $ q (\bm{s}_{1:T}, \bm{a}_{1:T})  $ looks like:
 
+\begin{figure}[htpb]
+		\caption{$ q (\bm{s}_{1:T}, \bm{a}_{1:T})  $}
+\begin{center}
+\begin{tikzpicture}[scale=1, transform shape, node distance=1.5cm]
+		\node (s1) [mcs] {$\bm{s}_{1} $};
+		\node (descs1) [below of=s1, yshift=0.8cm] { $ p (\bm{s}_{1})  $ };
+		\node (a1) [mcs, above right of=s1] { $ \bm{a}_{1}  $};
+		\node (s2) [mcs, right of=s1, xshift=1cm] { $ \bm{s}_{2}  $};
+		\draw [arrow] (s1) -- (s2);
+		\draw [arrow] (s1) -- (a1);
+		\draw [arrow] (a1) -- (s2);
+		\node (a2) [mcs, above right of=s2] { $ \bm{a}_{2}  $};
+		\draw [arrow] (s2) -- (a2);
+		\node (desca2) [above of=a2, yshift=-0.8cm] { $ q(\bm{a}_{t}| \bm{s}_{t} )  $};
+		\node (s3) [mcs, right of=s2, xshift=1cm] { $ \bm{s}_{3}  $};
+		\draw [arrow] (a2) -- (s3);
+		\draw [arrow] (s2) -- node [midway, below, yshift=-0.3cm] {$p (\bm{s}_{t+1}|\bm{s}_{t}, \bm{a}_{t})  $ }  (s3);
+		\node (a3) [mcs, above right of=s3] { $ \bm{a}_{3}  $};
+		\draw [arrow] (s3) -- (a3);
+		\node (s4) [right of=s3, xshift=1cm] {$\dots$};
+		\draw [arrow] (s3) -- (s4);
+		\draw [arrow] (a3) -- (s4);
+\end{tikzpicture}
+\end{center}
+\end{figure}
+Let's tie this back variational inference.
+Let $ \bm{x}_{} = \mathcal{O}_{ 1:T }  $ and $ \bm{z}_{} = (\bm{s}_{1:T}, \bm{a}_{1:T} )  $.
+Now we want to write $ p (\bm{z}_{}|\bm{x}_{})  $ and $ q (\bm{z}_{})  $
+
+\subsubsection{Variational lower bound}
+\begin{align}
+		\log p (\bm{x}_{}) &\geq E_{ \bm{z}_{} \sim q (\bm{x}_{}) } \left[  \log p (\bm{x}_{}, \bm{z}_{}) - 
+\underbrace{\log q (\bm{z}_{})}_{ \text{entropy } \mathcal{H}(q) } \right] 
+\end{align}
+let (just substituting the new definitions)
+\begin{equation}
+q (\bm{s}_{1:T}, \bm{a}_{1:T} ) = p (\bm{s}_{1}) \prod_{t}^{} p (\bm{s}_{t+1}|\bm{s}_{t}, \bm{a}_{t}) q(\bm{a}_{t}| \bm{s}_{t} )
+\end{equation}
+and now we can write the log probability of evidence:
+(align + plus split left the broken env, 
+but at least youcan see the eqs, i can't be bothered atm)
+\begin{align}
+		\log p (\mathcal{O}_{ 1:T }) &\geq 
+		E_{ (\bm{s}_{1:T}, \bm{a}_{1:T} ) \sim q }
+		[ 
+				\cancel{\log p (\bm{s}_{1})} + \cancel{ \sum_{t=1}^{T} \log p (\bm{s}_{t+1}|\bm{s}_{t}, \bm{a}_{t})} \nonumber \\
+									 &+ 
+		\sum_{t=1}^{T} \log p (\mathcal{O}_{ t }| \bm{s}_{t}, \bm{a}_{t}) - 
+		\cancel{\log p (\bm{s}_{1})} \nonumber \\ &- 
+\cancel{\sum_{t=1}^{T} \log p (\bm{s}_{t+1}|\bm{s}_{t}, \bm{a}_{t}) }
+- \sum_{t=1}^{T} \log q (\bm{a}_{t}| \bm{s}_{t} )
+] \nonumber \\
+&= E_{  (\bm{s}_{1:T}, \bm{a}_{1:T} ) \sim q  } \left[ \sum_{t}^{} r(\bm{s}_{t}, \bm{a}_{t} ) - \log q(\bm{a}_{t}| \bm{s}_{t} ) \right] \\
+&= \sum_{t}^{} E_{ (\bm{s}_{t}, \bm{a}_{t} ) \sim q } \left[ r(\bm{s}_{t}, \bm{a}_{t} ) + \mathcal{H} (q (\bm{a}_{t}| \bm{s}_{t} )) \right] 
+\end{align}
+and from this we can see that we got the RL objective plus the additional entropy terms
+which model the slighly suboptimal behavior.
+
+\subsubsection{Optimizing the variational lower bound}
+Let's restate the relevant equations. Here's our q:
+\begin{equation}
+q (\bm{s}_{1:T}, \bm{a}_{1:T} ) = p (\bm{s}_{1}) \prod_{t}^{} p (\bm{s}_{t+1}|\bm{s}_{t}, \bm{a}_{t}) q (\bm{a}_{t}| \bm{s}_{t} )
+\end{equation}
+and
+the bound:
+\begin{equation}
+		\log p (\mathcal{O}_{ 1:T }) \geq
+		\sum_{t}^{} E_{ (\bm{s}_{t}, \bm{a}_{t} )\sim q} 
+		\left[ r(\bm{s}_{t}, \bm{a}_{t} ) + \mathcal{H} (q(\bm{a}_{t}| \bm{s}_{t} )) \right] 
+\end{equation}
+We could employ the dynamic programming approach:
+\begin{align}
+		q(\bm{a}_{T}| \bm{s}_{T} ) 
+		&= \argmax_{} E_{ \bm{s}_{T} \sim q (\bm{s}_{T}) } \left[ 
+E_{ \bm{a}_{T}\sim q(\bm{a}_{T}| \bm{s}_{T} ) } \left[ r (\bm{s}_{T}, \bm{a}_{T} ) \right] 
++ \mathcal{H} (q(\bm{a}_{T}| \bm{s}_{T} ))
+\right] \\
+&= \argmax_{} E_{ \bm{s}_{T} \sim q (\bm{s}_{T}) } \left[ 
+E_{ \bm{a}_{T}\sim q(\bm{a}_{T}| \bm{s}_{T} ) } \left[ r (\bm{s}_{T}, \bm{a}_{T} ) 
+- \log (q(\bm{a}_{T}| \bm{s}_{T} ))
+\right] \right] 
+\end{align}
+It can be shown that anytime you have an optimization objective of form
+of the expected value under a distribution of some quantity - the log
+probability of that distribution,
+the solution is always the exponential of that quantity.
+So we get that $ q(\bm{a}_{T}| \bm{s}_{T} )  $ is optimized when
+\begin{equation}
+		q(\bm{a}_{T}| \bm{s}_{T} ) \propto \exp (r(\bm{s}_{T}, \bm{a}_{T} ))
+\end{equation}
+and in particular we get
+\begin{equation}
+		q(\bm{a}_{T}| \bm{s}_{T} ) =
+		\frac{\exp (r(\bm{s}_{T}, \bm{a}_{T} ))}{\int \exp (r(\bm{s}_{T}, \bm{a}_{} ))d\bm{a}_{}} = 
+		\exp (Q(\bm{s}_{T}, \bm{a}_{T} ) - V (\bm{s}_{T}))
+\end{equation}
+\begin{equation}
+		V (\bm{s}_{T}) = \log \int \exp (Q(\bm{s}_{T}, \bm{a}_{T} ))d \bm{a}_{T}
+\end{equation}
+If we substitu in the expression for $ Q  $ we get:
+\begin{equation}
+E_{ \bm{s}_{T}\sim q (\bm{s}_{T}) }
+\left[ 
+E_{ \bm{a}_{T} \sim q(\bm{a}_{T}| \bm{s}_{T} ) }
+\left[ 
+r(\bm{s}_{T}, \bm{a}_{T} ) - \log q(\bm{a}_{T}| \bm{s}_{T} )
+\right] 
+\right] 
+=
+E_{ \bm{s}_{T}\sim q (\bm{s}_{T}) } \left[ 
+E_{ \bm{a}_{T} \sim q(\bm{a}_{T}| \bm{s}_{T} ) } \left[ V (\bm{s}_{T}) \right] 
+\right] 
+\end{equation}
+and now we can proceed with the recursive case:
+\begin{equation}
+q(\bm{a}_{t}| \bm{s}_{t} ) =
+\argmax_{}
+E_{ \bm{s}_{t}\sim q (\bm{s}_{t}) }
+\left[ 
+E_{ \bm{a}_{t} \sim q(\bm{a}_{t}| \bm{s}_{t} ) }
+\left[ 
+r(\bm{s}_{t}, \bm{a}_{t} ) - \log q(\bm{a}_{t}| \bm{s}_{t} )
++ E_{ \bm{s}_{t+1}\sim p (\bm{s}_{t+1}|\bm{s}_{t}, \bm{a}_{t}) }
+\left[ V (\bm{s}_{t+1}) \right] 
+\right] 
++ \mathcal{H} (q(\bm{a}_{t}| \bm{s}_{t} ))
+\right] 
+\end{equation}
+we can use the regular (\textit{not} optimistic) Bellman backup
+\begin{equation}
+		Q_{ t }(\bm{s}_{t}, \bm{a}_{t} ) = r(\bm{s}_{t}, \bm{a}_{t} ) + E \left[ V_{ t+1 } (\bm{s}_{t+1}) \right] 
+\end{equation}
+and now continue:
+\begin{align}
+q(\bm{a}_{t}| \bm{s}_{t} ) &= \dots \\
+&= \argmax_{} E_{ \bm{s}_{t} \sim q (\bm{s}_{t}) } \left[ 
+E_{ \bm{a}_{t} \sim q(\bm{a}_{t}| \bm{s}_{t} ) } \left[ 
+Q(\bm{s}_{t}, \bm{a}_{t} ) + \mathcal{H} (q(\bm{a}_{t}| \bm{s}_{t} ))
+\right] 
+\right] \\
+&= \argmax_{} E_{ \bm{s}_{t} \sim q (\bm{s}_{t}) } \left[ 
+E_{ \bm{a}_{t} \sim q(\bm{a}_{t}| \bm{s}_{t} ) } \left[ 
+Q(\bm{s}_{t}, \bm{a}_{t} ) - \log (q(\bm{a}_{t}| \bm{s}_{t} ))
+\right] 
+\right] \\
+& \text{optimized when } q(\bm{a}_{t}| \bm{s}_{t} ) \propto \exp (Q(\bm{s}_{t}, \bm{a}_{t} ))\\
+& \text{the normalizer is } V_{ t } (\bm{s}_{t}) = \log \int \exp (Q_{ t }(\bm{s}_{t}, \bm{a}_{t} )) d\bm{a}_{t}\\
+& \text{and we get } \exp (Q (\bm{s}_{t}, \bm{a}_{t} ) - V (\bm{s}_{t}))
+\end{align}
+we can formalize the recursive solution as a backward pass.
+If you'll want more on this check out Levine 2018
+reinforcement learning and control as probabilistic inferece: tutorial and review (downloaded and ready in master's folder).
+You can also add discount or explicit temperature to this.
+
 \subsection{Algorithms for RL as inference}
 \subsubsection{Q-learning with soft optimality}
 The stardard Q-learning looks like this:
@@ -3728,9 +3881,265 @@ optimizes
 E_{ \pi (\bm{s}_{t}) } \left[  \mathcal{H} (\pi(\bm{a}_{t}| \bm{s}_{t} ))
 \right] 
 \end{equation}
-where $ \mathcal{H} (\pi(\bm{a}_{t}| \bm{s}_{t} ))  $ is the policy entropy.
-The intuition is that  
-ok i need to go back to variational inference...
+where $ \mathcal{H} (\pi(\bm{a}_{t}| \bm{s}_{t} ))  $ is the policy entropy and that's the only new thing.
+The intuition is that the policy $ \pi(\bm{a}_{}| \bm{s}_{} )  \propto \exp (Q_{ \phi }(\bm{s}_{}, \bm{a}_{} ))$ 
+when $ \pi   $ minimizes $ D_{ KL } (\pi (\bm{a}_{}| \bm{s}_{} ) || \frac{1}{Z} \exp (Q(\bm{s}_{}, \bm{a}_{} ))  ) $  
+This is often referred to as ``entropy regularized'' policy gradient and it combats
+premature entropy collapse (when policy becomes deterministic too early).
+
+\subsubsection{Policy gradient vs Q-learning}
+\begin{equation}
+		J (\theta) = \sum_{t}^{} E_{ \pi (\bm{s}_{t}, \bm{a}_{t} ) } \left[ r (\bm{s}_{t}, \bm{a}_{t} ) \right] +
+		\underbrace{E_{ \pi (\bm{s}_{t}) } \left[ \mathcal{H} (\pi (\bm{a}_{t}| \bm{s}_{t} )) \right] }_{ E_{ \pi (\bm{a}_{t}| \bm{s}_{t} ) } \left[ - \log \pi (\bm{a}_{t}| \bm{s}_{t} ) \right]  }
+		= \sum_{t}^{} E_{ \pi (\bm{s}_{t}, \bm{a}_{t} ) } \left[ r (\bm{s}_{t}, \bm{a}_{t} ) - \log \pi(\bm{a}_{t}| \bm{s}_{t} ) \right] 
+\end{equation}
+and the gradient w.r.t $ \theta  $ is:
+\begin{flalign}
+&		\nabla_{ \theta } \left[ \sum_{t}^{} E_{ \pi (\bm{s}_{t}, \bm{a}_{t} ) } \left[ r(\bm{s}_{t}, \bm{a}_{t} ) - \log \pi (\bm{a}_{t}| \bm{s}_{t} ) \right]  \right] & \nonumber \\
+&\approx \frac{1}{N} \sum_{i}^{} \sum_{t}^{} \nabla_{ \theta } \log \pi (\bm{a}_{t}| \bm{s}_{t} ) 
+\left(
+\underbrace{ r (\bm{s}_{t}, \bm{a}_{t} ) + \left( \sum_{t'=t+1}^{T} r (\bm{s}_{t'}, \bm{a}_{t'} ) - \log \pi (\bm{a}_{t'}| \bm{s}_{t'} ) \right) }_{ \approx Q (\bm{s}_{t+1}, \bm{a}_{t+1} ) }
+- \log \pi (\bm{a}_{t}| \bm{s}_{t} ) -1 \right) &
+\end{flalign}
+But since the $ -1  $ doesn't make a difference when taking the gradient,
+you can just remove it and so it turns out that if you want to entropy regularize
+the policy, you just need to $ - \log \pi (\bm{a}_{t}| \bm{s}_{t} )  $ to the expression you're taking a gradient of.
+If we use $ \log \pi (\bm{a}_{t}| \bm{s}_{t} ) = Q (\bm{s}_{t}, \bm{a}_{t} ) - V (\bm{s}_{t}) $
+we can futher reduce the expression into
+\begin{equation}
+\approx \frac{1}{N} \sum_{i}^{} \sum_{t}^{} \left(   \nabla_{ \theta } Q (\bm{a}_{t}| \bm{s}_{t} ) - \nabla_{ \theta } V (\bm{s}_{t})  \right) 
+\left( r (\bm{s}_{t}, \bm{a}_{t} ) + Q (\bm{s}_{t+1}, \bm{a}_{t+1} ) - Q (\bm{s}_{t}, \bm{a}_{t} ) + \cancel{V (\bm{s}_{t})} \right) 
+\end{equation}
+where we again remove a baseline term.
+Q-learning grad descent under softmax is:
+\begin{equation}
+- \frac{1}{N} \sum_{i}^{} \sum_{t}^{}\nabla_{ \theta } Q (\bm{a}_{t}| \bm{s}_{t} ) \left( 
+r(\bm{s}_{t}, \bm{a}_{t} ) + 
+\underbrace{\text{soft} \max_{\bm{a}_{t+1}} Q (\bm{s}_{t+1}, \bm{a}_{t+1} ) }_{ \text{off-policy correction} }
+- Q (\bm{s}_{t}, \bm{a}_{t} )
+\right)  
+\end{equation}
+so these 2 are quite similar under the soft optimality framework.
+\subsubsection{Benefits of soft optimality}
+\begin{itemize}
+		\item imrove exploration and prevent entropy collapse
+		\item easier to specialize (fineture) policies for more specific tasks
+		\item principled approach to break ties
+		\item better robustness (due to wider coverage of states)
+		\item can reduce to hard optimality as reward magnitude increases, or if you put in temperature and drive it to 0
+		\item good model for modeling human behavior
+\end{itemize}
+
+\subsubsection{Example methods}
+Some papers using these methods, skippable.
+Includes SAC.
+
+\section{Inverse reinforcement learning}
+So far we always assumed that a reward function was provided (and it was in fact hand-engineered).
+But what if we could \textit{learn}  the reward function from observing an expert, and then use reinforcement learning?
+We'll utilize the approximate optimality model from last time, but now we'll learn the reward.
+We defined optimality in the deterministic case:
+\begin{align}
+		\bm{a}_{1}, \dots, \bm{a}_{T} &= \argmax_{\bm{a}_{1}, \dots, \bm{a}_{T}} \sum_{t=1}^{T} r(\bm{s}_{t}, \bm{a}_{t} ) \\
+		\bm{s}_{t+1} &= f(\bm{s}_{t}, \bm{a}_{t} )
+\end{align}
+and in the stochastic case:
+\begin{align}
+		\pi &= \argmax_{\pi} E_{ \bm{s}_{t+1} \sim p (\bm{s}_{t+1}| \bm{s}_{t}, \bm{a}_{t} ), \bm{a}_{t} \sim \pi (\bm{a}_{t}| \bm{s}_{t} ) } \left[ r (\bm{s}_{t}, \bm{a}_{t} ) \right] 	\\
+		\bm{a}_{t} \sim \pi (\bm{a}_{t}| \bm{s}_{t} )
+\end{align}
+
+\subsubsection{Why should we worry about learning rewards?}
+\paragraph{Imitation learning perspective}
+Why not do imitation learning? Well, humans don't do it this way.
+Humans try to understand what others do --- we copy the \textit{intent} of the expert.
+This might result in very different actions.
+
+\paragraph{The RL perspective}
+What is the reward for a car going down the highway? It's probably much easier
+to have a professional driver demonstrate good driver than to hand-engineer reward function.
+
+\paragraph{Inverse RL}
+By itself, this is an \textbf{underspecified} problem --- many reward function can explain the \textbf{same} behavior.
+Take a gridworld example. A sample trajectory can does not tell you what the reward was. Was it going to that square, 
+all squares in some area, etc.
+
+\begin{table}[htpb]
+		\centering
+		\begin{tabular}{c | c}
+				\textbf{``forward RL''} & \textbf{inverse RL} \\
+				\hline
+				given: &  given: \\
+				states $ \bm{s}_{} \in \mathcal{S}  $, actions $ \bm{a}_{} \in \mathcal{A}  $ &
+				states $ \bm{s}_{} \in \mathcal{S}  $, actions $ \bm{a}_{} \in \mathcal{A}  $ \\
+				(sometimes) transitions $ p (\bm{s}_{}'|\bm{s}_{}, \bm{a}_{} )  $ &
+				(sometimes) transitions $ p (\bm{s}_{}'|\bm{s}_{}, \bm{a}_{} )  $\\
+				reward function $ r \bm{s}_{}, \bm{a}_{}   $ &
+				samples $ \left\{ \tau_{ i } \right\}   $ sampled from $ \pi^{ \star } (\tau)  $ \\
+				learn $ \pi^{ \star } (\bm{a}_{}| \bm{s}_{} )  $&
+				learn $ \pi_{ \psi } (\bm{s}_{}, \bm{a}_{} )  $ ($\psi$ are the reward params)\\
+				\hline
+		\end{tabular}
+\end{table}
+
+\subsubsection{Feature matching IRL}
+The pre-neural net stuff.
+Linear reward functions were used:
+\begin{equation}
+		r_{ \psi } (\bm{s}_{}, \bm{a}_{} ) =
+		\sum_{i}^{} \psi_{ i } f_{ i } (\bm{s}_{}, \bm{a}_{} ) = \psi^{ T } \bm{f}_{} (\bm{s}_{}, \bm{a}_{} )
+\end{equation}
+if features $ \bm{f}_{}  $ are important, what if we match their expectations?
+So let $ \pi^{ r_{ \psi } }  $ be optimal policy for $ r_{ \psi }  $.
+Pick $ \psi  $ s.t. $   
+E_{ \pi^{ r_{ \psi } } } \left[ \bm{f}_{} (\bm{s}_{}, \bm{a}_{} )  \right] 
+= E_{ \pi^{ \star } } \left[ \bm{f}_{} (\bm{s}_{}, \bm{a}_{} ) \right] $,
+where $ E_{ \pi^{ r_{ \psi } } } \left[ \bm{f}_{} (\bm{s}_{}, \bm{a}_{} )  \right]  $ is the state-action marginal under $ \pi^{ r_{ \psi } }  $ 
+and  $ E_{ \pi^{ \star } } \left[ \bm{f}_{} (\bm{s}_{}, \bm{a}_{} ) \right]   $ is the unknown optimal policy approximated using expert samples.
+Well, this is still ambiguous because multiple different $ \psi_{ i }  $
+could result in the same policy.
+One thing people thought of is
+\begin{equation}
+		\max_{\psi, m} m \text{ such that } \psi^{ T } E_{ \pi^{ \star } } \left[ \bm{f}_{}(\bm{s}_{}, \bm{a}_{} ) \right] 
+		\geq \max_{\pi \in \Pi} \psi^{ T } E_{ \pi } \left[ \bm{f}_{}(\bm{s}_{}, \bm{a}_{} ) \right]  +m
+\end{equation}
+this is a heuristic, but it's reasonable. Basically it says to pick the reward for which the expert is the best.
+But we need to somehow ``weight'' $ \pi^{ \star }  $ and $ \pi  $ by similarity.
+This stuff is from support vector machines (SVMs).
+I'll casually skip how to do this with SVMs.
+The problems with this are the following:
+\begin{itemize}
+		\item maximizing the margin is a bit arbitrary
+		\item it does not provide a clear model of expert suboptimality 
+		\item it results in a messy constrained optimization problem --- not great for deep learning
+\end{itemize}
+
+In our graphical model with optimality probabilities $ p (\mathcal{O}| \bm{s}_{t}, \bm{a}_{t} ) = \exp (r (\bm{s}_{t}, \bm{a}_{t} ))  $,
+we calculated the probability of a trajectory, given that the actor acts optimally and that gave us
+that the optimal trajectory was the most likely and that the suboptimal trajectories were less likely:
+\begin{align}
+		p (\tau|\mathcal{O}_{ 1:T }) &= \frac{p (\tau, \mathcal{O}_{ 1:T })}{p (\mathcal{O}_{ 1:T })}  \\
+&\propto p (\tau) \prod_{t}^{} \exp (r (\bm{s}_{t}, \bm{a}_{t} )) = p (\tau) \exp \left( \sum_{t}^{} r (\bm{s}_{t}, \bm{a}_{t} ) \right)  
+\end{align}
+
+But now we'll use this model to learn reward functions.
+
+\subsubsection{Learning the optimality variable}
+
+\begin{figure}[htpb]
+		\caption{$ p (\bm{s}_{1:T}, \bm{a}_{1:T}|\mathcal{O}_{ 1:T })  $}
+\begin{center}
+\begin{tikzpicture}[scale=1, transform shape, node distance=1.5cm]
+		\node (s1) [mcs] {$\bm{s}_{1} $};
+		\node (descs1) [below of=s1, yshift=0.8cm] { $ p (\bm{s}_{1})  $ };
+		\node (o1) [mcsb, above of=s1] {$\mathcal{O}_{ 1 }$};
+		\draw [arrow] (s1) -- (o1);
+		\node (a1) [mcs, above right of=s1] { $ \bm{a}_{1}  $};
+		\draw [arrow] (a1) -- (o1);
+		\node (s2) [mcs, right of=s1, xshift=1cm] { $ \bm{s}_{2}  $};
+		\node (o2) [mcsb, above of=s2] {$\mathcal{O}_{ 2 }$};
+		\draw [arrow] (s1) -- (s2);
+		\draw [arrow] (a1) -- (s2);
+		\draw [arrow] (s2) -- (o2);
+		\node (a2) [mcs, above right of=s2] { $ \bm{a}_{2}  $};
+		\draw [arrow] (a2) -- (o2);
+		\node (s3) [mcs, right of=s2, xshift=1cm] { $ \bm{s}_{3}  $};
+		\draw [arrow] (a2) -- (s3);
+		\draw [arrow] (s2) -- node [midway, below, yshift=-0.3cm] {$p (\bm{s}_{t+1}|\bm{s}_{t}, \bm{a}_{t})  $ }  (s3);
+		\node (o3) [mcsb, above of=s3] {$\mathcal{O}_{ 3 }$};
+		\node (desco3) [right of=o3, yshift=0.2cm] { $ p (\mathcal{O}_{ t }|\bm{s}_{t}, \bm{a}_{t})  $ };
+		\node (a3) [mcs, above right of=s3] { $ \bm{a}_{3}  $};
+		\draw [arrow] (s3) -- (o3);
+		\draw [arrow] (a3) -- (o3);
+		\node (s4) [right of=s3, xshift=1cm] {$\dots$};
+		\draw [arrow] (s3) -- (s4);
+		\draw [arrow] (a3) -- (s4);
+\end{tikzpicture}
+\end{center}
+\end{figure}
+
+\begin{equation}
+		p (\mathcal{O}_{ t }| \bm{s}_{t}, \bm{a}_{t} , \psi) = \exp (r_{ \psi }(\bm{s}_{t}, \bm{a}_{t} ))
+\end{equation}
+From before we have
+\begin{equation}
+		p (\tau|\mathcal{O}_{ 1:T },\psi )
+		\propto 
+		\underbrace{\cancel{p (\tau)} }_{ \text{can ignore 'cos independent of } \psi}
+		\exp \left( \sum_{t}^{} r_{ \psi } (\bm{s}_{t}, \bm{a}_{t} ) \right) 
+\end{equation}
+In the inverse RL setting we're given samples $ \left\{ \tau_{ i } \right\}   $ from $ \pi^{ \star } (\tau)  $
+and we can do maximum likelihood learning on that:
+\begin{equation}
+		\max_{\psi} \frac{1}{N}  \sum_{i=1}^{N} \log p (\tau_{ i }|\mathcal{O}_{ 1:T }, \psi)
+		= 
+		\max_{\psi} \frac{1}{N}  \sum_{i=1}^{N} r_{ \psi } (\tau_{ i } ) -\log Z
+\end{equation}
+where we plugged in our $ p (\tau|\mathcal{O}_{ 1:T },\psi)  $ expression in.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
