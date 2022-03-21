@@ -1,151 +1,151 @@
-\contentsline {section}{\numberline {0.1}Plan}{2}{section.0.1}%
-\contentsline {paragraph}{Old plan, look at update}{2}{section*.2}%
-\contentsline {paragraph}{Update}{2}{section*.3}%
-\contentsline {subsection}{\numberline {0.1.1}TODOs}{3}{subsection.0.1.1}%
-\contentsline {paragraph}{Purpose}{3}{section*.4}%
-\contentsline {section}{\numberline {0.2}Immitation learning}{3}{section.0.2}%
-\contentsline {section}{\numberline {0.3}Formal setting}{3}{section.0.3}%
-\contentsline {subsection}{\numberline {0.3.1}Markov chain}{3}{subsection.0.3.1}%
-\contentsline {subsection}{\numberline {0.3.2}Markov decision process}{4}{subsection.0.3.2}%
-\contentsline {subsection}{\numberline {0.3.3}Partially observed Markov decision process}{4}{subsection.0.3.3}%
-\contentsline {subsubsection}{The goal of reinforcement learning}{5}{section*.5}%
-\contentsline {paragraph}{Note}{5}{section*.6}%
-\contentsline {subsection}{\numberline {0.3.4}Value functions}{6}{subsection.0.3.4}%
-\contentsline {paragraph}{Definition: Q-function}{6}{section*.7}%
-\contentsline {paragraph}{Definition: value function}{6}{section*.8}%
-\contentsline {section}{\numberline {0.4}Policy gradients}{7}{section.0.4}%
-\contentsline {paragraph}{The idea}{7}{section*.9}%
-\contentsline {subsection}{\numberline {0.4.1}Reducing variance}{9}{subsection.0.4.1}%
-\contentsline {paragraph}{Causality}{9}{section*.10}%
-\contentsline {subsubsection}{Baselines}{9}{section*.11}%
-\contentsline {subsection}{\numberline {0.4.2}Off-policy gradients}{11}{subsection.0.4.2}%
-\contentsline {paragraph}{Importance sampling}{11}{section*.12}%
-\contentsline {subsubsection}{Policy gradient with automatic differentiation}{13}{section*.13}%
-\contentsline {subsubsection}{Policy gradients in practice}{13}{section*.14}%
-\contentsline {subsection}{\numberline {0.4.3}Advanced policy gradients}{13}{subsection.0.4.3}%
-\contentsline {section}{\numberline {0.5}Actor-critic algorithms}{14}{section.0.5}%
-\contentsline {subsection}{\numberline {0.5.1}Policy evaluation}{15}{subsection.0.5.1}%
-\contentsline {subsection}{\numberline {0.5.2}From evaluation to actor-critic}{16}{subsection.0.5.2}%
-\contentsline {subsection}{\numberline {0.5.3}Aside: discount factors}{17}{subsection.0.5.3}%
-\contentsline {subsection}{\numberline {0.5.4}Actor-critic design choises}{18}{subsection.0.5.4}%
-\contentsline {subsection}{\numberline {0.5.5}Online actor-critic in practise}{18}{subsection.0.5.5}%
-\contentsline {subsection}{\numberline {0.5.6}Critics as state-dependent baselines}{20}{subsection.0.5.6}%
-\contentsline {subsubsection}{Eligibility traces and n-step returns}{21}{section*.15}%
-\contentsline {subsubsection}{Generalied advantage estimation (GAE)}{21}{section*.16}%
-\contentsline {section}{\numberline {0.6}Value function methods}{22}{section.0.6}%
-\contentsline {subsubsection}{Can we omit policy gradient completely?}{22}{section*.17}%
-\contentsline {subsection}{\numberline {0.6.1}Policy iteration}{22}{subsection.0.6.1}%
-\contentsline {subsubsection}{Dynamic programming}{22}{section*.18}%
-\contentsline {subsubsection}{Policy iteration with dynamic programming}{22}{section*.19}%
-\contentsline {subsubsection}{Even simpler dynamic programming}{22}{section*.20}%
-\contentsline {subsubsection}{Fitted value iteration and Q-iteration}{23}{section*.21}%
-\contentsline {subsection}{\numberline {0.6.2}From Q-iteration to Q-learning}{24}{subsection.0.6.2}%
-\contentsline {subsubsection}{Why is this algorithm off-policy}{24}{section*.22}%
-\contentsline {subsection}{\numberline {0.6.3}Value function in theory}{25}{subsection.0.6.3}%
-\contentsline {subsubsection}{A sad corollary}{26}{section*.23}%
-\contentsline {section}{\numberline {0.7}Deep RL with Q-functions}{26}{section.0.7}%
-\contentsline {subsubsection}{Replay buffers}{27}{section*.24}%
-\contentsline {subsection}{\numberline {0.7.1}Target networks}{27}{subsection.0.7.1}%
-\contentsline {subsection}{\numberline {0.7.2}A general view of Q-learning}{28}{subsection.0.7.2}%
-\contentsline {section}{\numberline {0.8}Improving Q-learning}{28}{section.0.8}%
-\contentsline {subsubsection}{Are Q-values accurate?}{28}{section*.25}%
-\contentsline {subsection}{\numberline {0.8.1}Double Q-learning}{29}{subsection.0.8.1}%
-\contentsline {subsubsection}{Double Q-learning in practise}{29}{section*.26}%
-\contentsline {subsubsection}{Multi-step returns}{29}{section*.27}%
-\contentsline {subsubsection}{Q-learning with N-step returns}{30}{section*.28}%
-\contentsline {subsection}{\numberline {0.8.2}Q-learning with continuous actions}{30}{subsection.0.8.2}%
-\contentsline {paragraph}{Option 1}{30}{section*.29}%
-\contentsline {paragraph}{Option 2}{30}{section*.30}%
-\contentsline {paragraph}{Option 3}{31}{section*.31}%
-\contentsline {subsubsection}{DDPG}{31}{section*.32}%
-\contentsline {subsection}{\numberline {0.8.3}Implementation tips and examples}{31}{subsection.0.8.3}%
-\contentsline {paragraph}{Tips}{31}{section*.33}%
-\contentsline {section}{\numberline {0.9}Even more advanced policy gradients (PPO and TRPO)}{32}{section.0.9}%
-\contentsline {subsubsection}{Policy gradient as policy iteration}{32}{section*.34}%
-\contentsline {subsubsection}{Bounding the objective value}{35}{section*.35}%
-\contentsline {subsection}{\numberline {0.9.1}Policy gradients with constraints}{36}{subsection.0.9.1}%
-\contentsline {subsubsection}{How do we enforce the constraint}{36}{section*.36}%
-\contentsline {subsection}{\numberline {0.9.2}Natural gradient}{36}{subsection.0.9.2}%
-\contentsline {paragraph}{Do these results carry over in practise?}{38}{section*.37}%
-\contentsline {subsection}{\numberline {0.9.3}Practical methods and notes}{38}{subsection.0.9.3}%
-\contentsline {paragraph}{Natural policy gradient}{38}{section*.38}%
-\contentsline {paragraph}{Trust region policy optimization}{38}{section*.39}%
-\contentsline {paragraph}{Just using importance sampling objective directly}{38}{section*.40}%
-\contentsline {section}{\numberline {0.10}Optimal control and planning}{38}{section.0.10}%
-\contentsline {paragraph}{The objective}{38}{section*.41}%
-\contentsline {subsubsection}{Stochastic optimization}{39}{section*.42}%
-\contentsline {subsubsection}{Cross-entropy method (CEM)}{39}{section*.43}%
-\contentsline {subsubsection}{Discrete case: Monte Carlo tree search (MCTS)}{40}{section*.44}%
-\contentsline {subsection}{\numberline {0.10.1}Trajectory optimization with derivatives}{41}{subsection.0.10.1}%
-\contentsline {subsubsection}{Linear case: LQR}{41}{section*.45}%
-\contentsline {subsection}{\numberline {0.10.2}LQR for stochastic and nonlinear systems}{44}{subsection.0.10.2}%
-\contentsline {subsubsection}{Nonlinear case: differential dynamic programming (DDP)/ iterative LQR}{44}{section*.46}%
-\contentsline {subsubsection}{Nonlinear model-predictive control}{46}{section*.47}%
-\contentsline {section}{\numberline {0.11}Model-based reinforcement learning}{46}{section.0.11}%
-\contentsline {subsection}{\numberline {0.11.1}Uncertainty in model-based RL}{48}{subsection.0.11.1}%
-\contentsline {subsubsection}{Uncertainty-aware neural network models}{48}{section*.48}%
-\contentsline {paragraph}{Idea 1:}{48}{section*.49}%
-\contentsline {paragraph}{Idea 2:}{48}{section*.50}%
-\contentsline {subsubsection}{Quick overview of Bayesian neural networks}{49}{section*.51}%
-\contentsline {subsubsection}{Bootstrap ensembles}{49}{section*.52}%
-\contentsline {subsubsection}{How to plan with uncertainty}{50}{section*.53}%
-\contentsline {paragraph}{Other options:}{50}{section*.54}%
-\contentsline {subsection}{\numberline {0.11.2}Model-based reinforcement learning with images}{50}{subsection.0.11.2}%
-\contentsline {subsubsection}{State space (latent space models)}{51}{section*.55}%
-\contentsline {section}{\numberline {0.12}Model-based policy learning}{52}{section.0.12}%
-\contentsline {subsubsection}{What's the solution?}{53}{section*.56}%
-\contentsline {paragraph}{First class of solutions}{53}{section*.57}%
-\contentsline {paragraph}{Second class of solutions}{54}{section*.58}%
-\contentsline {subsection}{\numberline {0.12.1}Model-free learning with a model}{54}{subsection.0.12.1}%
-\contentsline {subsubsection}{Dyna}{54}{section*.59}%
-\contentsline {paragraph}{General ``Dyna-style'' model-based RL recipe}{55}{section*.60}%
-\contentsline {subsubsection}{Local models}{56}{section*.61}%
-\contentsline {section}{\numberline {0.13}Exploration algorithms}{56}{section.0.13}%
-\contentsline {subsubsection}{Optimistic exploration}{56}{section*.62}%
-\contentsline {subsubsection}{Probability matching/posterior sampling}{56}{section*.63}%
-\contentsline {subsubsection}{Information gain}{56}{section*.64}%
-\contentsline {subsubsection}{General themes}{57}{section*.65}%
-\contentsline {subsection}{\numberline {0.13.1}Exploration in deep reinforcement learning}{57}{subsection.0.13.1}%
-\contentsline {subsubsection}{Fitting generative models}{58}{section*.66}%
-\contentsline {subsubsection}{What kind of bonus to use?}{58}{section*.67}%
-\contentsline {paragraph}{What kind of model to use?}{59}{section*.68}%
-\contentsline {subsection}{\numberline {0.13.2}Posterior sampling in deep RL}{59}{subsection.0.13.2}%
-\contentsline {subsection}{\numberline {0.13.3}Information gain in DRL}{59}{subsection.0.13.3}%
-\contentsline {subsection}{\numberline {0.13.4}Exploration with model errors}{60}{subsection.0.13.4}%
-\contentsline {subsection}{\numberline {0.13.5}Unsupervised exploration}{60}{subsection.0.13.5}%
-\contentsline {subsubsection}{Information theoretic quantities in RL}{61}{section*.69}%
-\contentsline {section}{\numberline {0.14}Unsupervised reinforcement learning (sketches)}{61}{section.0.14}%
-\contentsline {subsubsection}{Aside: exploration with intrinsic motivation}{62}{section*.70}%
-\contentsline {subsection}{\numberline {0.14.1}Learning diverse skills}{63}{subsection.0.14.1}%
-\contentsline {subsubsection}{Diversity-promoting reward function}{63}{section*.71}%
-\contentsline {section}{\numberline {0.15}Generalisation gap}{63}{section.0.15}%
-\contentsline {paragraph}{What makes modern machine learning work}{63}{section*.72}%
-\contentsline {subsubsection}{Why is offline RL hard?}{64}{section*.73}%
-\contentsline {subsubsection}{Where does RL suffer from distributional shift?}{65}{section*.74}%
-\contentsline {subsection}{\numberline {0.15.1}Batch RL via importance sampling}{65}{subsection.0.15.1}%
-\contentsline {subsubsection}{The doubly robust estimator}{67}{section*.75}%
-\contentsline {subsubsection}{Marginalized importance sampling}{68}{section*.76}%
-\contentsline {subsection}{\numberline {0.15.2}Batch RL via linear fitted value functions}{68}{subsection.0.15.2}%
-\contentsline {section}{\numberline {0.16}Reinforcement learning as an inference problem}{68}{section.0.16}%
-\contentsline {subsection}{\numberline {0.16.1}Optimal control as a model of human behavior}{69}{subsection.0.16.1}%
-\contentsline {subsection}{\numberline {0.16.2}Control as inference}{70}{subsection.0.16.2}%
-\contentsline {subsubsection}{Backward messages}{70}{section*.77}%
-\contentsline {subsubsection}{But what the if the action prior is not uniform?}{72}{section*.78}%
-\contentsline {subsection}{\numberline {0.16.3}Policy computation}{72}{subsection.0.16.3}%
-\contentsline {subsection}{\numberline {0.16.4}Forward messages}{73}{subsection.0.16.4}%
-\contentsline {subsection}{\numberline {0.16.5}Control as variational inference}{74}{subsection.0.16.5}%
-\contentsline {subsubsection}{Variational lower bound}{75}{section*.79}%
-\contentsline {subsubsection}{Optimizing the variational lower bound}{76}{section*.80}%
-\contentsline {subsection}{\numberline {0.16.6}Algorithms for RL as inference}{77}{subsection.0.16.6}%
-\contentsline {subsubsection}{Q-learning with soft optimality}{77}{section*.81}%
-\contentsline {subsubsection}{Policy gradient with soft optimality}{78}{section*.82}%
-\contentsline {subsubsection}{Policy gradient vs Q-learning}{78}{section*.83}%
-\contentsline {subsubsection}{Benefits of soft optimality}{79}{section*.84}%
-\contentsline {subsubsection}{Example methods}{79}{section*.85}%
-\contentsline {section}{\numberline {0.17}Inverse reinforcement learning}{79}{section.0.17}%
-\contentsline {subsubsection}{Why should we worry about learning rewards?}{80}{section*.86}%
-\contentsline {paragraph}{Imitation learning perspective}{80}{section*.87}%
-\contentsline {paragraph}{The RL perspective}{80}{section*.88}%
-\contentsline {paragraph}{Inverse RL}{80}{section*.89}%
-\contentsline {subsubsection}{Feature matching IRL}{80}{section*.90}%
-\contentsline {subsubsection}{Learning the optimality variable}{81}{section*.91}%
+\contentsline {chapter}{\numberline {1}Plan}{5}{chapter.1}%
+\contentsline {subsubsection}{Old plan, look at update}{5}{section*.2}%
+\contentsline {subsubsection}{Update}{5}{section*.3}%
+\contentsline {section}{\numberline {1.1}TODOs}{6}{section.1.1}%
+\contentsline {subsubsection}{Purpose}{6}{section*.4}%
+\contentsline {chapter}{\numberline {2}Immitation learning}{7}{chapter.2}%
+\contentsline {chapter}{\numberline {3}Formal setting}{8}{chapter.3}%
+\contentsline {section}{\numberline {3.1}Markov chain}{8}{section.3.1}%
+\contentsline {section}{\numberline {3.2}Markov decision process}{8}{section.3.2}%
+\contentsline {section}{\numberline {3.3}Partially observed Markov decision process}{9}{section.3.3}%
+\contentsline {subsection}{\numberline {3.3.1}The goal of reinforcement learning}{9}{subsection.3.3.1}%
+\contentsline {subsubsection}{Note}{10}{section*.5}%
+\contentsline {section}{\numberline {3.4}Value functions}{10}{section.3.4}%
+\contentsline {subsubsection}{Definition: Q-function}{11}{section*.6}%
+\contentsline {subsubsection}{Definition: value function}{11}{section*.7}%
+\contentsline {chapter}{\numberline {4}Policy gradients}{12}{chapter.4}%
+\contentsline {subsubsection}{The idea}{12}{section*.8}%
+\contentsline {section}{\numberline {4.1}Reducing variance}{14}{section.4.1}%
+\contentsline {subsubsection}{Causality}{14}{section*.9}%
+\contentsline {subsection}{\numberline {4.1.1}Baselines}{15}{subsection.4.1.1}%
+\contentsline {section}{\numberline {4.2}Off-policy gradients}{16}{section.4.2}%
+\contentsline {subsubsection}{Importance sampling}{16}{section*.10}%
+\contentsline {subsection}{\numberline {4.2.1}Policy gradient with automatic differentiation}{18}{subsection.4.2.1}%
+\contentsline {subsection}{\numberline {4.2.2}Policy gradients in practice}{18}{subsection.4.2.2}%
+\contentsline {section}{\numberline {4.3}Advanced policy gradients}{18}{section.4.3}%
+\contentsline {chapter}{\numberline {5}Actor-critic algorithms}{20}{chapter.5}%
+\contentsline {section}{\numberline {5.1}Policy evaluation}{21}{section.5.1}%
+\contentsline {section}{\numberline {5.2}From evaluation to actor-critic}{23}{section.5.2}%
+\contentsline {section}{\numberline {5.3}Aside: discount factors}{23}{section.5.3}%
+\contentsline {section}{\numberline {5.4}Actor-critic design choises}{24}{section.5.4}%
+\contentsline {section}{\numberline {5.5}Online actor-critic in practise}{24}{section.5.5}%
+\contentsline {section}{\numberline {5.6}Critics as state-dependent baselines}{26}{section.5.6}%
+\contentsline {subsection}{\numberline {5.6.1}Eligibility traces and n-step returns}{27}{subsection.5.6.1}%
+\contentsline {subsection}{\numberline {5.6.2}Generalied advantage estimation (GAE)}{28}{subsection.5.6.2}%
+\contentsline {chapter}{\numberline {6}Value function methods}{29}{chapter.6}%
+\contentsline {subsection}{\numberline {6.0.1}Can we omit policy gradient completely?}{29}{subsection.6.0.1}%
+\contentsline {section}{\numberline {6.1}Policy iteration}{29}{section.6.1}%
+\contentsline {subsection}{\numberline {6.1.1}Dynamic programming}{29}{subsection.6.1.1}%
+\contentsline {subsection}{\numberline {6.1.2}Policy iteration with dynamic programming}{30}{subsection.6.1.2}%
+\contentsline {subsection}{\numberline {6.1.3}Even simpler dynamic programming}{30}{subsection.6.1.3}%
+\contentsline {subsection}{\numberline {6.1.4}Fitted value iteration and Q-iteration}{30}{subsection.6.1.4}%
+\contentsline {section}{\numberline {6.2}From Q-iteration to Q-learning}{31}{section.6.2}%
+\contentsline {subsection}{\numberline {6.2.1}Why is this algorithm off-policy}{31}{subsection.6.2.1}%
+\contentsline {section}{\numberline {6.3}Value function in theory}{32}{section.6.3}%
+\contentsline {subsection}{\numberline {6.3.1}A sad corollary}{33}{subsection.6.3.1}%
+\contentsline {chapter}{\numberline {7}Deep RL with Q-functions}{34}{chapter.7}%
+\contentsline {subsection}{\numberline {7.0.1}Replay buffers}{34}{subsection.7.0.1}%
+\contentsline {section}{\numberline {7.1}Target networks}{35}{section.7.1}%
+\contentsline {section}{\numberline {7.2}A general view of Q-learning}{35}{section.7.2}%
+\contentsline {chapter}{\numberline {8}Improving Q-learning}{36}{chapter.8}%
+\contentsline {subsection}{\numberline {8.0.1}Are Q-values accurate?}{36}{subsection.8.0.1}%
+\contentsline {section}{\numberline {8.1}Double Q-learning}{37}{section.8.1}%
+\contentsline {subsection}{\numberline {8.1.1}Double Q-learning in practise}{37}{subsection.8.1.1}%
+\contentsline {subsection}{\numberline {8.1.2}Multi-step returns}{37}{subsection.8.1.2}%
+\contentsline {subsection}{\numberline {8.1.3}Q-learning with N-step returns}{38}{subsection.8.1.3}%
+\contentsline {section}{\numberline {8.2}Q-learning with continuous actions}{38}{section.8.2}%
+\contentsline {subsubsection}{Option 1}{38}{section*.11}%
+\contentsline {subsubsection}{Option 2}{38}{section*.12}%
+\contentsline {subsubsection}{Option 3}{39}{section*.13}%
+\contentsline {subsection}{\numberline {8.2.1}DDPG}{39}{subsection.8.2.1}%
+\contentsline {section}{\numberline {8.3}Implementation tips and examples}{39}{section.8.3}%
+\contentsline {subsubsection}{Tips}{39}{section*.14}%
+\contentsline {chapter}{\numberline {9}Even more advanced policy gradients (PPO and TRPO)}{41}{chapter.9}%
+\contentsline {subsection}{\numberline {9.0.1}Policy gradient as policy iteration}{42}{subsection.9.0.1}%
+\contentsline {subsection}{\numberline {9.0.2}Bounding the objective value}{44}{subsection.9.0.2}%
+\contentsline {section}{\numberline {9.1}Policy gradients with constraints}{45}{section.9.1}%
+\contentsline {subsection}{\numberline {9.1.1}How do we enforce the constraint}{45}{subsection.9.1.1}%
+\contentsline {section}{\numberline {9.2}Natural gradient}{46}{section.9.2}%
+\contentsline {subsubsection}{Do these results carry over in practise?}{47}{section*.15}%
+\contentsline {section}{\numberline {9.3}Practical methods and notes}{47}{section.9.3}%
+\contentsline {subsubsection}{Natural policy gradient}{47}{section*.16}%
+\contentsline {subsubsection}{Trust region policy optimization}{47}{section*.17}%
+\contentsline {subsubsection}{Just using importance sampling objective directly}{47}{section*.18}%
+\contentsline {chapter}{\numberline {10}Optimal control and planning}{48}{chapter.10}%
+\contentsline {subsubsection}{The objective}{48}{section*.19}%
+\contentsline {subsection}{\numberline {10.0.1}Stochastic optimization}{49}{subsection.10.0.1}%
+\contentsline {subsection}{\numberline {10.0.2}Cross-entropy method (CEM)}{49}{subsection.10.0.2}%
+\contentsline {subsection}{\numberline {10.0.3}Discrete case: Monte Carlo tree search (MCTS)}{50}{subsection.10.0.3}%
+\contentsline {section}{\numberline {10.1}Trajectory optimization with derivatives}{50}{section.10.1}%
+\contentsline {subsection}{\numberline {10.1.1}Linear case: LQR}{51}{subsection.10.1.1}%
+\contentsline {section}{\numberline {10.2}LQR for stochastic and nonlinear systems}{53}{section.10.2}%
+\contentsline {subsection}{\numberline {10.2.1}Nonlinear case: differential dynamic programming (DDP)/ iterative LQR}{54}{subsection.10.2.1}%
+\contentsline {subsection}{\numberline {10.2.2}Nonlinear model-predictive control}{56}{subsection.10.2.2}%
+\contentsline {chapter}{\numberline {11}Model-based reinforcement learning}{57}{chapter.11}%
+\contentsline {section}{\numberline {11.1}Uncertainty in model-based RL}{58}{section.11.1}%
+\contentsline {subsection}{\numberline {11.1.1}Uncertainty-aware neural network models}{59}{subsection.11.1.1}%
+\contentsline {subsubsection}{Idea 1:}{59}{section*.20}%
+\contentsline {subsubsection}{Idea 2:}{59}{section*.21}%
+\contentsline {subsection}{\numberline {11.1.2}Quick overview of Bayesian neural networks}{59}{subsection.11.1.2}%
+\contentsline {subsection}{\numberline {11.1.3}Bootstrap ensembles}{60}{subsection.11.1.3}%
+\contentsline {subsection}{\numberline {11.1.4}How to plan with uncertainty}{61}{subsection.11.1.4}%
+\contentsline {subsubsection}{Other options:}{61}{section*.22}%
+\contentsline {section}{\numberline {11.2}Model-based reinforcement learning with images}{61}{section.11.2}%
+\contentsline {subsection}{\numberline {11.2.1}State space (latent space models)}{62}{subsection.11.2.1}%
+\contentsline {chapter}{\numberline {12}Model-based policy learning}{64}{chapter.12}%
+\contentsline {subsection}{\numberline {12.0.1}What's the solution?}{65}{subsection.12.0.1}%
+\contentsline {subsubsection}{First class of solutions}{65}{section*.23}%
+\contentsline {subsubsection}{Second class of solutions}{65}{section*.24}%
+\contentsline {section}{\numberline {12.1}Model-free learning with a model}{65}{section.12.1}%
+\contentsline {subsection}{\numberline {12.1.1}Dyna}{66}{subsection.12.1.1}%
+\contentsline {subsubsection}{General ``Dyna-style'' model-based RL recipe}{66}{section*.25}%
+\contentsline {subsection}{\numberline {12.1.2}Local models}{67}{subsection.12.1.2}%
+\contentsline {chapter}{\numberline {13}Exploration algorithms}{68}{chapter.13}%
+\contentsline {subsection}{\numberline {13.0.1}Optimistic exploration}{68}{subsection.13.0.1}%
+\contentsline {subsection}{\numberline {13.0.2}Probability matching/posterior sampling}{68}{subsection.13.0.2}%
+\contentsline {subsection}{\numberline {13.0.3}Information gain}{69}{subsection.13.0.3}%
+\contentsline {subsection}{\numberline {13.0.4}General themes}{69}{subsection.13.0.4}%
+\contentsline {section}{\numberline {13.1}Exploration in deep reinforcement learning}{70}{section.13.1}%
+\contentsline {subsection}{\numberline {13.1.1}Fitting generative models}{70}{subsection.13.1.1}%
+\contentsline {subsection}{\numberline {13.1.2}What kind of bonus to use?}{71}{subsection.13.1.2}%
+\contentsline {subsubsection}{What kind of model to use?}{71}{section*.26}%
+\contentsline {section}{\numberline {13.2}Posterior sampling in deep RL}{71}{section.13.2}%
+\contentsline {section}{\numberline {13.3}Information gain in DRL}{72}{section.13.3}%
+\contentsline {section}{\numberline {13.4}Exploration with model errors}{72}{section.13.4}%
+\contentsline {section}{\numberline {13.5}Unsupervised exploration}{72}{section.13.5}%
+\contentsline {subsection}{\numberline {13.5.1}Information theoretic quantities in RL}{73}{subsection.13.5.1}%
+\contentsline {chapter}{\numberline {14}Unsupervised reinforcement learning (sketches)}{74}{chapter.14}%
+\contentsline {subsection}{\numberline {14.0.1}Aside: exploration with intrinsic motivation}{75}{subsection.14.0.1}%
+\contentsline {section}{\numberline {14.1}Learning diverse skills}{76}{section.14.1}%
+\contentsline {subsection}{\numberline {14.1.1}Diversity-promoting reward function}{76}{subsection.14.1.1}%
+\contentsline {chapter}{\numberline {15}Generalisation gap}{77}{chapter.15}%
+\contentsline {subsubsection}{What makes modern machine learning work}{77}{section*.27}%
+\contentsline {subsection}{\numberline {15.0.1}Why is offline RL hard?}{78}{subsection.15.0.1}%
+\contentsline {subsection}{\numberline {15.0.2}Where does RL suffer from distributional shift?}{79}{subsection.15.0.2}%
+\contentsline {section}{\numberline {15.1}Batch RL via importance sampling}{79}{section.15.1}%
+\contentsline {subsection}{\numberline {15.1.1}The doubly robust estimator}{81}{subsection.15.1.1}%
+\contentsline {subsection}{\numberline {15.1.2}Marginalized importance sampling}{81}{subsection.15.1.2}%
+\contentsline {section}{\numberline {15.2}Batch RL via linear fitted value functions}{82}{section.15.2}%
+\contentsline {chapter}{\numberline {16}Reinforcement learning as an inference problem}{83}{chapter.16}%
+\contentsline {section}{\numberline {16.1}Optimal control as a model of human behavior}{83}{section.16.1}%
+\contentsline {section}{\numberline {16.2}Control as inference}{84}{section.16.2}%
+\contentsline {subsection}{\numberline {16.2.1}Backward messages}{85}{subsection.16.2.1}%
+\contentsline {subsection}{\numberline {16.2.2}But what the if the action prior is not uniform?}{86}{subsection.16.2.2}%
+\contentsline {section}{\numberline {16.3}Policy computation}{87}{section.16.3}%
+\contentsline {section}{\numberline {16.4}Forward messages}{88}{section.16.4}%
+\contentsline {section}{\numberline {16.5}Control as variational inference}{88}{section.16.5}%
+\contentsline {subsection}{\numberline {16.5.1}Variational lower bound}{89}{subsection.16.5.1}%
+\contentsline {subsection}{\numberline {16.5.2}Optimizing the variational lower bound}{91}{subsection.16.5.2}%
+\contentsline {section}{\numberline {16.6}Algorithms for RL as inference}{92}{section.16.6}%
+\contentsline {subsection}{\numberline {16.6.1}Q-learning with soft optimality}{92}{subsection.16.6.1}%
+\contentsline {subsection}{\numberline {16.6.2}Policy gradient with soft optimality}{93}{subsection.16.6.2}%
+\contentsline {subsection}{\numberline {16.6.3}Policy gradient vs Q-learning}{93}{subsection.16.6.3}%
+\contentsline {subsection}{\numberline {16.6.4}Benefits of soft optimality}{94}{subsection.16.6.4}%
+\contentsline {subsection}{\numberline {16.6.5}Example methods}{94}{subsection.16.6.5}%
+\contentsline {chapter}{\numberline {17}Inverse reinforcement learning}{95}{chapter.17}%
+\contentsline {subsection}{\numberline {17.0.1}Why should we worry about learning rewards?}{95}{subsection.17.0.1}%
+\contentsline {subsubsection}{Imitation learning perspective}{95}{section*.28}%
+\contentsline {subsubsection}{The RL perspective}{95}{section*.29}%
+\contentsline {subsubsection}{Inverse RL}{96}{section*.30}%
+\contentsline {subsection}{\numberline {17.0.2}Feature matching IRL}{96}{subsection.17.0.2}%
+\contentsline {subsection}{\numberline {17.0.3}Learning the optimality variable}{97}{subsection.17.0.3}%

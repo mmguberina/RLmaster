@@ -34,15 +34,15 @@
 
 \tableofcontents
 
-\section{Plan}
-\paragraph{Old plan, look at update}
+\chapter{Plan}
+\subsubsection{Old plan, look at update}
 Let's stdenomart by reading Sutton's book to get the basic theory down.
 I'll definitely skip some stuff I've passed so far to make it easier to get the ball rolling.
 This will be supplemented by Deep Mind's lectures.
 Once the basic theory is introduced, we'll start going through key papers one by one,
 starting with deep q-learning by DeepMind and continuing until the freshest stuff.
 
-\paragraph{Update}
+\subsubsection{Update}
 Yeah, that did not pan out that way. Turns our Sergey Levine's Berkley course is much more on
 the money for what I need right now --- going straight to function approximation with neural networks 
 and straight to policy gradients after introducing the definitions.
@@ -63,7 +63,7 @@ that's step 1.
 Implementing a few algorithms for practise (and then reading good implementations) is step 2.
 Only then in step 3 do I get to implement what I'm tasked with.
 
-\subsection{TODOs}
+\section{TODOs}
 \begin{enumerate}
 		\item go through berkley lectures again, see whether you understand everything and CORRECT THE MISTAKES
 		\item replace enum algorithms with something nicer (some box or something) or alternatively write the algorithms as pseudocode (probably better).
@@ -74,18 +74,18 @@ Only then in step 3 do I get to implement what I'm tasked with.
 		\item (optional) go back to skipped lectures and watch them and make notes
 \end{enumerate}
 
-\paragraph{Purpose}
+\subsubsection{Purpose}
 These notes serve multiple purposes:
 firstly, of course, is gaining the necessary theoretical knowledge to even describe what's going on.
 Secondly, it will enable generating hypothesis about new possible algorithms.
 Finally, they will serve as a reference - a reinforcement learning handbook if you will.
 
 
-\section{Immitation learning}
+\chapter{Immitation learning}
 skip lel, pls do it if you go for the classes' homeworks tho
 
-\section{Formal setting}
-\subsection{Markov chain}
+\chapter{Formal setting}
+\section{Markov chain}
 \begin{figure}[htpb]
 \begin{center}
 \begin{tikzpicture}[scale=1, transform shape, node distance=1.5cm]
@@ -107,7 +107,7 @@ skip lel, pls do it if you go for the classes' homeworks tho
 \item we have the markov property ofc
 \end{itemize}
 If we add actions and rewards:
-\subsection{Markov decision process}
+\section{Markov decision process}
 \begin{figure}[htpb]
 \begin{center}
 \begin{tikzpicture}[scale=1, transform shape, node distance=1.5cm]
@@ -135,7 +135,7 @@ If we add actions and rewards:
 \end{itemize}
 And if we don't have access to full states, but only partial observations of states:
 
-\subsection{Partially observed Markov decision process}
+\section{Partially observed Markov decision process}
 \begin{figure}[htpb]
 \begin{center}
 \begin{tikzpicture}[scale=1, transform shape, node distance=1.5cm]
@@ -167,7 +167,7 @@ And if we don't have access to full states, but only partial observations of sta
 \item $r$ - reward function ($r(s_t, a_t)$), $r : \mathcal{S} \times \mathcal{A} \to \mathbb{R}$
 \end{itemize}
 
-\subsubsection{The goal of reinforcement learning}
+\subsection{The goal of reinforcement learning}
 Let's deal with the finite horizon case for now.
 \begin{equation}
 \underbrace{p_\theta(\bm{s}_1, \bm{a}_1, \dots, \bm{s}_T, \bm{a}_T)}_{p_\theta(\tau)} = p(\bm{s}_1) \prod^{T}_{t=1} 
@@ -192,10 +192,10 @@ Does $p(\bm{s}_t, \bm{a}_t)$ convege to a stationary distribution?
 It does under the ergodicity (if you can get from any state to any other state) and if the chain is aperiodic.
 In symbols stationarity is $\mu = \mathcal{T}\mu$ which you get from $(\mathcal{T} - \bm{I})\mu = 0$.
 Here $\mu$ is the eingenvector of $\mathcal{T}$ with eigenvalue 1 (which always exists under some regularity conditions).
-\paragraph{Note} In RL we care about \textit{expectations}.
+\subsubsection{Note} In RL we care about \textit{expectations}.
 Because of this our goals are smooth and differentiable and we get do gradient descent on them.
 
-\subsection{Value functions}
+\section{Value functions}
 Let's start with the expectation which we are trying to maximize w.r.t. $\theta$.
 We'll write it out recursively (by using the chain rule of probability), obtaining nested expectations:
 \begin{align}
@@ -224,14 +224,14 @@ If we knew $Q(\bm{s}_1, \bm{a}_1)$, it would be easy to modify $\pi_\theta (\bm{
 For example we could just do $\pi(\bm{s}_1, \bm{a}_1) = 1$ 
 if $\bm{a}_1 = \argmax_{\bm{a}_1} Q(\bm{s}_1, \bm{a}_1)$.
 
-\paragraph{Definition: Q-function}
+\subsubsection{Definition: Q-function}
 \begin{equation}
 		Q^\pi (\bm{s}_t, \bm{a}_t) = \sum_{t'=t}^{T} E_{\pi_\theta}
 		\left[ r(\bm{s}_{t'}, \bm{a}_{t'} )| \bm{s}_t, \bm{a}_t \right] 
 \end{equation}
 thus denoting the total reward from taking $\bm{a}_t$ in $\bm{s}_t$.
 
-\paragraph{Definition: value function}
+\subsubsection{Definition: value function}
 \begin{equation}
 		V^\pi (\bm{s}_t) = \sum_{t'=t}^{T} E_{\pi_\theta}
 		\left[ r(\bm{s}_{t'}, \bm{a}_{t'} | \bm{s}_t) \right] 
@@ -263,8 +263,8 @@ if $ Q^\pi(\bm{s}, \bm{a}) > V^\pi(\bm{s})$ then $\bm{a}$ is \textit{better than
 We can then modify $\pi(\bm{a}|\bm{s})$ to increase the probabily of $\bm{a}$ if $ Q^\pi(\bm{s}, \bm{a}) > V^\pi(\bm{s})$
 
 
-\section{Policy gradients}
-\paragraph{The idea} We are going to directly formalize the concept of trial-and-error learning.
+\chapter{Policy gradients}
+\subsubsection{The idea} We are going to directly formalize the concept of trial-and-error learning.
 
 
  A trajectory distribution in MDP setting is:
@@ -380,8 +380,8 @@ Maximum likelihood:
 In practise, we have finite samples. We also get really high variance with rewards.
 Thus we need some strategy to lower the variance.
 
-\subsection{Reducing variance}
-\paragraph{Causality} policy at time $t'$ cannot affect reward at time $t$ when $t<t'$.
+\section{Reducing variance}
+\subsubsection{Causality} policy at time $t'$ cannot affect reward at time $t$ when $t<t'$.
 Our algorithm thus not use this fact. Let's make it use it.
 First let's rewrite the policy gradient (just used distributive property):
 \begin{equation}
@@ -410,7 +410,7 @@ So we can write:
 \end{equation}
 This will be further discussed later.
 
-\subsubsection{Baselines}
+\subsection{Baselines}
 If the good actions yield positive rewards and the bad actions yield negative rewards,
 the policy gradient will decrease the probability of bad actions and increase the probability 
 of good actions.
@@ -461,7 +461,7 @@ So this is the optimal $b$ (the baseline which minimizes the variance).
 You'll have a different baseline for every parameter as
 this is just the expected reward, by weigthed by gradient magnitudes.
 
-\subsection{Off-policy gradients}
+\section{Off-policy gradients}
 Let's first discuss why policy gradients are an on-policy method (the classic one in fact).
 \begin{equation}
 		\nabla_\theta J(\theta) = \underbrace{E_{\tau \sim p_\theta(\tau)}}_{\text{this is the trouble!}} [\nabla_\theta p_\theta(\tau)r(\tau)]
@@ -475,7 +475,7 @@ if they're not, this will be nice).
 What if we don't have samples from $p_\theta(\tau)$, but we have let's say
 $\bar{p}(\tau)$.
 Well, we can use importance sampling.
-\paragraph{Importance sampling}
+\subsubsection{Importance sampling}
 \begin{align}
 		E_{x \sim p(x)} [f(x)]  
 		&= \int_{{}}^{{}} {p(x)f(x)} \: d{x} \\
@@ -577,7 +577,7 @@ This does not in general give the correct policy gradient, but its reasonable
 in the sense that it gives bounded error is $\pi_{\theta'}$ is no too different form $\pi_\theta$.
 But that will be discussed later.
 
-\subsubsection{Policy gradient with automatic differentiation}
+\subsection{Policy gradient with automatic differentiation}
 We don't want to calculate the grad for every state-action pair 'cos neural nets have a lot of 
 parameters.
 Typically we want to use the backpropagation algorithm.
@@ -588,13 +588,13 @@ So we'll implement a ``pseudo-loss'' as a weighet maximum likelihood:
 \end{equation}
 This equation means nothing, but it will give us the gradient that we want (lol).
 
-\subsubsection{Policy gradients in practice}
+\subsection{Policy gradients in practice}
 \begin{itemize}
 		\item gradient has high variance, so use very large batch sizes (in the thousands)
 		\item tweaking learning rates is very hard (ADAM can be OK-ish), we'll do specific stuff on this later.
 \end{itemize}
 
-\subsection{Advanced policy gradients}
+\section{Advanced policy gradients}
 (There will be more on this later (even more advanced policy gradients (lol)).
 We have the following problem: some parameters change probabilities a lot more than others!
 We'd like to increase the changes made by parameters that make small changes, and decrease
@@ -630,7 +630,7 @@ Then solve for optimal $\alpha$ while solving $\bm{F}^{-1} \nabla_\theta J(\thet
 Here conjugate gradient works well.
 
 
-\section{Actor-critic algorithms}
+\chapter{Actor-critic algorithms}
 
 \begin{equation}
 		\nabla_\theta J(\theta) \approx 
@@ -696,7 +696,7 @@ There are methods which go for option 1, but we'll dicuss those later.
 OK, how do we learn $V^\pi(\bm{s})$ (it will be a neural net ofc).
 We need to evaluate the policy.
 
-\subsection{Policy evaluation}
+\section{Policy evaluation}
 \begin{align}
 		V^\pi(\bm{s}_t) &= \sum_{t'=t}^{T} E_{\pi_\theta} \left[ r(\bm{s}_{t}, \bm{a}_{t})\bm{s}_t \right] \\
 		J(\theta) &= E_{\bm{s}_1 \sim p(\bm{s}_1} \left[ V^\pi (\bm{s}_1) \right] 
@@ -745,7 +745,7 @@ it tells you how likely you are to win in a given board state.
 Also, in this particular example it is very easy to restart from a given board state 
 and get better estimates for the value function in that state.
 
-\subsection{From evaluation to actor-critic}
+\section{From evaluation to actor-critic}
 Basic example actor-critic algorithm:
 \begin{enumerate}
 		\item sample $\left\{ \bm{s}_i, \bm{a}_i \right\}$  from  $\pi_\theta (\bm{a}|\bm{s})$ (run policy)
@@ -755,7 +755,7 @@ Basic example actor-critic algorithm:
 		\item $\theta \leftarrow \theta + \alpha \nabla_\theta J(\theta)$
 \end{enumerate}
 
-\subsection{Aside: discount factors}
+\section{Aside: discount factors}
 In infinite-episode length the value-function can get infinitely large.
 So we'll discount the reward from states with $\gamma, \gamma \in [0,1]$,
 \begin{equation}
@@ -797,7 +797,7 @@ Let's now create an online actor-critic algorithm:
 		\item $\theta \leftarrow \theta  + \alpha \nabla_\theta J(\theta)$
 \end{enumerate}
 
-\subsection{Actor-critic design choises}
+\section{Actor-critic design choises}
 
 We can do a two network design: one for the value function $\bm{s} \to \hat{V}^\pi_\theta(\bm{s})$ and one for the policy 
 $\bm{s} \to \pi_\theta(\bm{a}|\bm{s})$.
@@ -805,7 +805,7 @@ The good thing about this is simple and stable. The bad thing is that it has no 
 Alternatively, you can go for the shared network desing (have a single network for both).
 It will probably need more hyperparameter tuning, but it is in principle more efficient.
 
-\subsection{Online actor-critic in practise}
+\section{Online actor-critic in practise}
 In practice (due to the properties of neural networks) we want to update with batches and not do a single sample gradient.
 One way to get a batch is to use multiple works, i.e. do the synchronized parallel actor-critic.
 This way you'll get n\_workers-sized batches.
@@ -886,7 +886,7 @@ So in total we're left with:
 In practise, people use the reparametrization trick in the gradient estimate and get a better estimate with it.
 Furthermore, there are a lot of fancier ways to fit Q-functions (for example soft actor-critic (SAC)).
 
-\subsection{Critics as state-dependent baselines}
+\section{Critics as state-dependent baselines}
 Let's first restate the actor-critic policy gradient:
 \begin{equation}
 	\nabla_\theta J(\theta) \approx \frac{1}{N} \sum_{i=1}^{N} \sum_{t=1}^{T} \nabla_{\theta} \log \pi_\theta(\bm{s}_{i,t}, \bm{a}_{i,t})
@@ -933,7 +933,7 @@ It is much better in some cases, providing you can evaluate the second term in t
 
 Let's cook up some more options with different tradeoffs.
 
-\subsubsection{Eligibility traces and n-step returns}
+\subsection{Eligibility traces and n-step returns}
 Thus far we've had
 \begin{equation}
 \hat{A}^\pi_C (\bm{s}_{t}, \bm{a}_{t}) =
@@ -962,7 +962,7 @@ Using $n>1$ often works better! Actually, in most cases
 the sweet spot is somewhere between 1 and $\infty$.
 
 Let's do one more trick:
-\subsubsection{Generalied advantage estimation (GAE)}
+\subsection{Generalied advantage estimation (GAE)}
 How about we construct all possible n-step return estimators and average them together?:
 \begin{equation}
 \hat{A}^\pi_{GAE} (\bm{s}_{t}, \bm{a}_{t}) =
@@ -978,8 +978,8 @@ where $\delta_{t'} = r(\bm{s}_{t'}, \bm{a}_{t'}) + \gamma \hat{V}^\pi_\theta(\bm
 Here larger $\lambda$ looks further in the future and vice-versa.
 This has a similar effect as a discount.
 
-\section{Value function methods}
-\subsubsection{Can we omit policy gradient completely?}
+\chapter{Value function methods}
+\subsection{Can we omit policy gradient completely?}
 We have $A^\pi(\bm{s}_{t}, \bm{a}_{t})$.
 It tells us how much better $\bm{a}_t$ is than the average action according to $\pi$ 
 and it is at least as good as any $\bm{a}_t \sim \pi(\bm{a}_t|\bm{s}_t)$
@@ -997,7 +997,7 @@ So the policy is this implicit argmax policy (does not require a neural net to g
 and we know how to improve it.
 This is the idea behind:
 
-\subsection{Policy iteration}
+\section{Policy iteration}
 On a high level the policy iteration algorithm is:
 \begin{enumerate}
 		\item evaluate $A^\pi (\bm{s}_{}, \bm{a}_{}) $
@@ -1006,7 +1006,7 @@ On a high level the policy iteration algorithm is:
 
 Now we need to figure out how to evaluate $A^\pi (\bm{s}_{}, \bm{a}_{}) $ (and whether
 we'll fit $Q^\pi$ or $V^\pi$).
-\subsubsection{Dynamic programming}
+\subsection{Dynamic programming}
 %Let's assume we know $p(\bm{s}'|\bm{s}, \bm{a})$ where 
 Skipping explaining this from a single Sergey slide, Sutton did it better.
 Plus even then I can only pretend to know the full depth.
@@ -1018,7 +1018,7 @@ V^\pi(\bm{s}) \leftarrow E_{\bm{a} \sim \pi(\bm{a}|\bm{s})} \left[ r(\bm{s}_{}, 
 \end{equation}
 which we can than use to calculate the advantage $A^\pi (\bm{s}_{t}, \bm{a}_{t})$ and update the policy.
 
-\subsubsection{Policy iteration with dynamic programming}
+\subsection{Policy iteration with dynamic programming}
 We evaluate $V^\pi(\bm{s})$ by doing
 \begin{equation}
 		V^\pi (\bm{s}) \leftarrow r(\bm{s}, \pi(\bm{s})) + 
@@ -1027,7 +1027,7 @@ We evaluate $V^\pi(\bm{s})$ by doing
 \end{equation}
 
 
-\subsubsection{Even simpler dynamic programming}
+\subsection{Even simpler dynamic programming}
 Looking at the argmax of the advantage function (specifically looking at 
 what's relevant in the argmax):
 \begin{equation}
@@ -1050,7 +1050,7 @@ You can even plug step 2 into step 1 lel.
 Again, this is simpler because we don't have to recover the indeces --- no need to do the whole table lookup,
 just do the max.
 
-\subsubsection{Fitted value iteration and Q-iteration}
+\subsection{Fitted value iteration and Q-iteration}
 Now we're using function approximators instead of tables to map states to values.
 This is done to combat the curse of dimensionality.
 We'll do least-squares regression on the target values (which are $\argmax_{\bm{a}} Q(\bm{s}, \bm{a})$).
@@ -1095,8 +1095,8 @@ A common design for Q networks in discrete spaces is to input the state $\bm{s}$
 The parameters here are the dataset size $N$, the collection policy, 
 the number of iterations $K$ (how much you go from step 3 back to step 2) the number of gradient steps $S$ .
 
-\subsection{From Q-iteration to Q-learning}
-\subsubsection{Why is this algorithm off-policy}
+\section{From Q-iteration to Q-learning}
+\subsection{Why is this algorithm off-policy}
 The one place where the policy is used is when using the Q-function (in step 2 in the algorithm under the max).
 The Q-function functions as kind of a model which tells us which actions will do what (in terms of reward).
 Really you have a dataset of transitions and you're fitting your Q-function on it.
@@ -1135,7 +1135,7 @@ Another exploration rule is the \textbf{Boltzmann exploration} rule
 \end{equation}
 Here there's a roughly same probability to take actions which are roughly equally good
 
-\subsection{Value function in theory}
+\section{Value function in theory}
 Let's dicuss why there are no convergence guarantees.
 The value iteration (tabular) algorithm is:
 \begin{enumerate}
@@ -1219,7 +1219,7 @@ the target Q-values themselves depend of Q-values.
 Now we could turn this algorithm into a gradient descent algorithm, but 
 the resulting ``residual algorithm'' has very bad numerical properties and performs very poorly in practise.
 
-\subsubsection{A sad corollary}
+\subsection{A sad corollary}
 The batch actor-critic algorithm is also not guaranteed to converge under function approximation :(
 \newline
 The reasons for this are the same.
@@ -1227,7 +1227,7 @@ The reasons for this are the same.
 Fortunatelly, we can actually make these algorithms work very well in practise (ML amirite).
 And now we'll do that:
 
-\section{Deep RL with Q-functions}
+\chapter{Deep RL with Q-functions}
 To recap look at \ref{eq:fitted_q_iteration_algorithm} and \ref{eq:online_q_iteration_algorithm} (NOTE: these links are bad as they don't link to the 
 enumerated algorithms, solving that is a TODO for later).
 
@@ -1241,7 +1241,7 @@ One practical way to mitigate this is to use multiple workers (running multiple 
 This can be done in both the synchronized and the asynchronous fashion.
 But there is another solution: using replay buffers.
 
-\subsubsection{Replay buffers}
+\subsection{Replay buffers}
 Q-learning with a replay buffer:
 \begin{enumerate}
 		\item sample a batch $\left( \bm{s}_i, \bm{a}_i, \bm{s}_i', r_i \right) $ from $\mathcal{B}$
@@ -1261,7 +1261,7 @@ OK, now the full Q-learning with a replay buffer looks like:
 \end{enumerate}
 where we repeat going from 3. to 2. K times.
 
-\subsection{Target networks}
+\section{Target networks}
 There is another problem we haven't tackled yet,
 in particular the fact that Q-learning is not gradient descent and it has a moving target 
 which makes it very hard to converge.
@@ -1302,13 +1302,13 @@ where $\tau = 0.999$ works well.
 This feels bad because we're linearly interpolating neural network parameters (which are nonlinear function).
 It works because $\phi'$ and $\phi$ are similar and there are \textit{some} theoretical justifications for this.
 
-\subsection{A general view of Q-learning}
+\section{A general view of Q-learning}
 
 It's important to note that process in step 1 and process in step 3 are quite separate - you can run them in parallel and they
 don't really need to care about each other (but of course they shouldn't be too divergent because then Q-learning won't really work).
 
-\section{Improving Q-learning}
-\subsubsection{Are Q-values accurate?}
+\chapter{Improving Q-learning}
+\subsection{Are Q-values accurate?}
 Q-values help us select a good policy, but they are also a prediction of future rewards.
 So do they predict Q-values accurately?
 [nice graphs on average returns and corresponding average Qs on Atari games where you can see that the Q values increase almost monotonically,
@@ -1333,7 +1333,7 @@ If we can somehow decorrelate the noise in the action selection mechanism and th
 mechanism, this problem will go away (so let's not get both actions and values from $Q_{\phi'}$).
 This is done in:
 
-\subsection{Double Q-learning}
+\section{Double Q-learning}
 Double Q-learning uses two networks:
 \begin{align}
 		Q_{\phi_A}(\bm{s}_{}, \bm{a}_{}) &\leftarrow r + \gamma Q_{\phi_B} \left( \bm{s}', \argmax_{\bm{a}'}Q_{\phi_A}(\bm{s}_{}', \bm{a}_{}') \right) \\
@@ -1341,7 +1341,7 @@ Double Q-learning uses two networks:
 \end{align}
 if we assume that $Q_{\phi_A}$ and $Q_{\phi_B}$ are decorrelated, the noise will be different and we won't overestimate.
 
-\subsubsection{Double Q-learning in practise}
+\subsection{Double Q-learning in practise}
 We already have 2 networks, $Q_\phi$ and $Q_{\phi'}$!
 So in standard Q-learning we do:
 \begin{equation}
@@ -1357,7 +1357,7 @@ Of course, $Q_\phi$ and $Q_{\phi'}$ are periodically set to be the same (and are
 so this is far from the perfect solution, 
 but it works well in practise nonetheless.
 
-\subsubsection{Multi-step returns}
+\subsection{Multi-step returns}
 The Q-learning target is:
 \begin{equation}
 y_{j,t} = r_{j,t} + \gamma Q_{\phi'}\left( \bm{s}', \argmax_{\bm{a}_{j,t+1}}Q_{\phi'}(\bm{s}_{j,t+1}', \bm{a}_{j,t+1}') \right)
@@ -1373,7 +1373,7 @@ Yes,
 This is sometimes called the n-step return estimator and the tradeoff is the same as in actor-critic (you get lower bias
 and higher variance).
 
-\subsubsection{Q-learning with N-step returns}
+\subsection{Q-learning with N-step returns}
 Less bias target values when Q-values are inaccurate,
 typically faster learning (especially early on), but only actually correct when learning on-policy (because you use action
 your new policy might not have taken).
@@ -1382,11 +1382,11 @@ How do we fix the issue?
 Ignore it (often works well (lmao ofc)), cut the trace (dynamically choose $N$ to get only on-policy data),
 do importance sampling and the mystery solution where Q is conditioned on something else which Sergey says is homework.
 
-\subsection{Q-learning with continuous actions}
+\section{Q-learning with continuous actions}
 How do we select continuous actions when we have to do the argmax to select the action?
 We also have to do the max to calculate the target values.
 Well, we can do optimization (e.g., SGD), or do stochastic optimization.
-\paragraph{Option 1}
+\subsubsection{Option 1}
 Simple solution
 \begin{equation}
 		\max_{\bm{a}} Q(\bm{s}_{}, \bm{a}_{}) \approx \max \left\{ Q(\bm{s}_{}, \bm{a}_{1}), \dots,Q(\bm{s}_{}, \bm{a}_{N})  \right\} 
@@ -1398,7 +1398,7 @@ This can also be fast.
 Or do CMA-ES which is substantially less simple iterative stochastic optimization but is more accurate.
 Anyhow CEM works OK for up to 40 dimensions of the actions space.
 
-\paragraph{Option 2}
+\subsubsection{Option 2}
 Use a function class that is easy to optimize:
 \begin{equation}
 		Q_\phi (\bm{s}_{}, \bm{a}_{}) = - \frac{1}{2} (\bm{a} - \mu_\phi(\bm{s}))^T P_\phi (\bm{s}) (\bm{a} - \mu_\phi(\bm{s})) + V_\phi (\bm{s})
@@ -1411,7 +1411,7 @@ Because for a given state the fuction is quadratic, we have a normalized advanta
 With this there are no changes to the algorithm and it's just as efficient as Q-learning,
 but it loses reparametrizational power.
 
-\paragraph{Option 3}
+\subsubsection{Option 3}
 We can also learn an approximate maximizer, i.e. learn another network to estimate the (arg)max.
 This method can be interpreted as a ``deterministic'' actor-critic,
 or as approximate Q-learning.
@@ -1427,7 +1427,7 @@ The new target is then
 		r_j + \gamma Q_{\phi'} (\bm{s}_{j}', \argmax_{\bm{a}'}Q_{\phi'} (\bm{s}_{j}', \bm{a}_{j}'))
 \end{equation}
 If we do this, we get DDPG
-\subsubsection{DDPG}
+\subsection{DDPG}
 \begin{enumerate}
 		\item take action $\bm{a}_i$ and observe $\left( \bm{s}_i, \bm{a}_i, \bm{s}_i', r_i \right)  $, add it to $\mathcal{B}$
 		\item sample a mini-batch  $\left( \bm{s}_j, \bm{a}_j, \bm{s}_j', r_j \right)$  from $\mathcal{B}$ uniformly
@@ -1438,11 +1438,11 @@ If we do this, we get DDPG
 		\item update $\phi'$ and $\theta'$ (e.g. Polyak averaging)
 \end{enumerate}
 
-\subsection{Implementation tips and examples}
+\section{Implementation tips and examples}
 Q-learning takes some care to stabilize --- test on easy and reliable tasks first --- you want to get through debugging first and then do the hyperparameter tuning.
 Also, Q-learning much differently on different tasks. Namely, there's a huge difference between stability. It can even happen that some runs works fine
 and other fail completely.
-\paragraph{Tips} Large replay buffers help improve stability (as it looks more like fitted Q-iteration).
+\subsubsection{Tips} Large replay buffers help improve stability (as it looks more like fitted Q-iteration).
 It takes time --- it might be no better than random for a while. To remedy this somewhat, start with high exploration and gradually reduce it.
 Bellman error gradients can be big so clip gradients or use Huber loss:
 \begin{equation}
@@ -1458,7 +1458,7 @@ N-step returns help a lot (particularly in the beginning), but introduce bias.
 Reducing learning rates over time also help, Adam optimizer can help too.
 Also, it's very important to run different random seeds as the algorithm is quite inconsistent between runs.
 
-\section{Even more advanced policy gradients (PPO and TRPO)}
+\chapter{Even more advanced policy gradients (PPO and TRPO)}
 we had the REINFORCE algorithm:
 \begin{enumerate}
 		\item sample $ \left\{ \tau^{ i } \right\}   $ from $ \pi_{ \theta } (\bm{a}_{t}| \bm{s}_{t} )  $ (run the policy)
@@ -1492,7 +1492,7 @@ This is desireable if the advantage estimator is not perfect. Then you cna colle
 and imporve the advatage estimator.
 
 Let's reinterpret policy gradient as policy iteration.
-\subsubsection{Policy gradient as policy iteration}
+\subsection{Policy gradient as policy iteration}
 $ J (\theta)  $ represent the reinforcement learning objective:
 \begin{equation}
 		J (\theta) = E_{ \tau \sim p_{ \theta }(\tau )} \left[ \sum_{t}^{} \gamma^{ t } r (\bm{s}_{t}, \bm{a}_{t} ) \right] 
@@ -1524,9 +1524,13 @@ J (\theta') + E_{ \tau \sim p_{ \theta' } (\tau) } \left[
 \right] \\
 &=
 E_{ \tau \sim p_{ \theta' } (\tau) } \left[ \sum_{t=0}^{\infty} \gamma^{ t } r (\bm{s}_{t}, \bm{a}_{t} ) \right] 
-+
-E_{ \tau \sim p_{ \theta' } (\tau) } 
-\left( \sum_{t=0}^{\infty} \gamma^{ t } \left( \gamma V^{ \pi_{ \theta } } (\bm{s}_{t+1}) - V^{ \pi_{ \theta } } (\bm{s}_{t}) \right)  \right)  \\
+ \nonumber \\
+		+&
+ E_{ \tau \sim p_{ \theta' } (\tau) } 
+\left( \sum_{t=0}^{\infty} \gamma^{ t } \left( \gamma V^{ \pi_{ \theta } } (\bm{s}_{t+1}) - V^{ \pi_{ \theta } } (\bm{s}_{t}) \right)  \right)  
+\end{align}
+
+\begin{equation}
 E_{ \tau \sim p_{ \theta' } (\tau) }
 \left[ 
 \sum_{t=0}^{\infty} \gamma^{ t } \left( 
@@ -1534,10 +1538,10 @@ r (\bm{s}_{t}, \bm{a}_{t} ) + \gamma V^{ \pi_{ \theta } } (\bm{s}_{t+1})
 - V^{ \pi_{ \theta } } (\bm{s}_{t})
 \right) 
 \right] \\
-&=
+=
 E_{ \tau \sim p_{ \theta' } (\tau) }
 \left[ \sum_{t=0}^{\infty} \gamma^{ t } A^{ \pi_{ \theta } } (\bm{s}_{t}, \bm{a}_{t} ) \right] 
-\end{align}
+\end{equation}
 First we're just substituting.
 We're starting in $ p (\bm{s}_{0})  $ because that doesn't depend on $ \theta  $ (that's all in the expectation and not in the distribution over which 
 the expectation is taken (and we can of course do this because we're staring in $ \bm{s}_{0}  $)).
@@ -1661,7 +1665,7 @@ With this lemma, we can restate the previous result on variation divergence to
 		\leq 2(1 - (1-\epsilon)^{ t }) \leq 2 \epsilon t
 \end{equation}
 
-\subsubsection{Bounding the objective value}
+\subsection{Bounding the objective value}
 Again, we have the claim that 
 $ \pi_{ \theta' }  $ is \textit{close} to $ \pi_{ \theta }  $ if $ \left| \pi_{ \theta' } (\bm{a}_{t}| \bm{s}_{t} ) - \pi_{ \theta } (\bm{a}_{t}| \bm{s}_{t} ) \right|
 \leq \epsilon \forall \bm{s}_{t} $
@@ -1708,7 +1712,7 @@ In total, we arrive at:
 \end{gather}
 for small enough $ \epsilon  $, this is guaranteed to improve $ J (\theta') - J (\theta)  $
 
-\subsection{Policy gradients with constraints}
+\section{Policy gradients with constraints}
 To use this in practise, we want a more convenient bound.
 That would be:
 \begin{equation}
@@ -1737,7 +1741,7 @@ D_{ KL } (\pi_{ \theta' } (\bm{a}_{t}| \bm{s}_{t} ) || \pi_{ \theta }(\bm{a}_{t}
 \end{gather}
 and for small enough $ \epsilon  $, this is guaranteed to improve $ J (\theta') - J (\theta)  $.
 
-\subsubsection{How do we enforce the constraint}
+\subsection{How do we enforce the constraint}
 There are a number of ways to do this.
 One way is to write the objective and the constraint in terms of the Lagrangian:
 \begin{equation}
@@ -1763,7 +1767,7 @@ This procedure is called \textit{dual gradient descent}.
 While doing this, you don't have to perform maximization in the first step until convergence,
 but only a few gradient steps.
 
-\subsection{Natural gradient}
+\section{Natural gradient}
 Now we'll approximate the constraint in another way which is more approximate,
 but leads to a nice algorithm.
 First let's introduce a shorthand:
@@ -1862,29 +1866,29 @@ where
 		\alpha = \sqrt{\frac{2\epsilon}{\nabla_{ \theta } J (\theta)^{ T } \bm{F}_{} \nabla_{ \theta } J (\theta)} }
 \end{equation}
 
-\paragraph{Do these results carry over in practise?}
+\subsubsection{Do these results carry over in practise?}
 Remember the example in the policy gradient section where the policy gradient was ill conditioned.
 Again, we solved an ill-conditioned optimization problem into a better conditioned optimization problem.
 
-\subsection{Practical methods and notes}
-\paragraph{Natural policy gradient}
+\section{Practical methods and notes}
+\subsubsection{Natural policy gradient}
 Generally a good choise to stabilize policy gradient trainig.
 Check paper Peters, Schaal ``Reinforcement learning of motor skills with policy gradients'' for more details.
 Also the paper Schulman et al ``Trust region policy optimization'',
 it has many useful non-trivial tricks.
-\paragraph{Trust region policy optimization}
+\subsubsection{Trust region policy optimization}
 Check mentioned paper for a nice use case of dual gradient descent.
-\paragraph{Just using importance sampling objective directly}
+\subsubsection{Just using importance sampling objective directly}
 Important to use regularization to stay close to the old policy.
 Check the ``Proximal policy optimization'' paper for this.
 
 
 
 
-\section{Optimal control and planning}
+\chapter{Optimal control and planning}
 I'll be mostly skipping this as it is mostly re-doing what I've written already.
 
-\paragraph{The objective}
+\subsubsection{The objective}
 Can be expressed as a optimization problem:
 \begin{equation}
 		\min_{\bm{a}_1, \dots, \bm{a}_T} \sum_{t=1}^{T} c(\bm{s}_{t}, \bm{a}_{t}) \text{ s.t. } \bm{s} = f (\bm{s}_{t-1}, \bm{a}_{t-1} ) 
@@ -1910,7 +1914,7 @@ However, this can be very suboptimal. Namely, open-loop planning in stochastic s
 Reinforcement learning typically solves things in a closed-loop fashion (it tells the agent what to do at every possible state,
 and it continuously observes  states and acts on them as they come).
 
-\subsubsection{Stochastic optimization}
+\subsection{Stochastic optimization}
 Let's abstract away optimal control/planning (the optimization problem is a black box):
 \begin{equation}
 		\bm{a}_1, \dots, \bm{a}_T = \argmax_{\bm{a}_1, \dots, \bm{a}_T} \underbrace{J(\bm{a}_1, \dots, \bm{a}_T)}_{\text{don't care what this is}}
@@ -1927,7 +1931,7 @@ The main benefit is that it is super simple. It is also quite fast to evaluate o
 The disadvantage is that you might not pick good actions (it's luck based after all).
 
 A better way to do black-box optimization is
-\subsubsection{Cross-entropy method (CEM)}
+\subsection{Cross-entropy method (CEM)}
 \begin{enumerate}
 		\item pick $\bm{A}_1, \dots, \bm{A}_N $ \underline{from some distribution} (e.g. uniform)
 		\item choose $\bm{A}_i$ based on $\argmax_i J(\bm{A}_i)  $
@@ -1955,7 +1959,7 @@ In total, the benefits are that these methods are fast if parallelized and they'
 and the drawbacks are that they suffer from a very harsh dimensionality limit (top limit 30-60 depending on the problem)
 and are available only for open-loop planning. Generally 10 dimensions and 15 timesteps is what you can expect from this.
 
-\subsubsection{Discrete case: Monte Carlo tree search (MCTS)}
+\subsection{Discrete case: Monte Carlo tree search (MCTS)}
 (Can actually be used for continuous problems, but eh).
 This shined in Go and poker.
 Anyhow, tree search blows up exponentially.
@@ -1983,7 +1987,7 @@ So we give a bonus for rarely visited nodes (states in tree terminology I assume
 Here $N$ is the number of times a state has been visited and $Q$ is the return obtained.
 Of course, you can do MCTS with RL and use value functions to do the estimated values for leaf nodes (ex. AlphaGo).
 
-\subsection{Trajectory optimization with derivatives}
+\section{Trajectory optimization with derivatives}
 Let's try to tackle continous action spaces.
 This is in the domain of \textit{optimal control} and these people traditionally
 denote states with $ \bm{x}_{t}  $ and actions with $ \bm{u}_{t}  $.
@@ -2010,7 +2014,7 @@ So they define plenty of points over the trajectory and thus provide finer contr
 over the whole trajectory.
 They are more complex, but are better conditioned than shooting methods.
 
-\subsubsection{Linear case: LQR}
+\subsection{Linear case: LQR}
 We're looking at the problem written in unconstrained form.
 Let's look at the deterministic linear controller
 \begin{equation}
@@ -2156,7 +2160,7 @@ for $ t=1  $ to $ T  $:
 Here the $ Q (\bm{x}_{t}, \bm{u}_{t} ) $ and $ V (\bm{x}_{t})  $ functions really are the
 value functions we're familiar with.
 
-\subsection{LQR for stochastic and nonlinear systems}
+\section{LQR for stochastic and nonlinear systems}
 Let's start with the special case where the noise is multivariate Gaussian.
 Then the system looks like this:
 \begin{align}
@@ -2179,7 +2183,7 @@ Also, the controller is potentially different at every timestep.
 
 But let's now talk about the nonlinear case:
 
-\subsubsection{Nonlinear case: differential dynamic programming (DDP)/ iterative LQR}
+\subsection{Nonlinear case: differential dynamic programming (DDP)/ iterative LQR}
 The first thing to do is, of course,
 ask whether we can \textit{approximate} a nonlinear system as a linear-quadratic system?
 And, of course, we'll use the Taylor expansion:
@@ -2283,7 +2287,7 @@ adding a $ \alpha  $ parameter to the constant term in forward pass, getting:
 You can search over $ \alpha  $ until improvement is achieved. Often
 some version of line search is used here.
 
-\subsubsection{Nonlinear model-predictive control}
+\subsection{Nonlinear model-predictive control}
 Comes from paper ``Synthesis and stabilization of complex behaviors through online trajectory optimization''.
 Idea is to at every time step:
 \begin{enumerate}
@@ -2314,7 +2318,7 @@ be robust to perturbations.
 
 
 
-\section{Model-based reinforcement learning}
+\chapter{Model-based reinforcement learning}
 We'll mostly be working with deterministic model of form $f (\bm{s}_{t}, \bm{a}_{t} ) = \bm{s}_{t+1} $,
 because they're easier to deal with and many results go over to the stochastic case 
 $p(\bm{s}_{t+1} | \bm{s}_t, \bm{a}_t)$
@@ -2377,7 +2381,7 @@ Essentially, the more you replan, the less perfect each individual plan needs to
 We use shorter horizons here.
 And even random sampling can work well here.
 
-\subsection{Uncertainty in model-based RL}
+\section{Uncertainty in model-based RL}
 There is a performance gap in model-based RL (when compared to model-free RL).
 The problem is that model is overfitting when it has little data and it needs not to to get good results later (they get stuck).
 If the model is broken somehow, the planner will exploit that.
@@ -2391,8 +2395,8 @@ We need to explore to get better. Thus too much caution could lead to never expl
 Furthermore, expected value is not the same as pessimistic value nor the optimistic value,
 it's just a good start.
 
-\subsubsection{Uncertainty-aware neural network models}
-\paragraph{Idea 1:} use output entropy. This is a bad idea.
+\subsection{Uncertainty-aware neural network models}
+\subsubsection{Idea 1:} use output entropy. This is a bad idea.
 ex:
 \begin{equation}
 		(\bm{s}_{t}, \bm{a}_{t} ) \to \text{network} \to p( \bm{s}_{t+1}| \bm{s}_{t}, \bm{a}_{t})
@@ -2411,7 +2415,7 @@ There are 2 types of uncertainty:
 		\item \textit{epistemic} or \textit{model} uncertainty (should go down over time because you don't know what the model is)
 \end{enumerate}
 
-\paragraph{Idea 2:} estimate model uncertainty --- `` the model is certain about the data, but we are not certain about the model.''
+\subsubsection{Idea 2:} estimate model uncertainty --- `` the model is certain about the data, but we are not certain about the model.''
 
 \begin{equation}
 		(\bm{s}_{t}, \bm{a}_{t} ) \to \text{network} \to p( \bm{s}_{t+1}| \bm{s}_{t}, \bm{a}_{t}), \text{parameters } \theta
@@ -2426,7 +2430,7 @@ Then we'd predict according to
 		\int_{}^{} p(\bm{s}_{t+1}| \bm{s}_{t}, \bm{a}_{t}, \theta) p(\theta|\mathcal{D}) d\theta
 \end{equation}
 
-\subsubsection{Quick overview of Bayesian neural networks}
+\subsection{Quick overview of Bayesian neural networks}
 Just the high-level idea here, we'll get back to this.
 In Bayesian neural networks, there's a distribution over every weight.
 If you want a prediction, you can sample over every weight (thus sampling a network from a distribution of neural networks)
@@ -2445,7 +2449,7 @@ Thus introducing 2 numbers for each weight which gives you the uncertainty of ea
 Check papers if you want to know more about this (some will be covered in the variational inference lecture too).
 Let's talk about a simpler method.
 
-\subsubsection{Bootstrap ensembles}
+\subsection{Bootstrap ensembles}
 What instead of training a Bayesian neural net, we instead train many different nets and diversify them.
 Ideally they'd do similar and accurate things on the training data, but they'd all make different mistakes outside of training data.
 The dispersion of their votes would then give us an estimate of their uncertainty.
@@ -2471,7 +2475,7 @@ In practise it's even easier. We do $<10$ models as they're expensive to trian.
 Also, just by training with stochastic gradient descent is often enough diversity and you don't 
 even need to resample with replacement (even though that's still important for theoretical results).
 
-\subsubsection{How to plan with uncertainty}
+\subsection{How to plan with uncertainty}
 Before:
 \begin{equation}
 		J(\bm{a}_{1}, \dots, \bm{a}_{H}) = \sum_{t=1}^{H} r (\bm{s}_{t}, \bm{a}_{t} ), \text{ where } \bm{s}_{t+1} = f (\bm{s}_{t}, \bm{a}_{t} )
@@ -2489,10 +2493,10 @@ In general, for candidate action sequence $ \bm{a}_{1}, \dots , \bm{a}_{H}$:
 		\item calculate $R = \sum_{t}^{} r (\bm{s}_{t}, \bm{a}_{t} )$
 		\item repeat steps 1 and 3 to accumulate the average reward
 \end{enumerate}
-\paragraph{Other options:} moment matching, more complex posterior estimation with BNNs, etc.
+\subsubsection{Other options:} moment matching, more complex posterior estimation with BNNs, etc.
 NOTE: there is a gazillion of papers to read here and you should do it if you're serious about all this.
 
-\subsection{Model-based reinforcement learning with images}
+\section{Model-based reinforcement learning with images}
 We had $f (\bm{s}_{t}, \bm{a}_{t} )= \bm{s}_{t+1}$.
 But this is particularly hard or images because:
 \begin{itemize}
@@ -2507,7 +2511,7 @@ and $p(\bm{s}_{t+1}|\bm{s}_{t}, \bm{a}_{t})$ (low dimensional but dynamic)?
 We'll discuss this and learning dynamics straight from the images.
 Let's start with state space (latent space models) models.
 
-\subsubsection{State space (latent space models)}
+\subsection{State space (latent space models)}
 Notation: 
 \begin{itemize}
 		\item $p(\bm{o}_{t}|\bm{s}_{t})$ - observation model
@@ -2574,7 +2578,7 @@ Let's write out a model-based RL algorithm which uses this:
 OK. What about learning directly in observation spaces,
 i.e. directly learning $p(\bm{o}_{t+1}| \bm{o}_{t}, \bm{s}_{t})$
 
-\section{Model-based policy learning}
+\chapter{Model-based policy learning}
 While our MBRL algorithm ver 1.5 makes open-loop predictions and then replans on every timestep, 
 it's still open-loop overall because it can't plan to make other decisions in the future in responce to other information 
 that will be revealed in the future.
@@ -2642,17 +2646,17 @@ Overall the problems are similar to those when training RNNs with very long time
 However, unlike LSTMs, we can't just ``choose'' a simple dynamics to control the gradients --- nature chose our dynamics.
 So all in all this is bad for model-based reinforcement learning.
 
-\subsubsection{What's the solution?}
-\paragraph{First class of solutions}
+\subsection{What's the solution?}
+\subsubsection{First class of solutions}
 Use derivative-free (model-free) RL algorithms with using the model not in the real world, but on the model to generate synthetic samples.
 Altough it seems strange to use the model to train model-free algorithms, it works well in practise.
 It's essentially model-based acceleration for model-free RL.
-\paragraph{Second class of solutions}
+\subsubsection{Second class of solutions}
 Use simpler policies than neural networks, ex. LQR with learned models (LQR-FLM (fitted local models)).
 Then use those models to train local policies to solve simple(r) tasks and the combine the local policies
 into a global policy via some supervised learning procedure.
 
-\subsection{Model-free learning with a model}
+\section{Model-free learning with a model}
 Basically use the model-free algorithm to make use of the virtually infinite synthetic data you can get from your model.
 This can be really good if, for example, you use policy gradients because the fact that you have many samples will lead to lower variance. 
 The policy gradient
@@ -2671,7 +2675,7 @@ Backprop (pathwise) gradient:
 Thus there 2 gradients represent the same quantity.
 So policy gradient might be more stable (if enough samples are used) because it does not require multiplying many Jacobians.
 
-\subsubsection{Dyna}
+\subsection{Dyna}
 Let's first cover the original method from Sutton's paper.
 It's an iterative online procedure.
 \begin{enumerate}
@@ -2687,7 +2691,7 @@ It's an iterative online procedure.
 The original version suggests you take an action from the dataset, but it makes more sense take actions from a new policy.
 And this is how modern versions do this.
 
-\paragraph{General ``Dyna-style'' model-based RL recipe}
+\subsubsection{General ``Dyna-style'' model-based RL recipe}
 \begin{enumerate}
 		\item collect some data, constisting of transitions $(s,a,s',r)$
 		\item use that data to learn a model $\hat{p}(s'|s,a)$ (using whatever supervise learning technique), 
@@ -2719,15 +2723,15 @@ Here's the model ML-y version of the algorithm:
 		\item use all transtitions $ \left( \bm{s}_{}, \bm{a}_{}, \bm{s}_{}', r \right)   $ along rollout to update Q-function
 \end{enumerate}
 
-\subsubsection{Local models}
+\subsection{Local models}
 Super interesting actually, but will skip atm
 
-\section{Exploration algorithms}
+\chapter{Exploration algorithms}
 Skipped writing about bandits, but the point is that you can get provably correct (Bayesian based) strategies only in the simplest settings,
 and even then stuff's intractable. But they do provide boudaries the effectiveness of much simpler strategies, which is useful for us.
 Also, thankfully, the simpler strategies work quite well. We'll discuss some now.
 
-\subsubsection{Optimistic exploration}
+\subsection{Optimistic exploration}
 Keep track of average reward $\hat{\mu}_a$ for each action $a$.
 For exploitation pick $a = \argmax \hat{\mu}_a$.
 The optimistic estimate is $a = \argmax \hat{\mu}_a + C \sigma_a$,
@@ -2742,7 +2746,7 @@ where $N(a)$ is the number of times you picked that action.
 With this algorithm, you get $\text{Reg}(T)$ to be $O(\log T)$, which is provably as good as any algorithm.
 However, it's not the best in practise.
 
-\subsubsection{Probability matching/posterior sampling}
+\subsection{Probability matching/posterior sampling}
 Assume $ r(a_i) \sim p_{\theta_i} (r_i)  $. This defines POMDP with $ \bm{s}_{} = \left[ \theta_1, \dots, \theta_n \right]   $.
 The belief state is $\hat{p}(\theta_1, \dots, \theta_n)$, i.e. this is a \textit{model} of our bandit.
 The idea is to sample $ \theta_1, \dots, \theta_n  \sim \hat{p}(\theta_1, \dots, \theta_n)$. Pretend
@@ -2751,7 +2755,7 @@ Then you update the model and repeat.
 This is called posterior or Thompson sampling and it's kind greedy.
 It's harder to analyze theoretically, but can work very well empirically.
 
-\subsubsection{Information gain}
+\subsection{Information gain}
 This is based on Bayesian experimental design.
 Say we want to determine some latent variable $z$. Which action do we take?
 Let $\mathcal{H}(\hat{p}(z))$ be the current entropy of our $z$ estimate.
@@ -2776,7 +2780,7 @@ Then choose $a$ according to $ \argmin_a \frac{\Delta (a)^2}{g(a)}   $.
 Here $g(a)$ in the denominator tells to not bother with taking actions if you won't learn anything
 and $\Delta (a)^2$ tells to not take actions that you're sure are suboptimal.
 
-\subsubsection{General themes}
+\subsection{General themes}
 Upper confidence bound (UCB) or optimistic exploration :
 \begin{equation}
 		a = \argmax \hat{\mu}_a + \sqrt{ \frac{2\ln T}{N(a)}  }
@@ -2802,7 +2806,7 @@ We didn't cover contextual bandits (bandits with state), optimal exploration in 
 Bayesian model-based reinforcement learning (similar to information gain) and probably approximately correct (PAC) exploration.
 That goes more into the theory.
 
-\subsection{Exploration in deep reinforcement learning}
+\section{Exploration in deep reinforcement learning}
 We now carry over the exploration methods we talked about in the bandit case over to the DRL case.
 How can we use UCB in RL?
 Do count-based exploration:
@@ -2814,7 +2818,7 @@ How do you even do counting in complex MDPs? Consider Montezuma's revenge.
 You get a combinatorial explosion of states for de facto equivalent states (the skull moves, the guy moves a bit,
 it's all the same but it's not the same exact state).
 So we need so density model to patch these similar states together.
-\subsubsection{Fitting generative models}
+\subsection{Fitting generative models}
 The idea is to fit a density model $ p_\theta(\bm{s}_{})  $ or $ p_\theta (\bm{s}_{}, \bm{a}_{})  $.
 As mentioned, we don't want to have high $ p_\theta(\bm{s}_{})  $ for similar states.
 Could we use it as a ``pseudocount''?
@@ -2848,11 +2852,11 @@ We have 2 equations and 2 unknowns, so:
 		\hat{n} = \frac{1 - p_{\theta'}(\bm{s}_{i})}{p_{\theta'}(\bm{s}_{i}) - p_{\theta}(\bm{s}_{i})} p_{\theta}(\bm{s}_{i})
 \end{gather}
 
-\subsubsection{What kind of bonus to use?}
+\subsection{What kind of bonus to use?}
 Also, what density to use?
 There are a lot of functions in the literature, check slides, whatever.
 
-\paragraph{What kind of model to use?}
+\subsubsection{What kind of model to use?}
 Don't really need to sample from it, doesn't really need to be normalized either (so no need for GANs or VAEs).
 You just want the output densities. 
 Some papers use CTS, stochastic neural networks, compression length, EX2 (whatever).
@@ -2860,7 +2864,7 @@ Then Sergey goes over papers which use these, don't really need those details he
 
 Here I skipped writting about lec13-part4..
 
-\subsection{Posterior sampling in deep RL}
+\section{Posterior sampling in deep RL}
 Let's refresh Thompson sampling so that we can make an analog in MDPs:
 \begin{gather}
 		\theta_1, \dots, \theta_n \sim \hat{p} (\theta_1, \dots, \theta_n) \\
@@ -2886,7 +2890,7 @@ Training $N$ big neural nets is expensive, and we again solve this the same way 
 This works becuase a random Q-function is more likely to be consistent in what it's doing than
 standard $\epsilon$-greedy exploration. But it's still not particularly good.
 
-\subsection{Information gain in DRL}
+\section{Information gain in DRL}
 It's $ IG(z,y|a)  $. But it's information about what?
 Information about the reward $ r(\bm{s}_{}, \bm{a}_{})  $ is not very useful if the reward is sparse.
 Information about state density $ p(\bm{s}_{})  $ would make sense because it tells us about changing state density (and thus tells about novelty).
@@ -2920,7 +2924,7 @@ We use $ D_{KL}(q(\theta|\phi')||q(\theta|\phi))  $ as approximate bonus.
 The plus of all this is the appealing mathematical formalism, but the minus is that
 the models are more complex and generally harder to use effectively.
 
-\subsection{Exploration with model errors}
+\section{Exploration with model errors}
 $ D_{KL}(q(\theta|\phi')||q(\theta|\phi))  $ can be seen as change in the network (mean) parameters $ \phi  $.
 If we forget about IG, there are many other ways to measure this,
 for example using an autoencoder to get a latent space representation and the using the autoencoder
@@ -2928,7 +2932,7 @@ loss as an exploration bonus.
 Using errors and models as an exploration bonus is a heavily studied area even though it's
 not always tied to information gain.
 
-\subsection{Unsupervised exploration}
+\section{Unsupervised exploration}
 We'll use information theory for this.
 The idea is to learn about the world without an explicit goal.
 Let's set the notation first.
@@ -2949,7 +2953,7 @@ Mutual information is defined as:
  &= \mathcal{H}(p(\bm{y}_{})) - \mathcal{H}(p(\bm{y}_{}|\bm{x}_{}))
 \end{align}
 
-\subsubsection{Information theoretic quantities in RL}
+\subsection{Information theoretic quantities in RL}
 The state \textit{marginal} distribution of policy $ \pi  $:
 \begin{equation}
 		\pi(\bm{s}_{})
@@ -2966,7 +2970,7 @@ This can come in, for example, the following setting.
 		\mathcal{H}(\bm{s}_{t+1}) - \mathcal{H}(\bm{s}_{t+1}|\bm{a}_{t})
 \end{equation}
 
-\section{Unsupervised reinforcement learning (sketches)}
+\chapter{Unsupervised reinforcement learning (sketches)}
 Let's say you have a generative model. Then
 you can sample from it and make the sample be a goal.
 Then use the data you gather to improve both the policy and the model.
@@ -3012,7 +3016,7 @@ So we're doing:
 In short, maximizing the mutual information between $ S  $ and $ G  $ leads to
 good exploration $ \mathcal{H}(p(G))  $ and effective goal reaching $\mathcal{H}(p(G|S))  $
 
-\subsubsection{Aside: exploration with intrinsic motivation}
+\subsection{Aside: exploration with intrinsic motivation}
 Just doing some form of pseudocounting to incentivise exploration won't cut it.
 Imagine the followign procedure:
 \begin{enumerate}
@@ -3056,7 +3060,7 @@ But just doing this won't yield the mixed Nash equilibrium --- the average over 
 of the final results of the game will thought.
 And that's why we're averaging the mixture.
 
-\subsection{Learning diverse skills}
+\section{Learning diverse skills}
 Let's say you have $n$ policies for $n$ skills.
 Most generally you could have:
 \begin{equation}
@@ -3067,7 +3071,7 @@ However, reaching diverse \textbf{goals} is not the same as performing diverse \
 and not all behaviors can be captured by \textbf{goal-reaching}.
 The intuition is that different \textbf{skills} should visit different \textbf{state-space regions}.
 
-\subsubsection{Diversity-promoting reward function}
+\subsection{Diversity-promoting reward function}
 \begin{equation}
 		\pi(\bm{a}_{}|\bm{s}_{},z) = \argmax_\pi \sum_{z}^{} E_{\bm{s}_{} \sim \pi(\bm{s}_{}|z)} \left[ r(\bm{s}_{},z) \right] 
 \end{equation}
@@ -3085,11 +3089,11 @@ which is again maximized here
 because $H(z)$ is maximized by using a uniform prior and 
 $H(z|s)$ is minimized by maximizing $\log p(z|\bm{s}_{})$.
 
-\section{Generalisation gap}
+\chapter{Generalisation gap}
 RL methods do not generalize as well as supervised learning techniques.
 Maybe we need more scaling and more variety in data?
 The problem is we're doing fundametally online learning (be it on or off policy).
-\paragraph{What makes modern machine learning work}
+\subsubsection{What makes modern machine learning work}
 Data.
 So can we develop data-driven RL methods?
 Enter off-policy reinforcement learning.
@@ -3133,7 +3137,7 @@ An example: have data of a robot that pick an object from a drawer and open a dr
 Ask it to do both even if it has never seen that before and it should be able to do so.
 This is superior to standard RL where the policy only works from known starting states.
 
-\subsubsection{Why is offline RL hard?}
+\subsection{Why is offline RL hard?}
 There's a fundametal problem of counterfactual queries.
 Say a policy generates some action which wasn't in the dataset.
 We have no way of knowing wether it's good or bad. In online RL,
@@ -3176,7 +3180,7 @@ $ \bm{x}_{}^\star \leftarrow \argmax_{\bm{x}} f_\theta(\bm{x}_{}) $?
 Well then we have a problem.
 This is what happens with adversarial examples.
 
-\subsubsection{Where does RL suffer from distributional shift?}
+\subsection{Where does RL suffer from distributional shift?}
 Let's look at Q-learning:
 \begin{equation}
 		Q (\bm{s}_{}, \bm{a}_{} ) \leftarrow
@@ -3208,7 +3212,7 @@ setting are not correct in the offline setting.
 So existing challenges with sampling error and function approximation error in standar RL
 become much more severe in offline RL.
 
-\subsection{Batch RL via importance sampling}
+\section{Batch RL via importance sampling}
 The classic, pre-deep learning offline learning methods.
 Let's do what we did when we derived off-policy policy gradients.
 The RL objective is:
@@ -3288,7 +3292,7 @@ probabilites from $ t  $ to $ t'  $, getting:
 \end{equation}
 This doesn't change the complexity, but it makes things a bit better.
 Another idea worth discussing is the :
-\subsubsection{The doubly robust estimator}
+\subsection{The doubly robust estimator}
 This is somewhat like a baseline for importance sampling.
 \begin{equation}
 \hat{V}^{\pi_\theta}(\bm{s}) \approx
@@ -3325,7 +3329,7 @@ Now we'll try to do the same to $ \bar{V}  $:
 \end{equation}
 so this is the recursive version of the bandit case.
 
-\subsubsection{Marginalized importance sampling}
+\subsection{Marginalized importance sampling}
 The main idea here is to use not the product of action probabilities $ \prod_{t}^{} \frac{\pi_{ \theta }(\bm{s}_{t}, \bm{a}_{t} )}{\pi_{ \beta }(\bm{s}_{t}, \bm{a}_{t} )}    $ , but estimate importance
 weights that are estimates of state probabilities or state-action probabilities 
 $ w (\bm{s}_{}, \bm{a}_{} ) = \frac{d^{ \pi_{ \theta } } (\bm{s}_{}, \bm{a}_{} )}{d^{ \pi_{ \beta } }(\bm{s}_{}, \bm{a}_{} )}  $
@@ -3344,7 +3348,7 @@ d^{ \pi_{ \beta } } (\bm{s}_{}', \bm{a}_{} ') w (\bm{s}_{}', \bm{a}_{}' ) =
 \end{equation}
 I won't explain this in any way because why would I (Sergey why did we go into this?).
 
-\subsection{Batch RL via linear fitted value functions}
+\section{Batch RL via linear fitted value functions}
 We'll talk about this because the analysis in the nonlinear function approximation case will be similar
 and because the linear fitted value function will have closed-form solution which can give us a hint
 on how to implement new more advanced methods.
@@ -3354,12 +3358,12 @@ I'm also skipping lecture 17, which while it looks really interesting, i don't n
 And i'm also skipping lecture 18 in the hope that i won't need variational inference to read the next 2 papers,
 altough i'll certainly need this later.
 
-\section{Reinforcement learning as an inference problem}
+\chapter{Reinforcement learning as an inference problem}
 In which we look to something other than reinforcement learning and optimal control to
 provide a reasonable model of human behavior.
 We also try to derive optimal control, RL and planning as \textit{probabilistic inference}.
 
-\subsection{Optimal control as a model of human behavior}
+\section{Optimal control as a model of human behavior}
 Let's assume a person does this:
 \begin{align}
 \bm{a}_{1}, \dots, \bm{a}_{T} &= \argmax_{\bm{a}_{1}, \dots, \bm{a}_{T}} \sum_{t=1}^{T} r (\bm{s}_{t}, \bm{a}_{t} ) \\
@@ -3434,7 +3438,7 @@ This provides an explanation for why stochastic behavior might be preferred (use
 
 How do we do inference in this model?
 
-\subsection{Control as inference}
+\section{Control as inference}
 We are interested in the following 3 inference problems:
 \begin{enumerate}
 		\item compute backward messages $ \beta_{ t } (\bm{s}_{t}, \bm{a}_{t} ) = p (\mathcal{O}_{ 1:T }| \bm{s}_{t}, \bm{a}_{t}) $,
@@ -3445,7 +3449,7 @@ We are interested in the following 3 inference problems:
 				will be important for inverse RL
 \end{enumerate}
 
-\subsubsection{Backward messages}
+\subsection{Backward messages}
 Backward messages are in a way the most important ones because we can obtain the optimal policy through them.
 \begin{align}
 \beta_{ t } (\bm{s}_{t}, \bm{a}_{t} ) &= p (\mathcal{O}_{ 1:T }|\bm{s}_{t}, \bm{a}_{t})\\
@@ -3513,7 +3517,7 @@ through $ T  $, given that we take action $ \bm{a}_{t}  $ in state $ \bm{s}_{t} 
 This is computed recursively from $ t=T  $ to $ t=1  $.
 The $ \log  $ of $ \beta_{ t }  $ is ``Q-function-like'' and we use it with the $ V_{ t } (\bm{s}_{t})  $ and $ q_{ t } (\bm{s}_{t}, \bm{a}_{t} )  $ we defined above.
 
-\subsubsection{But what the if the action prior is not uniform?}
+\subsection{But what the if the action prior is not uniform?}
 Then  (why is there no d in these interals??)
 \begin{align}
 		V (\bm{s}_{t}) &= \log 
@@ -3536,7 +3540,7 @@ we'll recover the right answer as if we properly accounted for the nonuniform ac
 Because we can always construct a reward function which accounts for the action prior, we don't 
 need to care about it.
 
-\subsection{Policy computation}
+\section{Policy computation}
 Now we want to compute the policy $ p (\bm{a}_{t}| \bm{s}_{t}, \mathcal{O}_{ 1:T } )  $ .
 Again, past optimality variables are conditionally independent given the state:
 \begin{align}
@@ -3571,7 +3575,7 @@ The natural interpretation is that better actions are more probable.
 This gets us random tie-breaking (solving the case where to action are equally worth randomly).
 It's analogous to Boltzmann exploration and it approaches the greedy policy as the temperature decreases.
 
-\subsection{Forward messages}
+\section{Forward messages}
 We'll apply the already familiar procedure from deriving backward messages.
 \begin{align}
 \alpha_{ t } (\bm{s}_{t}) &= p (\bm{s}_{t}| \mathcal{O}_{ 1:t-1 }) \\
@@ -3601,7 +3605,7 @@ p (\mathcal{O}_{ 1:t-1 }) \\
 &\propto \beta_{ t } (\bm{s}_{t}) \alpha_{ t } (\bm{s}_{t})
 \end{align}
 
-\subsection{Control as variational inference}
+\section{Control as variational inference}
 In complex high-dimensional or continuous state-spaces, or setting where the dynamics are
 not know, we need to do approximate inference.
 While doing this we'll also solve the optimism problem.
@@ -3720,7 +3724,7 @@ Let's tie this back variational inference.
 Let $ \bm{x}_{} = \mathcal{O}_{ 1:T }  $ and $ \bm{z}_{} = (\bm{s}_{1:T}, \bm{a}_{1:T} )  $.
 Now we want to write $ p (\bm{z}_{}|\bm{x}_{})  $ and $ q (\bm{z}_{})  $
 
-\subsubsection{Variational lower bound}
+\subsection{Variational lower bound}
 \begin{align}
 		\log p (\bm{x}_{}) &\geq E_{ \bm{z}_{} \sim q (\bm{x}_{}) } \left[  \log p (\bm{x}_{}, \bm{z}_{}) - 
 \underbrace{\log q (\bm{z}_{})}_{ \text{entropy } \mathcal{H}(q) } \right] 
@@ -3749,7 +3753,7 @@ but at least youcan see the eqs, i can't be bothered atm)
 and from this we can see that we got the RL objective plus the additional entropy terms
 which model the slighly suboptimal behavior.
 
-\subsubsection{Optimizing the variational lower bound}
+\subsection{Optimizing the variational lower bound}
 Let's restate the relevant equations. Here's our q:
 \begin{equation}
 q (\bm{s}_{1:T}, \bm{a}_{1:T} ) = p (\bm{s}_{1}) \prod_{t}^{} p (\bm{s}_{t+1}|\bm{s}_{t}, \bm{a}_{t}) q (\bm{a}_{t}| \bm{s}_{t} )
@@ -3845,8 +3849,8 @@ If you'll want more on this check out Levine 2018
 reinforcement learning and control as probabilistic inferece: tutorial and review (downloaded and ready in master's folder).
 You can also add discount or explicit temperature to this.
 
-\subsection{Algorithms for RL as inference}
-\subsubsection{Q-learning with soft optimality}
+\section{Algorithms for RL as inference}
+\subsection{Q-learning with soft optimality}
 The stardard Q-learning looks like this:
 \begin{align}
 \text{standard Q-learning: }& \phi \leftarrow \phi \alpha \nabla_{ \phi } Q_{ \phi } (\bm{s}_{}, \bm{a}_{} )
@@ -3871,7 +3875,7 @@ and the resulting Q-learning with soft optimality algorithm looks like:
 \end{enumerate}
 So pretty much the same as standard Q-learning, except for the softmax.
 
-\subsubsection{Policy gradient with soft optimality}
+\subsection{Policy gradient with soft optimality}
 \begin{equation}
 		\pi (\bm{a}_{}| \bm{s}_{} ) = \exp \left( Q_{ \phi } (\bm{s}_{}, \bm{a}_{} ) - V (\bm{s}_{}) \right) 
 \end{equation}
@@ -3887,7 +3891,7 @@ when $ \pi   $ minimizes $ D_{ KL } (\pi (\bm{a}_{}| \bm{s}_{} ) || \frac{1}{Z} 
 This is often referred to as ``entropy regularized'' policy gradient and it combats
 premature entropy collapse (when policy becomes deterministic too early).
 
-\subsubsection{Policy gradient vs Q-learning}
+\subsection{Policy gradient vs Q-learning}
 \begin{equation}
 		J (\theta) = \sum_{t}^{} E_{ \pi (\bm{s}_{t}, \bm{a}_{t} ) } \left[ r (\bm{s}_{t}, \bm{a}_{t} ) \right] +
 		\underbrace{E_{ \pi (\bm{s}_{t}) } \left[ \mathcal{H} (\pi (\bm{a}_{t}| \bm{s}_{t} )) \right] }_{ E_{ \pi (\bm{a}_{t}| \bm{s}_{t} ) } \left[ - \log \pi (\bm{a}_{t}| \bm{s}_{t} ) \right]  }
@@ -3920,7 +3924,7 @@ r(\bm{s}_{t}, \bm{a}_{t} ) +
 \right)  
 \end{equation}
 so these 2 are quite similar under the soft optimality framework.
-\subsubsection{Benefits of soft optimality}
+\subsection{Benefits of soft optimality}
 \begin{itemize}
 		\item imrove exploration and prevent entropy collapse
 		\item easier to specialize (fineture) policies for more specific tasks
@@ -3930,11 +3934,11 @@ so these 2 are quite similar under the soft optimality framework.
 		\item good model for modeling human behavior
 \end{itemize}
 
-\subsubsection{Example methods}
+\subsection{Example methods}
 Some papers using these methods, skippable.
 Includes SAC.
 
-\section{Inverse reinforcement learning}
+\chapter{Inverse reinforcement learning}
 So far we always assumed that a reward function was provided (and it was in fact hand-engineered).
 But what if we could \textit{learn}  the reward function from observing an expert, and then use reinforcement learning?
 We'll utilize the approximate optimality model from last time, but now we'll learn the reward.
@@ -3949,17 +3953,17 @@ and in the stochastic case:
 		\bm{a}_{t} \sim \pi (\bm{a}_{t}| \bm{s}_{t} )
 \end{align}
 
-\subsubsection{Why should we worry about learning rewards?}
-\paragraph{Imitation learning perspective}
+\subsection{Why should we worry about learning rewards?}
+\subsubsection{Imitation learning perspective}
 Why not do imitation learning? Well, humans don't do it this way.
 Humans try to understand what others do --- we copy the \textit{intent} of the expert.
 This might result in very different actions.
 
-\paragraph{The RL perspective}
+\subsubsection{The RL perspective}
 What is the reward for a car going down the highway? It's probably much easier
 to have a professional driver demonstrate good driver than to hand-engineer reward function.
 
-\paragraph{Inverse RL}
+\subsubsection{Inverse RL}
 By itself, this is an \textbf{underspecified} problem --- many reward function can explain the \textbf{same} behavior.
 Take a gridworld example. A sample trajectory can does not tell you what the reward was. Was it going to that square, 
 all squares in some area, etc.
@@ -3982,7 +3986,7 @@ all squares in some area, etc.
 		\end{tabular}
 \end{table}
 
-\subsubsection{Feature matching IRL}
+\subsection{Feature matching IRL}
 The pre-neural net stuff.
 Linear reward functions were used:
 \begin{equation}
@@ -4024,7 +4028,7 @@ that the optimal trajectory was the most likely and that the suboptimal trajecto
 
 But now we'll use this model to learn reward functions.
 
-\subsubsection{Learning the optimality variable}
+\subsection{Learning the optimality variable}
 
 \begin{figure}[htpb]
 		\caption{$ p (\bm{s}_{1:T}, \bm{a}_{1:T}|\mathcal{O}_{ 1:T })  $}
