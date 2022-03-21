@@ -3810,18 +3810,20 @@ E_{ \bm{a}_{T} \sim q(\bm{a}_{T}| \bm{s}_{T} ) } \left[ V (\bm{s}_{T}) \right]
 \end{equation}
 and now we can proceed with the recursive case:
 \begin{equation}
+\begin{split}
 q(\bm{a}_{t}| \bm{s}_{t} ) =
 \argmax_{}
 E_{ \bm{s}_{t}\sim q (\bm{s}_{t}) }
 \left[ 
 E_{ \bm{a}_{t} \sim q(\bm{a}_{t}| \bm{s}_{t} ) }
 \left[ 
-r(\bm{s}_{t}, \bm{a}_{t} ) - \log q(\bm{a}_{t}| \bm{s}_{t} )
+r(\bm{s}_{t}, \bm{a}_{t} ) - \log q(\bm{a}_{t}| \bm{s}_{t} ) 
 + E_{ \bm{s}_{t+1}\sim p (\bm{s}_{t+1}|\bm{s}_{t}, \bm{a}_{t}) }
 \left[ V (\bm{s}_{t+1}) \right] 
 \right] 
 + \mathcal{H} (q(\bm{a}_{t}| \bm{s}_{t} ))
 \right] 
+\end{split}
 \end{equation}
 we can use the regular (\textit{not} optimistic) Bellman backup
 \begin{equation}
@@ -4080,30 +4082,100 @@ and we can do maximum likelihood learning on that:
 		\max_{\psi} \frac{1}{N}  \sum_{i=1}^{N} r_{ \psi } (\tau_{ i } ) -\log Z
 \end{equation}
 where we plugged in our $ p (\tau|\mathcal{O}_{ 1:T },\psi)  $ expression in.
+The log normalized $ \log Z  $, also know as the partition function
+is making RL difficult.
 
+\subsubsection{The IRL partition function}
+We're looking at:
+\begin{equation}
+		\max_{\psi} \frac{1}{N} \sum_{i=1}^{N} r_{ \psi } (\tau_{ i }) -\log Z
+\end{equation}
+where $ Z  $ is
+\begin{equation}
+		Z = \int p (\tau) \exp (r_{ \psi } (\tau)) d\tau
+\end{equation}
+The $ Z  $ will prove to be intractable to compute.
+We could try to plug this in and take the derivative and we'd get the following
+\begin{equation}
+\nabla_{ \psi } \mathcal{L} = 
+\frac{1}{N}  \sum_{i=1}^{N} \nabla_{ \psi } r_{ \psi } (\tau_{ i })
+- 
+\underbrace{\frac{1}{Z} \int p (\tau) \exp (r_{ \psi (\tau) }) }_{ p (\tau| \mathcal{O}_{ 1:T }, \psi) }
+\nabla_{ \psi } r_{ \psi } (\tau) d\tau
+\end{equation}
+and so we can equivalently write the gradient in terms of expectations:
+\begin{equation}
+\nabla_{ \psi } \mathcal{L} = 
+\underbrace{E_{ \tau \sim \pi^{ \star } (\tau) } \left[ \nabla_{ \psi } r_{ \psi } (\tau_{ i })\right] }_{ \text{estimate with expert samples} }
+- 
+\underbrace{E_{ \tau \sim p (\tau|\mathcal{O}_{ 1:T }, \psi) } \left[ \nabla_{ \psi } r_{ \psi } (\tau) \right] }_{ \text{soft optimal policy under current reward} }
+\end{equation}
+and this has the following nice interpretation:
+the gradient of maximum likelihood of $ \psi  $
+is the difference between the expected value of the gradient obtained through optimal policy $ \pi^{ \star }  $
+and the expected value of the gradient under the current reward (which isdependent on $ \psi  $).
+And it since these are expectations, they can be sampled and we can create an algorithm out of this.
+Let's talk about how we can perform the estimation of the policy under current reward.
 
+\subsubsection{Estimating the expectation}
+Let's make the second expectation a bit more explicit:
+\begin{align}
+E_{ \tau \sim p (\tau|\mathcal{O}_{ 1:T }, \psi) } \left[ \nabla_{ \psi } r_{ \psi } (\tau) \right] &=
+E_{ \tau \sim p (\tau|\mathcal{O}_{ 1:T }, \psi) }
+\left[ \nabla_{ \psi } \sum_{t=1}^{T} r_{ \psi } (\bm{s}_{t}, \bm{a}_{t} ) \right] \\
+&= \sum_{t=1}^{T} 
+E\underbrace{_{ (\bm{s}_{t}, \bm{a}_{t} ) \sim p (\bm{s}_{t}, \bm{a}_{t} | \mathcal{O}_{ 1:T }, \psi) }}_{ 
+p (\bm{a}_{t}|\bm{s}_{t}, \mathcal{O}_{ 1:T },\psi) p (\bm{s}_{t}|\mathcal{O}_{ 1:T } , \psi)}
+\left[ \nabla_{ \psi }r_{ \psi } (\bm{s}_{t}, \bm{a}_{t} ) \right] 
+\end{align}
+and we've seen that 
+\begin{equation}
+	p (\bm{a}_{t}|\bm{s}_{t}, \mathcal{O}_{ 1:T },\psi)
+	= \frac{\beta (\bm{s}_{t}, \bm{a}_{t} )}{\beta (\bm{s}_{t})} 
+\end{equation}
+and 
+\begin{equation}
+		p (\bm{s}_{t}|\mathcal{O}_{ 1:T } , \psi) \propto \alpha (\bm{s}_{t}) \beta (\bm{s}_{t}) 
+\end{equation}
+and we also know that
+\begin{equation}
+		 (\bm{s}_{t}, \bm{a}_{t} ) \sim p (\bm{s}_{t}, \bm{a}_{t} | \mathcal{O}_{ 1:T }, \psi) 
+		 \propto \beta (\bm{s}_{t}, \bm{a}_{t} ) \alpha (\bm{s}_{t})
+\end{equation}
+This last thing has to be normalized over states and actions, but not over trajectories,
+so it's more tractable.
+Let's introduce simplifying notation:
+\begin{equation}
+	\mu_{ t } (\bm{s}_{t}, \bm{a}_{t} )\propto \beta (\bm{s}_{t}, \bm{a}_{t} ) \alpha (\bm{s}_{t})	
+\end{equation}
+Now we can get:
+\begin{align}
+E_{ \tau \sim p (\tau|\mathcal{O}_{ 1:T }, \psi) } \left[ \nabla_{ \psi } r_{ \psi } (\tau) \right] &=
+\sum_{t=1}^{T} \int \int \mu_{ t } (\bm{s}_{t}, \bm{a}_{t} ) \nabla_{ \psi }r_{ \psi } (\bm{s}_{t}, \bm{a}_{t} ) d\bm{s}_{t}d\bm{a}_{t} \\
+&= \sum_{t=1}^{T} \vec{\mu}_{ t }^{ T }\nabla_{ \psi }\vec{r}_{ \psi }
+\end{align}
+While this won't work for large state-action spaces, it's feasible for small discrete ones.
+The $ \vec{\mu}_{ t }$ is the state-action visitation probability for each $ (\bm{s}_{t}, \bm{a}_{t} )  $.
 
+\subsubsection{The MaxEnt IRL algorithm}
+\begin{enumerate}
+		\item given $ \psi  $, compute backward message $ \beta (\bm{s}_{t}, \bm{a}_{t} )  $
+		\item given $ \psi  $, compute forward message $ \alpha (\bm{s}_{t})  $
+		\item compute $ \mu_{ t }(\bm{s}_{t}, \bm{a}_{t} ) \propto \beta (\bm{s}_{t}, \bm{a}_{t} ) \alpha (\bm{s}_{t})$
+		\item evaluate $ \nabla_{ \psi } \mathcal{L} = \frac{1}{N} \sum_{i=1}^{N} \sum_{t=1}^{T} \nabla_{ \psi }r_{ \psi } (\bm{s}_{i,t}, \bm{a}_{i,t} )
+				- \sum_{t=1}^{T} \int \int \mu_{ t }(\bm{s}_{t}, \bm{a}_{t} )\nabla_{ \psi }r_{ \psi }(\bm{s}_{t}, \bm{a}_{t} )d\bm{s}_{t}d\bm{a}_{t}$
+		\item $ \psi \leftarrow \psi + \eta \nabla_{ \psi } \mathcal{L}  $ and repeat until convergence
+\end{enumerate}
 
+This is called MaxEnt because in the case where
+$ r_{ \psi }(\bm{s}_{t}, \bm{a}_{t} ) = \psi^{ T } \bm{f}_{}(\bm{s}_{t}, \bm{a}_{t} )  $,
+we can show that it optimizes
+\begin{equation}
+	\max_{\psi} \mathcal{H} (\pi^{ r_{ \psi } }) \text{ such that } E_{ \pi^{ r_{ \psi } } } \left[ \bm{f}_{} \right] = E_{ \pi^{ \star } } \left[ \bm{f}_{} \right] 	
+\end{equation}
+so it's a kind of statistic reification of the Occam's razor.
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+\section{Approximations to higher dimensions}
 
 
 

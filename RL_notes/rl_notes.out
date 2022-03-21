@@ -103,20 +103,4 @@
 \BOOKMARK [0][-]{chapter.16}{Reinforcement learning as an inference problem}{}% 103
 \BOOKMARK [1][-]{section.16.1}{Optimal control as a model of human behavior}{chapter.16}% 104
 \BOOKMARK [1][-]{section.16.2}{Control as inference}{chapter.16}% 105
-\BOOKMARK [2][-]{subsection.16.2.1}{Backward messages}{section.16.2}% 106
-\BOOKMARK [2][-]{subsection.16.2.2}{But what the if the action prior is not uniform?}{section.16.2}% 107
-\BOOKMARK [1][-]{section.16.3}{Policy computation}{chapter.16}% 108
-\BOOKMARK [1][-]{section.16.4}{Forward messages}{chapter.16}% 109
-\BOOKMARK [1][-]{section.16.5}{Control as variational inference}{chapter.16}% 110
-\BOOKMARK [2][-]{subsection.16.5.1}{Variational lower bound}{section.16.5}% 111
-\BOOKMARK [2][-]{subsection.16.5.2}{Optimizing the variational lower bound}{section.16.5}% 112
-\BOOKMARK [1][-]{section.16.6}{Algorithms for RL as inference}{chapter.16}% 113
-\BOOKMARK [2][-]{subsection.16.6.1}{Q-learning with soft optimality}{section.16.6}% 114
-\BOOKMARK [2][-]{subsection.16.6.2}{Policy gradient with soft optimality}{section.16.6}% 115
-\BOOKMARK [2][-]{subsection.16.6.3}{Policy gradient vs Q-learning}{section.16.6}% 116
-\BOOKMARK [2][-]{subsection.16.6.4}{Benefits of soft optimality}{section.16.6}% 117
-\BOOKMARK [2][-]{subsection.16.6.5}{Example methods}{section.16.6}% 118
-\BOOKMARK [0][-]{chapter.17}{Inverse reinforcement learning}{}% 119
-\BOOKMARK [1][-]{subsection.17.0.1}{Why should we worry about learning rewards?}{chapter.17}% 120
-\BOOKMARK [2][-]{subsection.17.0.2}{Feature matching IRL}{subsection.17.0.1}% 121
-\BOOKMARK [2][-]{subsection.17.0.3}{Learning the optimality variable}{subsection.17.0.1}% 122
+\BOOKMARK [2][-]{subsection.16.2.1}{Backward messa
