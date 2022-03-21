@@ -134,3 +134,7 @@
 \contentsline {subsubsection}{But what the if the action prior is not uniform?}{73}{section*.78}%
 \contentsline {subsection}{\numberline {1.15.3}Policy computation}{73}{subsection.1.15.3}%
 \contentsline {subsection}{\numberline {1.15.4}Forward messages}{74}{subsection.1.15.4}%
+\contentsline {subsection}{\numberline {1.15.5}Control as variational inference}{75}{subsection.1.15.5}%
+\contentsline {subsection}{\numberline {1.15.6}Algorithms for RL as inference}{76}{subsection.1.15.6}%
+\contentsline {subsubsection}{Q-learning with soft optimality}{76}{section*.79}%
+\contentsline {subsubsection}{Policy gradient with soft optimality}{77}{section*.80}%
