@@ -55,3 +55,5 @@
 \BOOKMARK [1][-]{section.1.15}{Reinforcement learning as an inference problem}{chapter.1}% 55
 \BOOKMARK [2][-]{subsection.1.15.1}{Optimal control as a model of human behavior}{section.1.15}% 56
 \BOOKMARK [2][-]{subsection.1.15.2}{Control as inference}{section.1.15}% 57
+\BOOKMARK [2][-]{subsection.1.15.3}{Policy computation}{section.1.15}% 58
+\BOOKMARK [2][-]{subsection.1.15.4}{Forward messages}{section.1.15}% 59

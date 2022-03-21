@@ -17,6 +17,8 @@
 \tikzstyle{rec} = [rectangle,  minimum width=2cm, minimum height=1cm, text centered, draw=black]
 \tikzstyle{arrow} = [thick,->,>=stealth]
 \tikzstyle{arrow_red} = [thick,->,>=stealth, color=red]
+\tikzstyle{mcs} = [circle, draw=black] 
+\tikzstyle{mcsb} = [circle, draw=black, fill=black!10] 
 
 
 
@@ -85,6 +87,17 @@ skip lel, pls do it if you go for the classes' homeworks tho
 
 \section{Formal setting}
 \subsection{Markov chain}
+\begin{figure}[htpb]
+\begin{center}
+\begin{tikzpicture}[scale=1, transform shape, node distance=1.5cm]
+		\node (s1) [mcs] {$\bm{s}_{1} $};
+		\node (s2) [mcs, right of=s1, xshift=1cm] { $ \bm{s}_{2}  $};
+		\draw [arrow] (s1) -- node [below, midway] {$ p(\bm{s}_{t+1}|\bm{s}_{t}) $} (s2);
+		\node (s3) [mcs, right of=s2, xshift=1cm] { $ \bm{s}_{3}  $};
+		\draw [arrow] (s2) -- node [below, midway] {$ p(\bm{s}_{t+1}|\bm{s}_{t}) $} (s3);
+\end{tikzpicture}
+\end{center}
+\end{figure}
 \begin{itemize}
 \item $\mathcal{M} = \{\mathcal{S}, \mathcal{T}\}$
 \item $\mathcal{S}$ - state space, $s \in \mathcal{S}$ (discrete or continuous)
@@ -96,6 +109,21 @@ skip lel, pls do it if you go for the classes' homeworks tho
 \end{itemize}
 If we add actions and rewards:
 \subsection{Markov decision process}
+\begin{figure}[htpb]
+\begin{center}
+\begin{tikzpicture}[scale=1, transform shape, node distance=1.5cm]
+		\node (s1) [mcs] {$\bm{s}_{1} $};
+		\node (a1) [mcs, above right of=s1] { $ \bm{a}_{1}  $};
+		\node (s2) [mcs, right of=s1, xshift=1.5cm] { $ \bm{s}_{2}  $};
+		\draw [arrow] (a1) -- (s2);
+		\draw [arrow] (s1) -- node [below, midway] {$ p(\bm{s}_{t+1}|\bm{s}_{t}, \bm{a}_{t}) $} (s2);
+		\node (s3) [mcs, right of=s2, xshift=1.5cm] { $ \bm{s}_{3}  $};
+		\node (a2) [mcs, above right of=s2] { $ \bm{a}_{2}  $};
+		\draw [arrow] (s2) -- node [below, midway] {$ p(\bm{s}_{t+1}|\bm{s}_{t}, \bm{a}_{t}) $} (s3);
+		\draw [arrow] (a2) -- (s3);
+\end{tikzpicture}
+\end{center}
+\end{figure}
 \begin{itemize}
 		\item $\mathcal{M} = \{\mathcal{S}, \mathcal{A}, \mathcal{T}, r\}$
 \item $\mathcal{S}$ - state space, $s \in \mathcal{S}$ (discrete or continuous)
@@ -109,6 +137,27 @@ If we add actions and rewards:
 And if we don't have access to full states, but only partial observations of states:
 
 \subsection{Partially observed Markov decision process}
+\begin{figure}[htpb]
+\begin{center}
+\begin{tikzpicture}[scale=1, transform shape, node distance=1.5cm]
+		\node (s1) [mcs] {$\bm{s}_{1} $};
+		\node (a1) [mcs, above right of=s1] { $ \bm{a}_{1}  $};
+		\node (o1) [mcs, above of=s1] { $ \bm{o}_{1}  $};
+		\draw [arrow] (s1) -- (o1);
+		\node (s2) [mcs, right of=s1, xshift=1.5cm] { $ \bm{s}_{2}  $};
+		\node (o2) [mcs, above of=s2] { $ \bm{o}_{2}  $};
+		\draw [arrow] (s2) -- (o2);
+		\draw [arrow] (a1) -- (s2);
+		\draw [arrow] (s1) --  (s2);
+		\node (s3) [mcs, right of=s2, xshift=1.5cm] { $ \bm{s}_{3}  $};
+		\node (o3) [mcs, above of=s3] { $ \bm{o}_{3}  $};
+		\draw [arrow] (s3) -- (o3);
+		\node (a2) [mcs, above right of=s2] { $ \bm{a}_{2}  $};
+		\draw [arrow] (s2) -- (s3);
+		\draw [arrow] (a2) -- (s3);
+\end{tikzpicture}
+\end{center}
+\end{figure}
 \begin{itemize}
 		\item $\mathcal{M} = \{\mathcal{S}, \mathcal{A}, \mathcal{O}, \mathcal{T}, \mathcal{E}, r\}$
 \item $\mathcal{S}$ - state space, $s \in \mathcal{S}$ (discrete or continuous)
@@ -3331,6 +3380,36 @@ Now we'll derive probabilistic policies tho and they'll look more like behaviors
 		\underbrace{p (\bm{s}_{1:T}, \bm{a}_{1:T})}_{ \tau } = ?
 \end{equation}
 We'll introduce binary variables which tell us whether the behavior we're observing is optimal or not.
+The Markov chain which is our model then looks like:
+\begin{figure}[htpb]
+\begin{center}
+\begin{tikzpicture}[scale=1, transform shape, node distance=1.5cm]
+		\node (s1) [mcs] {$\bm{s}_{1} $};
+		\node (o1) [mcsb, above of=s1] {$\mathcal{O}_{ 1 }$};
+		\draw [arrow] (s1) -- (o1);
+		\node (a1) [mcs, above right of=s1] { $ \bm{a}_{1}  $};
+		\draw [arrow] (a1) -- (o1);
+		\node (s2) [mcs, right of=s1, xshift=1cm] { $ \bm{s}_{2}  $};
+		\node (o2) [mcsb, above of=s2] {$\mathcal{O}_{ 2 }$};
+		\draw [arrow] (s1) -- (s2);
+		\draw [arrow] (a1) -- (s2);
+		\draw [arrow] (s2) -- (o2);
+		\node (a2) [mcs, above right of=s2] { $ \bm{a}_{2}  $};
+		\draw [arrow] (a2) -- (o2);
+		\node (s3) [mcs, right of=s2, xshift=1cm] { $ \bm{s}_{3}  $};
+		\draw [arrow] (a2) -- (s3);
+		\draw [arrow] (s2) -- (s3);
+		\node (o3) [mcsb, above of=s3] {$\mathcal{O}_{ 3 }$};
+		\node (a3) [mcs, above right of=s3] { $ \bm{a}_{3}  $};
+		\draw [arrow] (s3) -- (o3);
+		\draw [arrow] (a3) -- (o3);
+		\node (s4) [right of=s3, xshift=1cm] {$\dots$};
+		\draw [arrow] (s3) -- (s4);
+		\draw [arrow] (a3) -- (s4);
+\end{tikzpicture}
+\end{center}
+\end{figure}
+
 Then the inference problem we're trying to solve is
 \begin{equation}
 		p (\tau | \mathcal{O}_{ 1:T })
@@ -3357,21 +3436,189 @@ This provides an explanation for why stochastic behavior might be preferred (use
 How do we do inference in this model?
 
 \subsection{Control as inference}
+We are interested in the following 3 inference problems:
 \begin{enumerate}
-		\item compute backward messages $ \beta_{ t } (\bm{s}_{t}, \bm{a}_{t} ) p (\mathcal{O}_{ 1:T }| \bm{s}_{t}, \bm{a}_{t}) $
-		\item compute policy $ p (\bm{a}_{t} | \bm{s}_{t}, \mathcal{O}_{ 1:T })   $
-		\item compute forward messages $ \alpha_{ t } (\bm{s}_{t}) = p (\bm{s}_{t}|\mathcal{O}_{ 1:t-1 })  $
+		\item compute backward messages $ \beta_{ t } (\bm{s}_{t}, \bm{a}_{t} ) = p (\mathcal{O}_{ 1:T }| \bm{s}_{t}, \bm{a}_{t}) $,
+				which are the probability of optimality on the rest of the trajectory following $ (\bm{s}_{t}, \bm{a}_{t} )  $
+		\item compute policy $ p (\bm{a}_{t} | \bm{s}_{t}, \mathcal{O}_{ 1:T })   $,
+				given the previous state and the probability that the entire trajectory is optimal (the forward RL problem)
+		\item compute forward messages $ \alpha_{ t } (\bm{s}_{t}) = p (\bm{s}_{t}|\mathcal{O}_{ 1:t-1 })  $, which
+				will be important for inverse RL
 \end{enumerate}
 
 \subsubsection{Backward messages}
+Backward messages are in a way the most important ones because we can obtain the optimal policy through them.
 \begin{align}
 \beta_{ t } (\bm{s}_{t}, \bm{a}_{t} ) &= p (\mathcal{O}_{ 1:T }|\bm{s}_{t}, \bm{a}_{t})\\
 &= \int_{}^{} p (\mathcal{O}_{ 1:T }, \bm{s}_{t} | \bm{s}_{t}, \bm{a}_{t}) d\bm{s}_{t+1}\\
-&= \int_{}^{} p (\mathcal{O}_{ t+1:T }| \bm{s}_{t+1}) p (\bm{s}_{t+1}| \bm{s}_{t}, \bm{a}_{t}) p (\mathcal{O}_{ 1:T }| \bm{s}_{t}, \bm{a}_{t}) d\bm{s}_{t+1}\\
+&= \int_{}^{} p (\mathcal{O}_{ t+1:T }| \bm{s}_{t+1}) 
+\underbrace{p (\bm{s}_{t+1}| \bm{s}_{t}, \bm{a}_{t}) }_{ \text{model dynamics} }
+\underbrace{p (\mathcal{O}_{ t }| \bm{s}_{t}, \bm{a}_{t}) d\bm{s}_{t+1}}_{ \text{this we know already} }
 \end{align}
+where we first insert the next state and intergrate over it.
+Then we factorize this in order to get a recursive expression for $ \beta (\bm{s}_{t}, \bm{a}_{t} )  $, using
+a relation with $ \beta (\bm{s}_{t+1}, \bm{a}_{t+1} )  $.
+Then we use the fact that future optimality variables $ \mathcal{O}_{ t+1:T }  $
+are independent from the past when conditioned on $ \bm{s}_{t+1}  $.
 \begin{align}
 p (\mathcal{O}_{ t+1:T }|\bm{s}_{t+1}) &= \int_{}^{} 
+\underbrace{p (\mathcal{O}_{ t+1:T }| \bm{s}_{t+1}, \bm{a}_{t+1}) }_{ \beta_{ t } (\bm{s}_{t+1}, \bm{a}_{t+1} ) }
+\underbrace{p (\bm{a}_{t+1}| \bm{s}_{t+1} ) }_{ \text{which actions are likely \textit{a priori}} }
+d \bm{a}_{t+1}
 \end{align}
+We'll assume $ p (\bm{a}_{t+1}| \bm{s}_{t+1} )  $ is uniform for now
+because we don't know anything about this.
+This makes the expression a constant and so we can cancel it.
+We're left with the algorithm:
+
+for $ t = T -1  $ to $ 1  $:
+\begin{align}
+\beta_{ t } (\bm{s}_{t}, \bm{a}_{t} ) &= p (\mathcal{O}_{ t } | \bm{s}_{t}, \bm{a}_{t}) 
+E_{ \bm{s}_{t+1} \sim p (\bm{s}_{t+1} | \bm{s}_{t}, \bm{a}_{t}) } \left[ \beta_{ t+1 } (\bm{s}_{t+1}) \right] \\
+\beta_{ t } (\bm{s}_{t}) &=
+E_{ \bm{a}_{t} \sim p (\bm{a}_{t}| \bm{s}_{t} ) } \left[ \beta_{ t } (\bm{s}_{t}, \bm{a}_{t} ) \right] 
+\end{align}
+thus with this we can calculate the backward message from the end to the beggining.
+
+Let's introduce some definitions to help us understand this algorithm.
+\begin{gather}
+		\text{let } V_{ t } (\bm{s}_{t}) = \log \beta_{ t } ( \bm{s}_{t})\\
+		\text{let } Q_{ t } (\bm{s}_{t}, \bm{a}_{t} ) = \log \beta_{ t } (\bm{s}_{t}, \bm{a}_{t} ) \\
+		V_{ t } (\bm{s}_{t}) = \log \int_{}^{} \exp (Q_{ t }(\bm{s}_{t}, \bm{a}_{t} )) d \bm{a}_{t}
+\end{gather}
+Here $ V_{ t } (\bm{s}_{t})  $ is something like a soft relation of the $ \max  $ operator.
+\begin{gather}
+		V_{ t } (\bm{s}_{t}) \to \max_{\bm{a}_{t}} Q_{ t } (\bm{s}_{t}, \bm{a}_{t} ) \text{ as } Q_{ t }(\bm{s}_{t}, \bm{a}_{t} ) \text{ gets bigger}
+\end{gather}
+Let's do the other expression in log space as well:
+\begin{gather}
+		Q_{ t } (\bm{s}_{t}, \bm{a}_{t} ) = r (\bm{s}_{t}, \bm{a}_{t} ) + 
+		\log E \left[ \exp (v_{ t+1 }) (\bm{s}_{t+1}) \right] 
+\end{gather}
+which like the Bellman backup.
+It is in fact equal to the Bellman update in the case when the next state is a deterministic function
+of the currect state and action (then the expected value has only 1 non-zero element in the sum).
+The deterministic transition is:
+\begin{equation}
+		Q_{ t } (\bm{s}_{t}, \bm{a}_{t} ) = r (\bm{s}_{t}, \bm{a}_{t} ) + V_{ t+1 } (\bm{s}_{t+1})
+\end{equation}
+So our stochastic Bellman update is an ``optimistic transition'' because it does not distinquish
+between getting high values due to taking correct action and just being lucky.
+This will be discussed later.
+For now let's just note that the deterministic case is like a Bellman update,
+but with a kind of softmax instead of a max.
+
+Let's summarize the backward pass.
+$ \beta_{ t } (\bm{s}_{t}, \bm{a}_{t} ) = p (\mathcal{O}_{ t:T }| \bm{s}_{t}, \bm{a}_{t}) $ is the probability that we can be optimal at steps $ t  $
+through $ T  $, given that we take action $ \bm{a}_{t}  $ in state $ \bm{s}_{t}  $.
+This is computed recursively from $ t=T  $ to $ t=1  $.
+The $ \log  $ of $ \beta_{ t }  $ is ``Q-function-like'' and we use it with the $ V_{ t } (\bm{s}_{t})  $ and $ q_{ t } (\bm{s}_{t}, \bm{a}_{t} )  $ we defined above.
+
+\subsubsection{But what the if the action prior is not uniform?}
+Then  (why is there no d in these interals??)
+\begin{align}
+		V (\bm{s}_{t}) &= \log 
+		\int_{}^{} \exp (Q (\bm{s}_{t}, \bm{a}_{t} ) + \log p (\bm{a}_{t}| \bm{s}_{t} ) ) \bm{a}_{t}\\
+		Q (\bm{s}_{t}, \bm{a}_{t} ) &= r (\bm{s}_{t}, \bm{a}_{t} ) + \log E \left[ \exp (V (\bm{s}_{t+1})) \right] 
+\end{align}
+Let 
+\begin{equation}
+		\tilde{Q} (\bm{s}_{t}, \bm{a}_{t} ) = r (\bm{s}_{t}, \bm{a}_{t} ) + \log p (\bm{a}_{t}| \bm{s}_{t} ) + \log E \left[ \exp (V (\bm{s}_{t+1})) \right] 
+\end{equation}
+and now we get
+\begin{equation}
+		V (\bm{s}_{t}) = \log \int_{}^{} \exp (\tilde{Q} (\bm{s}_{t}, \bm{a}_{t} )) \bm{a}_{t}
+		\iff 
+		V (\bm{s}_{t}) = \log \int_{}^{} \exp (Q (\bm{s}_{t}, \bm{a}_{t} ) + \log p (\bm{a}_{t}| \bm{s}_{t} ) ) \bm{a}_{t}
+\end{equation}
+This make it apparent that if we add $ \log p (\bm{a}_{t}| \bm{s}_{t} )  $ to the reward,
+and then do the rest as if the action prior was uniform,
+we'll recover the right answer as if we properly accounted for the nonuniform action prior.
+Because we can always construct a reward function which accounts for the action prior, we don't 
+need to care about it.
+
+\subsection{Policy computation}
+Now we want to compute the policy $ p (\bm{a}_{t}| \bm{s}_{t}, \mathcal{O}_{ 1:T } )  $ .
+Again, past optimality variables are conditionally independent given the state:
+\begin{align}
+p (\bm{a}_{t}| \bm{s}_{t}, \mathcal{O}_{ 1:T } ) &= \pi (\bm{a}_{t}| \bm{s}_{t} ) \\
+&= p (\bm{a}_{t}| \bm{s}_{t}, \mathcal{O}_{ t:T } ) \\
+&= \frac{p (\bm{a}_{t}| \bm{s}_{t}, \mathcal{O}_{ t:T } )}{p (\bm{s}_{t}| \mathcal{O}_{ t:T })} \\
+&= \frac{p (\bm{a}_{t}| \bm{s}_{t}, \mathcal{O}_{ t:T } )/ \cancel{p (\mathcal{O}_{ t:T })}}{p (\mathcal{O}_{ t:T }|\bm{s}_{t}) p (\bm{s}_{t}) / \cancel{p (\mathcal{O}_{ t:T }) } }\\
+&= \frac{p (\mathcal{O}_{ t:T }|\bm{a}_{t}, \bm{s}_{t})}{p (\mathcal{O}_{ t:T }|\bm{s}_{t})}  \frac{p (\bm{a}_{t}| \bm{s}_{t} )}{p (\bm{s}_{t})} \\
+&= \frac{\beta_{ t }(\bm{s}_{t}, \bm{a}_{t} )}{\beta_{ t } (\bm{s}_{t})} \cancel{p (\bm{a}_{t}| \bm{s}_{t} ) }
+\end{align}
+in the $ 3^{ \text{rd} }  $ row we just use probability identities and in the $ 4^{ \text{th} }  $ we use Bayes' rule.
+
+Let's now express all this in $ \log  $ space.
+
+for $ t = T -1  $ to $ 1  $:
+\begin{align}
+Q_{ t } (\bm{s}_{t}, \bm{a}_{t} ) &= r (\bm{s}_{t}, \bm{a}_{t} ) + \log E \left[ \exp (V_{ t+1 } (\bm{s}_{t+1})) \right] \\
+V_{ t } (\bm{s}_{t}) &= \log \int_{}^{} \exp (Q_{ t } (\bm{s}_{t}, \bm{a}_{t} )) \bm{a}_{t}
+\end{align}
+and we have:
+\begin{gather}
+\pi (\bm{a}_{t}| \bm{s}_{t} ) = \frac{\beta_{ t }(\bm{s}_{t}, \bm{a}_{t} )}{\beta_{ t } (\bm{s}_{t})} \\
+V_{ t } (\bm{s}_{t}) = \log \beta_{ t } ( \bm{s}_{t}) \\
+Q_{ t } (\bm{s}_{t}, \bm{a}_{t} )= \log \beta_{ t } (\bm{s}_{t}, \bm{a}_{t} ) \\
+\pi (\bm{a}_{t}| \bm{s}_{t} ) = \exp (Q_{ t }(\bm{s}_{t}, \bm{a}_{t} )) - V_{ t } (\bm{s}_{t}) = \exp (A_{ t }(\bm{s}_{t}, \bm{a}_{t} ))
+\end{gather}
+and here we can add temperature to get:
+\begin{equation}
+		\pi (\bm{a}_{t}| \bm{s}_{t} ) = \exp (\frac{1}{\alpha} Q_{ t }(\bm{s}_{t}, \bm{a}_{t} ) - \frac{1}{\alpha} V_{ t } (\bm{s}_{t}) ) = \exp (\frac{1}{\alpha} A_{ t }(\bm{s}_{t}, \bm{a}_{t} ))
+\end{equation}
+The natural interpretation is that better actions are more probable.
+This gets us random tie-breaking (solving the case where to action are equally worth randomly).
+It's analogous to Boltzmann exploration and it approaches the greedy policy as the temperature decreases.
+
+\subsection{Forward messages}
+We'll apply the already familiar procedure from deriving backward messages.
+\begin{align}
+\alpha_{ t } (\bm{s}_{t}) &= p (\bm{s}_{t}| \mathcal{O}_{ 1:t-1 }) \\
+&= \int_{}^{} p (\bm{s}_{t}, \bm{s}_{t-1}, \bm{a}_{t-1}| \mathcal{O}_{ 1:t-1 }) d\bm{s}_{t-1} d\bm{a}_{t-1} \\
+&= \int_{}^{} p (\bm{s}_{t}, \bm{s}_{t-1}, \bm{a}_{t-1}, \cancel{ \mathcal{O}_{ 1:t-1 }}) 
+p(\bm{a}_{t-1}| \bm{a}_{t-1}, \mathcal{O}_{ 1:t-1 }) p (\bm{s}_{t-1}| \mathcal{O}_{ 1:t-1 })
+d\bm{s}_{t-1} d\bm{a}_{t-1} \\
+&= \int p (\bm{s}_{t}| \bm{s}_{t-1}, \bm{a}_{t-1}) p (\bm{a}_{t-1}| \bm{s}_{t-1}, \mathcal{O}_{ t-1 })
+p (\bm{s}_{t-1}| \mathcal{O}_{ 1:t-1 })
+d\bm{s}_{t-1} d\bm{a}_{t-1} \\
+\end{align}
+and
+\begin{equation}
+p (\bm{a}_{t-1}| \bm{s}_{t-1}, \mathcal{O}_{ t-1 })p (\bm{s}_{t-1}| \mathcal{O}_{ 1:t-1 }) =
+\frac{p (\mathcal{O}_{ t-1 }|\bm{s}_{t-1}, \bm{a}_{t-1})p (\bm{a}_{t-1}| \bm{s}_{t-1} )}{\cancel{p (\mathcal{O}_{ t-1 }|\bm{s}_{t-1})}} 
+\frac{\cancel{p (\mathcal{O}_{ t-1 }| \bm{s}_{t-1})} p (\bm{s}_{t-1}| \mathcal{O}_{ 1:t-2 })}{p (\mathcal{O}_{ t-1 }| \mathcal{O}_{ 1:t-2 })} 
+\end{equation}
+What if we want $ p (\bm{s}_{t}| \mathcal{O}_{ 1:T })  $
+Now that we have both forward and backward messages, we can redive this:
+\begin{align}
+p (\bm{}_{t}| \mathcal{O}_{ 1:T }) &=
+\frac{p (\bm{s}_{t}, \mathcal{O}_{ 1:T })}{p (\mathcal{O}_{ 1:T })} \\
+&= \frac{p (\mathcal{O}_{ t:T }|\bm{s}_{t}) p (\bm{s}_{t}, \mathcal{O}_{ 1:t-1 })}{p (\mathcal{O}_{ 1:T })} \\
+&\propto \beta_{ t } 
+\underbrace{(\bm{s}_{t}) p (\bm{s}_{t}| \mathcal{O}_{ 1:t-1 }) }_{ \alpha_{ t } (\bm{s}_{t}) }
+p (\mathcal{O}_{ 1:t-1 }) \\
+&\propto \beta_{ t } (\bm{s}_{t}) \alpha_{ t } (\bm{s}_{t})
+\end{align}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
