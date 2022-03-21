@@ -3207,34 +3207,171 @@ We have $ \bm{s}_{t}\sim d^{ \pi_{ \beta } }  (\bm{s}_{t})$, but we want
 $ \bm{s}_{t}\sim d^{ \pi_{ \theta } }  \bm{s}_{t}$.
 Also, $ \prod_{t'=t}^{T} \frac{\pi_{ \theta } (\bm{a}_{t',i}| \bm{s}_{t',i} )}{\pi_{ \beta }(\bm{a}_{t',i}| \bm{s}_{t',i} )}  $
 accounts for having the incorrect $ \hat{Q} (\bm{s}_{t,i}, \bm{a}_{t,i} )  $.
-The classic on-policy techniques disregard the first product.
+The classic on-policy techniques disregard the first product and
+take multiple gradient steps with this gradient before gathering more data
+and again this is justified because the policies $ \pi_{ \theta }  $ and $ \pi_{ \beta }  $ are similar.
 
+In fact, it turns out that to avoid exponentially exploding importane weights,
+we \textbf{must} use value function estimation!
+However, we'll still discuss the approaches which don't do this (Sergey I trust you).
 
+Let's talk about the other problematic term.
+One way to estimate $ \hat{Q} (\bm{s}_{t,i}, \bm{a}_{t,i} )  $ is to just sum up the future rewards:
+\begin{equation}
+\hat{Q} (\bm{s}_{t,i}, \bm{a}_{t,i} ) = E_{ \pi_{ \theta } } \left[ \sum_{t'=t}^{T} \gamma^{ t'-t }r_{ t' } \right]  
+\approx \sum_{t'=t}^{T} \gamma^{ t'-t }r_{ t',i }
+\end{equation}
+and we'd get:
+\begin{equation}
+		\left( 
+\prod_{t'=t}^{T} \frac{\pi_{ \theta }(\bm{a}_{t',i}| \bm{s}_{t',i} )}{\pi_{ \beta }(\bm{s}_{t',i}, \bm{a}_{t',i} )}  
+		\right) 
+		\hat{Q}(\bm{s}_{t,i}, \bm{a}_{t,i} )
+		\approx
+		\sum_{t'=t}^{T} \left( \prod_{t''=t}^{T}  \frac{\pi_{ \theta }(\bm{a}_{t'',i}| \bm{s}_{t'',i} )}{\pi_{ \beta }(\bm{s}_{t'',i}, \bm{a}_{t'',i} )} \right) 
+\gamma^{ t'-t } r_{ t',i }
+\end{equation}
+One thing that can be done here is to break up the importance weights further.
+Since action in the future don't affect the actions in the past, you can sum only the action
+probabilites from $ t  $ to $ t'  $, getting:
+\begin{equation}
+		\sum_{t'=t}^{T} \left( \prod_{t''=t}^{t'}  \frac{\pi_{ \theta }(\bm{a}_{t'',i}| \bm{s}_{t'',i} )}{\pi_{ \beta }(\bm{s}_{t'',i}, \bm{a}_{t'',i} )} \right) 
+\gamma^{ t'-t } r_{ t',i }
+\end{equation}
+This doesn't change the complexity, but it makes things a bit better.
+Another idea worth discussing is the :
+\subsubsection{The doubly robust estimator}
+This is somewhat like a baseline for importance sampling.
+\begin{equation}
+\hat{V}^{\pi_\theta}(\bm{s}) \approx
+\sum_{t'=t}^{T} \left( \prod_{t''=t}^{t'}  \frac{\pi_{ \theta }(\bm{a}_{t'',i}| \bm{s}_{t'',i} )}{\pi_{ \beta }(\bm{s}_{t'',i}, \bm{a}_{t'',i} )} \right) 
+\gamma^{ t'-t } r_{ t',i }
+\end{equation}
+Let's drop the indeces and continue
+\begin{align}
+\hat{V}^{\pi_\theta}(\bm{s}_{ 0 }) &\approx
+\sum_{t=0}^{T}
+\left(   
+\prod_{t'=0}^{t} \frac{\pi_{ \theta  }(\bm{s}_{t'}, \bm{a}_{t'} )}{\pi_{ \beta }(\bm{s}_{t'}, \bm{a}_{t'} )}  
+\right) \gamma{t}r_{ t }  \\
+&= 
+\sum_{t=0}^{T} \left( \prod_{t'=0}^{T} \rho_{ t' }  \right) \gamma^{ t } r_{ t } \\
+&=
+\rho_{ 0 }r_{ 0 } + \rho_{ 0 }\gamma \rho_{ 1 }r_{ 1 } + \rho_{ 0 }\gamma \rho_{ 1 }\gamma \rho_{ 2 }r_{ 2 } + \dots \\
+&=
+\rho_{ 0 } (r_{ 0 } + \gamma (\rho_{ 1 } (r_{ 1 } + \gamma )\rho_{ 2 } (r_{ 2 } + \gamma)))) \\
+&=
+\bar{V}^{ T } \text{where } \bar{V}^{ T+1-t } = \rho_{ t } (r_{ t } + \gamma \bar{V}^{ T-t })
+\end{align}
 
+Let's first derive doubly robust estimation in the bandit case:
+\begin{equation}
+		V_{ DR } (s) = \hat{V} (s) + \rho (s,a) (r_{ s,a } - \hat{Q} (s,a))
+\end{equation}
+where $ \hat{V}  $ and $ \hat{Q}  $ are models of function approximators.
+This is done to reduce the variance of the importance estimate,
+just like the baseline did.
+Now we'll try to do the same to $ \bar{V}  $:
+\begin{equation}
+		\bar{V}^{ T+1-t }_{ DR } = \hat{V} (\bm{s}_{t}) + \rho_{ t } (r_{ t } + \gamma \bar{V}_{ DR }^{ T-t } - \hat{Q}(\bm{s}_{t}, \bm{a}_{t} ))
+\end{equation}
+so this is the recursive version of the bandit case.
 
+\subsubsection{Marginalized importance sampling}
+The main idea here is to use not the product of action probabilities $ \prod_{t}^{} \frac{\pi_{ \theta }(\bm{s}_{t}, \bm{a}_{t} )}{\pi_{ \beta }(\bm{s}_{t}, \bm{a}_{t} )}    $ , but estimate importance
+weights that are estimates of state probabilities or state-action probabilities 
+$ w (\bm{s}_{}, \bm{a}_{} ) = \frac{d^{ \pi_{ \theta } } (\bm{s}_{}, \bm{a}_{} )}{d^{ \pi_{ \beta } }(\bm{s}_{}, \bm{a}_{} )}  $
+If we can do this, we can estimate $ J (\theta) \approx \frac{1}{N}  \sum_{i}^{} w (\bm{s}_{i}, \bm{a}_{i} )r_{ i }  $.
+Typically this is done for off-policy evaluation rather than policy learning.
+How do we determine $ w (\bm{s}_{}, \bm{a}_{} )  $? Typically we set and then solve some kind of consistency condition.
+That would be something like a Bellman equation, but for (state of state-action) importance weights.
+For example,
+\begin{equation}
+		\begin{split}
+d^{ \pi_{ \beta } } (\bm{s}_{}', \bm{a}_{} ') w (\bm{s}_{}', \bm{a}_{}' ) =
+(1 -\gamma ) p_{ 0 } (\bm{s}_{}') \pi_{ \theta } (\bm{a}_{}'| \bm{s}_{} ') +\\
+\gamma \sum_{\bm{s}_{}, \bm{a}_{}}^{} \pi_{ \theta } (\bm{a}_{}'| \bm{s}_{}' ) p (\bm{s}_{}'|\bm{s}_{}, \bm{a}_{}) d^{ \pi_{ \beta } }
+(\bm{s}_{}, \bm{a}_{} ) w (\bm{s}_{}, \bm{a}_{} )
+		\end{split}
+\end{equation}
+I won't explain this in any way because why would I (Sergey why did we go into this?).
 
+\subsection{Batch RL via linear fitted value functions}
+We'll talk about this because the analysis in the nonlinear function approximation case will be similar
+and because the linear fitted value function will have closed-form solution which can give us a hint
+on how to implement new more advanced methods.
 
+I'm skipping lecture 15 part 3 and the entire lecture 16 'cos i really don't need offline RL rith now.
+I'm also skipping lecture 17, which while it looks really interesting, i don't need right now (RL theory, bounds on things etc).
+And i'm also skipping lecture 18 in the hope that i won't need variational inference to read the next 2 papers,
+altough i'll certainly need this later.
 
+\section{Reinforcement learning as an inference problem}
+In which we look to something other than reinforcement learning and optimal control to
+provide a reasonable model of human behavior.
+We also try to derive optimal control, RL and planning as \textit{probabilistic inference}.
 
+\subsection{Optimal control as a model of human behavior}
+Let's assume a person does this:
+\begin{align}
+\bm{a}_{1}, \dots, \bm{a}_{T} &= \argmax_{\bm{a}_{1}, \dots, \bm{a}_{T}} \sum_{t=1}^{T} r (\bm{s}_{t}, \bm{a}_{t} ) \\
+\bm{s}_{t+1} &= f (\bm{s}_{t}, \bm{a}_{t} ) \\
+\pi &= \argmax_{\pi} E_{ \bm{s}_{t+1} \sim p (\bm{s}_{t+1} | \bm{s}_{t}, \bm{a}_{t}), \bm{a}_{t} \sim \pi (\bm{a}_{t}| \bm{s}_{t} ) } \left[ r (\bm{s}_{t}, \bm{a}_{t} ) \right] \\
+\bm{a}_{t} &\sim \pi (\bm{a}_{t}| \bm{s}_{t} )
+\end{align}
+where optimizing $ r (\bm{s}_{t}, \bm{a}_{t} )  $ explains the data  (human behavior).
+But what if the data is not optimal? 
+Often, humans and monkeys don't care about perfection, especially when perfection does not make
+much of a difference.
+Some mistakes matter more than other and behavior is stochastic, but good behavior is still most likely.
+In fact, we can prove that in all fully observable settings, a deterministic policy will be optimal.
 
+Now we'll derive probabilistic policies tho and they'll look more like behaviors we observe in animals.
+\begin{equation}
+		\underbrace{p (\bm{s}_{1:T}, \bm{a}_{1:T})}_{ \tau } = ?
+\end{equation}
+We'll introduce binary variables which tell us whether the behavior we're observing is optimal or not.
+Then the inference problem we're trying to solve is
+\begin{equation}
+		p (\tau | \mathcal{O}_{ 1:T })
+\end{equation}
+and we'll choose the following form for the distribution:
+\begin{equation}
+		p (\mathcal{O}| \bm{s}_{t}, \bm{a}_{t}) = \exp (r (\bm{s}_{t}, \bm{a}_{t} ))
+\end{equation}
+for this we'll need all the rewards to be negative, which is no problem because optimal 
+behavior is invariant to additive change (unless rewards are unbounded, but we don't deal with that anyway).
+With this we have:
+\begin{align}
+p (\tau| \mathcal{O}_{ 1:T }) &= \frac{p (\tau, \mathcal{O}_{ 1:T })}{p (\mathcal{O}_{ 1:T })} \\
+&\propto p (\tau) \prod_{t}^{} \exp (r(\bm{s}_{t}, \bm{a}_{t} ))\\ 
+&= p (\tau) \exp \left( \sum_{t}^{} r (\bm{s}_{t}, \bm{a}_{t} ) \right)  
+\end{align}
+The maximum reward trajectory will be most likely and the other rewards will be exponentially less likely.
+This looks like monkeys reaching bananas on a screen (running example for realistic animal behavior).
 
+So the cool thing is we can model suboptimal behavior (important for inverse RL).
+We can apply inference algorithms to solve control and planning problems.
+This provides an explanation for why stochastic behavior might be preferred (useful for exploration and transfer learning).
 
+How do we do inference in this model?
 
+\subsection{Control as inference}
+\begin{enumerate}
+		\item compute backward messages $ \beta_{ t } (\bm{s}_{t}, \bm{a}_{t} ) p (\mathcal{O}_{ 1:T }| \bm{s}_{t}, \bm{a}_{t}) $
+		\item compute policy $ p (\bm{a}_{t} | \bm{s}_{t}, \mathcal{O}_{ 1:T })   $
+		\item compute forward messages $ \alpha_{ t } (\bm{s}_{t}) = p (\bm{s}_{t}|\mathcal{O}_{ 1:t-1 })  $
+\end{enumerate}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+\subsubsection{Backward messages}
+\begin{align}
+\beta_{ t } (\bm{s}_{t}, \bm{a}_{t} ) &= p (\mathcal{O}_{ 1:T }|\bm{s}_{t}, \bm{a}_{t})\\
+&= \int_{}^{} p (\mathcal{O}_{ 1:T }, \bm{s}_{t} | \bm{s}_{t}, \bm{a}_{t}) d\bm{s}_{t+1}\\
+&= \int_{}^{} p (\mathcal{O}_{ t+1:T }| \bm{s}_{t+1}) p (\bm{s}_{t+1}| \bm{s}_{t}, \bm{a}_{t}) p (\mathcal{O}_{ 1:T }| \bm{s}_{t}, \bm{a}_{t}) d\bm{s}_{t+1}\\
+\end{align}
+\begin{align}
+p (\mathcal{O}_{ t+1:T }|\bm{s}_{t+1}) &= \int_{}^{} 
+\end{align}
 
 
 

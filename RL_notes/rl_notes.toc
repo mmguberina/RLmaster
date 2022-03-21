@@ -124,3 +124,10 @@
 \contentsline {subsubsection}{Why is offline RL hard?}{64}{section*.73}%
 \contentsline {subsubsection}{Where does RL suffer from distributional shift?}{65}{section*.74}%
 \contentsline {subsection}{\numberline {1.14.1}Batch RL via importance sampling}{65}{subsection.1.14.1}%
+\contentsline {subsubsection}{The doubly robust estimator}{67}{section*.75}%
+\contentsline {subsubsection}{Marginalized importance sampling}{68}{section*.76}%
+\contentsline {subsection}{\numberline {1.14.2}Batch RL via linear fitted value functions}{68}{subsection.1.14.2}%
+\contentsline {section}{\numberline {1.15}Reinforcement learning as an inference problem}{68}{section.1.15}%
+\contentsline {subsection}{\numberline {1.15.1}Optimal control as a model of human behavior}{69}{subsection.1.15.1}%
+\contentsline {subsection}{\numberline {1.15.2}Control as inference}{70}{subsection.1.15.2}%
+\contentsline {subsubsection}{Backward messages}{70}{section*.77}%

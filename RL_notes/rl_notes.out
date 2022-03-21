@@ -51,3 +51,7 @@
 \BOOKMARK [2][-]{subsection.1.13.1}{Learning diverse skills}{section.1.13}% 51
 \BOOKMARK [1][-]{section.1.14}{Generalisation gap}{chapter.1}% 52
 \BOOKMARK [2][-]{subsection.1.14.1}{Batch RL via importance sampling}{section.1.14}% 53
+\BOOKMARK [2][-]{subsection.1.14.2}{Batch RL via linear fitted value functions}{section.1.14}% 54
+\BOOKMARK [1][-]{section.1.15}{Reinforcement learning as an inference problem}{chapter.1}% 55
+\BOOKMARK [2][-]{subsection.1.15.1}{Optimal control as a model of human behavior}{section.1.15}% 56
+\BOOKMARK [2][-]{subsection.1.15.2}{Control as inference}{section.1.15}% 57
