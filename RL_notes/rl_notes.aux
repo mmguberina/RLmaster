@@ -191,4 +191,62 @@
 \newlabel{eq:transition_probability_inference}{{16.57}{89}{Control as variational inference}{equation.16.5.57}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {16.5.1}Variational lower bound}{89}{subsection.16.5.1}\protected@file@percent }
 \@writefile{lof}{\contentsline {figure}{\numberline {16.1}{\ignorespaces $ p (\bm  {s}_{1:T}, \bm  {a}_{1:T}|\mathcal  {O}_{ 1:T }) $}}{90}{figure.16.1}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {16.2}{\ignorespaces $ q (\bm  {s}_{1:T}, \bm  {a}_{1:T}) $}}{90}{figu
+\@writefile{lof}{\contentsline {figure}{\numberline {16.2}{\ignorespaces $ q (\bm  {s}_{1:T}, \bm  {a}_{1:T}) $}}{90}{figure.16.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {16.5.2}Optimizing the variational lower bound}{91}{subsection.16.5.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {16.6}Algorithms for RL as inference}{92}{section.16.6}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {16.6.1}Q-learning with soft optimality}{92}{subsection.16.6.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {16.6.2}Policy gradient with soft optimality}{93}{subsection.16.6.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {16.6.3}Policy gradient vs Q-learning}{93}{subsection.16.6.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {16.6.4}Benefits of soft optimality}{94}{subsection.16.6.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {16.6.5}Example methods}{94}{subsection.16.6.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {chapter}{\numberline {17}Inverse reinforcement learning}{95}{chapter.17}\protected@file@percent }
+\@writefile{lof}{\addvspace {10\p@ }}
+\@writefile{lot}{\addvspace {10\p@ }}
+\@writefile{toc}{\contentsline {subsection}{\numberline {17.0.1}Why should we worry about learning rewards?}{95}{subsection.17.0.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{Imitation learning perspective}{95}{section*.28}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{The RL perspective}{95}{section*.29}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{Inverse RL}{96}{section*.30}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {17.0.2}Feature matching IRL}{96}{subsection.17.0.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {17.0.3}Learning the optimality variable}{97}{subsection.17.0.3}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {17.1}{\ignorespaces $ p (\bm  {s}_{1:T}, \bm  {a}_{1:T}|\mathcal  {O}_{ 1:T }) $}}{97}{figure.17.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{The IRL partition function}{97}{section*.31}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{Estimating the expectation}{98}{section*.32}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{The MaxEnt IRL algorithm}{99}{section*.33}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {17.1}Approximations to higher dimensions}{99}{section.17.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {17.1.1}Unknown dynamics and larges state/action spaces}{100}{subsection.17.1.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{Guided policy cost}{100}{section*.34}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {17.2}{\ignorespaces Guided cost learning algorithm}}{101}{figure.17.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {17.1.2}IRL and GANs}{101}{subsection.17.1.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {chapter}{\numberline {18}Transfer and multi-task learning}{102}{chapter.18}\protected@file@percent }
+\@writefile{lof}{\addvspace {10\p@ }}
+\@writefile{lot}{\addvspace {10\p@ }}
+\@writefile{toc}{\contentsline {paragraph}{Question}{102}{section*.35}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {18.1}Transfer learning terminology}{102}{section.18.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Transfer learning:}{102}{section*.36}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {18.1.1}How can we frame transfer learning problems?}{103}{subsection.18.1.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {18.2}Forward transfer}{103}{section.18.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {18.2.1}What are the likely issues?}{103}{subsection.18.2.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Domain shift}{103}{section*.37}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Difference in the MDP}{103}{section*.38}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Finetuning issues}{103}{section*.39}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{Domain adaptation in computer vision}{104}{section*.40}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {18.2.2}How can we apply this idea in RL?}{104}{subsection.18.2.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{Domain adaptation in RL for dynamics?}{104}{section*.41}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{What if we can also finetune?}{104}{section*.42}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {18.3}Forward transfer with randomization}{105}{section.18.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {18.3.1}What if we can manipulate the source domain?}{105}{subsection.18.3.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{EDOpt: randomizing physical parameters}{105}{section*.43}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {18.4}Multi-task transfer}{105}{section.18.4}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {18.1}{\ignorespaces Single-task MDP}}{105}{figure.18.1}\protected@file@percent }
+\newlabel{fig:}{{18.1}{105}{Single-task MDP}{figure.18.1}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {18.2}{\ignorespaces Multi-task MDP}}{105}{figure.18.2}\protected@file@percent }
+\newlabel{fig:}{{18.2}{105}{Multi-task MDP}{figure.18.2}{}}
+\@writefile{toc}{\contentsline {subsubsection}{What's difficult about this?}{105}{section*.44}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{Distillation for multi-task transfer}{106}{section*.45}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{Divide and conquer RL}{106}{section*.46}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{How does the model know what to do?}{106}{section*.47}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {18.5}Transfering models and value functions}{106}{section.18.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {18.5.1}The problem setting}{106}{subsection.18.5.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Assumption:}{106}{section*.48}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {18.5.2}Transferring models}{106}{subsection.18.5.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {18.5.3}Transferring value functions}{107}{subsection.18.5.3}\protected@file@percent }

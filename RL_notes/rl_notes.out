@@ -103,4 +103,36 @@
 \BOOKMARK [0][-]{chapter.16}{Reinforcement learning as an inference problem}{}% 103
 \BOOKMARK [1][-]{section.16.1}{Optimal control as a model of human behavior}{chapter.16}% 104
 \BOOKMARK [1][-]{section.16.2}{Control as inference}{chapter.16}% 105
-\BOOKMARK [2][-]{subsection.16.2.1}{Backward messa
+\BOOKMARK [2][-]{subsection.16.2.1}{Backward messages}{section.16.2}% 106
+\BOOKMARK [2][-]{subsection.16.2.2}{But what the if the action prior is not uniform?}{section.16.2}% 107
+\BOOKMARK [1][-]{section.16.3}{Policy computation}{chapter.16}% 108
+\BOOKMARK [1][-]{section.16.4}{Forward messages}{chapter.16}% 109
+\BOOKMARK [1][-]{section.16.5}{Control as variational inference}{chapter.16}% 110
+\BOOKMARK [2][-]{subsection.16.5.1}{Variational lower bound}{section.16.5}% 111
+\BOOKMARK [2][-]{subsection.16.5.2}{Optimizing the variational lower bound}{section.16.5}% 112
+\BOOKMARK [1][-]{section.16.6}{Algorithms for RL as inference}{chapter.16}% 113
+\BOOKMARK [2][-]{subsection.16.6.1}{Q-learning with soft optimality}{section.16.6}% 114
+\BOOKMARK [2][-]{subsection.16.6.2}{Policy gradient with soft optimality}{section.16.6}% 115
+\BOOKMARK [2][-]{subsection.16.6.3}{Policy gradient vs Q-learning}{section.16.6}% 116
+\BOOKMARK [2][-]{subsection.16.6.4}{Benefits of soft optimality}{section.16.6}% 117
+\BOOKMARK [2][-]{subsection.16.6.5}{Example methods}{section.16.6}% 118
+\BOOKMARK [0][-]{chapter.17}{Inverse reinforcement learning}{}% 119
+\BOOKMARK [1][-]{subsection.17.0.1}{Why should we worry about learning rewards?}{chapter.17}% 120
+\BOOKMARK [2][-]{subsection.17.0.2}{Feature matching IRL}{subsection.17.0.1}% 121
+\BOOKMARK [2][-]{subsection.17.0.3}{Learning the optimality variable}{subsection.17.0.1}% 122
+\BOOKMARK [1][-]{section.17.1}{Approximations to higher dimensions}{chapter.17}% 123
+\BOOKMARK [2][-]{subsection.17.1.1}{Unknown dynamics and larges state/action spaces}{section.17.1}% 124
+\BOOKMARK [2][-]{subsection.17.1.2}{IRL and GANs}{section.17.1}% 125
+\BOOKMARK [0][-]{chapter.18}{Transfer and multi-task learning}{}% 126
+\BOOKMARK [1][-]{section.18.1}{Transfer learning terminology}{chapter.18}% 127
+\BOOKMARK [2][-]{subsection.18.1.1}{How can we frame transfer learning problems?}{section.18.1}% 128
+\BOOKMARK [1][-]{section.18.2}{Forward transfer}{chapter.18}% 129
+\BOOKMARK [2][-]{subsection.18.2.1}{What are the likely issues?}{section.18.2}% 130
+\BOOKMARK [2][-]{subsection.18.2.2}{How can we apply this idea in RL?}{section.18.2}% 131
+\BOOKMARK [1][-]{section.18.3}{Forward transfer with randomization}{chapter.18}% 132
+\BOOKMARK [2][-]{subsection.18.3.1}{What if we can manipulate the source domain?}{section.18.3}% 133
+\BOOKMARK [1][-]{section.18.4}{Multi-task transfer}{chapter.18}% 134
+\BOOKMARK [1][-]{section.18.5}{Transfering models and value functions}{chapter.18}% 135
+\BOOKMARK [2][-]{subsection.18.5.1}{The problem setting}{section.18.5}% 136
+\BOOKMARK [2][-]{subsection.18.5.2}{Transferring models}{section.18.5}% 137
+\BOOKMARK [2][-]{subsection.18.5.3}{Transferring value functions}{section.18.5}% 138

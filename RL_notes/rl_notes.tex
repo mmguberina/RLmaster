@@ -13,7 +13,13 @@
 \usepackage[makeroom]{cancel}
 \usepackage{hyperref}
 \usepackage{tikz}
+\usetikzlibrary{arrows.meta}
 \usetikzlibrary{shapes.geometric, arrows}
+%\usepackage{tikz-graph}
+%\usetikzlibrary{bayesnet}
+%\usetikzlibrary{shapes.geometric}
+%\usetikzlibrary{trees}
+\usetikzlibrary{positioning}
 \tikzstyle{rec} = [rectangle,  minimum width=2cm, minimum height=1cm, text centered, draw=black]
 \tikzstyle{arrow} = [thick,->,>=stealth]
 \tikzstyle{arrow_red} = [thick,->,>=stealth, color=red]
@@ -3662,7 +3668,6 @@ Let
 \end{equation}
 We had the following graph for $ p (\bm{s}_{1:T}, \bm{a}_{1:T}|\mathcal{O}_{ 1:T })  $ :
 \begin{figure}[htpb]
-		\caption{$ p (\bm{s}_{1:T}, \bm{a}_{1:T}|\mathcal{O}_{ 1:T })  $}
 \begin{center}
 \begin{tikzpicture}[scale=1, transform shape, node distance=1.5cm]
 		\node (s1) [mcs] {$\bm{s}_{1} $};
@@ -3691,12 +3696,12 @@ We had the following graph for $ p (\bm{s}_{1:T}, \bm{a}_{1:T}|\mathcal{O}_{ 1:T
 		\draw [arrow] (a3) -- (s4);
 \end{tikzpicture}
 \end{center}
+		\caption{$ p (\bm{s}_{1:T}, \bm{a}_{1:T}|\mathcal{O}_{ 1:T })  $}
 \end{figure}
 
 and now the graph of our approximate version $ q (\bm{s}_{1:T}, \bm{a}_{1:T})  $ looks like:
 
 \begin{figure}[htpb]
-		\caption{$ q (\bm{s}_{1:T}, \bm{a}_{1:T})  $}
 \begin{center}
 \begin{tikzpicture}[scale=1, transform shape, node distance=1.5cm]
 		\node (s1) [mcs] {$\bm{s}_{1} $};
@@ -3719,6 +3724,7 @@ and now the graph of our approximate version $ q (\bm{s}_{1:T}, \bm{a}_{1:T})  $
 		\draw [arrow] (a3) -- (s4);
 \end{tikzpicture}
 \end{center}
+		\caption{$ q (\bm{s}_{1:T}, \bm{a}_{1:T})  $}
 \end{figure}
 Let's tie this back variational inference.
 Let $ \bm{x}_{} = \mathcal{O}_{ 1:T }  $ and $ \bm{z}_{} = (\bm{s}_{1:T}, \bm{a}_{1:T} )  $.
@@ -4033,7 +4039,6 @@ But now we'll use this model to learn reward functions.
 \subsection{Learning the optimality variable}
 
 \begin{figure}[htpb]
-		\caption{$ p (\bm{s}_{1:T}, \bm{a}_{1:T}|\mathcal{O}_{ 1:T })  $}
 \begin{center}
 \begin{tikzpicture}[scale=1, transform shape, node distance=1.5cm]
 		\node (s1) [mcs] {$\bm{s}_{1} $};
@@ -4062,6 +4067,7 @@ But now we'll use this model to learn reward functions.
 		\draw [arrow] (a3) -- (s4);
 \end{tikzpicture}
 \end{center}
+		\caption{$ p (\bm{s}_{1:T}, \bm{a}_{1:T}|\mathcal{O}_{ 1:T })  $}
 \end{figure}
 
 \begin{equation}
@@ -4176,48 +4182,339 @@ we can show that it optimizes
 so it's a kind of statistic reification of the Occam's razor.
 
 \section{Approximations to higher dimensions}
+MaxEnt so far requires:
+\begin{itemize}
+		\item solving for (soft) optimal policy in the inner loop
+		\item enumerating all state-aciton tuples for visitation frequency and gradient
+\end{itemize}
+To apply this in practical problem settings, the following needs to be handled:
+\begin{itemize}
+		\item large and continuos state and action spaces
+		\item states obtained via sampling only
+		\item unknown dynamics
+\end{itemize}
 
+\subsection{Unknown dynamics and larges state/action spaces}
+We have the following gradient:
+\begin{equation}
+\nabla_{ \psi } \mathcal{L} = 
+\underbrace{E_{ \tau \sim \pi^{ \star } (\tau) } \left[ \nabla_{ \psi } r_{ \psi } (\tau_{ i })\right] }_{ \text{estimate with expert samples} }
+- 
+\underbrace{E_{ \tau \sim p (\tau|\mathcal{O}_{ 1:T }, \psi) } \left[ \nabla_{ \psi } r_{ \psi } (\tau) \right] }_{ \text{soft optimal policy under current reward} }
+\end{equation}
+the idea now is to learn $ p (\bm{a}_{t}| \bm{s}_{t}, \mathcal{O}_{ 1:T }, \psi)  $ using any max-ent RL algorithm,
+i.e. anything that maximizes:
+\begin{equation}
+		J (\theta)  = \sum_{t}^{} E_{ \pi (\bm{s}_{t}, \bm{a}_{t} ) } \left[ r_{ \psi }(\bm{s}_{t}, \bm{a}_{t} ) \right] + 
+		E_{ \pi (\bm{s}_{t}, \bm{a}_{t} ) } \left[ \mathcal{H} (\pi(\bm{a}_{t}| \bm{s}_{t} )) \right] 
+\end{equation}
+and then run that policy to sample trajectories $ \left\{ \tau_{ j } \right\}   $
+and use that to estimate the second term.
+Together, our gradient estimate would look like:
+\begin{equation}
+		\nabla_{ \psi } \mathcal{L} \approx
+		\frac{1}{N} \sum_{i=1}^{N} \nabla_{ \psi }r_{ \psi } (\tau_{ i }) -
+		\frac{1}{M} \sum_{j=1}^{M} \nabla_{ \psi }r_{ \psi } (\tau_{ j})
+\end{equation}
 
+While this would perform MaxEnt RL,
+but it would require running MaxEnt (the forward problem) until convergence 
+for every step of the reward function and that's intractable.
 
+\subsubsection{Guided policy cost}
+Could we do some ``lazy'' policy optimization?
+Then we would just improve $ p (\bm{a}_{t}|\bm{s}_{t}, \mathcal{O}_{ 1:T }, \psi)  $ a little bit.
+The problem this introduces is that the estimator is now biased and is on the wrong distribution.
+One possible solution to this is to use importance sampling:
+\begin{equation}
+		\nabla_{ \psi } \mathcal{L} \approx
+		\frac{1}{N} \sum_{i=1}^{N} \nabla_{ \psi }r_{ \psi } (\tau_{ i }) -
+		\frac{1}{ \sum_{j}^{} w_{ j } } \sum_{j=1}^{M} w_{ j } \nabla_{ \psi }r_{ \psi } (\tau_{ j})
+\end{equation}
+where $ w_{ j }  $ are the importance weights and we also have a factor to normalize their sum to 1.
+\begin{align}
+w_{ j } &= \frac{p (\tau) \exp (r_{ \psi } (\tau_{ j }))}{\pi (\tau_{ j })} \\
+		&= \frac{\cancel{p (\bm{s}_{1}) \prod_{t}^{} p (\bm{s}_{t+1}|\bm{s}_{t}, \bm{a}_{t}) }\exp (r_{ \psi } (\bm{s}_{t}, \bm{a}_{t} ))) }
+		{\cancel{p (\bm{s}_{1}) \prod_{t}^{} p (\bm{s}_{t+1}|\bm{s}_{t}, \bm{a}_{t} )}\pi (\bm{a}_{t}| \bm{s}_{t} ) }  \\
+&= \frac{\exp (\sum_{t}^{} r_{ \psi } (\bm{s}_{t}, \bm{a}_{t} ))}{\prod_{i}^{} \pi (\bm{s}_{t}, \bm{a}_{t} ) } 
+\end{align}
+So each policy update w.r.t. $ r_{ \psi }  $ brings us closer to the target distribution.
+This is the basis of the guided cost learning algorithm.
 
+\begin{figure}[htpb]
+\begin{center}
+\begin{tikzpicture}[scale=1, transform shape, node distance=2cm]
+		\node (pi) [mcs] {policy $ \pi  $};
+		\node (descpi) [above left of=pi, xshift=-0.8cm] { initial policy $ \pi  $ };
+		\node (r) [mcs, right of=s1, xshift=1.5cm] {reward $ r  $};
+		\node (descr) [above right of=r, xshift=0.8cm] {human demonstration};
+		\node (descru) [right of=r, xshift=1cm, text width=2.5cm] {update reward using  samples and demos};
+		\draw [arrow] (descpi) -- (pi);
+		\draw [arrow] (descr) -- (r);
+%		\path [arrow, bend down] (r) -- node [midway, below, yshift=-0.3cm] {update $ \pi  $ w.r.t reward}  (pi);
+		\draw [arrow] (r.240) to [bend left=30] node [midway, below, yshift=-0.2cm] (textnode1) {update $ \pi  $ w.r.t reward}  (pi.300);
+		\draw [arrow] (pi.70) to [bend left=30] node [midway, above, yshift=0.2cm] (textnode2) {generate samples from $ \pi  $} (r.100);
+%		\draw [-{Latex[length=1.5mm]},dotted] (r.270) to [bend left=30] node [midway, below, yshift=-0.3cm] (textnode1) {update $ \pi  $ w.r.t reward}  (pi.270);
+%		\draw [thick,->,>=stealth] (r.270) to [bend left=30] node [midway, below, yshift=-0.3cm] (textnode1) {update $ \pi  $ w.r.t reward}  (pi.270);
+\end{tikzpicture}
+\end{center}
+		\caption{Guided cost learning algorithm}
+\end{figure}
+So we're doing policy gradient with the extra entropy term to update the policy.
 
+\subsection{IRL and GANs}
+Yes, there is a connection.
+But I'm not going to write about this now.
+Skipped lecture 20, part 4.
 
+\chapter{Transfer and multi-task learning}
+\paragraph{Question} Can RL use prior knowledge like humans do?
+To know the answer, we need to know how knowledge is stored:
+\begin{itemize}
+		\item Q-functions tells us which actions or states are good
+		\item policy tells us which actions are potentially useful
+				\begin{itemize}
+						\item some actions are never useful and that could be useful
+				\end{itemize}
+		\item models tell us what laws of physics govern the world
+		\item features or hidden states provide us with a good representation 
+\end{itemize}
 
+There's a nice example of how important good representations are
+in ``Loss is its own reward''.
+Summarize that paper pls --- will  be done after the transfer learning lecture.
 
+\section{Transfer learning terminology}
+\paragraph{Transfer learning:} using experience from \underline{one set of tasks} for faster
+learning and better performance on a \underline{new task}.
+In RL, \textbf{task = MDP}.
+The task from which we're transferring is called \textbf{source domain}
+and the task we're transferring into is called \textbf{target domain}.
+A \textbf{``shot''} is the number of attempts needed in the target domain before the task
+has been solved.
+\textbf{0-shot} means that you can just run a policy trained in the source domain in the target domain
+and it will work.
+\textbf{1-shot} means trying the task once and \textbf{few shot} refers to try the task a few times.
 
+\subsection{How can we frame transfer learning problems?}
+There's no single solution, this is more of a survey of different frameworks and methods
+in that's referred to as transfer learning.
+\begin{enumerate}
+		\item forward transfer: train on one task, transfer to another
+				\begin{itemize}
+						\item transferring visual representation and domain adaptation
+						\item domain adaptation in RL
+						\item randomization
+				\end{itemize}
+		\item multi-task transfer: train on many tasks, transfer to a new task
+				\begin{itemize}
+						\item sharing representations and layers across tasks in multi-task learning
+						\item contextual policies
+						\item optimization challanges
+						\item algorithms
+				\end{itemize}
+		\item transferring models and value functions
+			\begin{itemize}
+					\item model based RL as transfer mechanism
+					\item successor features and representation
+			\end{itemize}
+\end{enumerate}
 
+\section{Forward transfer}
+This is the most popular method in supervised deep learning ---
+this is the pretraining on a big dataset, chopping of the last few fully connected layers
+and using the convolutional parts of the network on other dataset.
+This works great, especially if the pretraining dataset is large and diverse.
+\subsection{What are the likely issues?}
+\paragraph{Domain shift}
+The learned representations migh not work in the target domain (training in sim and transferring
+to real-world samples).
+\paragraph{Difference in the MDP}
+Some things that are possible in the source domain are not possible in the target domain.
+In the worst case you need to unlearn and then relearn things.
+\paragraph{Finetuning issues}
+If you end up with a deterministic policy during pretraining,
+you might not explore enough in the new domain.
 
+\subsubsection{Domain adaptation in computer vision}
+Let's talk sim to real for CV.
+Net trained in source domain works in source domain and doesn't in the target domain.
+The assumption we made was the \textbf{invariance assumption}: everything that is different between domains is irrelevant.
+This is often not true in practise, but if it holds we can formally say
+that: $ p (x)  $ is different.
+Then $ \exists  $ some $ z = f (x)  $ such that $ p (y|x) = p (y|x) $, but $ p(z)  $ is the same.
+If we discover the invariant representation $ z  $, we'll solve the domain shift problem.
+You can do that without access to labels in the target domain.
+We enforce that some layer will have the same $ z  $ over a population of images.
+We do this because we don't have access to pairs of what are supposed to be identical images in both domains,
+but we can enforce them to be the same over a population.
+This is done in the following way.
+Train a binary classifier which tries to predict from which domain a picture comes from,
+but it does so from the $ z  $ domain (which is again the output of some layer in the network).
+Now we can train our vision network to make the classifier wrong.
+This technique is called ``domain confusion'' and ``domain adversarial neural networks''.
 
+\subsection{How can we apply this idea in RL?}
+We do the same thing on our representation.
+Notably, we're not doing RL in the target domain observations, we're only including them
+in the classifier loss.
+\subsubsection{Domain adaptation in RL for dynamics?}
+The \textbf{invariance} is not enough when the dynamics don't match.
+We could try to pretend we're in the target domain by augmenting the reward so as to reward
+what's good in the target domain, even if it's not present in the source domain.
+One such reward augmentation is ex.:
+\begin{equation}
+		\Delta r (s_{ t }, a_{ t }, s_{ t+1 }) = \log p_{ \text{target} } \left( s_{ t+1 } | s_{ t }, a_{ t } \right) 
+		- \log p_{ \text{source} } \left( s_{ t+1 }| s_{ t }, a_{ t } \right) 
+\end{equation}
+Now you need 2 discriminators,  but whatever.
+This won't work if the correct way to act in the target domain is simply unavailable in the source domain.
 
+\paragraph{What if we can also finetune?}
+So not just doing 0-shot stuff.
+There are additional challenges in RL:
+\begin{enumerate}
+		\item RL tasks are generally much less diverse
+		\begin{itemize}
+				\item features are less general
+				\item policies and value functions become overly specialized
+		\end{itemize}
+\item optimal policies in fully observed MDPs are determinstic
+		\begin{itemize}
+				\item loss of exploration at convergence
+				\item low-entropy policies adapt very slowly to new settings
+		\end{itemize}
+\end{enumerate}
+Could we aleviate some of this by increasing diversity and entropy?
+Yes. We basically train to act as randomly as possible while getting the maximum reward.
 
+\section{Forward transfer with randomization}
+\subsection{What if we can manipulate the source domain?}
+This is what we can do with simulations as source domains.
+\subsubsection{EDOpt: randomizing physical parameters}
+Also doing supervised learning on the parameters from bbla bla i know the cool paper.
+The papers are in the slides and there's a lot of them.
 
+\section{Multi-task transfer}
+Can we learn \textbf{faster} by learning multiple tasks? Yes.
+But how do we solve multiple tasks at once?
+Well, multi-task RL corresponds to single-task RL in a \textbf{joint MDP}.
+Let's construct a joint MDP.
+We begin with a single task MDP:
+\begin{figure}[htpb]
+\begin{center}
+\begin{tikzpicture}[scale=1, transform shape, node distance=2cm]
+		\node (ps0) [] { $ p (\bm{s}_{0})  $};	
+		\node (s0) [right of=ps0] { $ \bm{s}_{0}  $};	
+		\node (s1) [right of=s0] { $ \bm{s}_{1}  $};	
+		\node (etc) [right of=s1] {etc.};	
+		\draw[arrow, dashed] (ps0) -- node (txts) [midway, above] {sample} (s0);
+		\draw[arrow] (s0) -- node (txt) [midway, above] { $ \pi (\bm{a}_{0}| \bm{s}_{0} )  $} (s1);
+		\draw[arrow] (s1) -- (etc);
+\end{tikzpicture}
+\end{center}
+\caption{Single-task MDP}
+\label{fig:}
+\end{figure}
 
+To get the multi-task MDP, you modify the initial state distribution and 
+the definition of a state, so that the task you're doing is a part of the state (like an additional variable appended to the state).
+It is sampled randomly when sampling the initial state and you don't touch it afterward.
+Esentially you pick an MDP randomly in the first state.
+This is a well-defined MDP.
 
+\begin{figure}[htpb]
+\begin{center}
+\begin{tikzpicture}[scale=1, transform shape, node distance=2cm]
+		\node (ps0) [] { $ p (\bm{s}_{0})  $};	
+		\node (s01) [right of=ps0] { $ \bm{s}_{0}  $};	
+		\node (s02) [above right of=ps0, xshift=0.58cm] { $ \bm{s}_{0}  $};	
+		\node (s03) [below right of=ps0, xshift=0.58cm] { $ \bm{s}_{0}  $};	
+		\node (s11) [right of=s01] { $ \bm{s}_{1}  $};	
+		\node (s12) [right of=s02] { $ \bm{s}_{1}  $};	
+		\node (s13) [right of=s03] { $ \bm{s}_{1}  $};	
+		\node (etc1) [right of=s11] {etc.  MDP 1};	
+		\node (etc2) [right of=s12] {etc.  MDP 0};	
+		\node (etc3) [right of=s13] {etc.  MDP 2};	
+		\draw[arrow, dashed] (ps0) -- node (txts) [midway, above, sloped ] {sample} (s01);
+		\draw[arrow, dashed] (ps0) -- node (txts) [midway, above, sloped ] {sample} (s02);
+		\draw[arrow, dashed] (ps0) -- node (txts) [midway, above, sloped ] {sample} (s03);
+		\draw[arrow] (s01) -- node (txt) [midway, above] { $ \pi (\bm{a}_{0}| \bm{s}_{0} )  $} (s11);
+		\draw[arrow] (s02) -- node (txt) [midway, above] { $ \pi (\bm{a}_{0}| \bm{s}_{0} )  $} (s12);
+		\draw[arrow] (s03) -- node (txt) [midway, above] { $ \pi (\bm{a}_{0}| \bm{s}_{0} )  $} (s13);
+		\draw[arrow] (s11) -- (etc1);
+		\draw[arrow] (s12) -- (etc2);
+		\draw[arrow] (s13) -- (etc3);
+\end{tikzpicture}
+\end{center}
+\caption{Multi-task MDP}
+\label{fig:}
+\end{figure}
 
+\subsubsection{What's difficult about this?}
+This is really difficult in practice:
+\begin{itemize}
+		\item \textbf{gradient interference}: becoming better on one task can make you worse on another (this is a major challenge)
+		\item \textbf{winner-take-all problem}: imagine one task starts getting good --- the algorithm is likely
+				to prioritize that task in order to increase average expected reward and it will do so at the expense of others
+\end{itemize}
+While these are somewhat anegdotal, they appear often and make this kind
+of multi-task RL very challenging.
+Here are some papers which tried to do this, namely, have a single policy to play all Atari games:
+\begin{itemize}
+		\item policy distillation
+		\item actor-mimic: deep multitask and transfer RL
+\end{itemize}
+\subsubsection{Distillation for multi-task transfer}
+They train individual policies with regular RL for each game and then they do supervised
+learning to train a single central policy that plays all the games.
+More on this in the model-based chapter.
 
+\subsubsection{Divide and conquer RL}
+More on this in the model-based chapter.
 
+\subsubsection{How does the model know what to do?}
+Could have a contextual policy which depends on the context variable $ \omega  $, i.e. $ \pi_{ \theta } (\bm{a}_{}| \bm{s}_{} , \omega)  $
+and the state space is augmented so that $ \tilde{s} = \begin{bmatrix} \bm{s}_{} \\ \omega \end{bmatrix}   $,
+$ \tilde{\mathcal{S}} = \mathcal{S} \times \Omega  $.
+This will be discussed further in the meta-learning chapter.
 
+\section{Transfering models and value functions}
+\subsection{The problem setting}
+We'll make the setting a bit narower.
+\paragraph{Assumption:} the dynamics $ p (\bm{s}_{t+1}| \bm{s}_{t}, \bm{a}_{t} )  $ is the same in both domains,
+but the \textbf{reward function} is different.
+It makes sense to trasfer a \textbf{model} because it should in principle already be independent of reward.
+But we could also transfer the \textbf{value function}. It is not straightforward to transder by itself as it entangles
+the dynamics and the reward, but it's possible with a decomposition. 
+We could also transfer the \textbf{policy} if it is a contextual policy.
 
+\subsection{Transferring models}
+It should just work. 
+But of course, a zero-shot transfer might not work due to distributional shift.
+And that's all to be said here.
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+\subsection{Transferring value functions}
+Yes, they do couple dynamics, rewards and policies:
+\begin{equation}
+		Q^{ \pi } (\bm{s}_{}, \bm{a}_{} ) = r (\bm{s}_{}, \bm{a}_{} ) + \gamma E_{ \bm{s}_{}' \sim p (\bm{s}_{}|\bm{s}_{}, \bm{a}_{} ),
+		\bm{a}_{}' \sim \pi (\bm{a}_{}'| \bm{s}_{} ')} \left[ Q^{ \pi } (\bm{s}_{}', \bm{a}_{} ') \right] 
+\end{equation}
+However, the value function is linear in the reward function.
+Let $ \bm{Pv}_{}  $ denote a vector $ \bm{w}_{}  $ of length $ |S||A|  $ given by
+\begin{equation}
+		\bm{w}_{} (\bm{s}_{}, \bm{a}_{} ) = E_{ \bm{s}_{}' \sim p (\bm{s}_{}| \bm{s}_{}, \bm{a}_{} ) } \left[ v (\bm{s}_{}') \right] 
+\end{equation}
+Now let $ \bm{P}_{}^{ \pi } \bm{v}_{}  $ denote a vector
+$ \bm{w}_{}  $ of length $ |S||A|  $ given by 
+\begin{equation}
+\bm{w}_{} (\bm{s}_{}, \bm{a}_{} ) =
+E_{ \bm{s}_{}' \sim p (\bm{s}_{}'| \bm{s}_{}, \bm{a}_{} ), \bm{a}_{}' \sim \pi (\bm{a}_{}'| \bm{s}_{} ') } \left[ \bm{v}_{} (\bm{s}_{}', \bm{a}_{}' ) \right] 
+\end{equation}
+and with this we can write
+\begin{equation}
+		Q^{ \pi } = r + \gamma \bm{P}_{}^{ \pi } Q^{ \pi } = (\bm{I}_{} - \gamma \bm{P}_{}^{ \pi })^{ -1 }r
+\end{equation}
 
 
 
