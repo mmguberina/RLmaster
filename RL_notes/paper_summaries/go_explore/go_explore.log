@@ -1,9 +1,9 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.21 (TeX Live 2020) (preloaded format=pdflatex 2020.9.19)  23 MAR 2022 12:38
+This is pdfTeX, Version 3.14159265-2.6-1.40.21 (TeX Live 2020) (preloaded format=pdflatex 2020.9.19)  23 MAR 2022 12:46
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
-**never_give_up.tex
-(./never_give_up.tex
+**go_explore.tex
+(./go_explore.tex
 LaTeX2e <2020-02-02> patch level 5
 L3 programming layer <2020-09-06>
 (/mnt/ubuntu/usr/local/texlive/2020/texmf-dist/tex/latex/base/article.cls
@@ -147,8 +147,8 @@ ftex.def
 File: l3backend-pdftex.def 2020-09-11 L3 backend support: PDF output (pdfTeX)
 \l__kernel_color_stack_int=\count188
 \l__pdf_internal_box=\box49
-) (./never_give_up.aux)
-\openout1 = `never_give_up.aux'.
+) (./go_explore.aux)
+\openout1 = `go_explore.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 13.
 LaTeX Font Info:    ... okay on input line 13.
@@ -247,46 +247,28 @@ LaTeX Warning: No \author given.
 [1
 
 {/mnt/ubuntu/usr/local/texlive/2020/texmf-var/fonts/map/pdftex/updmap/pdftex.ma
-p}]
-Overfull \hbox (28.46503pt too wide) in paragraph at lines 74--75
-[][] 
- []
-
-[2] [3] (./never_give_up.aux) ) 
+p}] (./go_explore.aux) ) 
 Here is how much of TeX's memory you used:
- 3167 strings out of 480876
- 42891 string characters out of 5907582
- 281953 words of memory out of 5000000
- 18726 multiletter control sequences out of 15000+600000
- 554568 words of font info for 83 fonts, out of 8000000 for 9000
+ 3135 strings out of 480876
+ 42524 string characters out of 5907582
+ 278989 words of memory out of 5000000
+ 18706 multiletter control sequences out of 15000+600000
+ 547802 words of font info for 63 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 40i,6n,37p,229b,202s stack positions out of 5000i,500n,10000p,200000b,80000s
-{/mnt/ubuntu/usr/local/texlive/2020/texmf-dist/f
-onts/enc/dvips/cm-super/cm-super-t1.enc}</mnt/ubuntu/usr/local/texlive/2020/tex
-mf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></mnt/ubuntu/usr/local/texliv
-e/2020/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></mnt/ubuntu/usr/lo
-cal/texlive/2020/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi5.pfb></mnt/ubun
-tu/usr/local/texlive/2020/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb><
-/mnt/ubuntu/usr/local/texlive/2020/texmf-dist/fonts/type1/public/amsfonts/cm/cm
-r10.pfb></mnt/ubuntu/usr/local/texlive/2020/texmf-dist/fonts/type1/public/amsfo
-nts/cm/cmr5.pfb></mnt/ubuntu/usr/local/texlive/2020/texmf-dist/fonts/type1/publ
-ic/amsfonts/cm/cmr7.pfb></mnt/ubuntu/usr/local/texlive/2020/texmf-dist/fonts/ty
-pe1/public/amsfonts/cm/cmsy10.pfb></mnt/ubuntu/usr/local/texlive/2020/texmf-dis
-t/fonts/type1/public/amsfonts/cm/cmsy7.pfb></mnt/ubuntu/usr/local/texlive/2020/
-texmf-dist/fonts/type1/public/amsfonts/symbols/msbm10.pfb></mnt/ubuntu/usr/loca
-l/texlive/2020/texmf-dist/fonts/type1/public/cm-super/sfbx1000.pfb></mnt/ubuntu
-/usr/local/texlive/2020/texmf-dist/fonts/type1/public/cm-super/sfbx1200.pfb></m
-nt/ubuntu/usr/local/texlive/2020/texmf-dist/fonts/type1/public/cm-super/sfbx144
-0.pfb></mnt/ubuntu/usr/local/texlive/2020/texmf-dist/fonts/type1/public/cm-supe
-r/sfrm0700.pfb></mnt/ubuntu/usr/local/texlive/2020/texmf-dist/fonts/type1/publi
-c/cm-super/sfrm1000.pfb></mnt/ubuntu/usr/local/texlive/2020/texmf-dist/fonts/ty
-pe1/public/cm-super/sfrm1200.pfb></mnt/ubuntu/usr/local/texlive/2020/texmf-dist
-/fonts/type1/public/cm-super/sfrm1728.pfb></mnt/ubuntu/usr/local/texlive/2020/t
-exmf-dist/fonts/type1/public/cm-super/sfti1000.pfb>
-Output written on never_give_up.pdf (3 pages, 216562 bytes).
+ 40i,6n,37p,226b,202s stack positions out of 5000i,500n,10000p,200000b,80000s
+{/mnt/ubuntu/usr/local/texlive/2020/texmf-dist/fonts/en
+c/dvips/cm-super/cm-super-t1.enc}</mnt/ubuntu/usr/local/texlive/2020/texmf-dist
+/fonts/type1/public/cm-super/sfbx1200.pfb></mnt/ubuntu/usr/local/texlive/2020/t
+exmf-dist/fonts/type1/public/cm-super/sfbx1440.pfb></mnt/ubuntu/usr/local/texli
+ve/2020/texmf-dist/fonts/type1/public/cm-super/sfrm1000.pfb></mnt/ubuntu/usr/lo
+cal/texlive/2020/texmf-dist/fonts/type1/public/cm-super/sfrm1200.pfb></mnt/ubun
+tu/usr/local/texlive/2020/texmf-dist/fonts/type1/public/cm-super/sfrm1728.pfb><
+/mnt/ubuntu/usr/local/texlive/2020/texmf-dist/fonts/type1/public/cm-super/sfti1
+000.pfb>
+Output written on go_explore.pdf (1 page, 86291 bytes).
 PDF statistics:
- 87 PDF objects out of 1000 (max. 8388607)
- 63 compressed objects within 1 object stream
+ 33 PDF objects out of 1000 (max. 8388607)
+ 23 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
  1 words of extra memory for PDF output out of 10000 (max. 10000000)
 

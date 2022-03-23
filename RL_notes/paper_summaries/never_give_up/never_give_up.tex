@@ -39,14 +39,114 @@ A self-supervised inverse dynamics model is used to train the embedding of the n
 so that the novelty is biased toward what the agent can control.
 Universal value function approximators (UVFA) are used to simultaneously learn the different directed
 exploratory policies within the same neural network.
+Using the same network enables transfer between predominantly exploratory policies
+to effective exploitative policies.
+Works in parallel environments, achieves good results on \textit{Pitfall!}.
 
-Apparently i need to go over transfer and inverse reinforcement learning to read this...................
-Well
-back to the berkley lectures then.
 
 \subsection{Introduction}
+To have effective exploration, you want to ensure you reach all state-action pairs infinitelly often.
+While $ \epsilon  $-greedy or Boltzmann exploration works,
+it's inefficient and steps needed grow exponentially with state space size.
+Still they work well in dense reward settings.
+Novelty based exploration achieved nice results, but fails once whatever measure of novelty has been satisfied (it does not go further downstream).
+Using prediction error from predictive forward models is expensive and error-prone.
+
+The main idea of the proposed approach is to jointly learn separate exploration and exploitation policies
+derived from the same network so that we get the best of each.
+In fact, a family of policies with various degrees of exploratory behavior is learned.
+
+An intrinsic reward that combines episodic and life-long novelty is proposed.
+The episodic novelty encourages periodic revisits of familiar states over several episodes (but not the same episode).
+Every observation potentially changes the per-episode novelty significantly.
+Life-long novelty downmodulates states that become familiar over many episodes. It is driven
+by random network distillation error and it is slow.
+
+\fbox{
+		\parbox{\textwidth}{
+\subsubsection{Short note on UFVA}
+The universal in universal function approximators is that they generalize not only over states $ V (s; \theta)  $,
+but also over goals $ V (s,g;\theta)  $.
+There are ``general value functions'' that tell you about progressions in an environment.
+The paper which introduced this used a special network architecture 
+where the goals and states produce different embeddings and can be trained in 2 ways.
+Check out the paper again if needed.}
+}
+
+\subsubsection{Contributions}
+\begin{enumerate}
+		\item defining an exploration bonus which includes life-long and episodic novelty which is able to maintain exploration 
+				throughout the training process (\textit{never give})
+		\item learning a family of policies that separate exploration and exploitation using a conditional architecture with shared weights
+		\item experimental evidence
+\end{enumerate}
+
 
 \subsection{Method}
+TODO: crop their fantastic image showing their architecture and put it here.
+The introduced intrinsic reward $ r_{ i }^{ t }  $ satisfies 3 properties:
+\begin{enumerate}
+		\item it rapidly discourages revisiting the same state within the same episode
+		\item it slowly discourages visits to states visited many times across episodes
+		\item the notion of a state ignores aspects of the environment that are not influenced by the agent's action
+\end{enumerate}
+It is composed of 2 blocks:
+an \textit{episodic novelty module} and an \textit{life-long novelty module}.
+The episodic novelty model consists of an episodic memory $ M  $ and an embedding function $ f  $ which
+maps from the current observation to a learned representation that is refered to as a \textit{controllable states}.
+At every timestep $ r_{ t }^{ \text{episodic} }  $ is computed,
+the controllable state is appended to the current obsevation to memory $ M  $.
+
+The life-long module modulates the exploration bonus $ r_{ t }^{ \text{episodic} }  $ with a life-long
+curiosity factor $ \alpha_{ t }  $. This vanishes over time.
+The formula is:
+\begin{equation}
+		r^{ i }_{ t } = r_{ t }^{ \text{episodic } } \cdot \min \left\{ \max \left\{ \alpha_{ t }, 1 \right\}, L  \right\} 
+\end{equation}
+where L is a chosen maximum reward scaling.
+
+\paragraph{Embedding network}
+$ f: \mathcal{O} \to \mathbb{R}^{ p }  $ maps the current observation to a $ p  $-dimensional 
+vector corresponding to its controllable state.
+To avoid meaningless exploration, given two consecutive observations a Siamese network $ f  $
+is trained to predict the action taken by the agent to go from one obsevation to the next.
+More  formally, given $ \left\{ x_{ t }, a_{ t }, x_{ t+1 } \right\}   $ where $ x_{ t }  $
+are observations taken by the agent $ a_{ t }  $, a conditional likelihood is parametrized:
+\begin{equation}
+		p (a|x_{ t }, x_{ t+1 }) = h ( f(x_{ t }), f (x_{ t+1 }))
+\end{equation}
+where $ h  $ is one hidden layer MLP followed by a softmax.
+Parameters of both $ h  $ and $ f  $ are trained by maximum likelihood.
+
+The intrinsic reward definition is inspired by state-counting:
+\begin{equation}
+		r_{ t }^{ \text{episodic} } = \frac{1}{\sqrt{n (f (x_{ t }))}} \approx
+		\frac{1}{\sqrt{\sum_{f_{ i } \in N_{ k }}^{} K (f (x_{ t }), f_{ i })} + c} 
+\end{equation}
+where $ n ( f (x_{ t }))  $ are the counts for the visits to the abstact state $ f (x_{ t })  $.
+These counts are approximate as the sum of similarities given by a kernel function 
+$ K : \mathbb{R}^{ p } \times \mathbb{R}^{ p } \to \mathbb{R}  $ over the content of $M $.
+In practie, pseudo-counts are computed using the $ k  $-nearest neighbors of $ f (x_{ t })  $
+in memory $ M  $, denoted by $ N_{ k } = \left\{ f_{ i }\right\}^{ k }_{ i=1 }   $
+The constant $ c  $ guarantees a minimum amount of pseudo-counts.
+\begin{equation}
+		K (x,y) = \frac{\epsilon}{\frac{d^{ 2 } (x,y)}{d^{ 2 }_{ m }} + \epsilon} 
+\end{equation}
+where $ \epsilon=10^{ -3 }  $ is used in all experiments.
+
+\subsubsection{Integrating life-long curiosity}
+Could be any long-term novelty estimator, but RND is used.
+I've done that paper already, check details there and in this paper
+for implementation.
+
+\subsubsection{The never give up agent}
+The basis is recurrent replay distributed DQN (R2D2).
+chekc that paper later.
+
+
+
+
+
 
 \subsection{Other stuff}
 
