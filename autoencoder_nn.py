@@ -1,0 +1,110 @@
+import torch
+import torch.nn as nn
+from torchvision import transforms
+from atari_dataset import AtariImageDataset
+import matplotlib.pyplot as plt
+import numpy as np
+
+# taken from stablebaselines3
+# but everyone uses this anyway
+# make it usable
+class NatureCNNEncoder(nn.Module):
+    """
+    CNN from DQN nature paper:
+        Mnih, Volodymyr, et al.
+        "Human-level control through deep reinforcement learning."
+        Nature 518.7540 (2015): 529-533.
+
+    :param observation_space:
+    :param features_dim: Number of features extracted.
+        This corresponds to the number of unit for the last layer.
+    """
+
+    def __init__(self, observation_shape, 
+            features_dim: int = 512):
+        super(NatureCNNEncoder, self).__init__()
+        assert features_dim > 0
+        assert len(observation_shape) == 3
+        #self._observation_space = observation_space
+        self.observation_shape = observation_shape
+        self._features_dim = features_dim
+
+        # We assume CxHxW images (channels first)
+        # Re-ordering will be done by pre-preprocessing or wrapper
+        #n_input_channels = observation_space.shape[0]
+        n_input_channels = self.observation_shape[0]
+        self.encoder = nn.Sequential(
+            nn.Conv2d(n_input_channels, 32, kernel_size=8, stride=4, padding=0),
+            nn.ReLU(),
+            nn.Conv2d(32, 64, kernel_size=4, stride=2, padding=0),
+            nn.ReLU(),
+            nn.Conv2d(64, 64, kernel_size=3, stride=1, padding=0),
+            nn.ReLU(),
+            nn.Flatten(),
+        )
+
+        # Compute shape by doing one forward pass
+#        with torch.no_grad():
+#            n_flatten = self.cnn(torch.as_tensor(observation_space.sample()[None]).float()).shape[1]
+
+#        self.linear = nn.Sequential(nn.Linear(n_flatten, features_dim), nn.ReLU())
+
+    def forward(self, observations: torch.Tensor) -> torch.Tensor:
+#        return self.linear(self.cnn(observations))
+        return self.encoder(observations)
+
+class CNNDecoder(nn.Module):
+    def __init__(self, observation_shape, features_dim: int = 512):
+        super(CNNDecoder, self).__init__()
+        self.observation_shape = observation_shape
+        self._features_dim = features_dim
+        n_input_channels = self.observation_shape[0]
+
+        self.deconv = nn.Sequential(
+            nn.ConvTranspose2d(64, 64, kernel_size=3, stride=1, padding=0),
+            nn.ReLU(),
+            nn.ConvTranspose2d(64, 32, kernel_size=4, stride=2, padding=0),
+            nn.ReLU(),
+            nn.ConvTranspose2d(32, n_input_channels, kernel_size=8, stride=4, padding=0),
+            nn.Sigmoid(),
+        )
+
+    def forward(self, latent_observations: torch.Tensor) -> torch.Tensor:
+        deconv = latent_observations.view(-1, 64, 7, 7)
+        obs = self.deconv(deconv)
+#        print(obs.shape)
+        return obs
+
+def imshow(img):
+#    img = img / 2 + 0.5  # unnormalize
+    plt.imshow(np.transpose(img, (1, 2, 0)))  # convert from Tensor image
+
+
+if __name__ == "__main__":
+
+    dir_name = "pong_dataset"
+    transform = transforms.ToTensor()
+    num_workers = 0
+    batch_size = 20
+    train_dataset = AtariImageDataset(root_dir="/home/gospodar/chalmers/MASTER/RLmaster/", 
+                                      dir_name="pong_dataset", transform=transform)
+    train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=batch_size, num_workers=num_workers)
+
+    dataiter = iter(train_loader)
+    images = dataiter.next()
+
+    observation_shape = images[0].shape
+    encoder = NatureCNNEncoder(observation_shape=observation_shape)
+    decoder = CNNDecoder(observation_shape=observation_shape)
+
+    encoder.load_state_dict(torch.load("./encoder30.pt", map_location=torch.device('cpu')))
+    decoder.load_state_dict(torch.load("./decoder30.pt", map_location=torch.device('cpu')))
+    with torch.no_grad():
+        rez = decoder(encoder(images))
+        images = rez.numpy()
+    fig = plt.figure(figsize=(25, 4))
+    for i in np.arange(20):
+        ax = fig.add_subplot(2, 20//2, i + 1, xticks=[], yticks=[])
+        imshow(images[i])
+        #ax.set_title(classes[labels[i]])
+    plt.show()

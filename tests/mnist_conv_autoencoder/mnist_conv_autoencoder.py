@@ -15,8 +15,8 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 transform = transforms.ToTensor()
 
-train_dataset = datasets.CIFAR10('dataset', train=True, download=False, transform=transform)
-test_dataset = datasets.CIFAR10('dataset', train=False, download=False, transform=transform)
+train_dataset = datasets.CIFAR10('dataset', train=True, download=True, transform=transform)
+test_dataset = datasets.CIFAR10('dataset', train=False, download=True, transform=transform)
 
 num_workers = 0
 batch_size = 20
@@ -87,3 +87,4 @@ for epoch in range(1, n_epochs + 1):
     train_loss = train_loss / len(train_loader)
     print('Epoch: {} \tTraining Loss: {:.6f}'.format(epoch, train_loss))
 
+torch.save(model, "model_cifar10.pt")

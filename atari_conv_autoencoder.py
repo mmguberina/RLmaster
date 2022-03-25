@@ -9,97 +9,92 @@ from torch.utils.data.sampler import SubsetRandomSampler
 from torch.utils.data import DataLoader
 from torchvision import datasets, transforms
 import matplotlib.pyplot as plt
-import subprocess
+import os
+from atari_dataset import AtariImageDataset, showSample
+from autoencoder_nn import NatureCNNEncoder, CNNDecoder
+
+def evaluate(test_loader, encoder, decoder):
+    test_loss= 0 
+    for images in test_loader:
+        images = images.to(device)
+        with torch.no_grad():
+            encoded = encoder(images)
+            decoded = decoder(encoded)
+            loss = criterion(decoded, images)
+            test_loss += loss.item() * images.size(0)
+
+    total_loss = test_loss / len(test_loader)
+    return total_loss
+
+
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 dir_name = "pong_dataset"
 
-class AtariImageDataset(Dataset):
-    def __init__(self, dir_name, transform):
-        lines = subprocess.check_output("ls " + dir_name, shell=True).decode('utf-8').split('\n')[:-1]
-        self.size = len(lines)
-        self.transform = transform
-
-    def __len__(self):
-        return self.size
-
-    def __getitem__(self, idx):
-
-
-
-
 
 transform = transforms.ToTensor()
 
-train_dataset = datasets.CIFAR10('dataset', train=True, download=False, transform=transform)
-test_dataset = datasets.CIFAR10('dataset', train=False, download=False, transform=transform)
+train_dataset = AtariImageDataset(root_dir="/home/gospodar/chalmers/MASTER/RLmaster/", 
+                                  dir_name="pong_dataset", transform=transform, train=True)
+
+test_dataset = AtariImageDataset(root_dir="/home/gospodar/chalmers/MASTER/RLmaster/", 
+                                  dir_name="pong_dataset", transform=transform, train=False)
+
+#train_dataset = AtariImageDataset('dataset', train=True, download=False, transform=transform)
+#test_dataset = datasets.CIFAR10('dataset', train=False, download=False, transform=transform)
 
 num_workers = 0
 batch_size = 20
 
 train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=batch_size, num_workers=num_workers)
-test_loader = torch.utils.data.DataLoader(train_dataset, batch_size=batch_size, num_workers=num_workers)
+test_loader = torch.utils.data.DataLoader(test_dataset, batch_size=batch_size, num_workers=num_workers)
 
-def imshow(img):
-    img = img / 2 + 0.5  # unnormalize
-    plt.imshow(np.transpose(img, (1, 2, 0)))  # convert from Tensor image
-    
-classes = ['airplane', 'automobile', 'bird', 'cat', 'deer',
-           'dog', 'frog', 'horse', 'ship', 'truck']
-
-"""
-# show some images
 dataiter = iter(train_loader)
-images, labels = dataiter.next()
-images = images.numpy()
+images = dataiter.next()
 
-fig = plt.figure(figsize=(25, 4))
-for i in np.arange(20):
-    ax = fig.add_subplot(2, 20//2, i + 1, xticks=[], yticks=[])
-    imshow(images[i])
-    ax.set_title(classes[labels[i]])
-"""
+observation_shape = images[0].shape
+encoder = NatureCNNEncoder(observation_shape=observation_shape)
+encoder.to(device)
+decoder = CNNDecoder(observation_shape=observation_shape)
+decoder.to(device)
 
-import torch.nn as nn
-import torch.nn.functional as F
+print("=================encoder=================")
+print(encoder)
+print("=================decoder=================")
+print(decoder)
 
-class ConvAutoencoder(nn.Module):
-    def __init__(self):
-        super(ConvAutoencoder, self).__init__()
-        self.conv1 = nn.Conv2d(3, 16, 3, padding=1)
-        self.conv2 = nn.Conv2d(16, 4, 3, padding=1)
-        self.pool = nn.MaxPool2d(2, 2)
-        self.t_conv1 = nn.ConvTranspose2d(4, 16, 2, stride=2)
-        self.t_conv2 = nn.ConvTranspose2d(16, 3, 2, stride=2)
-
-    def forward(self, x):
-        x = F.relu(self.conv1(x))
-        x = self.pool(x)
-        x = F.relu(self.conv2(x))
-        x = self.pool(x)
-        x = F.relu(self.t_conv1(x))
-        x = torch.sigmoid(self.t_conv2(x))
-        return x
-
-model = ConvAutoencoder()
-model.to(device)
-print(model)
 
 criterion = nn.BCELoss()
-optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
+optimizer_encoder = torch.optim.Adam(encoder.parameters(), lr=0.001)
+optimizer_decoder = torch.optim.Adam(decoder.parameters(), lr=0.001)
 n_epochs = 100
-
+#
+lowest_test_loss = 10**8
 for epoch in range(1, n_epochs + 1):
+    if epoch % 10 == 0:
+        test_loss = evaluate(test_loader, encoder, decoder)
+        print("Current evaluation loss:", test_loss)
+        if test_loss < lowest_test_loss:
+            lowest_test_loss = test_loss
+        else:
+            print("overfitting could be (probably is) happening")
+        torch.save(encoder.state_dict(), "encoder{}.pt".format(epoch))
+        torch.save(decoder.state_dict(), "decoder{}.pt".format(epoch))
+
     train_loss = 0.0
-    for images, _ in train_loader:
+    for images in train_loader:
         images = images.to(device)
-        optimizer.zero_grad()
-        outputs = model(images)
-        loss = criterion(outputs, images)
+        optimizer_encoder.zero_grad()
+        optimizer_decoder.zero_grad()
+        encoded = encoder(images)
+        decoded = decoder(encoded)
+        loss = criterion(decoded, images)
         loss.backward()
-        optimizer.step()
+        optimizer_encoder.step()
+        optimizer_decoder.step()
         train_loss += loss.item() * images.size(0)
 
     train_loss = train_loss / len(train_loader)
     print('Epoch: {} \tTraining Loss: {:.6f}'.format(epoch, train_loss))
-
+torch.save(encoder.state_dict(), "encoder.pt")
+torch.save(decoder.state_dict(), "decor.pt")

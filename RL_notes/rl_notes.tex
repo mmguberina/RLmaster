@@ -112,7 +112,7 @@ skip lel, pls do it if you go for the classes' homeworks tho
 		$\overrightarrow{\mu}_{t+1} = \mathcal{T} \overrightarrow{\mu}_t$
 \item we have the markov property ofc
 \end{itemize}
-If we add actions and rewards:
+If we add actions and rewards we can construct a Markov decision process.
 \section{Markov decision process}
 \begin{figure}[htpb]
 \begin{center}
@@ -184,6 +184,24 @@ A bit more explicitely:
 p((\bm{s}_{t+1}, \bm{a}_{t+1}) | (\bm{s}_t, \bm{a}_t)) = 
 p((\bm{s}_{t+1}| (\bm{s}_t, \bm{a}_t)) \pi_\theta (\bm{a}_{t+1} | \bm{s}_{t+1})
 \end{equation}
+In the MD sketch this looks like:
+\begin{figure}[htpb]
+\begin{center}
+\begin{tikzpicture}[scale=1, transform shape, node distance=2.5cm]
+		\node (s1) [mcs] {$\bm{s}_{1} $};
+		\node (a1) [mcs, above right of=s1] { $ \bm{a}_{1}  $};
+		\node (s2) [mcs, right of=s1, xshift=1.5cm] { $ \bm{s}_{2}  $};
+		\draw [arrow] (a1) -- (s2);
+		\draw [arrow] (s1) -- node [below, midway] {$ p(\bm{s}_{t+1}|\bm{s}_{t}, \bm{a}_{t}) $} (s2);
+		\node (s3) [mcs, right of=s2, xshift=1.5cm] { $ \bm{s}_{3}  $};
+		\node (a2) [mcs, above right of=s2] { $ \bm{a}_{2}  $};
+		\draw [arrow] (s2) -- node [below, midway] {$ p(\bm{s}_{t+1}|\bm{s}_{t}, \bm{a}_{t}) $} (s3);
+		\draw [arrow] (a2) -- (s3);
+		\draw [arrow] (s1) -- node [above, midway, sloped] {$\pi_{ \theta } (\bm{a}_{t}| \bm{s}_{t} )  $} (a1);
+		\draw [arrow] (s2) -- node [above, midway, sloped] {$\pi_{ \theta } (\bm{a}_{t}| \bm{s}_{t} )  $} (a2);
+\end{tikzpicture}
+\end{center}
+\end{figure}
 
 This will allow us to define the objective a bit more conveniently.
 We'll use marginalisation ( $p_\theta (\bm{s}_t, \bm{a}_t)$ is the state-action marginal) (will be useful for infinite horizon case):
@@ -330,17 +348,21 @@ We'll need to use a convenient identity because we don't know $p_\theta(\tau)$ (
 	\nabla_\theta p_\theta(\tau)
 \end{equation}
 So now:
-\begin{equation}
-		\nabla_\theta J(\theta) = \int_{{}}^{{}} {\nabla_\theta p_\theta (\tau) r(\tau)} \: d{\tau} {}
+\begin{align}
+		\nabla_\theta J(\theta) &= \int_{{}}^{{}} {\nabla_\theta p_\theta (\tau) r(\tau)} \: d{\tau} {}
 		=
-		\int_{{}}^{{}} {p_\theta(\tau) \nabla_\theta \log  p_\theta(\tau) r(\tau) } \: d{\tau} =
-		E_{\tau \sim p_\theta(\tau)} [\nabla_\theta \log p_\theta(\tau)r(\tau)]
-\end{equation}
-THERE ARE MISTAKES BELOW, PLEASE COME BACK AND CORRECT THEM!!!!!!!!
+		\int_{{}}^{{}} {p_\theta(\tau) \nabla_\theta \log  p_\theta(\tau) r(\tau) } \: d{\tau} \\
+								&=E_{\tau \sim p_\theta(\tau)} [\nabla_\theta \log p_\theta(\tau)r(\tau)]
+\end{align}
 
 We can evaluate expectations with samples so we're on a good track.
 We can log $p_\theta(\tau)$ on both sides of the equation and get a summation instead of a product.
 Let's see what we get from that:
+\begin{equation}
+		\log p_{ \theta } (\tau) =
+		\log p (\bm{s}_{1}) + \sum_{t=1}^{T} \log \pi_{ \theta } (\bm{a}_{t}| \bm{s}_{t} ) + \log p (\bm{s}_{t+1}| \bm{s}_{t}, \bm{a}_{t} )
+\end{equation}
+and now we take the derivate
 \begin{equation}
 		\nabla_\theta \log p_\theta(\tau)r(\tau) =
 \nabla_\theta \left [\cancel{\log p(\bm{s}_1)} + \sum^{T}_{t=1} \log \pi_\theta (\bm{a}_t | \bm{s}_t) + \cancel{\log p(\bm{s}_{t+1} | \bm{s}_t, \bm{a}_t)} \right ]
@@ -360,14 +382,18 @@ To evaluate the policy gradient we can sample:
 \end{equation}
 Once we have the gradient we can do a step of gradient ascent and we good to go!
 This is the REINFORCE algorithm:
+
+\fbox{
+		\parbox{\textwidth}{
+				\underline{REINFORCE algorithm:}
 \begin{enumerate}
 		\item sample $\{\tau^i\}$ from $\pi_\theta(\bm{a}_t | \bm{s}_t)$(run policy)
-		\item $\nabla_\theta J(\theta) \approx   \sum_{i=1}^{} 
-		\left ( \sum_{t=1}^{T} \nabla_\theta \log \pi_\theta (\bm{a}_{i,t} | \bm{s}_{i,t} ) \right )
-		\left ( \sum_{t=1}^{T} r(\bm{s}_{i,t}, \bm{a}_{i,t}) \right )$
+		\item $\nabla_\theta J(\theta) \approx   \sum_{i}^{} 
+		\left ( \sum_{t}^{T} \nabla_\theta \log \pi_\theta (\bm{a}_{i,t} | \bm{s}_{i,t} ) \right )
+		\left ( \sum_{t}^{} r(\bm{s}_{i,t}, \bm{a}_{i,t}) \right )$
 \item $\theta \leftarrow \theta + \alpha \nabla_\theta J(\theta) $
 \end{enumerate}
-
+}}
 
 If you implement this as-is, it won't work (well).
 Let's discuss the algorithm a bit more.

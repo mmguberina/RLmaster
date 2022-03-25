@@ -27,3 +27,14 @@ Finally, there's an implementation with model predictive control which performs 
 which means that it is possible to gather samples to try immitation learning as well.
 Once I get more into it, I'll elaborate different stages of the problem and 
 track progress in great detail.
+
+Starting with atari games tho, namely pong and breakout.
+Concrete TODO list:
+1. train autoencoder on samples generated from random policy
+1.1. try out different net sizes to see what you can get away with
+1.2. visualize results somehow
+1.3. develop some sort of a workflow for tracking and testing the latent representations
+2. try training rainbow on that, just to be able to compare results againt model-free all the way
+1.3. develop some sort of a workflow for tracking and testing the RL algorithm
+3. continue updating the autoencoder as the training progresses, see how that goes
+4. think of more ideas and try those
