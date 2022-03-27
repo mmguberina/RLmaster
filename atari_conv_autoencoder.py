@@ -43,7 +43,7 @@ test_dataset = AtariImageDataset(root_dir="/home/gospodar/chalmers/MASTER/RLmast
 #train_dataset = AtariImageDataset('dataset', train=True, download=False, transform=transform)
 #test_dataset = datasets.CIFAR10('dataset', train=False, download=False, transform=transform)
 
-num_workers = 0
+num_workers = 4
 batch_size = 20
 
 train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=batch_size, num_workers=num_workers)
@@ -55,7 +55,7 @@ images = dataiter.next()
 observation_shape = images[0].shape
 encoder = NatureCNNEncoder(observation_shape=observation_shape)
 encoder.to(device)
-decoder = CNNDecoder(observation_shape=observation_shape)
+decoder = CNNDecoder(observation_shape=observation_shape, n_flatten=encoder.n_flatten)
 decoder.to(device)
 
 print("=================encoder=================")
@@ -78,8 +78,8 @@ for epoch in range(1, n_epochs + 1):
             lowest_test_loss = test_loss
         else:
             print("overfitting could be (probably is) happening")
-        torch.save(encoder.state_dict(), "encoder{}.pt".format(epoch))
-        torch.save(decoder.state_dict(), "decoder{}.pt".format(epoch))
+        torch.save(encoder.state_dict(), "encoder_w_ln{}.pt".format(epoch))
+        torch.save(decoder.state_dict(), "decoder_w_ln{}.pt".format(epoch))
 
     train_loss = 0.0
     for images in train_loader:
@@ -96,5 +96,5 @@ for epoch in range(1, n_epochs + 1):
 
     train_loss = train_loss / len(train_loader)
     print('Epoch: {} \tTraining Loss: {:.6f}'.format(epoch, train_loss))
-torch.save(encoder.state_dict(), "encoder.pt")
-torch.save(decoder.state_dict(), "decor.pt")
+torch.save(encoder.state_dict(), "encoder_w_ln.pt")
+torch.save(decoder.state_dict(), "decoder_w_ln.pt")

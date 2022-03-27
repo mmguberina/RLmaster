@@ -1,0 +1,76 @@
+\documentclass{article}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsfonts}
+\usepackage[T1]{fontenc}
+\usepackage{bm}
+\usepackage{array}
+\usepackage{graphicx}
+\usepackage[utf8]{inputenc}
+
+\title{Paper summary: Rainbow: combining improvements in deep reinforcement learning}
+\date{\today}
+\author{Marko Guberina 19970821-1256}
+
+\begin{document}
+\maketitle
+
+
+\section{Idea in few sentances}
+
+
+
+
+\section{Explanation of the central concept}
+
+
+
+
+\section{Methodology}
+
+
+\section{Initial rambly notes}
+It's a DeepMind paper in which they combine every improvement made to DQN
+and see what specific combination is the best.
+The graph showing the performance immediately shows you why you want this:
+it's DQN, but a LOT faster and practically 2 times better than any improvement 
+in isolation.
+
+\subsection{Abstract}
+The paper combines all improvements made to DQN
+and empirically finds a good combination of all improvements.
+
+
+\subsection{Introduction}
+You have DQN. It has problems.
+People introduced the following improvements:
+\begin{enumerate}
+		\item \textbf{double DQN (DDQN)}: address an overestimation bias of Q-learning by decoupling
+				selection and evaluation of the bootstrap action.
+		\item \textbf{prioritized experience replay}: improves data efficiency by replaying the transitions
+				from which there is more to learn more often
+		\item \textbf{dueling network architecture} helps generalize across actions by separately
+				representing state values and action advantages
+		\item learning from multi-step bootstrap targets like in A3C shifts the bias-variance
+				trade-off and helps to propagate newly observed rewards to earlier states faster
+		\item \textbf{distributional Q-learning} learns a categorical distribution of discounted returns
+				instead of estimating the mean
+		\item \textbf{noisy DQN} uses stochastic network layers for exploration
+		\item many more $ \dots  $
+\end{enumerate}
+These various approaches address different issues in DQN.
+Some have been combined, like prioritized DDQN and dueling DDQN (which
+can also have prioritized experience replay).
+This paper combines everything.
+
+
+\subsection{Method}
+
+\subsection{Other stuff}
+
+
+
+
+
+
+\end{document}

@@ -1,0 +1,6 @@
+\begin{Verbatim}[commandchars=\\\{\},codes={\catcode`\$=3\catcode`\^=7\catcode`\_=8\relax}]
+\PYG{k+kn}{from} \PYG{n+nn}{torch.utils.tensorboard} \PYG{k+kn}{import} \PYG{n}{SummaryWriter}
+\PYG{k+kn}{from} \PYG{n+nn}{tianshou.utils} \PYG{k+kn}{import} \PYG{n}{TensorboardLogger}
+\PYG{n}{writer} \PYG{o}{=} \PYG{n}{SummaryWriter}\PYG{p}{(}\PYG{l+s+s1}{\PYGZsq{}log/dqn\PYGZsq{}}\PYG{p}{)}
+\PYG{n}{logger} \PYG{o}{=} \PYG{n}{TensorboardLogger}\PYG{p}{(}\PYG{n}{writer}\PYG{p}{)}
+\end{Verbatim}

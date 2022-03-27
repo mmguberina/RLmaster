@@ -1,0 +1,12 @@
+\begin{Verbatim}[commandchars=\\\{\},codes={\catcode`\$=3\catcode`\^=7\catcode`\_=8\relax}]
+\PYG{c+c1}{\PYGZsh{} the agent predicts the batch action from batch observation}
+\PYG{n}{result} \PYG{o}{=} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{policy}\PYG{p}{(}\PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{data}\PYG{p}{,} \PYG{n}{last\PYGZus{}state}\PYG{p}{)}
+\PYG{n}{act} \PYG{o}{=} \PYG{n}{to\PYGZus{}numpy}\PYG{p}{(}\PYG{n}{result}\PYG{o}{.}\PYG{n}{act}\PYG{p}{)}
+\PYG{c+c1}{\PYGZsh{} update the data with new action/policy}
+\PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{data}\PYG{o}{.}\PYG{n}{update}\PYG{p}{(}\PYG{n}{act}\PYG{o}{=}\PYG{n}{act}\PYG{p}{)}
+\PYG{c+c1}{\PYGZsh{} apply action to environment}
+\PYG{n}{result} \PYG{o}{=} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{env}\PYG{o}{.}\PYG{n}{step}\PYG{p}{(}\PYG{n}{act}\PYG{p}{,} \PYG{n}{ready\PYGZus{}env\PYGZus{}ids}\PYG{p}{)}
+\PYG{n}{obs\PYGZus{}next}\PYG{p}{,} \PYG{n}{rew}\PYG{p}{,} \PYG{n}{done}\PYG{p}{,} \PYG{n}{info} \PYG{o}{=} \PYG{n}{result}
+\PYG{c+c1}{\PYGZsh{} update the data with new state/reward/done/info}
+\PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{data}\PYG{o}{.}\PYG{n}{update}\PYG{p}{(}\PYG{n}{obs\PYGZus{}next}\PYG{o}{=}\PYG{n}{obs\PYGZus{}next}\PYG{p}{,} \PYG{n}{rew}\PYG{o}{=}\PYG{n}{rew}\PYG{p}{,} \PYG{n}{done}\PYG{o}{=}\PYG{n}{done}\PYG{p}{,} \PYG{n}{info}\PYG{o}{=}\PYG{n}{info}\PYG{p}{)}
+\end{Verbatim}

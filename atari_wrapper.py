@@ -6,6 +6,84 @@ from collections import deque
 import cv2
 import gym
 import numpy as np
+from torchvision import transforms
+import torch
+from autoencoder_nn import NatureCNNEncoder, CNNDecoder
+#from autoencoder_nn import NatureCNNEncoder, CNNDecoder
+
+class AutoencoderEnv(gym.Wrapper):
+    """
+    used to visualize the autoencoder in action,
+    it's way easier to see what you've got if you,
+    well, see it .
+    totaly useless otherwise
+    """
+    def __init__(self, env, encoder, decoder):
+        super().__init__(env)
+        self.size = 84
+        self.observation_space = gym.spaces.Box(
+            low=np.min(np.zeros((self.size, self.size))),
+            high=np.max(np.ones((self.size, self.size))),
+            shape=(self.size, self.size),
+            dtype=np.float32
+        )
+        self.transform = transforms.ToTensor()
+        self.encoder = encoder
+        self.decoder = decoder
+
+    def observation(self, frame):
+        """passes the observation through the autoencoder so that it's performance
+        may be judged"""
+        frame = self.transform(frame)
+        frame = frame.view([1,1,84,84])
+        with torch.no_grad():
+            encoded = self.encoder(frame)
+            decoded = self.decoder(encoded)
+        return decoded.numpy()
+        
+
+class LatentSpaceEnv(gym.Wrapper):
+    """
+    downsample every observation by pushing it though
+    an encoder.
+    it must be applied after the other wrappers for atari
+    as the autoencoder was trained on frames obtained 
+    by applying the WarpFrame wrapper
+    """
+    def __init__(self, env, encoder_path, device):
+        super().__init__(env)
+        # getting the observation_shape for the encoder should be:
+        #self.observation_shape = super().observation_space.shape
+        # but i did a bad so it's:
+        observation_shape = (1, 84, 84)
+        self.encoder = NatureCNNEncoder(observation_shape=observation_shape)
+        if device == 'cpu':
+            self.encoder.load_state_dict(torch.load(encoder_path, map_location=torch.device('cpu')))
+        else:
+            self.encoder.load_state_dict(torch.load(encoder_path))
+        self.encoder.to(device)
+        self.size = self.encoder.n_flatten
+        # TODO i didn't squash the encoder outputs
+        # that could be potentially problematic here
+        # it's unclear what the max should be
+        # and wether that's even necessary
+        # putting it to inf for now
+        self.observation_space = gym.spaces.Box(
+            low=np.min(np.zeros((self.size, self.size))),
+            high=np.max(np.ones((self.size, self.size)) * np.inf),
+            shape=(self.size, self.size),
+            dtype=np.float32
+        )
+        self.transform = transforms.ToTensor()
+
+    def observation(self, frame):
+        frame = self.transform(frame)
+        frame = frame.view([-1,1,84,84])
+        with torch.no_grad():
+            encoded = self.encoder(frame)
+        return encoded.numpy()
+
+
 
 
 class NoopResetEnv(gym.Wrapper):
@@ -238,6 +316,45 @@ def wrap_deepmind(
         env = FireResetEnv(env)
     if warp_frame:
         env = WarpFrame(env)
+    if scale:
+        env = ScaledFloatFrame(env)
+    if clip_rewards:
+        env = ClipRewardEnv(env)
+    if frame_stack:
+        env = FrameStack(env, frame_stack)
+    return env
+def wrap_deepmind_premade_encoder(
+    env_id,
+    encoder_path="GIB_PATH",
+    device="cpu",
+    episode_life=True,
+    clip_rewards=True,
+    frame_stack=4,
+    scale=False,
+    warp_frame=True
+):
+    """Configure environment for DeepMind-style Atari. The observation is
+    channel-first: (c, h, w) instead of (h, w, c).
+
+    :param str env_id: the atari environment id.
+    :param bool episode_life: wrap the episode life wrapper.
+    :param bool clip_rewards: wrap the reward clipping wrapper.
+    :param int frame_stack: wrap the frame stacking wrapper.
+    :param bool scale: wrap the scaling observation wrapper.
+    :param bool warp_frame: wrap the grayscale + resize observation wrapper.
+    :return: the wrapped atari environment.
+    """
+    assert 'NoFrameskip' in env_id
+    env = gym.make(env_id)
+    env = NoopResetEnv(env, noop_max=30)
+    env = MaxAndSkipEnv(env, skip=4)
+    if episode_life:
+        env = EpisodicLifeEnv(env)
+    if 'FIRE' in env.unwrapped.get_action_meanings():
+        env = FireResetEnv(env)
+    if warp_frame:
+        env = WarpFrame(env)
+        env = LatentSpaceEnv(env, encoder_path, device)
     if scale:
         env = ScaledFloatFrame(env)
     if clip_rewards:

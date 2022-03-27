@@ -1,0 +1,3 @@
+\begin{Verbatim}[commandchars=\\\{\},codes={\catcode`\$=3\catcode`\^=7\catcode`\_=8\relax}]
+\PYG{n}{state}\PYG{p}{,} \PYG{n}{reward}\PYG{p}{,} \PYG{n}{done} \PYG{o}{=} \PYG{n}{env}\PYG{o}{.}\PYG{n}{step}\PYG{p}{(}\PYG{n}{action}\PYG{p}{)}
+\end{Verbatim}

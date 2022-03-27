@@ -1,0 +1,493 @@
+This is pdfTeX, Version 3.14159265-2.6-1.40.21 (TeX Live 2020) (preloaded format=pdflatex 2020.9.19)  27 MAR 2022 10:05
+entering extended mode
+ \write18 enabled.
+ %&-line parsing enabled.
+**tianshou_docs_notes.tex
+(./tianshou_docs_notes.tex
+LaTeX2e <2020-02-02> patch level 5
+L3 programming layer <2020-09-06>
+(/mnt/ubuntu/usr/local/texlive/2020/texmf-dist/tex/latex/base/article.cls
+Document Class: article 2019/12/20 v1.4l Standard LaTeX document class
+(/mnt/ubuntu/usr/local/texlive/2020/texmf-dist/tex/latex/base/size10.clo
+File: size10.clo 2019/12/20 v1.4l Standard LaTeX file (size option)
+)
+\c@part=\count168
+\c@section=\count169
+\c@subsection=\count170
+\c@subsubsection=\count171
+\c@paragraph=\count172
+\c@subparagraph=\count173
+\c@figure=\count174
+\c@table=\count175
+\abovecaptionskip=\skip47
+\belowcaptionskip=\skip48
+\bibindent=\dimen134
+)
+(/mnt/ubuntu/usr/local/texlive/2020/texmf-dist/tex/latex/amsmath/amsmath.sty
+Package: amsmath 2020/01/20 v2.17e AMS math features
+\@mathmargin=\skip49
+
+For additional information on amsmath, use the `?' option.
+(/mnt/ubuntu/usr/local/texlive/2020/texmf-dist/tex/latex/amsmath/amstext.sty
+Package: amstext 2000/06/29 v2.01 AMS text
+
+(/mnt/ubuntu/usr/local/texlive/2020/texmf-dist/tex/latex/amsmath/amsgen.sty
+File: amsgen.sty 1999/11/30 v2.0 generic functions
+\@emptytoks=\toks15
+\ex@=\dimen135
+))
+(/mnt/ubuntu/usr/local/texlive/2020/texmf-dist/tex/latex/amsmath/amsbsy.sty
+Package: amsbsy 1999/11/29 v1.2d Bold Symbols
+\pmbraise@=\dimen136
+)
+(/mnt/ubuntu/usr/local/texlive/2020/texmf-dist/tex/latex/amsmath/amsopn.sty
+Package: amsopn 2016/03/08 v2.02 operator names
+)
+\inf@bad=\count176
+LaTeX Info: Redefining \frac on input line 227.
+\uproot@=\count177
+\leftroot@=\count178
+LaTeX Info: Redefining \overline on input line 389.
+\classnum@=\count179
+\DOTSCASE@=\count180
+LaTeX Info: Redefining \ldots on input line 486.
+LaTeX Info: Redefining \dots on input line 489.
+LaTeX Info: Redefining \cdots on input line 610.
+\Mathstrutbox@=\box45
+\strutbox@=\box46
+\big@size=\dimen137
+LaTeX Font Info:    Redeclaring font encoding OML on input line 733.
+LaTeX Font Info:    Redeclaring font encoding OMS on input line 734.
+\macc@depth=\count181
+\c@MaxMatrixCols=\count182
+\dotsspace@=\muskip16
+\c@parentequation=\count183
+\dspbrk@lvl=\count184
+\tag@help=\toks16
+\row@=\count185
+\column@=\count186
+\maxfields@=\count187
+\andhelp@=\toks17
+\eqnshift@=\dimen138
+\alignsep@=\dimen139
+\tagshift@=\dimen140
+\tagwidth@=\dimen141
+\totwidth@=\dimen142
+\lineht@=\dimen143
+\@envbody=\toks18
+\multlinegap=\skip50
+\multlinetaggap=\skip51
+\mathdisplay@stack=\toks19
+LaTeX Info: Redefining \[ on input line 2859.
+LaTeX Info: Redefining \] on input line 2860.
+)
+(/mnt/ubuntu/usr/local/texlive/2020/texmf-dist/tex/latex/amsfonts/amssymb.sty
+Package: amssymb 2013/01/14 v3.01 AMS font symbols
+
+(/mnt/ubuntu/usr/local/texlive/2020/texmf-dist/tex/latex/amsfonts/amsfonts.sty
+Package: amsfonts 2013/01/14 v3.01 Basic AMSFonts support
+\symAMSa=\mathgroup4
+\symAMSb=\mathgroup5
+LaTeX Font Info:    Redeclaring math symbol \hbar on input line 98.
+LaTeX Font Info:    Overwriting math alphabet `\mathfrak' in version `bold'
+(Font)                  U/euf/m/n --> U/euf/b/n on input line 106.
+)) (/mnt/ubuntu/usr/local/texlive/2020/texmf-dist/tex/latex/base/fontenc.sty
+Package: fontenc 2020/02/11 v2.0o Standard LaTeX package
+)
+(/mnt/ubuntu/usr/local/texlive/2020/texmf-dist/tex/latex/tools/bm.sty
+Package: bm 2019/07/24 v1.2d Bold Symbol Support (DPC/FMi)
+\symboldoperators=\mathgroup6
+\symboldletters=\mathgroup7
+\symboldsymbols=\mathgroup8
+LaTeX Font Info:    Redeclaring math alphabet \mathbf on input line 141.
+LaTeX Info: Redefining \bm on input line 209.
+)
+(/mnt/ubuntu/usr/local/texlive/2020/texmf-dist/tex/latex/tools/array.sty
+Package: array 2019/08/31 v2.4l Tabular extension package (FMi)
+\col@sep=\dimen144
+\ar@mcellbox=\box47
+\extrarowheight=\dimen145
+\NC@list=\toks20
+\extratabsurround=\skip52
+\backup@length=\skip53
+\ar@cellbox=\box48
+)
+(/mnt/ubuntu/usr/local/texlive/2020/texmf-dist/tex/latex/graphics/graphicx.sty
+Package: graphicx 2019/11/30 v1.2a Enhanced LaTeX Graphics (DPC,SPQR)
+
+(/mnt/ubuntu/usr/local/texlive/2020/texmf-dist/tex/latex/graphics/keyval.sty
+Package: keyval 2014/10/28 v1.15 key=value parser (DPC)
+\KV@toks@=\toks21
+)
+(/mnt/ubuntu/usr/local/texlive/2020/texmf-dist/tex/latex/graphics/graphics.sty
+Package: graphics 2019/11/30 v1.4a Standard LaTeX Graphics (DPC,SPQR)
+
+(/mnt/ubuntu/usr/local/texlive/2020/texmf-dist/tex/latex/graphics/trig.sty
+Package: trig 2016/01/03 v1.10 sin cos tan (DPC)
+)
+(/mnt/ubuntu/usr/local/texlive/2020/texmf-dist/tex/latex/graphics-cfg/graphics.
+cfg
+File: graphics.cfg 2016/06/04 v1.11 sample graphics configuration
+)
+Package graphics Info: Driver file: pdftex.def on input line 105.
+
+(/mnt/ubuntu/usr/local/texlive/2020/texmf-dist/tex/latex/graphics-def/pdftex.de
+f
+File: pdftex.def 2020/08/26 v1.2 Graphics/color driver for pdftex
+))
+\Gin@req@height=\dimen146
+\Gin@req@width=\dimen147
+) (/mnt/ubuntu/usr/local/texlive/2020/texmf-dist/tex/latex/base/inputenc.sty
+Package: inputenc 2018/08/11 v1.3c Input encoding file
+\inpenc@prehook=\toks22
+\inpenc@posthook=\toks23
+) (/mnt/ubuntu/usr/local/texlive/2020/texmf-dist/tex/latex/minted/minted.sty
+Package: minted 2017/07/19 v2.5 Yet another Pygments shim for LaTeX
+
+(/mnt/ubuntu/usr/local/texlive/2020/texmf-dist/tex/latex/kvoptions/kvoptions.st
+y
+Package: kvoptions 2019/11/29 v3.13 Key value format for package options (HO)
+
+(/mnt/ubuntu/usr/local/texlive/2020/texmf-dist/tex/generic/ltxcmds/ltxcmds.sty
+Package: ltxcmds 2019/12/15 v1.24 LaTeX kernel commands for general use (HO)
+)
+(/mnt/ubuntu/usr/local/texlive/2020/texmf-dist/tex/generic/kvsetkeys/kvsetkeys.
+sty
+Package: kvsetkeys 2019/12/15 v1.18 Key value parser (HO)
+))
+(/mnt/ubuntu/usr/local/texlive/2020/texmf-dist/tex/latex/fvextra/fvextra.sty
+Package: fvextra 2019/02/04 v1.4 fvextra - extensions and patches for fancyvrb
+
+(/mnt/ubuntu/usr/local/texlive/2020/texmf-dist/tex/latex/base/ifthen.sty
+Package: ifthen 2014/09/29 v1.1c Standard LaTeX ifthen package (DPC)
+)
+(/mnt/ubuntu/usr/local/texlive/2020/texmf-dist/tex/latex/etoolbox/etoolbox.sty
+Package: etoolbox 2020/08/24 v2.5j e-TeX tools for LaTeX (JAW)
+\etb@tempcnta=\count188
+) (/mnt/ubuntu/usr/local/texlive/2020/texmf-dist/tex/latex/fancyvrb/fancyvrb.st
+y
+Package: fancyvrb 2020/05/03 v3.6 verbatim text (tvz,hv)
+\FV@CodeLineNo=\count189
+\FV@InFile=\read2
+\FV@TabBox=\box49
+\c@FancyVerbLine=\count190
+\FV@StepNumber=\count191
+\FV@OutFile=\write3
+) (/mnt/ubuntu/usr/local/texlive/2020/texmf-dist/tex/latex/upquote/upquote.sty
+Package: upquote 2012/04/19 v1.3 upright-quote and grave-accent glyphs in verba
+tim
+
+(/mnt/ubuntu/usr/local/texlive/2020/texmf-dist/tex/latex/base/textcomp.sty
+Package: textcomp 2020/02/02 v2.0n Standard LaTeX package
+))
+(/mnt/ubuntu/usr/local/texlive/2020/texmf-dist/tex/latex/lineno/lineno.sty
+Package: lineno 2005/11/02 line numbers on paragraphs v4.41
+\linenopenalty=\count192
+\output=\toks24
+\linenoprevgraf=\count193
+\linenumbersep=\dimen148
+\linenumberwidth=\dimen149
+\c@linenumber=\count194
+\c@pagewiselinenumber=\count195
+\c@LN@truepage=\count196
+\c@internallinenumber=\count197
+\c@internallinenumbers=\count198
+\quotelinenumbersep=\dimen150
+\bframerule=\dimen151
+\bframesep=\dimen152
+\bframebox=\box50
+LaTeX Info: Redefining \\ on input line 3056.
+)
+\c@FV@TrueTabGroupLevel=\count199
+\c@FV@TrueTabCounter=\count266
+\FV@TabBox@Group=\box51
+\FV@TmpLength=\skip54
+\c@FV@HighlightLinesStart=\count267
+\c@FV@HighlightLinesStop=\count268
+\FV@LoopCount=\count269
+\FV@NCharsBox=\box52
+\FV@BreakIndent=\dimen153
+\FV@BreakIndentNChars=\count270
+\FV@BreakSymbolSepLeft=\dimen154
+\FV@BreakSymbolSepLeftNChars=\count271
+\FV@BreakSymbolSepRight=\dimen155
+\FV@BreakSymbolSepRightNChars=\count272
+\FV@BreakSymbolIndentLeft=\dimen156
+\FV@BreakSymbolIndentLeftNChars=\count273
+\FV@BreakSymbolIndentRight=\dimen157
+\FV@BreakSymbolIndentRightNChars=\count274
+\c@FancyVerbLineBreakLast=\count275
+\FV@LineBox=\box53
+\FV@LineIndentBox=\box54
+\FV@LineWidth=\dimen158
+)
+(/mnt/ubuntu/usr/local/texlive/2020/texmf-dist/tex/latex/tools/calc.sty
+Package: calc 2017/05/25 v4.3 Infix arithmetic (KKT,FJ)
+\calc@Acount=\count276
+\calc@Bcount=\count277
+\calc@Adimen=\dimen159
+\calc@Bdimen=\dimen160
+\calc@Askip=\skip55
+\calc@Bskip=\skip56
+LaTeX Info: Redefining \setlength on input line 80.
+LaTeX Info: Redefining \addtolength on input line 81.
+\calc@Ccount=\count278
+\calc@Cskip=\skip57
+)
+(/mnt/ubuntu/usr/local/texlive/2020/texmf-dist/tex/latex/tools/shellesc.sty
+Package: shellesc 2019/11/08 v1.0c unified shell escape interface for LaTeX
+Package shellesc Info: Unrestricted shell escape enabled on input line 75.
+)
+(/mnt/ubuntu/usr/local/texlive/2020/texmf-dist/tex/latex/ifplatform/ifplatform.
+sty
+Package: ifplatform 2017/10/13 v0.4a Testing for the operating system
+
+(/mnt/ubuntu/usr/local/texlive/2020/texmf-dist/tex/generic/pdftexcmds/pdftexcmd
+s.sty
+Package: pdftexcmds 2020-06-27 v0.33 Utility functions of pdfTeX for LuaTeX (HO
+)
+
+(/mnt/ubuntu/usr/local/texlive/2020/texmf-dist/tex/generic/infwarerr/infwarerr.
+sty
+Package: infwarerr 2019/12/03 v1.5 Providing info/warning/error messages (HO)
+) (/mnt/ubuntu/usr/local/texlive/2020/texmf-dist/tex/generic/iftex/iftex.sty
+Package: iftex 2020/03/06 v1.0d TeX engine tests
+)
+Package pdftexcmds Info: \pdf@primitive is available.
+Package pdftexcmds Info: \pdf@ifprimitive is available.
+Package pdftexcmds Info: \pdfdraftmode found.
+)
+(/mnt/ubuntu/usr/local/texlive/2020/texmf-dist/tex/generic/catchfile/catchfile.
+sty
+Package: catchfile 2019/12/09 v1.8 Catch the contents of a file (HO)
+
+(/mnt/ubuntu/usr/local/texlive/2020/texmf-dist/tex/generic/etexcmds/etexcmds.st
+y
+Package: etexcmds 2019/12/15 v1.7 Avoid name clashes with e-TeX commands (HO)
+))
+(/mnt/ubuntu/usr/local/texlive/2020/texmf-dist/tex/generic/iftex/ifluatex.sty
+Package: ifluatex 2019/10/25 v1.5 ifluatex legacy package. Use iftex instead.
+)
+runsystem(uname -s > "tianshou_docs_notes.w18")...executed.
+
+
+(./tianshou_docs_notes.w18)
+runsystem(rm -- "tianshou_docs_notes.w18")...executed.
+
+)
+(/mnt/ubuntu/usr/local/texlive/2020/texmf-dist/tex/generic/xstring/xstring.sty
+(/mnt/ubuntu/usr/local/texlive/2020/texmf-dist/tex/generic/xstring/xstring.tex
+\integerpart=\count279
+\decimalpart=\count280
+)
+Package: xstring 2019/02/06 v1.83 String manipulations (CT)
+) (/mnt/ubuntu/usr/local/texlive/2020/texmf-dist/tex/latex/framed/framed.sty
+Package: framed 2011/10/22 v 0.96: framed or shaded text with page breaks
+\OuterFrameSep=\skip58
+\fb@frw=\dimen161
+\fb@frh=\dimen162
+\FrameRule=\dimen163
+\FrameSep=\dimen164
+)
+(/mnt/ubuntu/usr/local/texlive/2020/texmf-dist/tex/latex/float/float.sty
+Package: float 2001/11/08 v1.3d Float enhancements (AL)
+\c@float@type=\count281
+\float@exts=\toks25
+\float@box=\box55
+\@float@everytoks=\toks26
+\@floatcapt=\box56
+)
+\minted@appexistsfile=\read3
+\minted@bgbox=\box57
+\minted@code=\write4
+\c@minted@FancyVerbLineTemp=\count282
+\c@minted@pygmentizecounter=\count283
+\@float@every@listing=\toks27
+\c@listing=\count284
+)
+runsystem(mkdir -p _minted-tianshou_docs_notes)...executed.
+
+
+(/mnt/ubuntu/usr/local/texlive/2020/texmf-dist/tex/latex/xcolor/xcolor.sty
+Package: xcolor 2016/05/11 v2.12 LaTeX color extensions (UK)
+
+(/mnt/ubuntu/usr/local/texlive/2020/texmf-dist/tex/latex/graphics-cfg/color.cfg
+File: color.cfg 2016/01/02 v1.6 sample color configuration
+)
+Package xcolor Info: Driver file: pdftex.def on input line 225.
+Package xcolor Info: Model `cmy' substituted by `cmy0' on input line 1348.
+Package xcolor Info: Model `hsb' substituted by `rgb' on input line 1352.
+Package xcolor Info: Model `RGB' extended on input line 1364.
+Package xcolor Info: Model `HTML' substituted by `rgb' on input line 1366.
+Package xcolor Info: Model `Hsb' substituted by `hsb' on input line 1367.
+Package xcolor Info: Model `tHsb' substituted by `hsb' on input line 1368.
+Package xcolor Info: Model `HSB' substituted by `hsb' on input line 1369.
+Package xcolor Info: Model `Gray' substituted by `gray' on input line 1370.
+Package xcolor Info: Model `wave' substituted by `hsb' on input line 1371.
+)
+runsystem(which pygmentize && touch tianshou_docs_notes.aex)...executed.
+
+runsystem(rm tianshou_docs_notes.aex)...executed.
+
+
+(/mnt/ubuntu/usr/local/texlive/2020/texmf-dist/tex/latex/l3backend/l3backend-pd
+ftex.def
+File: l3backend-pdftex.def 2020-09-11 L3 backend support: PDF output (pdfTeX)
+\l__kernel_color_stack_int=\count285
+\l__pdf_internal_box=\box58
+) (./tianshou_docs_notes.aux)
+\openout1 = `tianshou_docs_notes.aux'.
+
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 18.
+LaTeX Font Info:    ... okay on input line 18.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 18.
+LaTeX Font Info:    ... okay on input line 18.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 18.
+LaTeX Font Info:    ... okay on input line 18.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 18.
+LaTeX Font Info:    ... okay on input line 18.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 18.
+LaTeX Font Info:    ... okay on input line 18.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 18.
+LaTeX Font Info:    ... okay on input line 18.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 18.
+LaTeX Font Info:    ... okay on input line 18.
+
+(/mnt/ubuntu/usr/local/texlive/2020/texmf-dist/tex/context/base/mkii/supp-pdf.m
+kii
+[Loading MPS to PDF converter (version 2006.09.02).]
+\scratchcounter=\count286
+\scratchdimen=\dimen165
+\scratchbox=\box59
+\nofMPsegments=\count287
+\nofMParguments=\count288
+\everyMPshowfont=\toks28
+\MPscratchCnt=\count289
+\MPscratchDim=\dimen166
+\MPnumerator=\count290
+\makeMPintoPDFobject=\count291
+\everyMPtoPDFconversion=\toks29
+)
+(/mnt/ubuntu/usr/local/texlive/2020/texmf-dist/tex/latex/epstopdf-pkg/epstopdf-
+base.sty
+Package: epstopdf-base 2020-01-24 v2.11 Base part for package epstopdf
+Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 4
+85.
+
+(/mnt/ubuntu/usr/local/texlive/2020/texmf-dist/tex/latex/latexconfig/epstopdf-s
+ys.cfg
+File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Liv
+e
+))
+LaTeX Font Info:    Trying to load font information for U+msa on input line 19.
+
+
+(/mnt/ubuntu/usr/local/texlive/2020/texmf-dist/tex/latex/amsfonts/umsa.fd
+File: umsa.fd 2013/01/14 v3.01 AMS symbols A
+)
+LaTeX Font Info:    Trying to load font information for U+msb on input line 19.
+
+
+(/mnt/ubuntu/usr/local/texlive/2020/texmf-dist/tex/latex/amsfonts/umsb.fd
+File: umsb.fd 2013/01/14 v3.01 AMS symbols B
+)
+<./basic_q_learning_pipeline.png, id=1, 2027.575pt x 968.61874pt>
+File: ./basic_q_learning_pipeline.png Graphic file (type png)
+<use ./basic_q_learning_pipeline.png>
+Package pdftex.def Info: ./basic_q_learning_pipeline.png  used on input line 33
+.
+(pdftex.def)             Requested size: 276.00105pt x 131.8516pt.
+LaTeX Font Info:    Trying to load font information for T1+cmtt on input line 4
+1.
+
+(/mnt/ubuntu/usr/local/texlive/2020/texmf-dist/tex/latex/base/t1cmtt.fd
+File: t1cmtt.fd 2019/12/16 v2.5j Standard LaTeX font definitions
+)
+[1
+
+{/mnt/ubuntu/usr/local/texlive/2020/texmf-var/fonts/map/pdftex/updmap/pdftex.ma
+p} <./basic_q_learning_pipeline.png>]
+\openout3 = `tianshou_docs_notes.pyg'.
+
+
+(./_minted-tianshou_docs_notes/default-pyg-prefix.pygstyle)
+(./_minted-tianshou_docs_notes/default.pygstyle)
+(./_minted-tianshou_docs_notes/C6C2EA87DF7F02193449127E2F84A449FF44E8C1CFAB4EE2
+32DA5A73450A8359.pygtex)
+Overfull \hbox (1.49481pt too wide) in paragraph at lines 67--70
+\T1/cmr/m/n/10 col-lec-tor to which you pass the ren-der ar-gu-ment, for ex-am-
+ple []
+ []
+
+\openout3 = `tianshou_docs_notes.pyg'.
+
+
+(./_minted-tianshou_docs_notes/3A0BBA8505841F54B1B7C67DBBA63683FF44E8C1CFAB4EE2
+32DA5A73450A8359.pygtex
+LaTeX Font Info:    Font shape `T1/cmtt/bx/n' in size <10> not available
+(Font)              Font shape `T1/cmtt/m/n' tried instead on input line 2.
+LaTeX Font Info:    Trying to load font information for TS1+cmtt on input line 
+4.
+
+(/mnt/ubuntu/usr/local/texlive/2020/texmf-dist/tex/latex/base/ts1cmtt.fd
+File: ts1cmtt.fd 2019/12/16 v2.5j Standard LaTeX font definitions
+))
+<./concepts_arch2.png, id=14, 743.77875pt x 343.2825pt>
+File: ./concepts_arch2.png Graphic file (type png)
+<use ./concepts_arch2.png>
+Package pdftex.def Info: ./concepts_arch2.png  used on input line 89.
+(pdftex.def)             Requested size: 276.00105pt x 127.38966pt.
+\openout3 = `tianshou_docs_notes.pyg'.
+
+
+(./_minted-tianshou_docs_notes/2B9A3CE329E4AA625F2D32150A7E8A6DFF44E8C1CFAB4EE2
+32DA5A73450A8359.pygtex [2])
+\openout3 = `tianshou_docs_notes.pyg'.
+
+
+(./_minted-tianshou_docs_notes/D5FE910CA70CB9BFBA76859F483980E0FF44E8C1CFAB4EE2
+32DA5A73450A8359.pygtex) [3 <./concepts_arch2.png>]
+\openout3 = `tianshou_docs_notes.pyg'.
+
+
+(./_minted-tianshou_docs_notes/A6A38C7EDC70F661C08BC20EFFA30EAFFF44E8C1CFAB4EE2
+32DA5A73450A8359.pygtex) [4]
+Overfull \hbox (18.51843pt too wide) in paragraph at lines 189--191
+\T1/cmr/m/n/10 There are dif-fer-ent classes of poli-cies, but all poli-cies mu
+st in-herit from [].
+ []
+
+[5] [6] (./tianshou_docs_notes.aux)
+runsystem(rm tianshou_docs_notes.pyg)...executed.
+
+ ) 
+Here is how much of TeX's memory you used:
+ 6943 strings out of 480876
+ 117154 string characters out of 5907582
+ 408169 words of memory out of 5000000
+ 22399 multiletter control sequences out of 15000+600000
+ 554039 words of font info for 84 fonts, out of 8000000 for 9000
+ 1141 hyphenation exceptions out of 8191
+ 50i,15n,41p,834b,377s stack positions out of 5000i,500n,10000p,200000b,80000s
+{/mnt/ubuntu/usr/local/texlive/2020/texmf-dist/fonts/enc/dvips/cm-super/cm-su
+per-t1.enc}{/mnt/ubuntu/usr/local/texlive/2020/texmf-dist/fonts/enc/dvips/cm-su
+per/cm-super-ts1.enc}</mnt/ubuntu/usr/local/texlive/2020/texmf-dist/fonts/type1
+/public/amsfonts/cm/cmmi10.pfb></mnt/ubuntu/usr/local/texlive/2020/texmf-dist/f
+onts/type1/public/amsfonts/cm/cmr10.pfb></mnt/ubuntu/usr/local/texlive/2020/tex
+mf-dist/fonts/type1/public/cm-super/sfbx1000.pfb></mnt/ubuntu/usr/local/texlive
+/2020/texmf-dist/fonts/type1/public/cm-super/sfbx1200.pfb></mnt/ubuntu/usr/loca
+l/texlive/2020/texmf-dist/fonts/type1/public/cm-super/sfbx1440.pfb></mnt/ubuntu
+/usr/local/texlive/2020/texmf-dist/fonts/type1/public/cm-super/sfit1000.pfb></m
+nt/ubuntu/usr/local/texlive/2020/texmf-dist/fonts/type1/public/cm-super/sfrm050
+0.pfb></mnt/ubuntu/usr/local/texlive/2020/texmf-dist/fonts/type1/public/cm-supe
+r/sfrm1000.pfb></mnt/ubuntu/usr/local/texlive/2020/texmf-dist/fonts/type1/publi
+c/cm-super/sfrm1200.pfb></mnt/ubuntu/usr/local/texlive/2020/texmf-dist/fonts/ty
+pe1/public/cm-super/sfrm1728.pfb></mnt/ubuntu/usr/local/texlive/2020/texmf-dist
+/fonts/type1/public/cm-super/sftt1000.pfb>
+Output written on tianshou_docs_notes.pdf (6 pages, 309984 bytes).
+PDF statistics:
+ 76 PDF objects out of 1000 (max. 8388607)
+ 52 compressed objects within 1 object stream
+ 0 named destinations out of 1000 (max. 500000)
+ 11 words of extra memory for PDF output out of 10000 (max. 10000000)
+

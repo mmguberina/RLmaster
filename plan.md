@@ -35,6 +35,10 @@ Concrete TODO list:
 1.2. visualize results somehow
 1.3. develop some sort of a workflow for tracking and testing the latent representations
 2. try training rainbow on that, just to be able to compare results againt model-free all the way
-1.3. develop some sort of a workflow for tracking and testing the RL algorithm
+2.1 write the LatentSpace(gym.Wrapper) to encode every frame seamlessly
+2.2 at least somewhat understand tianshou code for rainbow
+2.3. change the policy into the appropriate MLP (multilayered perceptron) architecture (2 layers should be fine,
+check the Rainbow paper to see what they've used)
+2.4. develop some sort of a workflow for tracking and testing the RL algorithm
 3. continue updating the autoencoder as the training progresses, see how that goes
 4. think of more ideas and try those

@@ -1,0 +1,15 @@
+\begin{Verbatim}[commandchars=\\\{\},codes={\catcode`\$=3\catcode`\^=7\catcode`\_=8\relax}]
+\PYG{p}{\PYGZob{}}
+    \PYG{l+s+s1}{\PYGZsq{}done\PYGZsq{}}\PYG{p}{:} \PYG{n}{done}\PYG{p}{,}
+    \PYG{l+s+s1}{\PYGZsq{}reward\PYGZsq{}}\PYG{p}{:} \PYG{n}{reward}\PYG{p}{,}
+    \PYG{l+s+s1}{\PYGZsq{}state\PYGZsq{}}\PYG{p}{:} \PYG{p}{\PYGZob{}}
+        \PYG{l+s+s1}{\PYGZsq{}camera\PYGZsq{}}\PYG{p}{:} \PYG{n}{camera}\PYG{p}{,}
+        \PYG{l+s+s1}{\PYGZsq{}sensory\PYGZsq{}}\PYG{p}{:} \PYG{n}{sensory}
+    \PYG{p}{\PYGZcb{}}
+    \PYG{l+s+s1}{\PYGZsq{}action\PYGZsq{}}\PYG{p}{:} \PYG{p}{\PYGZob{}}
+        \PYG{l+s+s1}{\PYGZsq{}direct\PYGZsq{}}\PYG{p}{:} \PYG{n}{direct}\PYG{p}{,}
+        \PYG{l+s+s1}{\PYGZsq{}point\PYGZus{}3d\PYGZsq{}}\PYG{p}{:} \PYG{n}{point\PYGZus{}3d}\PYG{p}{,}
+        \PYG{l+s+s1}{\PYGZsq{}force\PYGZsq{}}\PYG{p}{:} \PYG{n}{force}\PYG{p}{,}
+    \PYG{p}{\PYGZcb{}}
+\PYG{p}{\PYGZcb{}}
+\end{Verbatim}
