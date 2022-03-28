@@ -142,6 +142,8 @@ class Rainbow(DQN):
         else:
             logits = q
         probs = logits.softmax(dim=2)
+        print("probs.shape")
+        print(probs.shape)
         return probs, state
 
 
@@ -154,9 +156,9 @@ class RainbowNoConvLayers(nn.Module):
     def __init__(
         self,
         action_shape: Sequence[int],
-        device: Union[str, int, torch.device] = "cpu",
         num_atoms: int = 51,
         noisy_std: float = 0.5,
+        device: Union[str, int, torch.device] = "cpu",
         is_dueling: bool = True,
         is_noisy: bool = True,
         output_dim: int = 3136,
@@ -172,7 +174,6 @@ class RainbowNoConvLayers(nn.Module):
                 return NoisyLinear(x, y, noisy_std)
             else:
                 return nn.Linear(x, y)
-
         self.Q = nn.Sequential(
             linear(self.output_dim, 512), nn.ReLU(inplace=True),
             linear(512, self.action_num * self.num_atoms)
@@ -202,6 +203,9 @@ class RainbowNoConvLayers(nn.Module):
         else:
             logits = q
         probs = logits.softmax(dim=2)
+
+        print("probs.shape")
+        print(probs.shape)
         return probs, state
 
 

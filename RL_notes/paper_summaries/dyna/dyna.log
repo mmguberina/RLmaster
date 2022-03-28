@@ -1,9 +1,9 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.21 (TeX Live 2020) (preloaded format=pdflatex 2020.9.19)  20 MAR 2022 17:17
+This is pdfTeX, Version 3.14159265-2.6-1.40.21 (TeX Live 2020) (preloaded format=pdflatex 2020.9.19)  27 MAR 2022 19:36
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
-**exploration_by_random_network_distillation.tex
-(./exploration_by_random_network_distillation.tex
+**dyna.tex
+(./dyna.tex
 LaTeX2e <2020-02-02> patch level 5
 L3 programming layer <2020-09-06>
 (/mnt/ubuntu/usr/local/texlive/2020/texmf-dist/tex/latex/base/article.cls
@@ -147,8 +147,8 @@ ftex.def
 File: l3backend-pdftex.def 2020-09-11 L3 backend support: PDF output (pdfTeX)
 \l__kernel_color_stack_int=\count188
 \l__pdf_internal_box=\box49
-) (./exploration_by_random_network_distillation.aux)
-\openout1 = `exploration_by_random_network_distillation.aux'.
+) (./dyna.aux)
+\openout1 = `dyna.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 15.
 LaTeX Font Info:    ... okay on input line 15.
@@ -244,35 +244,34 @@ File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 [1
 
 {/mnt/ubuntu/usr/local/texlive/2020/texmf-var/fonts/map/pdftex/updmap/pdftex.ma
-p}] [2] (./exploration_by_random_network_distillation.aux) ) 
+p}] [2] (./dyna.aux) ) 
 Here is how much of TeX's memory you used:
  3166 strings out of 480876
- 43176 string characters out of 5907582
- 280010 words of memory out of 5000000
+ 42796 string characters out of 5907582
+ 279972 words of memory out of 5000000
  18726 multiletter control sequences out of 15000+600000
  553369 words of font info for 82 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 40i,6n,37p,258b,202s stack positions out of 5000i,500n,10000p,200000b,80000s
-{/mnt/ubuntu/usr/lo
-cal/texlive/2020/texmf-dist/fonts/enc/dvips/cm-super/cm-super-t1.enc}{/mnt/ubun
-tu/usr/local/texlive/2020/texmf-dist/fonts/enc/dvips/cm-super/cm-super-ts1.enc}
-</mnt/ubuntu/usr/local/texlive/2020/texmf-dist/fonts/type1/public/amsfonts/cm/c
-mmi10.pfb></mnt/ubuntu/usr/local/texlive/2020/texmf-dist/fonts/type1/public/ams
-fonts/cm/cmmi7.pfb></mnt/ubuntu/usr/local/texlive/2020/texmf-dist/fonts/type1/p
-ublic/amsfonts/cm/cmmib10.pfb></mnt/ubuntu/usr/local/texlive/2020/texmf-dist/fo
-nts/type1/public/amsfonts/cm/cmr10.pfb></mnt/ubuntu/usr/local/texlive/2020/texm
-f-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb></mnt/ubuntu/usr/local/texlive/2
-020/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></mnt/ubuntu/usr/local
-/texlive/2020/texmf-dist/fonts/type1/public/cm-super/sfbx1000.pfb></mnt/ubuntu/
-usr/local/texlive/2020/texmf-dist/fonts/type1/public/cm-super/sfbx1200.pfb></mn
-t/ubuntu/usr/local/texlive/2020/texmf-dist/fonts/type1/public/cm-super/sfbx1440
-.pfb></mnt/ubuntu/usr/local/texlive/2020/texmf-dist/fonts/type1/public/cm-super
-/sfrm1000.pfb></mnt/ubuntu/usr/local/texlive/2020/texmf-dist/fonts/type1/public
-/cm-super/sfrm1200.pfb></mnt/ubuntu/usr/local/texlive/2020/texmf-dist/fonts/typ
-e1/public/cm-super/sfrm1728.pfb></mnt/ubuntu/usr/local/texlive/2020/texmf-dist/
-fonts/type1/public/cm-super/sfti1000.pfb>
-Output written on exploration_by_random_network_distillation.pdf (2 pages, 1561
-63 bytes).
+ 40i,6n,37p,220b,202s stack positions out of 5000i,500n,10000p,200000b,80000s
+{/mnt/ubuntu/usr/local/texlive/2020/texmf-dist/fonts/enc/
+dvips/cm-super/cm-super-t1.enc}{/mnt/ubuntu/usr/local/texlive/2020/texmf-dist/f
+onts/enc/dvips/cm-super/cm-super-ts1.enc}</mnt/ubuntu/usr/local/texlive/2020/te
+xmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></mnt/ubuntu/usr/local/texli
+ve/2020/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb></mnt/ubuntu/usr/lo
+cal/texlive/2020/texmf-dist/fonts/type1/public/amsfonts/cm/cmmib10.pfb></mnt/ub
+untu/usr/local/texlive/2020/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb
+></mnt/ubuntu/usr/local/texlive/2020/texmf-dist/fonts/type1/public/amsfonts/cm/
+cmr7.pfb></mnt/ubuntu/usr/local/texlive/2020/texmf-dist/fonts/type1/public/amsf
+onts/cm/cmsy10.pfb></mnt/ubuntu/usr/local/texlive/2020/texmf-dist/fonts/type1/p
+ublic/cm-super/sfbx1000.pfb></mnt/ubuntu/usr/local/texlive/2020/texmf-dist/font
+s/type1/public/cm-super/sfbx1200.pfb></mnt/ubuntu/usr/local/texlive/2020/texmf-
+dist/fonts/type1/public/cm-super/sfbx1440.pfb></mnt/ubuntu/usr/local/texlive/20
+20/texmf-dist/fonts/type1/public/cm-super/sfrm1000.pfb></mnt/ubuntu/usr/local/t
+exlive/2020/texmf-dist/fonts/type1/public/cm-super/sfrm1200.pfb></mnt/ubuntu/us
+r/local/texlive/2020/texmf-dist/fonts/type1/public/cm-super/sfrm1728.pfb></mnt/
+ubuntu/usr/local/texlive/2020/texmf-dist/fonts/type1/public/cm-super/sfti1000.p
+fb>
+Output written on dyna.pdf (2 pages, 156163 bytes).
 PDF statistics:
  67 PDF objects out of 1000 (max. 8388607)
  49 compressed objects within 1 object stream

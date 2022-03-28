@@ -43,7 +43,6 @@ print(env)
 
 for i in range(500):
     obs, reward, done, info = env.step(env.action_space.sample())
-    obs = env.observation(obs)
     obs = np.ceil(obs * 255).astype(np.uint8).reshape((84,84))
     if done:
         env.reset()

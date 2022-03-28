@@ -10,7 +10,7 @@ from atari_wrapper import wrap_deepmind, wrap_deepmind_premade_encoder
 from torch.utils.tensorboard import SummaryWriter
 
 from tianshou.data import Collector, PrioritizedVectorReplayBuffer, VectorReplayBuffer
-from tianshou.env import ShmemVectorEnv, DummyVectorEnv
+from tianshou.env import ShmemVectorEnv, DummyVectorEnv, SubprocVectorEnv
 from tianshou.policy import RainbowPolicy
 from tianshou.trainer import offpolicy_trainer
 from tianshou.utils import TensorboardLogger
@@ -45,8 +45,8 @@ def get_args():
     parser.add_argument('--step-per-collect', type=int, default=10)
     parser.add_argument('--update-per-step', type=float, default=0.1)
     parser.add_argument('--batch-size', type=int, default=32)
-    parser.add_argument('--training-num', type=int, default=10)
-    parser.add_argument('--test-num', type=int, default=10)
+    parser.add_argument('--training-num', type=int, default=4)
+    parser.add_argument('--test-num', type=int, default=4)
     parser.add_argument('--logdir', type=str, default='log')
     parser.add_argument('--render', type=float, default=0.)
     parser.add_argument('--encoder-path', type=str, default="./encoder.pt")
@@ -84,11 +84,6 @@ def make_atari_env_watch(args):
 
 def test_rainbow(args=get_args()):
     env = make_atari_env_premade_encoder(args)
-    env.reset()
-    o,r,d,i = env.step(0)
-    print(env)
-    print(o.shape)
-    exit()
     args.state_shape = env.observation_space.shape or env.observation_space.n
     args.action_shape = env.action_space.shape or env.action_space.n
     # should be N_FRAMES x H x W
@@ -98,12 +93,21 @@ def test_rainbow(args=get_args()):
     train_envs = DummyVectorEnv(
         [lambda: make_atari_env_premade_encoder(args) for _ in range(args.training_num)]
     )
+
+    test_envs = DummyVectorEnv(
+        [lambda: make_atari_env_watch(args) for _ in range(args.test_num)]
+    )
 #    train_envs = ShmemVectorEnv(
 #        [lambda: make_atari_env_premade_encoder(args) for _ in range(args.training_num)]
 #    )
-    test_envs = ShmemVectorEnv(
-        [lambda: make_atari_env_watch(args) for _ in range(args.test_num)]
-    )
+# these are properly parallelized, but don't work for some reason
+# probably the loading doesn't happen or something
+#    test_envs = ShmemVectorEnv(
+#        [lambda: make_atari_env_watch(args) for _ in range(args.test_num)]
+#    )
+#    test_envs = ShmemVectorEnv(
+#        [lambda: make_atari_env_watch(args) for _ in range(args.test_num)]
+#    )
     # seed
     np.random.seed(args.seed)
     torch.manual_seed(args.seed)
@@ -111,7 +115,7 @@ def test_rainbow(args=get_args()):
     test_envs.seed(args.seed)
     # define model
     net = RainbowNoConvLayers(
-        *args.state_shape,
+#        *args.state_shape,
         args.action_shape,
         args.num_atoms,
         args.noisy_std,
@@ -120,7 +124,6 @@ def test_rainbow(args=get_args()):
         is_noisy=not args.no_noisy
     )
     print(net)
-    exit()
     optim = torch.optim.Adam(net.parameters(), lr=args.lr)
     # define policy
     policy = RainbowPolicy(

@@ -2,7 +2,6 @@
 # https://github.com/openai/baselines/blob/master/baselines/common/atari_wrappers.py
 
 from collections import deque
-
 import cv2
 import gym
 import numpy as np
@@ -11,7 +10,7 @@ import torch
 from autoencoder_nn import NatureCNNEncoder, CNNDecoder
 #from autoencoder_nn import NatureCNNEncoder, CNNDecoder
 
-class AutoencoderEnv(gym.Wrapper):
+class AutoencoderEnv(gym.ObservationWrapper):
     """
     used to visualize the autoencoder in action,
     it's way easier to see what you've got if you,
@@ -42,7 +41,7 @@ class AutoencoderEnv(gym.Wrapper):
         return decoded.numpy()
         
 
-class LatentSpaceEnv(gym.Wrapper):
+class LatentSpaceEnv(gym.ObservationWrapper):
     """
     downsample every observation by pushing it though
     an encoder.
@@ -56,12 +55,14 @@ class LatentSpaceEnv(gym.Wrapper):
         #self.observation_shape = super().observation_space.shape
         # but i did a bad so it's:
         observation_shape = (1, 84, 84)
+        print("loading encoder")
         self.encoder = NatureCNNEncoder(observation_shape=observation_shape)
         if device == 'cpu':
             self.encoder.load_state_dict(torch.load(encoder_path, map_location=torch.device('cpu')))
         else:
             self.encoder.load_state_dict(torch.load(encoder_path))
         self.encoder.to(device)
+        print("done loading encoder")
         self.size = self.encoder.n_flatten
         # TODO i didn't squash the encoder outputs
         # that could be potentially problematic here
@@ -69,9 +70,9 @@ class LatentSpaceEnv(gym.Wrapper):
         # and wether that's even necessary
         # putting it to inf for now
         self.observation_space = gym.spaces.Box(
-            low=np.min(np.zeros((self.size, self.size))),
-            high=np.max(np.ones((self.size, self.size)) * np.inf),
-            shape=(self.size, self.size),
+            low=np.min(np.zeros(self.size)),
+            high=np.max(np.ones(self.size) * np.inf),
+            shape=(self.size,),
             dtype=np.float32
         )
         self.transform = transforms.ToTensor()
