@@ -86,7 +86,6 @@ def test_rainbow(args=get_args()):
     env = make_atari_env_premade_encoder(args)
     args.state_shape = env.observation_space.shape or env.observation_space.n
     args.action_shape = env.action_space.shape or env.action_space.n
-    # should be N_FRAMES x H x W
     print("Observations shape:", args.state_shape)
     print("Actions shape:", args.action_shape)
     # make environments
@@ -101,7 +100,9 @@ def test_rainbow(args=get_args()):
 #        [lambda: make_atari_env_premade_encoder(args) for _ in range(args.training_num)]
 #    )
 # these are properly parallelized, but don't work for some reason
-# probably the loading doesn't happen or something
+# initializes first 2 just fine, then stops on the third one, no idea why
+# some pipe end keeps waiting indefinitely, probably solvable with a well-placed sleep.
+# solve it later
 #    test_envs = ShmemVectorEnv(
 #        [lambda: make_atari_env_watch(args) for _ in range(args.test_num)]
 #    )

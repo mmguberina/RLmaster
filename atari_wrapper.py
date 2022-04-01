@@ -55,13 +55,14 @@ class LatentSpaceEnv(gym.ObservationWrapper):
         #self.observation_shape = super().observation_space.shape
         # but i did a bad so it's:
         observation_shape = (1, 84, 84)
+        self.device = device
         print("loading encoder")
         self.encoder = NatureCNNEncoder(observation_shape=observation_shape)
-        if device == 'cpu':
+        if self.device == 'cpu':
             self.encoder.load_state_dict(torch.load(encoder_path, map_location=torch.device('cpu')))
         else:
             self.encoder.load_state_dict(torch.load(encoder_path))
-        self.encoder.to(device)
+        self.encoder.to(self.device)
         print("done loading encoder")
         self.size = self.encoder.n_flatten
         # TODO i didn't squash the encoder outputs
@@ -78,11 +79,15 @@ class LatentSpaceEnv(gym.ObservationWrapper):
         self.transform = transforms.ToTensor()
 
     def observation(self, frame):
-        frame = self.transform(frame)
+#        print("raw frame", frame.shape)
+        frame = self.transform(frame).to(self.device)
+#        print("to tensor frame", frame.shape)
         frame = frame.view([-1,1,84,84])
         with torch.no_grad():
             encoded = self.encoder(frame)
-        return encoded.numpy()
+#        print("from encoder in wrapper")
+#        print(encoded.shape)
+        return (encoded.view([-1])).cpu().numpy()
 
 
 

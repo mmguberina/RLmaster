@@ -50,6 +50,33 @@ class DQN(nn.Module):
         obs = torch.as_tensor(obs, device=self.device, dtype=torch.float32)
         return self.net(obs), state
 
+class DQNNoEncoder(nn.Module):
+    def __init__(
+        self,
+        action_shape: Sequence[int],
+        device: Union[str, int, torch.device] = "cpu",
+        input_dim: int = 3136,
+    ) -> None:
+        super().__init__()
+        self.device = device
+        self.input_dim = input_dim
+        self.net = nn.Sequential(
+            nn.Linear(self.input_dim *4, 512), nn.ReLU(inplace=True),
+            nn.Linear(512, np.prod(action_shape))
+        )
+        self.output_dim = np.prod(action_shape)
+
+    def forward(
+        self,
+        obs: Union[np.ndarray, torch.Tensor],
+        state: Optional[Any] = None,
+        info: Dict[str, Any] = {},
+    ) -> Tuple[torch.Tensor, Any]:
+        r"""Mapping: s -> Q(s, \*)."""
+        obs = torch.as_tensor(obs, device=self.device, dtype=torch.float32)
+        obs = obs.reshape(-1, 4 * self.input_dim)
+        return self.net(obs), state
+
 
 class C51(DQN):
     """Reference: A distributional perspective on reinforcement learning.
@@ -193,6 +220,7 @@ class RainbowNoConvLayers(nn.Module):
         info: Dict[str, Any] = {},
     ) -> Tuple[torch.Tensor, Any]:
         r"""Mapping: x -> Z(x, \*)."""
+        print(obs.shape)
         obs = torch.as_tensor(obs, device=self.device, dtype=torch.float32)
         q = self.Q(obs)
         q = q.view(-1, self.action_num, self.num_atoms)

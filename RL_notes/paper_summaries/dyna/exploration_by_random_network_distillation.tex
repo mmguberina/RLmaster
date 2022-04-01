@@ -1,0 +1,83 @@
+\documentclass{article}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsfonts}
+\usepackage[T1]{fontenc}
+\usepackage{bm}
+\usepackage{array}
+\usepackage{graphicx}
+\usepackage[utf8]{inputenc}
+
+\title{Paper summary: Dyna, ax integrated architecture for learning, planning and reacting}
+\date{\today}
+\author{Marko Guberina 19970821-1256}
+
+\begin{document}
+\maketitle
+
+
+\section{Idea in few sentances}
+So you have you're model-free learner and you're happy with how it works.
+Collecting samples is hard. How about you use those
+samples to learn the dynamics and generate your own samples?
+Then you'd have more samples and thus a better agent which is
+also able to learn safely by imagining stuff in its head.
+
+This paper concretizes this idea, outlines it in pseudocode and
+discusses it's benefits and drawbacks.
+
+
+
+\section{Explanation of the central concept}
+
+
+
+
+\section{Methodology}
+
+
+\section{Initial rambly notes}
+This papper is old, early 90s old. Here R. Sutton lays down the theoretical foundation for learning a model and a policy in tandem.
+
+\subsection{Abstract}
+Just says he introduces Dyna without going into any detail.
+Everything is completely theoretical here.
+
+\subsection{Introduction}
+Dyna architecture attempts to integrate (I'm guessing the correct notation as Sutton doesn't provide any):
+\begin{itemize}
+		\item trial-and-error learning of an optimal \textit{reactive policy} : $ \pi : \bm{s}_{t} \to \bm{a}_{t}  $
+		\item learning domain knowledge in the form of an \textit{action model}: $ p : (\bm{s}_{t}, \bm{a}_{t} ) \to \bm{s}_{t+1}  $
+		\item planning: finding the optimal reactive policy given domain knowledge $ \pi_{ p }  $
+		\item reactive execution: there is no planning, just reactions to percieved states
+\end{itemize}
+
+\paragraph{Algorithm pseudocode}
+Repeat forever:
+\begin{enumerate}
+		\item observe the world's state and reactively choose an action based on it
+		\item observe resulting reward and state
+		\item apply RL to this experience
+		\item update action model based on this experience
+		\item repeat K times:
+				\begin{enumerate}
+						\item choose a hypothetical world state and action
+						\item predict resultant reward and new state using the action model
+						\item apply RL to this hypothetical experience
+				\end{enumerate}
+\end{enumerate}
+
+
+
+\subsection{Method}
+There is no method, only the theoretical architecture is introduced.
+However, it's potential implementations, advantages and shortcomings are disscused.
+
+\subsection{Other stuff}
+
+
+
+
+
+
+\end{document}

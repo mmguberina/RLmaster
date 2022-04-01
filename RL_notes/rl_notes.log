@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.21 (TeX Live 2020) (preloaded format=pdflatex 2020.9.19)  24 MAR 2022 10:21
+This is pdfTeX, Version 3.14159265-2.6-1.40.21 (TeX Live 2020) (preloaded format=pdflatex 2020.9.19)  30 MAR 2022 11:20
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -798,64 +798,56 @@ Package hyperref Warning: Difference (2) between bookmark levels is greater
 
 [29
 
-] [30] [31] [32] [33]
+] [30] [31] [32] [33] [34]
 Chapter 7.
 
 Package hyperref Warning: Difference (2) between bookmark levels is greater 
-(hyperref)                than one, level fixed on input line 1276.
+(hyperref)                than one, level fixed on input line 1282.
 
-[34
+[35
 
-] [35]
+] [36] [37] [38] [39] [40]
 Chapter 8.
-
-Package hyperref Warning: Difference (2) between bookmark levels is greater 
-(hyperref)                than one, level fixed on input line 1343.
-
-[36
-
-] [37] [38] [39] [40]
-Chapter 9.
 [41
 
 ]
 
 Package hyperref Warning: Difference (2) between bookmark levels is greater 
-(hyperref)                than one, level fixed on input line 1527.
+(hyperref)                than one, level fixed on input line 1533.
 
 
-Overfull \hbox (28.8059pt too wide) detected at line 1576
+Overfull \hbox (28.8059pt too wide) detected at line 1582
 []\OML/cmm/m/it/10 E[] [] []  \OT1/cmr/m/n/10 = \OML/cmm/m/it/10 E[] []
  []
 
 [42]
-Overfull \hbox (38.91605pt too wide) detected at line 1619
+Overfull \hbox (38.91605pt too wide) detected at line 1625
 []
  []
 
 [43] [44] [45]
-Overfull \hbox (22.20895pt too wide) detected at line 1842
+Overfull \hbox (22.20895pt too wide) detected at line 1848
 []\OMS/cmsy/m/n/10 r[][]\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 ^^R[]\OT1/cmr/m/n/10 
 ) = [] \OML/cmm/m/it/10 E[] []
  []
 
 
-Overfull \hbox (18.64445pt too wide) detected at line 1855
+Overfull \hbox (18.64445pt too wide) detected at line 1861
 []\OMS/cmsy/m/n/10 r[][]\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 ^^R[]\OT1/cmr/m/n/10 
 ) = [] \OML/cmm/m/it/10 E[] [] \OT1/cmr/m/n/10 = \OMS/cmsy/m/n/10 r[]\OML/cmm/m
 /it/10 J\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 ^^R\OT1/cmr/m/n/10 )
  []
 
 [46] [47]
-Chapter 10.
+Chapter 9.
 
 Package hyperref Warning: Difference (2) between bookmark levels is greater 
-(hyperref)                than one, level fixed on input line 1949.
+(hyperref)                than one, level fixed on input line 1955.
 
 [48
 
 ] [49] [50] [51]
-Overfull \hbox (39.67233pt too wide) detected at line 2130
+Overfull \hbox (39.67233pt too wide) detected at line 2136
 []\OML/cmm/m/it/10 Q\OT1/cmr/m/n/10 (\OML/cmm/b/it/10 x[]\OML/cmm/m/it/10 ; \OM
 L/cmm/b/it/10 u[]\OT1/cmr/m/n/10 ) = [] + [] [][] \OML/cmm/b/it/10 C[] [] \OT1/
 cmr/m/n/10 + [][] \OML/cmm/b/it/10 c[] \OT1/cmr/m/n/10 + \OML/cmm/m/it/10 V\OT1
@@ -864,16 +856,16 @@ it/10 ; \OML/cmm/b/it/10 u[]\OT1/cmr/m/n/10 ))
  []
 
 [52] [53]
-Overfull \hbox (50.11205pt too wide) detected at line 2231
+Overfull \hbox (50.11205pt too wide) detected at line 2237
 []
  []
 
 [54] [55] [56]
-Chapter 11.
+Chapter 10.
 [57
 
 ] [58] [59] [60]
-Overfull \hbox (28.32248pt too wide) detected at line 2519
+Overfull \hbox (28.32248pt too wide) detected at line 2525
 []\OML/cmm/m/it/10 J\OT1/cmr/m/n/10 (\OML/cmm/b/it/10 a[]\OML/cmm/m/it/10 ; [] 
 ; \OML/cmm/b/it/10 a[]\OT1/cmr/m/n/10 ) = [] [] [] \OML/cmm/m/it/10 r\OT1/cmr/m
 /n/10 (\OML/cmm/b/it/10 s[]\OML/cmm/m/it/10 ; \OML/cmm/b/it/10 a[]\OT1/cmr/m/n/
@@ -881,24 +873,24 @@ Overfull \hbox (28.32248pt too wide) detected at line 2519
  []
 
 
-Overfull \hbox (5.76776pt too wide) in paragraph at lines 2531--2531
+Overfull \hbox (5.76776pt too wide) in paragraph at lines 2537--2537
 []\T1/cmr/bx/n/14.4 Model-based re-in-force-ment learn-ing with im-
  []
 
 [61]
-Overfull \hbox (19.05202pt too wide) detected at line 2563
+Overfull \hbox (19.05202pt too wide) detected at line 2569
 [] [] [] [] [] \OML/cmm/m/it/10 E[] []
  []
 
 
-Overfull \hbox (41.0987pt too wide) detected at line 2599
+Overfull \hbox (41.0987pt too wide) detected at line 2605
 [] [] [] [] [] [] \OT1/cmr/m/n/10 + [] + []
  []
 
 [62] [63]
-Chapter 12.
+Chapter 11.
 
-Overfull \hbox (20.52324pt too wide) in paragraph at lines 2663--2664
+Overfull \hbox (20.52324pt too wide) in paragraph at lines 2669--2670
  [] 
  []
 
@@ -907,35 +899,35 @@ Overfull \hbox (20.52324pt too wide) in paragraph at lines 2663--2664
 ]
 
 Package hyperref Warning: Difference (2) between bookmark levels is greater 
-(hyperref)                than one, level fixed on input line 2681.
+(hyperref)                than one, level fixed on input line 2687.
 
 [65] [66] [67]
-Chapter 13.
+Chapter 12.
 
 Package hyperref Warning: Difference (2) between bookmark levels is greater 
-(hyperref)                than one, level fixed on input line 2766.
+(hyperref)                than one, level fixed on input line 2772.
 
 [68
 
 ]
-Overfull \hbox (8.19519pt too wide) in paragraph at lines 2807--2814
+Overfull \hbox (8.19519pt too wide) in paragraph at lines 2813--2820
 []\T1/cmr/m/n/10 This is used in a Russo & Van Roy pa-per ``Learn-ing to op-ti-
 mize via information-
  []
 
 [69] [70] [71] [72] [73]
-Chapter 14.
+Chapter 13.
 [74
 
 ]
 
 Package hyperref Warning: Difference (2) between bookmark levels is greater 
-(hyperref)                than one, level fixed on input line 3051.
+(hyperref)                than one, level fixed on input line 3057.
 
 [75] [76]
-Chapter 15.
+Chapter 14.
 
-Overfull \hbox (38.65361pt too wide) in paragraph at lines 3149--3154
+Overfull \hbox (38.65361pt too wide) in paragraph at lines 3155--3160
 []\T1/cmr/m/n/10 Let's talk about off-policy eval-u-a-tion. Given $\OMS/cmsy/m/
 n/10 D$\T1/cmr/m/n/10 , es-ti-mate $\OML/cmm/m/it/10 J\OT1/cmr/m/n/10 (\OML/cmm
 /m/it/10 ^^Y\OT1/cmr/m/n/10 ) = \OML/cmm/m/it/10 E[] []$\T1/cmr/m/n/10 .
@@ -946,10 +938,10 @@ n/10 D$\T1/cmr/m/n/10 , es-ti-mate $\OML/cmm/m/it/10 J\OT1/cmr/m/n/10 (\OML/cmm
 ]
 
 Package hyperref Warning: Difference (2) between bookmark levels is greater 
-(hyperref)                than one, level fixed on input line 3172.
+(hyperref)                than one, level fixed on input line 3178.
 
 [78] [79]
-Overfull \hbox (71.15213pt too wide) detected at line 3287
+Overfull \hbox (71.15213pt too wide) detected at line 3293
 []\OMS/cmsy/m/n/10 r[]\OML/cmm/m/it/10 J\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 ^^R\O
 T1/cmr/m/n/10 ) \OMS/cmsy/m/n/10 ^^Y [] [] [] [] r[]\OML/cmm/m/it/10 ^^M[] [] ^
 ^Y[]\OT1/cmr/m/n/10 (\OML/cmm/b/it/10 a[]\OMS/cmsy/m/n/10 j\OML/cmm/b/it/10 s[]
@@ -958,18 +950,18 @@ T1/cmr/m/n/10 ) \OMS/cmsy/m/n/10 ^^Y [] [] [] [] r[]\OML/cmm/m/it/10 ^^M[] [] ^
  []
 
 
-Overfull \hbox (1.05779pt too wide) in paragraph at lines 3302--3304
+Overfull \hbox (1.05779pt too wide) in paragraph at lines 3308--3310
 []\T1/cmr/m/n/10 Let's talk about the other prob-lem-atic term. One way to es-t
 i-mate $[]\OT1/cmr/m/n/10 (\OML/cmm/b/it/10 s[]\OML/cmm/m/it/10 ; \OML/cmm/b/it
 /10 a[]\OT1/cmr/m/n/10 )$
  []
 
 [80] [81] [82]
-Chapter 16.
+Chapter 15.
 [83
 
 ] [84] [85]
-Overfull \hbox (14.00633pt too wide) detected at line 3568
+Overfull \hbox (14.00633pt too wide) detected at line 3574
 []\OML/cmm/m/it/10 V\OT1/cmr/m/n/10 (\OML/cmm/b/it/10 s[]\OT1/cmr/m/n/10 ) = []
  [][] []([](\OML/cmm/b/it/10 s[]\OML/cmm/m/it/10 ; \OML/cmm/b/it/10 a[]\OT1/cmr
 /m/n/10 ))\OML/cmm/b/it/10 a[]  \OMS/cmsy/m/n/10 ([])  \OML/cmm/m/it/10 V\OT1/c
@@ -980,12 +972,12 @@ S/cmsy/m/n/10 j\OML/cmm/b/it/10 s[]\OT1/cmr/m/n/10 ))\OML/cmm/b/it/10 a[]
  []
 
 [86]
-Overfull \hbox (11.4879pt too wide) detected at line 3621
+Overfull \hbox (11.4879pt too wide) detected at line 3627
 []
  []
 
 [87]
-Overfull \hbox (73.30766pt too wide) detected at line 3627
+Overfull \hbox (73.30766pt too wide) detected at line 3633
 []\OML/cmm/m/it/10 p\OT1/cmr/m/n/10 (\OML/cmm/b/it/10 a[]\OMS/cmsy/m/n/10 j\OML
 /cmm/b/it/10 s[]\OML/cmm/m/it/10 ; \OMS/cmsy/m/n/10 O[]\OT1/cmr/m/n/10 )\OML/cm
 m/m/it/10 p\OT1/cmr/m/n/10 (\OML/cmm/b/it/10 s[]\OMS/cmsy/m/n/10 jO[]\OT1/cmr/m
@@ -993,17 +985,17 @@ m/m/it/10 p\OT1/cmr/m/n/10 (\OML/cmm/b/it/10 s[]\OMS/cmsy/m/n/10 jO[]\OT1/cmr/m
  []
 
 [88] [89] [90]
-Overfull \hbox (40.36357pt too wide) detected at line 3842
+Overfull \hbox (40.36357pt too wide) detected at line 3848
 []\OML/cmm/m/it/10 E[] [] \OT1/cmr/m/n/10 = \OML/cmm/m/it/10 E[] []
  []
 
 
-Overfull \hbox (137.47238pt too wide) detected at line 3859
+Overfull \hbox (137.47238pt too wide) detected at line 3865
 []
  []
 
 [91] [92]
-Overfull \hbox (65.85571pt too wide) in paragraph at lines 3921--3927
+Overfull \hbox (65.85571pt too wide) in paragraph at lines 3927--3933
 \T1/cmr/m/n/10 ition is that the pol-icy $\OML/cmm/m/it/10 ^^Y\OT1/cmr/m/n/10 (
 \OML/cmm/b/it/10 a[]\OMS/cmsy/m/n/10 j\OML/cmm/b/it/10 s[]\OT1/cmr/m/n/10 ) \OM
 S/cmsy/m/n/10 / []\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 Q[]\OT1/cmr/m/n/10 (\OML/cm
@@ -1016,36 +1008,36 @@ m/m/it/10 ; \OML/cmm/b/it/10 a[]\OT1/cmr/m/n/10 )))$
  []
 
 
-Overfull \hbox (49.63167pt too wide) detected at line 3933
+Overfull \hbox (49.63167pt too wide) detected at line 3939
 []\OML/cmm/m/it/10 J\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 ^^R\OT1/cmr/m/n/10 ) = []
  \OML/cmm/m/it/10 E[] [] \OT1/cmr/m/n/10 + [] = [] \OML/cmm/m/it/10 E[] []
  []
 
 
-Overfull \hbox (84.57678pt too wide) detected at line 3941
+Overfull \hbox (84.57678pt too wide) detected at line 3947
 []
  []
 
 
-Overfull \hbox (31.7829pt too wide) detected at line 3950
+Overfull \hbox (31.7829pt too wide) detected at line 3956
 [] \OMS/cmsy/m/n/10 ^^Y [] [] [] [] []
  []
 
 [93] [94]
-Chapter 17.
+Chapter 16.
 
 Package hyperref Warning: Difference (2) between bookmark levels is greater 
-(hyperref)                than one, level fixed on input line 3990.
+(hyperref)                than one, level fixed on input line 3996.
 
 [95
 
 ]
-Overfull \hbox (7.6657pt too wide) in paragraph at lines 4007--4021
+Overfull \hbox (7.6657pt too wide) in paragraph at lines 4013--4027
  [][] 
  []
 
 
-Overfull \hbox (15.7865pt too wide) in paragraph at lines 4055--4058
+Overfull \hbox (15.7865pt too wide) in paragraph at lines 4061--4064
 []\T1/cmr/m/n/10 In our graph-i-cal model with op-ti-mal-ity prob-a-bil-i-ties 
 $\OML/cmm/m/it/10 p\OT1/cmr/m/n/10 (\OMS/cmsy/m/n/10 Oj\OML/cmm/b/it/10 s[]\OML
 /cmm/m/it/10 ; \OML/cmm/b/it/10 a[]\OT1/cmr/m/n/10 ) = [](\OML/cmm/m/it/10 r\OT
@@ -1054,7 +1046,7 @@ mr/m/n/10 ))$\T1/cmr/m/n/10 ,
  []
 
 [96] [97] [98]
-Overfull \hbox (57.28552pt too wide) in paragraph at lines 4197--4199
+Overfull \hbox (57.28552pt too wide) in paragraph at lines 4203--4205
 []\T1/cmr/m/n/10 evaluate $\OMS/cmsy/m/n/10 r[]L \OT1/cmr/m/n/10 = [] [][] [][]
  \OMS/cmsy/m/n/10 r[]\OML/cmm/m/it/10 r[]\OT1/cmr/m/n/10 (\OML/cmm/b/it/10 s[]\
 OML/cmm/m/it/10 ; \OML/cmm/b/it/10 a[]\OT1/cmr/m/n/10 ) \OMS/cmsy/m/n/10 ^^@ []
@@ -1066,28 +1058,28 @@ L/cmm/b/it/10 a[]$
  []
 
 [99] [100] [101]
-Chapter 18.
+Chapter 17.
 [102
 
 ] [103] [104] [105] [106] [107]
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 4563.
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 4563.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 4569.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 4569.
  (./rl_notes.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 4563.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 4563.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 4569.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 4569.
 
 Package rerunfilecheck Info: File `rl_notes.out' has not changed.
-(rerunfilecheck)             Checksum: 07049525A50FD94AA51033B99EC6E5EC;10885.
+(rerunfilecheck)             Checksum: B7573494639ABB22396321C455A9B38A;10881.
 
 
 LaTeX Warning: There were multiply-defined labels.
 
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 4563.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 4569.
  ) 
 Here is how much of TeX's memory you used:
  19837 strings out of 480876
- 377837 string characters out of 5907582
- 609946 words of memory out of 5000000
+ 377770 string characters out of 5907582
+ 609945 words of memory out of 5000000
  34127 multiletter control sequences out of 15000+600000
  560137 words of font info for 91 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
@@ -1130,7 +1122,7 @@ t/ubuntu/usr/local/texlive/2020/texmf-dist/fonts/type1/public/cm-super/sfrm1728
 .pfb></mnt/ubuntu/usr/local/texlive/2020/texmf-dist/fonts/type1/public/cm-super
 /sfti0700.pfb></mnt/ubuntu/usr/local/texlive/2020/texmf-dist/fonts/type1/public
 /cm-super/sfti1000.pfb>
-Output written on rl_notes.pdf (108 pages, 750750 bytes).
+Output written on rl_notes.pdf (108 pages, 751215 bytes).
 PDF statistics:
  2197 PDF objects out of 2487 (max. 8388607)
  2035 compressed objects within 21 object streams

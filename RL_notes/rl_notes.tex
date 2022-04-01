@@ -1039,10 +1039,16 @@ On a high level the policy iteration algorithm is:
 Now we need to figure out how to evaluate $A^\pi (\bm{s}_{}, \bm{a}_{}) $ (and whether
 we'll fit $Q^\pi$ or $V^\pi$).
 \subsection{Dynamic programming}
-%Let's assume we know $p(\bm{s}'|\bm{s}, \bm{a})$ where 
-Skipping explaining this from a single Sergey slide, Sutton did it better.
-Plus even then I can only pretend to know the full depth.
-So let's just get to how we use it for policy iteration.
+Dynamic programming refers to a collection of algorithms that can be used
+to compute optimal policies given a perfect model of the environment as
+an MDP.
+They're of limited utility for RL due to the perfect model requirement 
+and their great computational expense, but are important theoretically ---
+they provide an essential foundation for understanding the other methods.
+Usually a finite MDP is assumed. DP can be applied to continous problems as well,
+but exact solution exist only in special cases.
+
+Let's just get to how we use it for policy iteration.
 We're in the tabular setting.
 For now the only point is that it gives the bootstrapped update:
 \begin{equation}
@@ -1339,7 +1345,7 @@ It works because $\phi'$ and $\phi$ are similar and there are \textit{some} theo
 It's important to note that process in step 1 and process in step 3 are quite separate - you can run them in parallel and they
 don't really need to care about each other (but of course they shouldn't be too divergent because then Q-learning won't really work).
 
-\chapter{Improving Q-learning}
+\section{Improving Q-learning}
 \subsection{Are Q-values accurate?}
 Q-values help us select a good policy, but they are also a prediction of future rewards.
 So do they predict Q-values accurately?
@@ -1350,7 +1356,7 @@ But why are Q-values overestimating?
 		\text{target value } y_j = r_j + \gamma \underbrace{ \max_{\bm{a}_j'} Q_{\phi'}(\bm{s}_{j}', \bm{a}_{j}')}_{\text{herein lies the problem}}
 \end{equation}
 Let's explain this in simple terms.
-Image we have 2 random variables $X_1$ and $X_2$ and let's say they represent a true value plus some noise.
+Imagine we have 2 random variables $X_1$ and $X_2$ and let's say they represent a true value plus some noise.
 Proveably,
 \begin{equation}
 		E \left[ \max (X_1, X_2) \right] \geq \max	\left( E[X_1], E[X_2] \right) 

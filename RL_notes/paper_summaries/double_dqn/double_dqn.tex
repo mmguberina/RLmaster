@@ -1,0 +1,53 @@
+\documentclass{article}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsfonts}
+\usepackage[T1]{fontenc}
+\usepackage{bm}
+\usepackage{array}
+\usepackage{graphicx}
+\usepackage[utf8]{inputenc}
+
+\title{Paper summary: Deep reinforcement learning with double Q-learning}
+
+\begin{document}
+\maketitle
+
+
+\section{Idea in few sentances}
+
+
+
+\section{Explanation of the central concept}
+
+
+
+
+\section{Methodology}
+
+
+\section{Initial rambly notes}
+The first important improvement to the vannila Q-learning algorithm.
+
+
+\subsection{Abstract}
+DQN substantially overestimates and that harms performance.
+Double DQN, a technique first introduced in a tabular settings, is adapted for large-scale function approximation.
+
+\subsection{Introduction}
+Q-learning's target is
+\begin{equation}
+		Y_{ t }^{ Q } = R_{ t+1 } + \gamma Q (S_{ t+1 }, \argmax_{a}Q (S_{ t+1 }, a; \bm{\theta}_{t}); \theta_{ t })
+\end{equation}
+Whatever, I got it from the lectures, Sergey did a good job explaining the idea.
+
+\subsection{Method}
+
+\subsection{Other stuff}
+
+
+
+
+
+
+\end{document}
