@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
 from torchvision import transforms
-from atari_dataset import AtariImageDataset
+from ..util.atari_dataset import AtariImageDataset
 import matplotlib.pyplot as plt
 import numpy as np
 

@@ -7,7 +7,7 @@ import gym
 import numpy as np
 from torchvision import transforms
 import torch
-from autoencoder_nn import CNNEncoder, CNNDecoder
+from ..latent_representations.autoencoder_nn import CNNEncoder, CNNDecoder
 
 class AutoencoderEnv(gym.ObservationWrapper):
     """

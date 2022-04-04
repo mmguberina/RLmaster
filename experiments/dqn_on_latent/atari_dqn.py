@@ -4,8 +4,8 @@ import pprint
 
 import numpy as np
 import torch
-from atari_network import DQNNoEncoder
-from atari_wrapper import wrap_deepmind, wrap_deepmind_premade_encoder
+from RLmaster.network.atari_network import DQNNoEncoder
+from RLmaster.util.atari_wrapper import wrap_deepmind, wrap_deepmind_premade_encoder
 from torch.utils.tensorboard import SummaryWriter
 
 from tianshou.data import Collector, VectorReplayBuffer
