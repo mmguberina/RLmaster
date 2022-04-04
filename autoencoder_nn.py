@@ -8,21 +8,11 @@ import numpy as np
 # taken from stablebaselines3
 # but everyone uses this anyway
 # make it usable
-class NatureCNNEncoder(nn.Module):
-    """
-    CNN from DQN nature paper:
-        Mnih, Volodymyr, et al.
-        "Human-level control through deep reinforcement learning."
-        Nature 518.7540 (2015): 529-533.
-
-    :param observation_space:
-    :param features_dim: Number of features extracted.
-        This corresponds to the number of unit for the last layer.
-    """
+class CNNEncoder(nn.Module):
 
     def __init__(self, observation_shape, 
             features_dim: int = 512):
-        super(NatureCNNEncoder, self).__init__()
+        super(CNNEncoder, self).__init__()
         assert features_dim > 0
         assert len(observation_shape) == 3
         #self._observation_space = observation_space
@@ -104,7 +94,7 @@ if __name__ == "__main__":
     images = dataiter.next()
 
     observation_shape = images[0].shape
-    encoder = NatureCNNEncoder(observation_shape=observation_shape)
+    encoder = CNNEncoder(observation_shape=observation_shape)
     decoder = CNNDecoder(observation_shape=observation_shape)
 
     encoder.load_state_dict(torch.load("./encoder90.pt", map_location=torch.device('cpu')))
