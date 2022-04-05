@@ -3,13 +3,13 @@ import numpy as np
 import torch
 from PIL import Image
 import imagehash
-from atari_wrapper import WarpFrame, AutoencoderEnv
-from autoencoder_nn import NatureCNNEncoder, CNNDecoder
+from RLmaster.util.atari_wrapper import WarpFrame, AutoencoderEnv
+from RLmaster.latent_representations.autoencoder_nn import CNNEncoder, CNNDecoder
 
 import torch
 import torch.nn as nn
 from torchvision import transforms
-from atari_dataset import AtariImageDataset
+from RLmaster.util.atari_dataset import AtariImageDataset
 #import matplotlib.pyplot as plt
 import cv2
 
@@ -28,10 +28,12 @@ images = dataiter.next()
 
 observation_shape = images[0].shape
 
-encoder = NatureCNNEncoder(observation_shape=observation_shape)
-decoder = CNNDecoder(observation_shape=observation_shape, n_flatten=encoder.n_flatten)
-encoder.load_state_dict(torch.load("./encoder.pt", map_location=torch.device('cpu')))
-decoder.load_state_dict(torch.load("./decoder.pt", map_location=torch.device('cpu')))
+features_dim = 576
+
+encoder = CNNEncoder(observation_shape=observation_shape, features_dim=features_dim)
+decoder = CNNDecoder(observation_shape=observation_shape, n_flatten=encoder.n_flatten, features_dim=features_dim)
+encoder.load_state_dict(torch.load("../../experiments/latent_only/encoder_features_dim_{}.pt".format(features_dim), map_location=torch.device('cpu')))
+decoder.load_state_dict(torch.load("../../experiments/latent_only/decoder_features_dim_{}.pt".format(features_dim), map_location=torch.device('cpu')))
 
 env = gym.make('PongNoFrameskip-v4')
 env = WarpFrame(env)

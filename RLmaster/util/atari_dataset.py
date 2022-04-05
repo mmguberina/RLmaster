@@ -9,7 +9,7 @@ import numpy as np
 class AtariImageDataset(Dataset):
     def __init__(self, root_dir, dir_name, transform, train):
         self.train = train
-        self.image_names = subprocess.check_output("ls " + dir_name, shell=True).decode('utf-8').split('\n')[:-1]
+        self.image_names = subprocess.check_output("ls " + root_dir + dir_name, shell=True).decode('utf-8').split('\n')[:-1]
         self.transform = transform
         self.root_dir = os.path.join(root_dir, dir_name)
         # let's say 15% of the data is the test dataset

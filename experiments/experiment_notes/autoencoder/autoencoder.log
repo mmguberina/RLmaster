@@ -1,0 +1,336 @@
+This is pdfTeX, Version 3.14159265-2.6-1.40.21 (TeX Live 2020) (preloaded format=pdflatex 2020.9.19)  5 APR 2022 09:26
+entering extended mode
+ restricted \write18 enabled.
+ %&-line parsing enabled.
+**autoencoder.tex
+(./autoencoder.tex
+LaTeX2e <2020-02-02> patch level 5
+L3 programming layer <2020-09-06>
+(/mnt/ubuntu/usr/local/texlive/2020/texmf-dist/tex/latex/base/article.cls
+Document Class: article 2019/12/20 v1.4l Standard LaTeX document class
+(/mnt/ubuntu/usr/local/texlive/2020/texmf-dist/tex/latex/base/size10.clo
+File: size10.clo 2019/12/20 v1.4l Standard LaTeX file (size option)
+)
+\c@part=\count168
+\c@section=\count169
+\c@subsection=\count170
+\c@subsubsection=\count171
+\c@paragraph=\count172
+\c@subparagraph=\count173
+\c@figure=\count174
+\c@table=\count175
+\abovecaptionskip=\skip47
+\belowcaptionskip=\skip48
+\bibindent=\dimen134
+)
+(/mnt/ubuntu/usr/local/texlive/2020/texmf-dist/tex/latex/amsmath/amsmath.sty
+Package: amsmath 2020/01/20 v2.17e AMS math features
+\@mathmargin=\skip49
+
+For additional information on amsmath, use the `?' option.
+(/mnt/ubuntu/usr/local/texlive/2020/texmf-dist/tex/latex/amsmath/amstext.sty
+Package: amstext 2000/06/29 v2.01 AMS text
+
+(/mnt/ubuntu/usr/local/texlive/2020/texmf-dist/tex/latex/amsmath/amsgen.sty
+File: amsgen.sty 1999/11/30 v2.0 generic functions
+\@emptytoks=\toks15
+\ex@=\dimen135
+))
+(/mnt/ubuntu/usr/local/texlive/2020/texmf-dist/tex/latex/amsmath/amsbsy.sty
+Package: amsbsy 1999/11/29 v1.2d Bold Symbols
+\pmbraise@=\dimen136
+)
+(/mnt/ubuntu/usr/local/texlive/2020/texmf-dist/tex/latex/amsmath/amsopn.sty
+Package: amsopn 2016/03/08 v2.02 operator names
+)
+\inf@bad=\count176
+LaTeX Info: Redefining \frac on input line 227.
+\uproot@=\count177
+\leftroot@=\count178
+LaTeX Info: Redefining \overline on input line 389.
+\classnum@=\count179
+\DOTSCASE@=\count180
+LaTeX Info: Redefining \ldots on input line 486.
+LaTeX Info: Redefining \dots on input line 489.
+LaTeX Info: Redefining \cdots on input line 610.
+\Mathstrutbox@=\box45
+\strutbox@=\box46
+\big@size=\dimen137
+LaTeX Font Info:    Redeclaring font encoding OML on input line 733.
+LaTeX Font Info:    Redeclaring font encoding OMS on input line 734.
+\macc@depth=\count181
+\c@MaxMatrixCols=\count182
+\dotsspace@=\muskip16
+\c@parentequation=\count183
+\dspbrk@lvl=\count184
+\tag@help=\toks16
+\row@=\count185
+\column@=\count186
+\maxfields@=\count187
+\andhelp@=\toks17
+\eqnshift@=\dimen138
+\alignsep@=\dimen139
+\tagshift@=\dimen140
+\tagwidth@=\dimen141
+\totwidth@=\dimen142
+\lineht@=\dimen143
+\@envbody=\toks18
+\multlinegap=\skip50
+\multlinetaggap=\skip51
+\mathdisplay@stack=\toks19
+LaTeX Info: Redefining \[ on input line 2859.
+LaTeX Info: Redefining \] on input line 2860.
+)
+(/mnt/ubuntu/usr/local/texlive/2020/texmf-dist/tex/latex/amsfonts/amssymb.sty
+Package: amssymb 2013/01/14 v3.01 AMS font symbols
+
+(/mnt/ubuntu/usr/local/texlive/2020/texmf-dist/tex/latex/amsfonts/amsfonts.sty
+Package: amsfonts 2013/01/14 v3.01 Basic AMSFonts support
+\symAMSa=\mathgroup4
+\symAMSb=\mathgroup5
+LaTeX Font Info:    Redeclaring math symbol \hbar on input line 98.
+LaTeX Font Info:    Overwriting math alphabet `\mathfrak' in version `bold'
+(Font)                  U/euf/m/n --> U/euf/b/n on input line 106.
+)) (/mnt/ubuntu/usr/local/texlive/2020/texmf-dist/tex/latex/base/fontenc.sty
+Package: fontenc 2020/02/11 v2.0o Standard LaTeX package
+)
+(/mnt/ubuntu/usr/local/texlive/2020/texmf-dist/tex/latex/tools/bm.sty
+Package: bm 2019/07/24 v1.2d Bold Symbol Support (DPC/FMi)
+\symboldoperators=\mathgroup6
+\symboldletters=\mathgroup7
+\symboldsymbols=\mathgroup8
+LaTeX Font Info:    Redeclaring math alphabet \mathbf on input line 141.
+LaTeX Info: Redefining \bm on input line 209.
+)
+(/mnt/ubuntu/usr/local/texlive/2020/texmf-dist/tex/latex/tools/array.sty
+Package: array 2019/08/31 v2.4l Tabular extension package (FMi)
+\col@sep=\dimen144
+\ar@mcellbox=\box47
+\extrarowheight=\dimen145
+\NC@list=\toks20
+\extratabsurround=\skip52
+\backup@length=\skip53
+\ar@cellbox=\box48
+)
+(/mnt/ubuntu/usr/local/texlive/2020/texmf-dist/tex/latex/graphics/graphicx.sty
+Package: graphicx 2019/11/30 v1.2a Enhanced LaTeX Graphics (DPC,SPQR)
+
+(/mnt/ubuntu/usr/local/texlive/2020/texmf-dist/tex/latex/graphics/keyval.sty
+Package: keyval 2014/10/28 v1.15 key=value parser (DPC)
+\KV@toks@=\toks21
+)
+(/mnt/ubuntu/usr/local/texlive/2020/texmf-dist/tex/latex/graphics/graphics.sty
+Package: graphics 2019/11/30 v1.4a Standard LaTeX Graphics (DPC,SPQR)
+
+(/mnt/ubuntu/usr/local/texlive/2020/texmf-dist/tex/latex/graphics/trig.sty
+Package: trig 2016/01/03 v1.10 sin cos tan (DPC)
+)
+(/mnt/ubuntu/usr/local/texlive/2020/texmf-dist/tex/latex/graphics-cfg/graphics.
+cfg
+File: graphics.cfg 2016/06/04 v1.11 sample graphics configuration
+)
+Package graphics Info: Driver file: pdftex.def on input line 105.
+
+(/mnt/ubuntu/usr/local/texlive/2020/texmf-dist/tex/latex/graphics-def/pdftex.de
+f
+File: pdftex.def 2020/08/26 v1.2 Graphics/color driver for pdftex
+))
+\Gin@req@height=\dimen146
+\Gin@req@width=\dimen147
+) (/mnt/ubuntu/usr/local/texlive/2020/texmf-dist/tex/latex/base/inputenc.sty
+Package: inputenc 2018/08/11 v1.3c Input encoding file
+\inpenc@prehook=\toks22
+\inpenc@posthook=\toks23
+) (/mnt/ubuntu/usr/local/texlive/2020/texmf-dist/tex/latex/minted/minted.sty
+Package: minted 2017/07/19 v2.5 Yet another Pygments shim for LaTeX
+
+(/mnt/ubuntu/usr/local/texlive/2020/texmf-dist/tex/latex/kvoptions/kvoptions.st
+y
+Package: kvoptions 2019/11/29 v3.13 Key value format for package options (HO)
+
+(/mnt/ubuntu/usr/local/texlive/2020/texmf-dist/tex/generic/ltxcmds/ltxcmds.sty
+Package: ltxcmds 2019/12/15 v1.24 LaTeX kernel commands for general use (HO)
+)
+(/mnt/ubuntu/usr/local/texlive/2020/texmf-dist/tex/generic/kvsetkeys/kvsetkeys.
+sty
+Package: kvsetkeys 2019/12/15 v1.18 Key value parser (HO)
+))
+(/mnt/ubuntu/usr/local/texlive/2020/texmf-dist/tex/latex/fvextra/fvextra.sty
+Package: fvextra 2019/02/04 v1.4 fvextra - extensions and patches for fancyvrb
+
+(/mnt/ubuntu/usr/local/texlive/2020/texmf-dist/tex/latex/base/ifthen.sty
+Package: ifthen 2014/09/29 v1.1c Standard LaTeX ifthen package (DPC)
+)
+(/mnt/ubuntu/usr/local/texlive/2020/texmf-dist/tex/latex/etoolbox/etoolbox.sty
+Package: etoolbox 2020/08/24 v2.5j e-TeX tools for LaTeX (JAW)
+\etb@tempcnta=\count188
+) (/mnt/ubuntu/usr/local/texlive/2020/texmf-dist/tex/latex/fancyvrb/fancyvrb.st
+y
+Package: fancyvrb 2020/05/03 v3.6 verbatim text (tvz,hv)
+\FV@CodeLineNo=\count189
+\FV@InFile=\read2
+\FV@TabBox=\box49
+\c@FancyVerbLine=\count190
+\FV@StepNumber=\count191
+\FV@OutFile=\write3
+) (/mnt/ubuntu/usr/local/texlive/2020/texmf-dist/tex/latex/upquote/upquote.sty
+Package: upquote 2012/04/19 v1.3 upright-quote and grave-accent glyphs in verba
+tim
+
+(/mnt/ubuntu/usr/local/texlive/2020/texmf-dist/tex/latex/base/textcomp.sty
+Package: textcomp 2020/02/02 v2.0n Standard LaTeX package
+))
+(/mnt/ubuntu/usr/local/texlive/2020/texmf-dist/tex/latex/lineno/lineno.sty
+Package: lineno 2005/11/02 line numbers on paragraphs v4.41
+\linenopenalty=\count192
+\output=\toks24
+\linenoprevgraf=\count193
+\linenumbersep=\dimen148
+\linenumberwidth=\dimen149
+\c@linenumber=\count194
+\c@pagewiselinenumber=\count195
+\c@LN@truepage=\count196
+\c@internallinenumber=\count197
+\c@internallinenumbers=\count198
+\quotelinenumbersep=\dimen150
+\bframerule=\dimen151
+\bframesep=\dimen152
+\bframebox=\box50
+LaTeX Info: Redefining \\ on input line 3056.
+)
+\c@FV@TrueTabGroupLevel=\count199
+\c@FV@TrueTabCounter=\count266
+\FV@TabBox@Group=\box51
+\FV@TmpLength=\skip54
+\c@FV@HighlightLinesStart=\count267
+\c@FV@HighlightLinesStop=\count268
+\FV@LoopCount=\count269
+\FV@NCharsBox=\box52
+\FV@BreakIndent=\dimen153
+\FV@BreakIndentNChars=\count270
+\FV@BreakSymbolSepLeft=\dimen154
+\FV@BreakSymbolSepLeftNChars=\count271
+\FV@BreakSymbolSepRight=\dimen155
+\FV@BreakSymbolSepRightNChars=\count272
+\FV@BreakSymbolIndentLeft=\dimen156
+\FV@BreakSymbolIndentLeftNChars=\count273
+\FV@BreakSymbolIndentRight=\dimen157
+\FV@BreakSymbolIndentRightNChars=\count274
+\c@FancyVerbLineBreakLast=\count275
+\FV@LineBox=\box53
+\FV@LineIndentBox=\box54
+\FV@LineWidth=\dimen158
+)
+(/mnt/ubuntu/usr/local/texlive/2020/texmf-dist/tex/latex/tools/calc.sty
+Package: calc 2017/05/25 v4.3 Infix arithmetic (KKT,FJ)
+\calc@Acount=\count276
+\calc@Bcount=\count277
+\calc@Adimen=\dimen159
+\calc@Bdimen=\dimen160
+\calc@Askip=\skip55
+\calc@Bskip=\skip56
+LaTeX Info: Redefining \setlength on input line 80.
+LaTeX Info: Redefining \addtolength on input line 81.
+\calc@Ccount=\count278
+\calc@Cskip=\skip57
+)
+(/mnt/ubuntu/usr/local/texlive/2020/texmf-dist/tex/latex/tools/shellesc.sty
+Package: shellesc 2019/11/08 v1.0c unified shell escape interface for LaTeX
+Package shellesc Info: Restricted shell escape enabled on input line 77.
+)
+(/mnt/ubuntu/usr/local/texlive/2020/texmf-dist/tex/latex/ifplatform/ifplatform.
+sty
+Package: ifplatform 2017/10/13 v0.4a Testing for the operating system
+
+(/mnt/ubuntu/usr/local/texlive/2020/texmf-dist/tex/generic/pdftexcmds/pdftexcmd
+s.sty
+Package: pdftexcmds 2020-06-27 v0.33 Utility functions of pdfTeX for LuaTeX (HO
+)
+
+(/mnt/ubuntu/usr/local/texlive/2020/texmf-dist/tex/generic/infwarerr/infwarerr.
+sty
+Package: infwarerr 2019/12/03 v1.5 Providing info/warning/error messages (HO)
+) (/mnt/ubuntu/usr/local/texlive/2020/texmf-dist/tex/generic/iftex/iftex.sty
+Package: iftex 2020/03/06 v1.0d TeX engine tests
+)
+Package pdftexcmds Info: \pdf@primitive is available.
+Package pdftexcmds Info: \pdf@ifprimitive is available.
+Package pdftexcmds Info: \pdfdraftmode found.
+)
+(/mnt/ubuntu/usr/local/texlive/2020/texmf-dist/tex/generic/catchfile/catchfile.
+sty
+Package: catchfile 2019/12/09 v1.8 Catch the contents of a file (HO)
+
+(/mnt/ubuntu/usr/local/texlive/2020/texmf-dist/tex/generic/etexcmds/etexcmds.st
+y
+Package: etexcmds 2019/12/15 v1.7 Avoid name clashes with e-TeX commands (HO)
+))
+(/mnt/ubuntu/usr/local/texlive/2020/texmf-dist/tex/generic/iftex/ifluatex.sty
+Package: ifluatex 2019/10/25 v1.5 ifluatex legacy package. Use iftex instead.
+)
+
+Package ifplatform Warning: 
+    shell escape is disabled, so I can only detect \ifwindows.
+
+)
+(/mnt/ubuntu/usr/local/texlive/2020/texmf-dist/tex/generic/xstring/xstring.sty
+(/mnt/ubuntu/usr/local/texlive/2020/texmf-dist/tex/generic/xstring/xstring.tex
+\integerpart=\count279
+\decimalpart=\count280
+)
+Package: xstring 2019/02/06 v1.83 String manipulations (CT)
+) (/mnt/ubuntu/usr/local/texlive/2020/texmf-dist/tex/latex/framed/framed.sty
+Package: framed 2011/10/22 v 0.96: framed or shaded text with page breaks
+\OuterFrameSep=\skip58
+\fb@frw=\dimen161
+\fb@frh=\dimen162
+\FrameRule=\dimen163
+\FrameSep=\dimen164
+)
+(/mnt/ubuntu/usr/local/texlive/2020/texmf-dist/tex/latex/float/float.sty
+Package: float 2001/11/08 v1.3d Float enhancements (AL)
+\c@float@type=\count281
+\float@exts=\toks25
+\float@box=\box55
+\@float@everytoks=\toks26
+\@floatcapt=\box56
+)
+\minted@appexistsfile=\read3
+\minted@bgbox=\box57
+\minted@code=\write4
+\c@minted@FancyVerbLineTemp=\count282
+\c@minted@pygmentizecounter=\count283
+\@float@every@listing=\toks27
+\c@listing=\count284
+)
+runsystem(mkdir -p _minted-autoencoder)...disabled (restricted).
+
+
+
+! Package minted Error: You must invoke LaTeX with the -shell-escape flag.
+
+See the minted package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.11 
+     
+? 
+! Emergency stop.
+ ...                                              
+                                                  
+l.11 
+     
+Pass the -shell-escape flag to LaTeX. Refer to the minted.sty documentation for
+ more information.
+
+ 
+Here is how much of TeX's memory you used:
+ 5516 strings out of 480876
+ 93434 string characters out of 5907582
+ 377853 words of memory out of 5000000
+ 21088 multiletter control sequences out of 15000+600000
+ 535851 words of font info for 30 fonts, out of 8000000 for 9000
+ 1141 hyphenation exceptions out of 8191
+ 50i,0n,41p,826b,65s stack positions out of 5000i,500n,10000p,200000b,80000s
+!  ==> Fatal error occurred, no output PDF file produced!

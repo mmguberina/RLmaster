@@ -7,7 +7,7 @@ import gym
 import numpy as np
 from torchvision import transforms
 import torch
-from ..latent_representations.autoencoder_nn import CNNEncoder, CNNDecoder
+from RLmaster.latent_representations.autoencoder_nn import CNNEncoder, CNNDecoder
 
 class AutoencoderEnv(gym.ObservationWrapper):
     """
@@ -55,14 +55,14 @@ class LatentSpaceEnv(gym.ObservationWrapper):
         # but i did a bad so it's:
         observation_shape = (1, 84, 84)
         self.device = device
-        print("loading encoder")
+#        print("loading encoder")
         self.encoder = CNNEncoder(observation_shape=observation_shape)
         if self.device == 'cpu':
             self.encoder.load_state_dict(torch.load(encoder_path, map_location=torch.device('cpu')))
         else:
             self.encoder.load_state_dict(torch.load(encoder_path))
         self.encoder.to(self.device)
-        print("done loading encoder")
+#        print("done loading encoder")
         self.size = self.encoder.n_flatten
         # TODO i didn't squash the encoder outputs
         # that could be potentially problematic here
