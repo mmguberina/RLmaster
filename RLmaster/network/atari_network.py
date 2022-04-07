@@ -61,7 +61,11 @@ class DQNNoEncoder(nn.Module):
         self.device = device
         self.input_dim = input_dim
         self.net = nn.Sequential(
-            nn.Linear(self.input_dim *4, 512), nn.ReLU(inplace=True),
+            #TODO make this not a stupid commented out line,
+            # but define multiply with the number of frame stacks
+            # under the condition that blabla
+            #nn.Linear(self.input_dim *4, 512), nn.ReLU(inplace=True),
+            nn.Linear(self.input_dim, 512), nn.ReLU(inplace=True),
             nn.Linear(512, np.prod(action_shape))
         )
         self.output_dim = np.prod(action_shape)
@@ -74,7 +78,8 @@ class DQNNoEncoder(nn.Module):
     ) -> Tuple[torch.Tensor, Any]:
         r"""Mapping: s -> Q(s, \*)."""
         obs = torch.as_tensor(obs, device=self.device, dtype=torch.float32)
-        obs = obs.reshape(-1, 4 * self.input_dim)
+        #obs = obs.reshape(-1, 4 * self.input_dim)
+        obs = obs.reshape(-1, self.input_dim)
         return self.net(obs), state
 
 

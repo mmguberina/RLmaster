@@ -29,16 +29,16 @@ def evaluate(test_loader, encoder, decoder):
 
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-dir_name = "Breakout-v4_dataset"
+dir_name = "Pong-v4_dataset"
 
 
 transform = transforms.ToTensor()
 
 train_dataset = AtariImageDataset(root_dir="/home/gospodar/chalmers/MASTER/RLmaster/RLmaster/util/", 
-                                  dir_name="Breakout-v4_dataset", transform=transform, train=True)
+                                  dir_name=dir_name, transform=transform, train=True)
 
 test_dataset = AtariImageDataset(root_dir="/home/gospodar/chalmers/MASTER/RLmaster/RLmaster/util/", 
-                                  dir_name="Breakout-v4_dataset", transform=transform, train=False)
+                                  dir_name=dir_name, transform=transform, train=False)
 
 #train_dataset = AtariImageDataset('dataset', train=True, download=False, transform=transform)
 #test_dataset = datasets.CIFAR10('dataset', train=False, download=False, transform=transform)
