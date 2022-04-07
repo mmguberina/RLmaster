@@ -4,11 +4,11 @@ import torch
 import cv2
 from PIL import Image
 import imagehash
-from atari_wrapper import WarpFrame
+from RLmaster.util.atari_wrapper import WarpFrame
 from os import makedirs
 from tqdm import tqdm
 
-env_name = 'Breakout-v4'
+env_name = 'Pong-v4'
 dir_name = env_name + "_dataset/"
 makedirs(dir_name, exist_ok=True)
 

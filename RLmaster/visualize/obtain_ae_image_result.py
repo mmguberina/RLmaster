@@ -11,12 +11,12 @@ def imshow(img):
     plt.imshow(np.transpose(img, (1, 2, 0)))  # convert from Tensor image
 
 
-dir_name = "pong_dataset"
+dir_name = "Pong-v4_dataset"
 transform = transforms.ToTensor()
 num_workers = 0
 batch_size = 32
-train_dataset = AtariImageDataset(root_dir="/home/gospodar/chalmers/MASTER/RLmaster/", 
-                                  dir_name="pong_dataset", transform=transform, train=False)
+train_dataset = AtariImageDataset(root_dir="/home/gospodar/chalmers/MASTER/RLmaster/RLmaster/util/", 
+                                  dir_name=dir_name, transform=transform, train=False)
 train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=batch_size, num_workers=num_workers)
 
 dataiter = iter(train_loader)

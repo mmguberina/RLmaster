@@ -166,6 +166,8 @@ class DQNOnReconstructionEncoderPolicy(BasePolicy):
 #        print("well i did get it once")
 #        print(batch)
         obs_next = obs.obs if hasattr(obs, "obs") else obs
+        # TODO make this normalization cleaner
+        obs_next = obs_next / 255.0
         embedded_obs = self.encoder(obs_next)
         # TODO these comments below,
         # yeah they didn't work...
@@ -205,6 +207,7 @@ class DQNOnReconstructionEncoderPolicy(BasePolicy):
         #obs = batch[input]
         obs = batch.obs
         obs_next = obs.obs if hasattr(obs, "obs") else obs
+        obs_next = obs_next / 255.0
         embedded_obs = self.encoder(obs_next)
         decoded_obs = self.decoder(embedded_obs)
         logits, hidden = q_network(embedded_obs, state=None, info=batch.info)
