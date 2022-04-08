@@ -297,7 +297,7 @@ def wrap_deepmind(
     episode_life=True,
     clip_rewards=True,
     frame_stack=4,
-    scale=False,
+    scale=True,
     warp_frame=True
 ):
     """Configure environment for DeepMind-style Atari. The observation is

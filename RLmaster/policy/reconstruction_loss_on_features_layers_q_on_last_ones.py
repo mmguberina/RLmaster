@@ -128,6 +128,7 @@ class DQNOnReconstructionEncoderPolicy(BasePolicy):
 
     # TODO: why am i passing the q_network here?
     # should i do the same for encoder and decoder then?
+    # TODO this works without casting to tensor!? why ??????
     def forward(
         self,
         batch: Batch,
@@ -167,7 +168,7 @@ class DQNOnReconstructionEncoderPolicy(BasePolicy):
 #        print(batch)
         obs_next = obs.obs if hasattr(obs, "obs") else obs
         # TODO make this normalization cleaner
-        obs_next = obs_next / 255.0
+#        obs_next = obs_next / 255.0
         embedded_obs = self.encoder(obs_next)
         # TODO these comments below,
         # yeah they didn't work...
@@ -196,7 +197,7 @@ class DQNOnReconstructionEncoderPolicy(BasePolicy):
         self.optim_encoder.zero_grad()
         self.optim_decoder.zero_grad()
         self.optim_q.zero_grad()
-        # pop works 'cos Batch is kinda like an overloaded dictionary
+        # pop works 'cos Batch is basically an overloaded dictionary
         weight = batch.pop("weight", 1.0)
 
         # can't use the forward method as it is now to get what i want
@@ -205,9 +206,10 @@ class DQNOnReconstructionEncoderPolicy(BasePolicy):
         # TODO i have no idea what this input is
         # it is not a key, that's for sure
         #obs = batch[input]
+        # obs are in obs key, just using this works
         obs = batch.obs
         obs_next = obs.obs if hasattr(obs, "obs") else obs
-        obs_next = obs_next / 255.0
+        obs_next = torch.as_tensor(obs_next)
         embedded_obs = self.encoder(obs_next)
         decoded_obs = self.decoder(embedded_obs)
         logits, hidden = q_network(embedded_obs, state=None, info=batch.info)
@@ -225,6 +227,10 @@ class DQNOnReconstructionEncoderPolicy(BasePolicy):
         td_error = returns - q
         q_loss = (td_error.pow(2) * weight).mean()
         batch.weight = td_error
+        
+        # as it is now, this passes the loss through the encoder as well
+        # and we don't want that
+        # altough we can pass both gradients, that'd be a fun experiment
         q_loss.backward()
         self.optim_q.step()
 
@@ -234,16 +240,20 @@ class DQNOnReconstructionEncoderPolicy(BasePolicy):
         #    TypeError: 'int' object is not callable
         # the sizes are certainly correct tho....
 
-        print("decoded_obs.shape")
-        print(decoded_obs.shape)
-        print(decoded_obs)
-        print("obs_next.shape")
-        print(obs_next.shape)
-        print(obs_next)
+
+#        print("decoded_obs.shape")
+#        print(decoded_obs.shape)
+#        print(decoded_obs)
+#        print("obs_next.shape")
+#        print(obs_next.shape)
+#        print(obs_next)
+#        torch.save(decoded_obs, "/home/gospodar/chalmers/MASTER/RLmaster/decoded_obs")
+#        torch.save(obs_next, "/home/gospodar/chalmers/MASTER/RLmaster/obs_next")
         reconstruction_loss = self.reconstruction_criterion(decoded_obs, obs_next)
         reconstruction_loss.backward()
         self.optim_encoder.step()
         self.optim_decoder.step()
+
 
         self._iter += 1
         # TODO need to change return so that it also given encoder (and decoder?) loss
