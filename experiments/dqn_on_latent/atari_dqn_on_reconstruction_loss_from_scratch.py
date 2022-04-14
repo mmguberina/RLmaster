@@ -25,23 +25,23 @@ def get_args():
     parser.add_argument('--eps-test', type=float, default=0.005)
     parser.add_argument('--eps-train', type=float, default=1.)
     parser.add_argument('--eps-train-final', type=float, default=0.05)
-    #parser.add_argument('--buffer-size', type=int, default=100000)
-    parser.add_argument('--buffer-size', type=int, default=1000)
+    parser.add_argument('--buffer-size', type=int, default=100000)
+    #parser.add_argument('--buffer-size', type=int, default=1000)
     parser.add_argument('--lr', type=float, default=0.0001)
     parser.add_argument('--gamma', type=float, default=0.99)
     parser.add_argument('--n-step', type=int, default=3)
     parser.add_argument('--target-update-freq', type=int, default=500)
     parser.add_argument('--epoch', type=int, default=100)
-    #parser.add_argument('--step-per-epoch', type=int, default=100000)
-    parser.add_argument('--step-per-epoch', type=int, default=1000)
+    parser.add_argument('--step-per-epoch', type=int, default=100000)
+    #parser.add_argument('--step-per-epoch', type=int, default=1000)
     #parser.add_argument('--step-per-collect', type=int, default=8)
     parser.add_argument('--step-per-collect', type=int, default=8)
     parser.add_argument('--update-per-step', type=float, default=0.1)
     parser.add_argument('--batch-size', type=int, default=32)
-    #parser.add_argument('--training-num', type=int, default=8)
-    parser.add_argument('--training-num', type=int, default=1)
-   #parser.add_argument('--test-num', type=int, default=8)
-    parser.add_argument('--test-num', type=int, default=1)
+    parser.add_argument('--training-num', type=int, default=8)
+    #parser.add_argument('--training-num', type=int, default=1)
+    parser.add_argument('--test-num', type=int, default=8)
+    #parser.add_argument('--test-num', type=int, default=1)
     parser.add_argument('--logdir', type=str, default='log')
     parser.add_argument('--render', type=float, default=0.)
     parser.add_argument(
@@ -136,6 +136,7 @@ def test_dqn(args=get_args()):
         optim_encoder,
         optim_decoder,
         reconstruction_criterion,
+        args.device,
         features_dim,
         args.gamma,
         args.n_step,

@@ -30,6 +30,7 @@ class DQNOnReconstructionEncoderPolicy(BasePolicy):
         optim_encoder: torch.optim.Optimizer,
         optim_decoder: torch.optim.Optimizer,
         reconstruction_criterion,
+        device: str = "cpu",
         features_dim: int = 3136,
         discount_factor: float = 0.99,
         estimation_step: int = 1,
@@ -46,6 +47,7 @@ class DQNOnReconstructionEncoderPolicy(BasePolicy):
         self.optim_decoder = optim_decoder
         self.optim_q = optim_q
         self.reconstruction_criterion = reconstruction_criterion
+        self.device = device
         self.eps = 0.0
         assert 0.0 <= discount_factor <= 1.0, "discount has to be in [0,1]"
         self._gamma = discount_factor
@@ -210,8 +212,8 @@ class DQNOnReconstructionEncoderPolicy(BasePolicy):
         obs = batch.obs
         obs_next = obs.obs if hasattr(obs, "obs") else obs
         obs_next = torch.as_tensor(obs_next)
-        embedded_obs = self.encoder(obs_next)
-        decoded_obs = self.decoder(embedded_obs)
+        with torch.no_grad():
+            embedded_obs = self.encoder(obs_next)
         logits, hidden = q_network(embedded_obs, state=None, info=batch.info)
         q = self.compute_q_value(logits, getattr(obs, "mask", None))
         if not hasattr(self, "max_action_num"):
@@ -234,6 +236,8 @@ class DQNOnReconstructionEncoderPolicy(BasePolicy):
         q_loss.backward()
         self.optim_q.step()
 
+
+
         # reconstruction criteon does not work
         # says:
         #    if target.size() != input.size():
@@ -249,6 +253,9 @@ class DQNOnReconstructionEncoderPolicy(BasePolicy):
 #        print(obs_next)
 #        torch.save(decoded_obs, "/home/gospodar/chalmers/MASTER/RLmaster/decoded_obs")
 #        torch.save(obs_next, "/home/gospodar/chalmers/MASTER/RLmaster/obs_next")
+        obs_next = obs_next.to(self.device)
+        embedded_obs = self.encoder(obs_next)
+        decoded_obs = self.decoder(embedded_obs)
         reconstruction_loss = self.reconstruction_criterion(decoded_obs, obs_next)
         reconstruction_loss.backward()
         self.optim_encoder.step()
@@ -257,7 +264,7 @@ class DQNOnReconstructionEncoderPolicy(BasePolicy):
 
         self._iter += 1
         # TODO need to change return so that it also given encoder (and decoder?) loss
-        return {"loss": loss.item()}
+        return {"q_loss": q_loss.item()}
 
     def exploration_noise(self, act: Union[np.ndarray, Batch],
                             batch: Batch) -> Union[np.ndarray, Batch]:
