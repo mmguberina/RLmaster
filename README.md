@@ -34,6 +34,7 @@ the algorithm to do that is the following:
 -----------------------------------------------
 BEFORE PROCEEDING SOME THINGS NEED TO BE PUT IN PLACE FIRST
 1. completely automated logging.
+rationale: we have no time and no nerves to waste on busy work of manually renaming logging paths and similar bs
 1.1. simply save everthing:
 1.1.1. save all hyperparameters in a file or something. ensure easy loading and everthing.
 1.1.2. save every possibly interesting network, replay buffer, torch tensor, whatever. there are enough terabytes for everything.
@@ -49,3 +50,23 @@ you're asked which computer you want to run this on or you let the system select
 the master program prompts the computers it knows about, checks their current load and the number
 of tasks they have in their (your) job queue and selects the computer based on that.
 you receive a notification when something interesting happens and/or when an experiment is done.
+
+2. setting up autoencoder learning by itself from the replay buffer.
+rationale: this will enable easy testing of other embedding models. it is also necessary
+to get forward and inverse losses - that needs to be handled by properly sampling from the buffer.
+this is easier to deal with individually then by also having to immediatelly intergrate it
+with the policy learning. and also it's much easier to debug. it's a boring, but necessary step
+1.1. get the most vanilla autoencoder to work - the one which takes one frame, compresses and decompress
+it and gets loss computed on it.
+1.2. get the forward predicting autoencoder to work. so take in say 4 frames, compress them all into
+the 5th frame and calculate loss betweeen this frame prediction and the actual fifth frame that happened.
+this will probably work even better if you give it the action that happened betweeen the 4th and 5th frame
+as input as well. 
+achievign this requires knowing how batches are sampled
+from the buffer so that you know that you're actually working with appropriate frames.
+and yes this will require a lot of boring index management, but hey, that's life too.
+1.3 (LATER STEP) get the inverse model to work too
+1.4 write new utility and visualization function to be able to see the results.
+this will most likely be easiest to achieve if you just run it in testing mode
+from the replay buffer + rendering. that's so because the input will already be processes from 
+batches from the replay buffer, so why write new code to the same exact thing?
