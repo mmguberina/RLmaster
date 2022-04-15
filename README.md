@@ -8,6 +8,7 @@ Chalmers master thesis
 3. wrap generation of frames into some convenient torchvision loader method
 4. train the autoencoder on said generation method
 5. check results, including nice frame-by-frame comparisons of original and reconstructed frames
+--> done. needs more architecture experimenting and tuning, maybe adding so normalization in training, but the main stuff is there.
 
 
 #### Task 1 - discussion
@@ -20,7 +21,6 @@ we will get biased samples from the state space.
 compare the following 3 scenarios to test this hypothesis and to check how big the differences are:
 1. random sample actions to generate frames
 2. used an agent trained in a model-free or whatever manner to play the game and collect those frames
-3. hack the game so that you generate truly uniformly random states and sample frames from that
 --------------
 the algorithm to do that is the following:
 1. train the latent representation from chosen distribution (generation/sampling method)
@@ -30,17 +30,22 @@ the algorithm to do that is the following:
 
 ----------------------------------
 
-
-Yes, that is actually a valid problem. Store the frames from a random policy in a large buffer, and then train autoencoder on mini-batches in this buffer. It should give similar effect to hashing & removing frames. Maybe also only store every Nth frame. Better idea is to run multiple agents in parallel, and store each of their experience in a single buffer, and use that to train AE (this is what asynchronous A3C does).
-
-
-Paper-2 is already what I told you before, that directly use AE, instead of VAE, so their suggestions about tweaking learning rate will not help much.
-
-
-3rd way is to train a single AE, using multiple agents run not only on a single game, but variety of games (don't worry about sample efficiency for now). Because I believe everything your trying now won't work, since you are not able to reach many new states using a random policy, since the game ends quite soon. This is exactly the problem tacked by this paper: https://arxiv.org/abs/1901.10995 , and you should rather focus on its extensions or newer papers citing & using this idea.
-
-
-
-Best,
-Divya
-
+### Task 2: Training autoencoder in parallel with the policy
+-----------------------------------------------
+BEFORE PROCEEDING SOME THINGS NEED TO BE PUT IN PLACE FIRST
+1. completely automated logging.
+1.1. simply save everthing:
+1.1.1. save all hyperparameters in a file or something. ensure easy loading and everthing.
+1.1.2. save every possibly interesting network, replay buffer, torch tensor, whatever. there are enough terabytes for everything.
+1.1.3. automatically generate plots (pull from tensorboards) and save as png. 
+1.1.4. generate and save video performance. 
+1.1.5. automatically generate a tex file which exctracts the most important elements from all this.
+like 3 standard plots + add a line if something was the best or the worst so far. other stuff goes in a table
+or something. all this can be a python script which just writes these strings to a file for all i care.
+HOW TO KNOW YOU'RE DONE: you change hyperparameters in the experiment script.  you start the training by running
+the experiment script.
+you're promted to give a textual explanation of why you're doing what you're doing - that gets stored.
+you're asked which computer you want to run this on or you let the system select automatically.
+the master program prompts the computers it knows about, checks their current load and the number
+of tasks they have in their (your) job queue and selects the computer based on that.
+you receive a notification when something interesting happens and/or when an experiment is done.
