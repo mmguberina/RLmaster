@@ -26,22 +26,22 @@ def get_args():
     parser.add_argument('--eps-train', type=float, default=1.)
     parser.add_argument('--eps-train-final', type=float, default=0.05)
     parser.add_argument('--buffer-size', type=int, default=100000)
-    #parser.add_argument('--buffer-size', type=int, default=1000)
+#    parser.add_argument('--buffer-size', type=int, default=1000)
     parser.add_argument('--lr', type=float, default=0.0001)
     parser.add_argument('--gamma', type=float, default=0.99)
     parser.add_argument('--n-step', type=int, default=3)
     parser.add_argument('--target-update-freq', type=int, default=500)
     parser.add_argument('--epoch', type=int, default=100)
     parser.add_argument('--step-per-epoch', type=int, default=100000)
-    #parser.add_argument('--step-per-epoch', type=int, default=1000)
+#    parser.add_argument('--step-per-epoch', type=int, default=1000)
     #parser.add_argument('--step-per-collect', type=int, default=8)
     parser.add_argument('--step-per-collect', type=int, default=8)
     parser.add_argument('--update-per-step', type=float, default=0.1)
     parser.add_argument('--batch-size', type=int, default=32)
     parser.add_argument('--training-num', type=int, default=8)
-    #parser.add_argument('--training-num', type=int, default=1)
+#    parser.add_argument('--training-num', type=int, default=1)
     parser.add_argument('--test-num', type=int, default=8)
-    #parser.add_argument('--test-num', type=int, default=1)
+#    parser.add_argument('--test-num', type=int, default=1)
     parser.add_argument('--logdir', type=str, default='log')
     parser.add_argument('--render', type=float, default=0.)
     parser.add_argument(
@@ -159,7 +159,7 @@ def test_dqn(args=get_args()):
     train_collector = Collector(policy, train_envs, buffer, exploration_noise=True)
     test_collector = Collector(policy, test_envs, exploration_noise=True)
     # log
-    log_name = 'DQNOnReconstructionEncoderFromScratch'
+    log_name = 'DQNOnReconstructionEncoderFromScratch_test'
     log_path = os.path.join(args.logdir, args.task, log_name)
     if args.logger == "tensorboard":
         writer = SummaryWriter(log_path)
@@ -201,9 +201,13 @@ def test_dqn(args=get_args()):
 
     def save_checkpoint_fn(epoch, env_step, gradient_step):
         # see also: https://pytorch.org/tutorials/beginner/saving_loading_models.html
-        ckpt_path = os.path.join(log_path, 'checkpoint.pth')
-        torch.save({'model': policy.state_dict()}, ckpt_path)
-        return ckpt_path
+        ckpt_path_q_network = os.path.join(log_path, 'checkpoint_q_network_epoch_' + str(epoch) + '.pth')
+        ckpt_path_encoder = os.path.join(log_path, 'checkpoint_encoder_epoch_' + str(epoch) + '.pth')
+        ckpt_path_decoder = os.path.join(log_path, 'checkpoint_decoder_epoch_' + str(epoch) + '.pth')
+        torch.save({'q_network': policy.state_dict()}, ckpt_path_q_network)
+        torch.save({'encoder': encoder.state_dict()}, ckpt_path_encoder)
+        torch.save({'decoder': decoder.state_dict()}, ckpt_path_decoder)
+        return "useless string for a useless return"
 
     # watch agent's performance
     def watch():
@@ -237,6 +241,7 @@ def test_dqn(args=get_args()):
     if args.watch:
         watch()
         exit(0)
+
 
     # test train_collector and start filling replay buffer
     train_collector.collect(n_step=args.batch_size * args.training_num)
