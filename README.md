@@ -70,3 +70,8 @@ and yes this will require a lot of boring index management, but hey, that's life
 this will most likely be easiest to achieve if you just run it in testing mode
 from the replay buffer + rendering. that's so because the input will already be processes from 
 batches from the replay buffer, so why write new code to the same exact thing?
+
+3. writing the different models as nn.module classes.
+these should inherint from a BaseCNNAutoencoder or whatever.
+The differences between them will be minute, if any, and structuring them like this
+will make everything a bit easier to take care of.

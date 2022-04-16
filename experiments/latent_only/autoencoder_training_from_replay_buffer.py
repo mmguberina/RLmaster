@@ -5,48 +5,57 @@ import pprint
 import numpy as np
 import torch
 from RLmaster.network.atari_network import DQNNoEncoder
-from RLmaster.util.atari_wrapper import wrap_deepmind
+from RLmaster.util.atari_wrapper import wrap_deepmind, make_atari_env, make_atari_env_watch
 from torch.utils.tensorboard import SummaryWriter
 
 from tianshou.data import Collector, VectorReplayBuffer
-from tianshou.env import ShmemVectorEnv, RayVectorEnv
-from RLmaster.policy.reconstruction_loss_on_features_layers_q_on_last_ones import DQNOnReconstructionEncoderPolicy
-from RLmaster.latent_representations.autoencoder_nn import CNNEncoderNew, CNNDecoder
-#from tianshou.policy.modelbased.icm import ICMPolicy
+from tianshou.env import ShmemVectorEnv
+# TODO write the autoencoder only policy
+#from RLmaster.policy.autoencoder_only import AutoencoderOnly
+from RLmaster.policy.random import RandomPolicy
+from RLmaster.latent_representations.autoencoder_nn import CNNEncoderNew, CNNDecoderNew
 from tianshou.trainer import offpolicy_trainer
-from tianshou.utils import TensorboardLogger, WandbLogger
-from tianshou.utils.net.discrete import IntrinsicCuriosityModule
+from tianshou.utils import TensorboardLogger
+
+"""
+action are all random sampled
+1 frame (1,84,84) -> pass through autoencoder -> 1 frame (1,84,84)
+"""
 
 
 def get_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('--task', type=str, default='PongNoFrameskip-v4')
+    parser.add_argument('--features_dim', type=int, default=3136)
     parser.add_argument('--seed', type=int, default=0)
-    parser.add_argument('--eps-test', type=float, default=0.005)
-    parser.add_argument('--eps-train', type=float, default=1.)
-    parser.add_argument('--eps-train-final', type=float, default=0.05)
-    parser.add_argument('--buffer-size', type=int, default=100000)
-#    parser.add_argument('--buffer-size', type=int, default=1000)
+#    parser.add_argument('--buffer-size', type=int, default=100000)
+    parser.add_argument('--buffer-size', type=int, default=100)
     parser.add_argument('--lr', type=float, default=0.0001)
-    parser.add_argument('--gamma', type=float, default=0.99)
-    parser.add_argument('--n-step', type=int, default=3)
-    parser.add_argument('--target-update-freq', type=int, default=500)
-    parser.add_argument('--epoch', type=int, default=100)
+    # TODO understand where exactly this is used and why
+    # it's probably how often you update the target policy network in deep-Q
+#    parser.add_argument('--target-update-freq', type=int, default=500)
+    parser.add_argument('--target-update-freq', type=int, default=5)
+#    parser.add_argument('--epoch', type=int, default=100)
+    parser.add_argument('--epoch', type=int, default=5)
     parser.add_argument('--step-per-epoch', type=int, default=100000)
-#    parser.add_argument('--step-per-epoch', type=int, default=1000)
-    #parser.add_argument('--step-per-collect', type=int, default=8)
+    # TODO why 8?
     parser.add_argument('--step-per-collect', type=int, default=8)
+    # TODO understand where exactly this is used and why
+    # why is this a float?
     parser.add_argument('--update-per-step', type=float, default=0.1)
     parser.add_argument('--batch-size', type=int, default=32)
     parser.add_argument('--training-num', type=int, default=8)
-#    parser.add_argument('--training-num', type=int, default=1)
+    # tests aren't necessary as we're free to overfit as much as we want
+    # the training domain IS the testing domain
     parser.add_argument('--test-num', type=int, default=8)
-#    parser.add_argument('--test-num', type=int, default=1)
     parser.add_argument('--logdir', type=str, default='log')
     parser.add_argument('--render', type=float, default=0.)
     parser.add_argument(
         '--device', type=str, default='cuda' if torch.cuda.is_available() else 'cpu'
     )
+    # NOTE: frame stacking needs to be 1 for what we're doing now
+    # but let's keep it like a parameter here to avoid unnecessary code
+#    parser.add_argument('--frames-stack', type=int, default=1)
     parser.add_argument('--frames-stack', type=int, default=4)
     parser.add_argument('--resume-path', type=str, default=None)
     parser.add_argument('--resume-id', type=str, default=None)
@@ -63,41 +72,13 @@ def get_args():
         help='watch the play of pre-trained policy only'
     )
     parser.add_argument('--save-buffer-name', type=str, default=None)
-    parser.add_argument(
-        '--icm-lr-scale',
-        type=float,
-        default=0.,
-        help='use intrinsic curiosity module with this lr scale'
-    )
-    parser.add_argument(
-        '--icm-reward-scale',
-        type=float,
-        default=0.01,
-        help='scaling factor for intrinsic curiosity reward'
-    )
-    parser.add_argument(
-        '--icm-forward-loss-weight',
-        type=float,
-        default=0.2,
-        help='weight for the forward model loss in ICM'
-    )
     return parser.parse_args()
 
 
-def make_atari_env(args):
-    return wrap_deepmind(args.task, frame_stack=args.frames_stack)
 
-
-def make_atari_env_watch(args):
-    return wrap_deepmind(
-        args.task,
-        frame_stack=args.frames_stack,
-        episode_life=False,
-        clip_rewards=False
-    )
-
-
-def test_dqn(args=get_args()):
+if __name__ == '__main__':
+#def test_dqn(args=get_args()):
+    args=get_args()
     env = make_atari_env(args)
     args.state_shape = env.observation_space.shape or env.observation_space.n
     args.action_shape = env.action_space.shape or env.action_space.n
@@ -116,32 +97,15 @@ def test_dqn(args=get_args()):
     torch.manual_seed(args.seed)
     train_envs.seed(args.seed)
     test_envs.seed(args.seed)
-    # define model
-    q_net = DQNNoEncoder(args.action_shape, args.device).to(args.device)
-    # TODO put this features_dim in arguments later, make code clean
-    features_dim = 3136 
-    encoder = CNNEncoderNew(observation_shape=args.state_shape, features_dim=features_dim, device=args.device).to(args.device)
-    decoder = CNNDecoder(observation_shape=args.state_shape, n_flatten=encoder.n_flatten, features_dim=features_dim).to(args.device)
-    optim_q = torch.optim.Adam(q_net.parameters(), lr=args.lr)
+    policy = RandomPolicy(args.action_shape)
+    encoder = CNNEncoderNew(observation_shape=args.state_shape, features_dim=args.features_dim, device=args.device).to(args.device)
+    decoder = CNNDecoderNew(observation_shape=args.state_shape, n_flatten=encoder.n_flatten, features_dim=args.features_dim).to(args.device)
     optim_encoder = torch.optim.Adam(encoder.parameters(), lr=args.lr)
     optim_decoder = torch.optim.Adam(decoder.parameters(), lr=args.lr)
     reconstruction_criterion = torch.nn.BCELoss()
-    # define policy
-    # TODO add this to device and solve the whole device situation
-    policy = DQNOnReconstructionEncoderPolicy(
-        encoder,
-        decoder,
-        q_net,
-        optim_q,
-        optim_encoder,
-        optim_decoder,
-        reconstruction_criterion,
-        args.device,
-        features_dim,
-        args.gamma,
-        args.n_step,
-        target_update_freq=args.target_update_freq,
-    )
+    # TODO change policy once you'll have it define policy
+    # also write this learning as a policy-wrapper around an actual policy
+    # for this file this actual policy will be RandomPolicy
     # load a previous policy
     if args.resume_path:
         policy.load_state_dict(torch.load(args.resume_path, map_location=args.device))
@@ -159,23 +123,15 @@ def test_dqn(args=get_args()):
     train_collector = Collector(policy, train_envs, buffer, exploration_noise=True)
     test_collector = Collector(policy, test_envs, exploration_noise=True)
     # log
-    log_name = 'DQNOnReconstructionEncoderFromScratch_test'
+    log_name = 'ae_from_replay_buffer_test'
     log_path = os.path.join(args.logdir, args.task, log_name)
-    if args.logger == "tensorboard":
-        writer = SummaryWriter(log_path)
-        writer.add_text("args", str(args))
-        logger = TensorboardLogger(writer)
-    else:
-        logger = WandbLogger(
-            save_interval=1,
-            project=args.task,
-            name=log_name,
-            run_id=args.resume_id,
-            config=args,
-        )
+    writer = SummaryWriter(log_path)
+    writer.add_text("args", str(args))
+    logger = TensorboardLogger(writer)
 
     def save_fn(policy):
-        torch.save(policy.state_dict(), os.path.join(log_path, 'policy.pth'))
+        torch.save(encoder.state_dict(), os.path.join(log_path, 'encoder.pth'))
+        torch.save(decoder.state_dict(), os.path.join(log_path, 'decoder.pth'))
 
     def stop_fn(mean_rewards):
         if env.spec.reward_threshold:
@@ -187,24 +143,26 @@ def test_dqn(args=get_args()):
 
     def train_fn(epoch, env_step):
         # nature DQN setting, linear decay in the first 1M steps
-        if env_step <= 1e6:
-            eps = args.eps_train - env_step / 1e6 * \
-                (args.eps_train - args.eps_train_final)
-        else:
-            eps = args.eps_train_final
-        policy.set_eps(eps)
+        # NOTE none of this is a thing here because we're using a random policy,
+        # and not q-learning
+#        if env_step <= 1e6:
+#            eps = args.eps_train - env_step / 1e6 * \
+#                (args.eps_train - args.eps_train_final)
+#        else:
+#            eps = args.eps_train_final
+#        policy.set_eps(eps)
         if env_step % 1000 == 0:
             logger.write("train/env_step", env_step, {"train/eps": eps})
 
     def test_fn(epoch, env_step):
-        policy.set_eps(args.eps_test)
+        pass
+        # NOTE none of this is a thing here because we're using a random policy,
+        #policy.set_eps(args.eps_test)
 
     def save_checkpoint_fn(epoch, env_step, gradient_step):
         # see also: https://pytorch.org/tutorials/beginner/saving_loading_models.html
-        ckpt_path_q_network = os.path.join(log_path, 'checkpoint_q_network_epoch_' + str(epoch) + '.pth')
         ckpt_path_encoder = os.path.join(log_path, 'checkpoint_encoder_epoch_' + str(epoch) + '.pth')
         ckpt_path_decoder = os.path.join(log_path, 'checkpoint_decoder_epoch_' + str(epoch) + '.pth')
-        torch.save({'q_network': policy.state_dict()}, ckpt_path_q_network)
         torch.save({'encoder': encoder.state_dict()}, ckpt_path_encoder)
         torch.save({'decoder': decoder.state_dict()}, ckpt_path_decoder)
         return "useless string for a useless return"
@@ -212,8 +170,6 @@ def test_dqn(args=get_args()):
     # watch agent's performance
     def watch():
         print("Setup test envs ...")
-        policy.eval()
-        policy.set_eps(args.eps_test)
         test_envs.seed(args.seed)
         if args.save_buffer_name:
             print(f"Generate buffer with size {args.buffer_size}")
@@ -246,6 +202,9 @@ def test_dqn(args=get_args()):
     # test train_collector and start filling replay buffer
     train_collector.collect(n_step=args.batch_size * args.training_num)
     # trainer
+    # don't need to run it right now
+    # just want to check the buffer out
+    """
     result = offpolicy_trainer(
         policy,
         train_collector,
@@ -268,7 +227,8 @@ def test_dqn(args=get_args()):
 
     pprint.pprint(result)
     watch()
+    """
 
 
-if __name__ == '__main__':
-    test_dqn(get_args())
+#if __name__ == '__main__':
+#    test_dqn(get_args())

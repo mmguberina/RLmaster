@@ -9,6 +9,19 @@ from torchvision import transforms
 import torch
 from RLmaster.latent_representations.autoencoder_nn import CNNEncoder, CNNDecoder
 
+
+def make_atari_env(args):
+    return wrap_deepmind(args.task, frame_stack=args.frames_stack)
+
+
+def make_atari_env_watch(args):
+    return wrap_deepmind(
+        args.task,
+        frame_stack=args.frames_stack,
+        episode_life=False,
+        clip_rewards=False
+    )
+
 class AutoencoderEnv(gym.ObservationWrapper):
     """
     used to visualize the autoencoder in action,

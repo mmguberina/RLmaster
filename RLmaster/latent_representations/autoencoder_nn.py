@@ -169,7 +169,7 @@ class CNNEncoderNew(nn.Module):
 
 class CNNDecoderNew(nn.Module):
     def __init__(self, observation_shape, n_flatten, features_dim: int = 3136):
-        super(CNNDecoder, self).__init__()
+        super(CNNDecoderNew, self).__init__()
         self.observation_shape = observation_shape
         self._features_dim = features_dim
         n_input_channels = self.observation_shape[0]
