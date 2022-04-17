@@ -13,7 +13,9 @@ from tianshou.env import ShmemVectorEnv
 # TODO write the autoencoder only policy
 #from RLmaster.policy.autoencoder_only import AutoencoderOnly
 from RLmaster.policy.random import RandomPolicy
+from RLmaster.latent_representations.autoencoder_learning_as_policy_wrapper import AutoencoderLatentSpacePolicy
 from RLmaster.latent_representations.autoencoder_nn import CNNEncoderNew, CNNDecoderNew
+from RLmaster.util.collector_on_latent import CollectorOnLatent
 from tianshou.trainer import offpolicy_trainer
 from tianshou.utils import TensorboardLogger
 
@@ -44,10 +46,12 @@ def get_args():
     # why is this a float?
     parser.add_argument('--update-per-step', type=float, default=0.1)
     parser.add_argument('--batch-size', type=int, default=32)
-    parser.add_argument('--training-num', type=int, default=8)
+#    parser.add_argument('--training-num', type=int, default=8)
+    parser.add_argument('--training-num', type=int, default=2)
     # tests aren't necessary as we're free to overfit as much as we want
     # the training domain IS the testing domain
-    parser.add_argument('--test-num', type=int, default=8)
+#    parser.add_argument('--test-num', type=int, default=8)
+    parser.add_argument('--test-num', type=int, default=1)
     parser.add_argument('--logdir', type=str, default='log')
     parser.add_argument('--render', type=float, default=0.)
     parser.add_argument(
@@ -55,8 +59,9 @@ def get_args():
     )
     # NOTE: frame stacking needs to be 1 for what we're doing now
     # but let's keep it like a parameter here to avoid unnecessary code
+    parser.add_argument('--frames-stack', type=int, default=2)
 #    parser.add_argument('--frames-stack', type=int, default=1)
-    parser.add_argument('--frames-stack', type=int, default=4)
+#    parser.add_argument('--frames-stack', type=int, default=4)
     parser.add_argument('--resume-path', type=str, default=None)
     parser.add_argument('--resume-id', type=str, default=None)
     parser.add_argument(
@@ -65,12 +70,15 @@ def get_args():
         default="tensorboard",
         choices=["tensorboard", "wandb"],
     )
-    parser.add_argument(
-        '--watch',
-        default=False,
-        action='store_true',
-        help='watch the play of pre-trained policy only'
-    )
+# TODO write the watch function
+# basically run some functions from visualize
+# or don't 'cos you'll be cloud training, whatever
+#    parser.add_argument(
+#        '--watch',
+#        default=False,
+#        action='store_true',
+#        help='watch the play of pre-trained policy only'
+#    )
     parser.add_argument('--save-buffer-name', type=str, default=None)
     return parser.parse_args()
 
@@ -97,7 +105,7 @@ if __name__ == '__main__':
     torch.manual_seed(args.seed)
     train_envs.seed(args.seed)
     test_envs.seed(args.seed)
-    policy = RandomPolicy(args.action_shape)
+    rl_policy = RandomPolicy(args.action_shape)
     encoder = CNNEncoderNew(observation_shape=args.state_shape, features_dim=args.features_dim, device=args.device).to(args.device)
     decoder = CNNDecoderNew(observation_shape=args.state_shape, n_flatten=encoder.n_flatten, features_dim=args.features_dim).to(args.device)
     optim_encoder = torch.optim.Adam(encoder.parameters(), lr=args.lr)
@@ -107,6 +115,16 @@ if __name__ == '__main__':
     # also write this learning as a policy-wrapper around an actual policy
     # for this file this actual policy will be RandomPolicy
     # load a previous policy
+    policy = AutoencoderLatentSpacePolicy(
+        rl_policy,
+        encoder,
+        decoder,
+        optim_encoder,
+        optim_decoder,
+        reconstruction_criterion,
+        args.batch_size,
+        args.frames_stack
+    )
     if args.resume_path:
         policy.load_state_dict(torch.load(args.resume_path, map_location=args.device))
         print("Loaded agent from: ", args.resume_path)
@@ -120,6 +138,8 @@ if __name__ == '__main__':
         stack_num=args.frames_stack
     )
     # collector
+    #train_collector = CollectorOnLatent(policy, train_envs, buffer, exploration_noise=True)
+    #test_collector = CollectorOnLatent(policy, test_envs, exploration_noise=True)
     train_collector = Collector(policy, train_envs, buffer, exploration_noise=True)
     test_collector = Collector(policy, test_envs, exploration_noise=True)
     # log
@@ -141,9 +161,10 @@ if __name__ == '__main__':
         else:
             return False
 
+    # nature DQN setting, linear decay in the first 1M steps
+    # NOTE none of this is a thing here because we're using a random policy,
     def train_fn(epoch, env_step):
-        # nature DQN setting, linear decay in the first 1M steps
-        # NOTE none of this is a thing here because we're using a random policy,
+        pass
         # and not q-learning
 #        if env_step <= 1e6:
 #            eps = args.eps_train - env_step / 1e6 * \
@@ -151,8 +172,8 @@ if __name__ == '__main__':
 #        else:
 #            eps = args.eps_train_final
 #        policy.set_eps(eps)
-        if env_step % 1000 == 0:
-            logger.write("train/env_step", env_step, {"train/eps": eps})
+#        if env_step % 1000 == 0:
+#            logger.write("train/env_step", env_step, {"train/eps": eps})
 
     def test_fn(epoch, env_step):
         pass
@@ -168,35 +189,39 @@ if __name__ == '__main__':
         return "useless string for a useless return"
 
     # watch agent's performance
-    def watch():
-        print("Setup test envs ...")
-        test_envs.seed(args.seed)
-        if args.save_buffer_name:
-            print(f"Generate buffer with size {args.buffer_size}")
-            buffer = VectorReplayBuffer(
-                args.buffer_size,
-                buffer_num=len(test_envs),
-                ignore_obs_next=True,
-                save_only_last_obs=True,
-                stack_num=args.frames_stack
-            )
-            collector = Collector(policy, test_envs, buffer, exploration_noise=True)
-            result = collector.collect(n_step=args.buffer_size)
-            print(f"Save buffer into {args.save_buffer_name}")
-            # Unfortunately, pickle will cause oom with 1M buffer size
-            buffer.save_hdf5(args.save_buffer_name)
-        else:
-            print("Testing agent ...")
-            test_collector.reset()
-            result = test_collector.collect(
-                n_episode=args.test_num, render=args.render
-            )
-        rew = result["rews"].mean()
-        print(f'Mean reward (over {result["n/ep"]} episodes): {rew}')
+    # TODO write this or decide to delete it
+#    def watch():
+#        print("Setup test envs ...")
+#        test_envs.seed(args.seed)
+#        if args.save_buffer_name:
+#            print(f"Generate buffer with size {args.buffer_size}")
+#            buffer = VectorReplayBuffer(
+#                args.buffer_size,
+#                buffer_num=len(test_envs),
+#                ignore_obs_next=True,
+#                save_only_last_obs=True,
+#                stack_num=args.frames_stack
+#            )
+#            collector = Collector(policy, test_envs, buffer, exploration_noise=True)
+#            result = collector.collect(n_step=args.buffer_size)
+#            print(f"Save buffer into {args.save_buffer_name}")
+#            # Unfortunately, pickle will cause oom with 1M buffer size
+#            buffer.save_hdf5(args.save_buffer_name)
+#        else:
+#            print("Testing agent ...")
+#            test_collector.reset()
+#            result = test_collector.collect(
+#                n_episode=args.test_num, render=args.render
+#            )
+#        rew = result["rews"].mean()
+#        print(f'Mean reward (over {result["n/ep"]} episodes): {rew}')
 
-    if args.watch:
-        watch()
-        exit(0)
+# TODO write the watch function
+# basically run some functions from visualize
+# or don't 'cos you'll be cloud training, whatever
+#    if args.watch:
+#        watch()
+#        exit(0)
 
 
     # test train_collector and start filling replay buffer
@@ -204,7 +229,7 @@ if __name__ == '__main__':
     # trainer
     # don't need to run it right now
     # just want to check the buffer out
-    """
+    
     result = offpolicy_trainer(
         policy,
         train_collector,
@@ -227,7 +252,7 @@ if __name__ == '__main__':
 
     pprint.pprint(result)
     watch()
-    """
+    
 
 
 #if __name__ == '__main__':

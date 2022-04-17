@@ -2,6 +2,10 @@ import numpy as np
 import torch
 import torch.nn.functional as F
 from copy import deepcopy
+<<<<<<< HEAD
+=======
+from typing import Any, Callable, Dict, Optional, Tuple, Union
+>>>>>>> e9cdd001 (todays progress. making an autoencoder learn from replay buffer is almost done (needs debugging). also implemented it as a wrapper around the policy. making a few combinations on top of this will be easy money once its debug because the code architecture is on point. after thats done, experiment automation is next and the we can finally let it rip and see some results.)
 
 from tianshou.data import Batch, ReplayBuffer, to_numpy, to_torch
 from tianshou.policy import BasePolicy
@@ -39,7 +43,14 @@ class AutoencoderLatentSpacePolicy(BasePolicy):
         decoder: CNNEncoderNew,
         optim_encoder: torch.optim.Optimizer,
         optim_decoder: torch.optim.Optimizer,
+<<<<<<< HEAD
         lr_scale: float,
+=======
+        reconstruction_criterion,
+        batch_size: int,
+        frames_stack: int,
+        lr_scale: float = 0.001,
+>>>>>>> e9cdd001 (todays progress. making an autoencoder learn from replay buffer is almost done (needs debugging). also implemented it as a wrapper around the policy. making a few combinations on top of this will be easy money once its debug because the code architecture is on point. after thats done, experiment automation is next and the we can finally let it rip and see some results.)
         pass_policy_grad: bool = False,
         **kwargs: Any,
     ) -> None:
@@ -49,6 +60,12 @@ class AutoencoderLatentSpacePolicy(BasePolicy):
         self.decoder = decoder
         self.optim_encoder = optim_encoder
         self.optim_decoder = optim_decoder
+<<<<<<< HEAD
+=======
+        self.reconstruction_criterion = reconstruction_criterion
+        self.batch_size = batch_size
+        self.frames_stack = frames_stack
+>>>>>>> e9cdd001 (todays progress. making an autoencoder learn from replay buffer is almost done (needs debugging). also implemented it as a wrapper around the policy. making a few combinations on top of this will be easy money once its debug because the code architecture is on point. after thats done, experiment automation is next and the we can finally let it rip and see some results.)
         self.pass_policy_grad = pass_policy_grad
         self.lr_scale = lr_scale
 
@@ -83,8 +100,51 @@ class AutoencoderLatentSpacePolicy(BasePolicy):
         # just replace the observation in the batch with embedded observations
         # TODO check if this actually works. there's no reason why it shouldn't,
         # but i'm not 100% on this.
+<<<<<<< HEAD
         batch[input] = self.encoder(batch[input])
         return self.policy.forward(batch, state, **kwargs)
+=======
+        #####################################33
+        # TODO
+        # it does not work. it manages to fuck with the replay buffer.
+        # the replay buffer does not save what it should because of this.
+        # it saves the batch to the replay buffer AFTER the forward pass, 
+        # which is actually good because you want to store the action as well.
+        # POINT IS you can't change the batch.obs here
+        # SOLUTION:
+        # add embedded obs as an extra key.
+        # yes this means you'll need to rewrite every single policy code to use
+        # this key instead of the obs key. and thus copy-paste every tianshou policy
+        # just to change this 1 line of code. but that's life bro. even though
+        # it's copying a lot of policies, it's better than rewriting how collector works imo.
+        # or is it????
+        # ---> yes it is, better to change 1 file than 10.
+        # so te FINAL SOLUTION is: 
+        # save original obs under new key called, say, orig_obs
+        # copy-paste collector code into CollectorOnEmbeddedSpace
+        # update the self.data batch not with obs=obs, but with obs=obs_orig or whatever
+        # TODO QUESTION: does it make sense to store the embedded observations too?
+        # certainly not just to have autoencoder learning, but what when the policy is learning?
+        # the policy learning will be more stable ....... maybe?
+        # the autoencoder shifts with learning, ergo same obs is not the same embedded_obs with 
+        # ----> nvm, you can send a different key to forward
+        # -------> so save embedded_obs in batch and make that the input key
+        # different autoencoders. thus after learning, the samples in the replay buffer are wrong.
+        # if you recalculate the embeddings, the chosen action potentially changes.
+        # and then what are you learning and updating?
+        # maybe this whole approch works better with on-policy algorithms?
+        # TODO YOU NEED TO FIND A WAY TO MEASURE EMBEDDING DISTRIBUTIONAL SHIFT
+        # YOU NEED TO QUANTIFY CATASTROPHIC FORGETTING
+        #batch.orig_obs = deepcopy(batch.obs)
+        #print(batch.orig_obs.shape)
+        # the below should be:
+        #batch.embedded_obs = self.encoder(batch[input])
+        # but to avoid needing to change policy code it is:
+        batch.embedded_obs = to_numpy(self.encoder(batch[input]))
+        #batch.obs = to_numpy(embedded_obs)
+        #print(batch.orig_obs.shape)
+        return self.policy.forward(batch, state, input="embedded_obs", **kwargs)
+>>>>>>> e9cdd001 (todays progress. making an autoencoder learn from replay buffer is almost done (needs debugging). also implemented it as a wrapper around the policy. making a few combinations on top of this will be easy money once its debug because the code architecture is on point. after thats done, experiment automation is next and the we can finally let it rip and see some results.)
 
     def set_eps(self, eps: float) -> None:
         """Set the eps for epsilon-greedy exploration."""
@@ -116,6 +176,7 @@ class AutoencoderLatentSpacePolicy(BasePolicy):
         # we don't do anything here, just pass it further to inner policy post-processing
         self.policy.post_process_fn(batch, buffer, indices)
 
+<<<<<<< HEAD
 # TODO rewrite this so that it works for the current usecase    
     def learn(self, batch: Batch, **kwargs: Any) -> Dict[str, float]:
         # pass through encoder with no_grad here
@@ -137,13 +198,43 @@ class AutoencoderLatentSpacePolicy(BasePolicy):
             (1 - self.forward_loss_weight) * inverse_loss +
             self.forward_loss_weight * forward_loss
         ) * self.lr_scale
+=======
+    def learn(self, batch: Batch, **kwargs: Any) -> Dict[str, float]:
+        # pass through encoder with no_grad here
+        # TODO don't really know if deepcopy is necessary here given that the array is stored in a batch (dictionary)
+        #print("from learn")
+        #print("===================================")
+        #obs = deepcopy(batch.obs)
+        #print(obs.shape)
+        #print("===================================")
+#        print(batch)
+#        print(batch.shape)
+# NOTE: stupid hack for a stupid problem...
+        if self.frames_stack == 1:
+            batch.obs = to_torch(batch.obs).view(self.batch_size, self.frames_stack, 84, 84)
+        with torch.no_grad():
+            batch.embedded_obs = self.encoder(batch.obs)
+            #batch.embedded_obs = self.encoder(to_torch(batch.obs).view(32, 1, 84, 84))
+        # then do this policy learn thing
+        res = self.policy.learn(batch, input="embedded_obs", **kwargs)
+
+        # and now here pass again through encoder, pass trough decoder and do the update
+        self.optim_encoder.zero_grad()
+        self.optim_decoder.zero_grad()
+        decoded_obs = self.decoder(self.encoder(batch.obs))
+        loss = self.reconstruction_criterion(decoded_obs, batch.obs)
+>>>>>>> e9cdd001 (todays progress. making an autoencoder learn from replay buffer is almost done (needs debugging). also implemented it as a wrapper around the policy. making a few combinations on top of this will be easy money once its debug because the code architecture is on point. after thats done, experiment automation is next and the we can finally let it rip and see some results.)
         loss.backward()
         self.optim.step()
         res.update(
             {
+<<<<<<< HEAD
                 "loss/icm": loss.item(),
                 "loss/icm/forward": forward_loss.item(),
                 "loss/icm/inverse": inverse_loss.item()
+=======
+                "loss/autoencoder": loss.item(),
+>>>>>>> e9cdd001 (todays progress. making an autoencoder learn from replay buffer is almost done (needs debugging). also implemented it as a wrapper around the policy. making a few combinations on top of this will be easy money once its debug because the code architecture is on point. after thats done, experiment automation is next and the we can finally let it rip and see some results.)
             }
         )
         return res
