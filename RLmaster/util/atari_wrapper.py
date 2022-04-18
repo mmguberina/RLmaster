@@ -29,7 +29,7 @@ class AutoencoderEnv(gym.ObservationWrapper):
     well, see it .
     totaly useless otherwise
     """
-    def __init__(self, env, encoder, decoder):
+    def __init__(self, env, encoder, decoder, frames_stack):
         super().__init__(env)
         self.size = 84
         self.observation_space = gym.spaces.Box(
@@ -41,12 +41,14 @@ class AutoencoderEnv(gym.ObservationWrapper):
         self.transform = transforms.ToTensor()
         self.encoder = encoder
         self.decoder = decoder
+        self.frames_stack = frames_stack
 
     def observation(self, frame):
         """passes the observation through the autoencoder so that it's performance
         may be judged"""
+        #frame = self.transform(frame / 255)
         frame = self.transform(frame)
-        frame = frame.view([1,1,84,84])
+        frame = frame.view([1,self.frames_stack,84,84])
         with torch.no_grad():
             encoded = self.encoder(frame)
             decoded = self.decoder(encoded)

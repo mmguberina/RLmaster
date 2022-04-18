@@ -43,6 +43,7 @@ class AutoencoderLatentSpacePolicy(BasePolicy):
         reconstruction_criterion,
         batch_size: int,
         frames_stack: int,
+        device: str = "cpu",
         lr_scale: float = 0.001,
         pass_policy_grad: bool = False,
         **kwargs: Any,
@@ -54,6 +55,7 @@ class AutoencoderLatentSpacePolicy(BasePolicy):
         self.optim_encoder = optim_encoder
         self.optim_decoder = optim_decoder
         self.reconstruction_criterion = reconstruction_criterion
+        self.device = device
         self.batch_size = batch_size
         self.frames_stack = frames_stack
         self.pass_policy_grad = pass_policy_grad
@@ -173,23 +175,44 @@ class AutoencoderLatentSpacePolicy(BasePolicy):
 #        print(batch.shape)
 # NOTE: stupid hack for a stupid problem...
         if self.frames_stack == 1:
-            batch.obs = to_torch(batch.obs).view(self.batch_size, self.frames_stack, 84, 84)
+            batch.obs = to_torch(batch.obs, device=self.device).view(self.batch_size, self.frames_stack, 84, 84)
+        else:
+            batch.obs = to_torch(batch.obs, device=self.device)
         with torch.no_grad():
             batch.embedded_obs = self.encoder(batch.obs)
             #batch.embedded_obs = self.encoder(to_torch(batch.obs).view(32, 1, 84, 84))
-        # then do this policy learn thing
+        # do policy learn on embedded
+        # TODO make this work:
+        # 0) ensure you can actually pass input key through learn (not convinced that you can)
+        # ---> a) save embedded_obs in replay buffer, use that
+        # ---> b) pass the newly embedded (like we did now (make less sense overall intuitively but that says close to nothing))
         res = self.policy.learn(batch, input="embedded_obs", **kwargs)
 
         # and now here pass again through encoder, pass trough decoder and do the update
         self.optim_encoder.zero_grad()
         self.optim_decoder.zero_grad()
         decoded_obs = self.decoder(self.encoder(batch.obs))
-        loss = self.reconstruction_criterion(decoded_obs, batch.obs)
-        loss.backward()
-        self.optim.step()
+        
+#        print("===================================")
+#        print("===================================")
+#        print(batch.obs)
+#        print(type(batch.obs))
+#        print(batch.obs.shape)
+#        print("===================================")
+#        print(decoded_obs)
+#        print(type(decoded_obs))
+#        print(decoded_obs.shape)
+        # batch.obs is of shape (batch_size, frames_stack, 84, 84)
+        # decoded_obs is of shape (batch_size, 1, 84, 84) and we want it to learn, say, the last frame only
+        # which means we have to somehow correctly slice batch.obs so that only the last frames are left
+        # tried it in shell, this worked 
+        reconstruction_loss = self.reconstruction_criterion(decoded_obs, batch.obs[:, -1, :, :].view(-1, 1, 84, 84))
+        reconstruction_loss.backward()
+        self.optim_encoder.step()
+        self.optim_decoder.step()
         res.update(
             {
-                "loss/autoencoder": loss.item(),
+                "loss/autoencoder": reconstruction_loss.item(),
             }
         )
         return res

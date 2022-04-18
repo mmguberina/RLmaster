@@ -7,6 +7,7 @@ import torch
 from RLmaster.network.atari_network import DQNNoEncoder
 from RLmaster.util.atari_wrapper import wrap_deepmind, make_atari_env, make_atari_env_watch
 from torch.utils.tensorboard import SummaryWriter
+from RLmaster.util.save_load_hyperparameters import save_hyperparameters
 
 from tianshou.data import Collector, VectorReplayBuffer
 from tianshou.env import ShmemVectorEnv
@@ -30,9 +31,9 @@ def get_args():
     parser.add_argument('--task', type=str, default='PongNoFrameskip-v4')
     parser.add_argument('--features_dim', type=int, default=3136)
     parser.add_argument('--seed', type=int, default=0)
-#    parser.add_argument('--buffer-size', type=int, default=100000)
-    parser.add_argument('--buffer-size', type=int, default=100)
-    parser.add_argument('--lr', type=float, default=0.0001)
+    parser.add_argument('--buffer-size', type=int, default=100000)
+#    parser.add_argument('--buffer-size', type=int, default=100)
+    parser.add_argument('--lr', type=float, default=0.001)
     # TODO understand where exactly this is used and why
     # it's probably how often you update the target policy network in deep-Q
 #    parser.add_argument('--target-update-freq', type=int, default=500)
@@ -44,23 +45,25 @@ def get_args():
     parser.add_argument('--step-per-collect', type=int, default=8)
     # TODO understand where exactly this is used and why
     # why is this a float?
-    parser.add_argument('--update-per-step', type=float, default=0.1)
-    parser.add_argument('--batch-size', type=int, default=32)
-#    parser.add_argument('--training-num', type=int, default=8)
-    parser.add_argument('--training-num', type=int, default=2)
+#    parser.add_argument('--update-per-step', type=float, default=0.1)
+    parser.add_argument('--update-per-step', type=float, default=0.6)
+    parser.add_argument('--batch-size', type=int, default=64)
+    parser.add_argument('--training-num', type=int, default=8)
+#    parser.add_argument('--training-num', type=int, default=2)
     # tests aren't necessary as we're free to overfit as much as we want
     # the training domain IS the testing domain
 #    parser.add_argument('--test-num', type=int, default=8)
     parser.add_argument('--test-num', type=int, default=1)
     parser.add_argument('--logdir', type=str, default='log')
+    parser.add_argument('--log_name', type=str, default='unlabelled_experiment')
     parser.add_argument('--render', type=float, default=0.)
     parser.add_argument(
         '--device', type=str, default='cuda' if torch.cuda.is_available() else 'cpu'
     )
     # NOTE: frame stacking needs to be 1 for what we're doing now
     # but let's keep it like a parameter here to avoid unnecessary code
-    parser.add_argument('--frames-stack', type=int, default=2)
-#    parser.add_argument('--frames-stack', type=int, default=1)
+#    parser.add_argument('--frames-stack', type=int, default=2)
+    parser.add_argument('--frames-stack', type=int, default=1)
 #    parser.add_argument('--frames-stack', type=int, default=4)
     parser.add_argument('--resume-path', type=str, default=None)
     parser.add_argument('--resume-id', type=str, default=None)
@@ -80,7 +83,8 @@ def get_args():
 #        help='watch the play of pre-trained policy only'
 #    )
     parser.add_argument('--save-buffer-name', type=str, default=None)
-    return parser.parse_args()
+    args = parser.parse_args()
+    return args
 
 
 
@@ -88,6 +92,14 @@ if __name__ == '__main__':
 #def test_dqn(args=get_args()):
     args=get_args()
     env = make_atari_env(args)
+    # this gives (1,84,84) w/ pixels in 0-1 range, as it should
+#    env.reset()
+#    obs, rew, done, info = env.step(0)
+#    obs, rew, done, info = env.step(0)
+#    obs, rew, done, info = env.step(0)
+#    print(obs)
+#    print(obs.shape)
+#    exit()
     args.state_shape = env.observation_space.shape or env.observation_space.n
     args.action_shape = env.action_space.shape or env.action_space.n
     # should be N_FRAMES x H x W
@@ -123,7 +135,8 @@ if __name__ == '__main__':
         optim_decoder,
         reconstruction_criterion,
         args.batch_size,
-        args.frames_stack
+        args.frames_stack,
+        args.device
     )
     if args.resume_path:
         policy.load_state_dict(torch.load(args.resume_path, map_location=args.device))
@@ -143,11 +156,12 @@ if __name__ == '__main__':
     train_collector = Collector(policy, train_envs, buffer, exploration_noise=True)
     test_collector = Collector(policy, test_envs, exploration_noise=True)
     # log
-    log_name = 'ae_from_replay_buffer_test'
-    log_path = os.path.join(args.logdir, args.task, log_name)
+    log_path = os.path.join(args.logdir, args.task, args.log_name)
     writer = SummaryWriter(log_path)
     writer.add_text("args", str(args))
     logger = TensorboardLogger(writer)
+
+    save_hyperparameters(args)
 
     def save_fn(policy):
         torch.save(encoder.state_dict(), os.path.join(log_path, 'encoder.pth'))
@@ -225,7 +239,10 @@ if __name__ == '__main__':
 
 
     # test train_collector and start filling replay buffer
-    train_collector.collect(n_step=args.batch_size * args.training_num)
+    #train_collector.collect(n_step=args.batch_size * args.training_num)
+    train_collector.collect(n_step=args.buffer_size)
+    #buffer.save_hdf5(os.path.join(log_path, 'buffer.h5'))
+    #exit()
     # trainer
     # don't need to run it right now
     # just want to check the buffer out
@@ -251,7 +268,7 @@ if __name__ == '__main__':
     )
 
     pprint.pprint(result)
-    watch()
+#    watch()
     
 
 

@@ -15,9 +15,11 @@ dir_name = "Pong-v4_dataset"
 transform = transforms.ToTensor()
 num_workers = 0
 batch_size = 32
-train_dataset = AtariImageDataset(root_dir="/home/gospodar/chalmers/MASTER/RLmaster/RLmaster/util/", 
+train_dataset = AtariImageDataset(
+        root_dir="/home/gospodar/chalmers/MASTER/RLmaster/RLmaster/util/", 
                                   dir_name=dir_name, transform=transform, train=False)
-train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=batch_size, num_workers=num_workers)
+train_loader = torch.utils.data.DataLoader(
+        train_dataset, batch_size=batch_size, num_workers=num_workers)
 
 dataiter = iter(train_loader)
 images = dataiter.next()
@@ -25,8 +27,10 @@ images = dataiter.next()
 features_dim = 3136
 
 observation_shape = images[0].shape
-encoder = CNNEncoderNew(observation_shape=observation_shape, features_dim=features_dim, device="cpu")
-decoder = CNNDecoder(observation_shape=observation_shape, n_flatten=encoder.n_flatten, features_dim=features_dim)
+encoder = CNNEncoderNew(observation_shape=observation_shape, 
+        features_dim=features_dim, device="cpu")
+decoder = CNNDecoder(observation_shape=observation_shape, 
+        n_flatten=encoder.n_flatten, features_dim=features_dim)
 
 #encoder.load_state_dict(torch.load("../../experiments/latent_only/encoder_features_dim_{}.pt".format(features_dim), map_location=torch.device('cpu')))
 #decoder.load_state_dict(torch.load("../../experiments/latent_only/decoder_features_dim_{}.pt".format(features_dim), map_location=torch.device('cpu')))

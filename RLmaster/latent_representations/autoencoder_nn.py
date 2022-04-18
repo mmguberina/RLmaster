@@ -111,7 +111,6 @@ class CNNDecoder(nn.Module):
 
 # need new ones if i want change and to be able to load old ones
 class CNNEncoderNew(nn.Module):
-
     def __init__(self, observation_shape, device,
             features_dim: int = 3136):
         super(CNNEncoderNew, self).__init__()
@@ -178,17 +177,18 @@ class CNNDecoderNew(nn.Module):
 #            nn.Linear(features_dim, n_flatten),
 #            nn.ReLU(),
 #        )
-
+        # this always returns a single frame, as it should
         if self._features_dim == 3136:
             self.deconv = nn.Sequential(
                 nn.ConvTranspose2d(64, 64, kernel_size=3, stride=1, padding=0),
                 nn.ReLU(),
                 nn.ConvTranspose2d(64, 32, kernel_size=4, stride=2, padding=0),
                 nn.ReLU(),
-                nn.ConvTranspose2d(32, n_input_channels, kernel_size=8, stride=4, padding=0),
+                nn.ConvTranspose2d(32, 1, kernel_size=8, stride=4, padding=0),
                 nn.Sigmoid(),
             )
 
+        # last layer needs to give 1 frame back, regardless of the stacking
         if self._features_dim == 576:
             self.deconv = nn.Sequential(
                 nn.ConvTranspose2d(64, 64, kernel_size=2, stride=1, padding=0),
@@ -197,7 +197,7 @@ class CNNDecoderNew(nn.Module):
                 nn.ReLU(),
                 nn.ConvTranspose2d(64, 64, kernel_size=8, stride=2, padding=0),
                 nn.ReLU(),
-                nn.ConvTranspose2d(64, n_input_channels, kernel_size=8, stride=4, padding=0),
+                nn.ConvTranspose2d(64, 1, kernel_size=8, stride=4, padding=0),
                 nn.Sigmoid(),
             )
 
