@@ -17,13 +17,13 @@ import cv2
 
 # TODO just save the god damn observation space
 # in the encoder class and stop this nonsense
-dir_name = "Pong-v4_dataset"
 transform = transforms.ToTensor()
 
 #features_dim = 576
 features_dim = 3136
 
-log_path = "../../experiments/latent_only/log/PongNoFrameskip-v4/unlabelled_experiment/"
+#log_path = "../../experiments/latent_only/log/PongNoFrameskip-v4/unlabelled_experiment/"
+log_path = "../../experiments/latent_only/log/PongNoFrameskip-v4/training_preloaded_buffer_fs_1/"
 args = load_hyperparameters(log_path)
 env = make_atari_env(args)
 observation_shape = env.observation_space.shape or env.observation_space.n
@@ -33,17 +33,17 @@ observation_shape = env.observation_space.shape or env.observation_space.n
 #encoder.load_state_dict(torch.load("../../experiments/latent_only/encoder_features_dim_{}.pt".format(features_dim), map_location=torch.device('cpu')))
 #decoder.load_state_dict(torch.load("../../experiments/latent_only/decoder_features_dim_{}.pt".format(features_dim), map_location=torch.device('cpu')))
 
-encoder_name = "checkpoint_encoder_epoch_3.pth"
-decoder_name = "checkpoint_decoder_epoch_3.pth"
+encoder_name = "checkpoint_encoder_epoch_30.pth"
+decoder_name = "checkpoint_decoder_epoch_30.pth"
 #encoder_name = "encoder.pth"
 #decoder_name = "decoder.pth"
 encoder = CNNEncoderNew(observation_shape=observation_shape, features_dim=features_dim, device='cpu')
 decoder = CNNDecoderNew(observation_shape=observation_shape, n_flatten=encoder.n_flatten, features_dim=features_dim)
 print(torch.load(log_path + encoder_name, map_location=torch.device('cpu')))
-encoder.load_state_dict(torch.load(log_path + encoder_name, map_location=torch.device('cpu'))['encoder'])
-decoder.load_state_dict(torch.load(log_path + decoder_name, map_location=torch.device('cpu'))['decoder'])
-#encoder.load_state_dict(torch.load(log_path + encoder_name, map_location=torch.device('cpu')))
-#decoder.load_state_dict(torch.load(log_path + decoder_name, map_location=torch.device('cpu')))
+#encoder.load_state_dict(torch.load(log_path + encoder_name, map_location=torch.device('cpu'))['encoder'])
+#decoder.load_state_dict(torch.load(log_path + decoder_name, map_location=torch.device('cpu'))['decoder'])
+encoder.load_state_dict(torch.load(log_path + encoder_name, map_location=torch.device('cpu')))
+decoder.load_state_dict(torch.load(log_path + decoder_name, map_location=torch.device('cpu')))
 
 
 #env = gym.make('PongNoFrameskip-v4')

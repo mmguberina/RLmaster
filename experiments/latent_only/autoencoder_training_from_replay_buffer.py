@@ -38,8 +38,8 @@ def get_args():
     # it's probably how often you update the target policy network in deep-Q
 #    parser.add_argument('--target-update-freq', type=int, default=500)
     parser.add_argument('--target-update-freq', type=int, default=5)
-#    parser.add_argument('--epoch', type=int, default=100)
-    parser.add_argument('--epoch', type=int, default=5)
+    parser.add_argument('--epoch', type=int, default=100)
+#    parser.add_argument('--epoch', type=int, default=5)
     parser.add_argument('--step-per-epoch', type=int, default=100000)
     # TODO why 8?
     parser.add_argument('--step-per-collect', type=int, default=8)
@@ -55,7 +55,7 @@ def get_args():
 #    parser.add_argument('--test-num', type=int, default=8)
     parser.add_argument('--test-num', type=int, default=1)
     parser.add_argument('--logdir', type=str, default='log')
-    parser.add_argument('--log_name', type=str, default='unlabelled_experiment')
+    parser.add_argument('--log-name', type=str, default='training_preloaded_buffer_fs_1')
     parser.add_argument('--render', type=float, default=0.)
     parser.add_argument(
         '--device', type=str, default='cuda' if torch.cuda.is_available() else 'cpu'
@@ -73,15 +73,7 @@ def get_args():
         default="tensorboard",
         choices=["tensorboard", "wandb"],
     )
-# TODO write the watch function
-# basically run some functions from visualize
-# or don't 'cos you'll be cloud training, whatever
-#    parser.add_argument(
-#        '--watch',
-#        default=False,
-#        action='store_true',
-#        help='watch the play of pre-trained policy only'
-#    )
+
     parser.add_argument('--save-buffer-name', type=str, default=None)
     args = parser.parse_args()
     return args
@@ -93,40 +85,26 @@ if __name__ == '__main__':
     args=get_args()
     env = make_atari_env(args)
     # this gives (1,84,84) w/ pixels in 0-1 range, as it should
-#    env.reset()
-#    obs, rew, done, info = env.step(0)
-#    obs, rew, done, info = env.step(0)
-#    obs, rew, done, info = env.step(0)
-#    print(obs)
-#    print(obs.shape)
-#    exit()
     args.state_shape = env.observation_space.shape or env.observation_space.n
     args.action_shape = env.action_space.shape or env.action_space.n
     # should be N_FRAMES x H x W
     print("Observations shape:", args.state_shape)
     print("Actions shape:", args.action_shape)
     # make environments
-    train_envs = ShmemVectorEnv(
-        [lambda: make_atari_env(args) for _ in range(args.training_num)]
-    )
-    test_envs = ShmemVectorEnv(
-        [lambda: make_atari_env_watch(args) for _ in range(args.test_num)]
-    )
     # seed
     np.random.seed(args.seed)
     torch.manual_seed(args.seed)
-    train_envs.seed(args.seed)
-    test_envs.seed(args.seed)
+    # in this experiment we're using the random policy
+    # which is just a placeholder really
     rl_policy = RandomPolicy(args.action_shape)
     encoder = CNNEncoderNew(observation_shape=args.state_shape, features_dim=args.features_dim, device=args.device).to(args.device)
     decoder = CNNDecoderNew(observation_shape=args.state_shape, n_flatten=encoder.n_flatten, features_dim=args.features_dim).to(args.device)
     optim_encoder = torch.optim.Adam(encoder.parameters(), lr=args.lr)
     optim_decoder = torch.optim.Adam(decoder.parameters(), lr=args.lr)
     reconstruction_criterion = torch.nn.BCELoss()
-    # TODO change policy once you'll have it define policy
-    # also write this learning as a policy-wrapper around an actual policy
-    # for this file this actual policy will be RandomPolicy
-    # load a previous policy
+    # the rl_policy is then passed into our autoencoder-wrapper policy
+    # it's done this way because the compression to latent spaces
+    # comes before using the rl policy.
     policy = AutoencoderLatentSpacePolicy(
         rl_policy,
         encoder,
@@ -138,139 +116,45 @@ if __name__ == '__main__':
         args.frames_stack,
         args.device
     )
-    if args.resume_path:
-        policy.load_state_dict(torch.load(args.resume_path, map_location=args.device))
-        print("Loaded agent from: ", args.resume_path)
-    # replay buffer: `save_last_obs` and `stack_num` can be removed together
-    # when you have enough RAM
-    buffer = VectorReplayBuffer(
-        args.buffer_size,
-        buffer_num=len(train_envs),
-        ignore_obs_next=True,
-        save_only_last_obs=True,
-        stack_num=args.frames_stack
-    )
-    # collector
-    #train_collector = CollectorOnLatent(policy, train_envs, buffer, exploration_noise=True)
-    #test_collector = CollectorOnLatent(policy, test_envs, exploration_noise=True)
-    train_collector = Collector(policy, train_envs, buffer, exploration_noise=True)
-    test_collector = Collector(policy, test_envs, exploration_noise=True)
-    # log
-    log_path = os.path.join(args.logdir, args.task, args.log_name)
-    writer = SummaryWriter(log_path)
-    writer.add_text("args", str(args))
-    logger = TensorboardLogger(writer)
+
+    # load filled buffer
+    # we're doing this only for faster debugging, otherwise 
+    # we'd just fill a new one with collector quite fast
+    log_path_buffer = "../../experiments/latent_only/log/PongNoFrameskip-v4/unlabelled_experiment/"
+    buffer_path = os.path.join(log_path_buffer, "buffer.h5")
+    buffer = VectorReplayBuffer.load_hdf5(buffer_path)
+
+    buffer._size = args.buffer_size
+    buffer.stack_num = args.frames_stack
 
     save_hyperparameters(args)
 
-    def save_fn(policy):
-        torch.save(encoder.state_dict(), os.path.join(log_path, 'encoder.pth'))
-        torch.save(decoder.state_dict(), os.path.join(log_path, 'decoder.pth'))
-
-    def stop_fn(mean_rewards):
-        if env.spec.reward_threshold:
-            return mean_rewards >= env.spec.reward_threshold
-        elif 'Pong' in args.task:
-            return mean_rewards >= 20
-        else:
-            return False
-
-    # nature DQN setting, linear decay in the first 1M steps
-    # NOTE none of this is a thing here because we're using a random policy,
-    def train_fn(epoch, env_step):
-        pass
-        # and not q-learning
-#        if env_step <= 1e6:
-#            eps = args.eps_train - env_step / 1e6 * \
-#                (args.eps_train - args.eps_train_final)
-#        else:
-#            eps = args.eps_train_final
-#        policy.set_eps(eps)
-#        if env_step % 1000 == 0:
-#            logger.write("train/env_step", env_step, {"train/eps": eps})
-
-    def test_fn(epoch, env_step):
-        pass
-        # NOTE none of this is a thing here because we're using a random policy,
-        #policy.set_eps(args.eps_test)
-
-    def save_checkpoint_fn(epoch, env_step, gradient_step):
-        # see also: https://pytorch.org/tutorials/beginner/saving_loading_models.html
-        ckpt_path_encoder = os.path.join(log_path, 'checkpoint_encoder_epoch_' + str(epoch) + '.pth')
-        ckpt_path_decoder = os.path.join(log_path, 'checkpoint_decoder_epoch_' + str(epoch) + '.pth')
-        torch.save({'encoder': encoder.state_dict()}, ckpt_path_encoder)
-        torch.save({'decoder': decoder.state_dict()}, ckpt_path_decoder)
-        return "useless string for a useless return"
-
-    # watch agent's performance
-    # TODO write this or decide to delete it
-#    def watch():
-#        print("Setup test envs ...")
-#        test_envs.seed(args.seed)
-#        if args.save_buffer_name:
-#            print(f"Generate buffer with size {args.buffer_size}")
-#            buffer = VectorReplayBuffer(
-#                args.buffer_size,
-#                buffer_num=len(test_envs),
-#                ignore_obs_next=True,
-#                save_only_last_obs=True,
-#                stack_num=args.frames_stack
-#            )
-#            collector = Collector(policy, test_envs, buffer, exploration_noise=True)
-#            result = collector.collect(n_step=args.buffer_size)
-#            print(f"Save buffer into {args.save_buffer_name}")
-#            # Unfortunately, pickle will cause oom with 1M buffer size
-#            buffer.save_hdf5(args.save_buffer_name)
-#        else:
-#            print("Testing agent ...")
-#            test_collector.reset()
-#            result = test_collector.collect(
-#                n_episode=args.test_num, render=args.render
-#            )
-#        rew = result["rews"].mean()
-#        print(f'Mean reward (over {result["n/ep"]} episodes): {rew}')
-
-# TODO write the watch function
-# basically run some functions from visualize
-# or don't 'cos you'll be cloud training, whatever
-#    if args.watch:
-#        watch()
-#        exit(0)
-
-
-    # test train_collector and start filling replay buffer
-    #train_collector.collect(n_step=args.batch_size * args.training_num)
-    train_collector.collect(n_step=args.buffer_size)
-    #buffer.save_hdf5(os.path.join(log_path, 'buffer.h5'))
-    #exit()
-    # trainer
-    # don't need to run it right now
-    # just want to check the buffer out
     
-    result = offpolicy_trainer(
-        policy,
-        train_collector,
-        test_collector,
-        args.epoch,
-        args.step_per_epoch,
-        args.step_per_collect,
-        args.test_num,
-        args.batch_size,
-        train_fn=train_fn,
-        test_fn=test_fn,
-        stop_fn=stop_fn,
-        save_fn=save_fn,
-        logger=logger,
-        update_per_step=args.update_per_step,
-        test_in_train=False,
-        resume_from_log=args.resume_id is not None,
-        save_checkpoint_fn=save_checkpoint_fn,
-    )
+    log_path = os.path.join(args.logdir, args.task, args.log_name)
+    for epoch in range(1, args.epoch + 1):
+        if epoch % 10 == 0:
+            print("did", epoch, "epochs")
+            ckpt_path_encoder = os.path.join(log_path, 'checkpoint_encoder_epoch_' + str(epoch) + '.pth')
+            ckpt_path_decoder = os.path.join(log_path, 'checkpoint_decoder_epoch_' + str(epoch) + '.pth')
+            torch.save(encoder.state_dict(), ckpt_path_encoder)
+            torch.save(decoder.state_dict(), ckpt_path_decoder)
 
-    pprint.pprint(result)
-#    watch()
-    
+        train_loss = 0.0
+        policy.train()
+        losses_epoch = 0
+        for i in range(args.buffer_size // args.batch_size):
+            losses = policy.update(args.batch_size, buffer)
+            losses_epoch += losses["loss/autoencoder"]
+        print("loss at epoch", epoch, " = ", losses_epoch)
 
-
-#if __name__ == '__main__':
-#    test_dqn(get_args())
+            #samples, indeces = buffer.sample(args.batch_size)
+            #images = images.to(device)
+            #optimizer_encoder.zero_grad()
+            #optimizer_decoder.zero_grad()
+            #encoded = encoder(images)
+            #decoded = decoder(encoded)
+            #loss = criterion(decoded, images)
+            #loss.backward()
+            #optimizer_encoder.step()
+            #optimizer_decoder.step()
+            #train_loss += loss.item() * images.size(0)

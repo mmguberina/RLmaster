@@ -1,6 +1,7 @@
 pong_dataset
 tests
 log
+experiments/latent_only/log
 sync_with_server.sh
 RLmaster/util/Breakout-v4_dataset
 RLmaster/util/Pong-v4_dataset

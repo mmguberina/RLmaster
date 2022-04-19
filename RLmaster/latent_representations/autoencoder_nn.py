@@ -161,6 +161,7 @@ class CNNEncoderNew(nn.Module):
         self.n_flatten = n_flatten
 #        self.linear = nn.Sequential(nn.Linear(n_flatten, features_dim), nn.ReLU())
 
+# TODO change this to be convert via torch.data.to_tensor
     def forward(self, observations: torch.Tensor) -> torch.Tensor:
         observations = torch.tensor(observations, dtype=torch.float32, device=self.device)
 #        return self.linear(self.encoder(observations))
