@@ -31,40 +31,41 @@ def get_args():
     parser.add_argument('--task', type=str, default='PongNoFrameskip-v4')
     parser.add_argument('--features_dim', type=int, default=3136)
     parser.add_argument('--seed', type=int, default=0)
+    parser.add_argument('--eps-test', type=float, default=0.005)
+    parser.add_argument('--eps-train', type=float, default=1.)
+    parser.add_argument('--eps-train-final', type=float, default=0.05)
     parser.add_argument('--buffer-size', type=int, default=100000)
 #    parser.add_argument('--buffer-size', type=int, default=100)
-    parser.add_argument('--lr', type=float, default=0.001)
-    # TODO understand where exactly this is used and why
-    # it's probably how often you update the target policy network in deep-Q
-#    parser.add_argument('--target-update-freq', type=int, default=500)
-    parser.add_argument('--target-update-freq', type=int, default=5)
-#    parser.add_argument('--epoch', type=int, default=100)
-    parser.add_argument('--epoch', type=int, default=5)
+    parser.add_argument('--lr', type=float, default=0.0001)
+    parser.add_argument('--gamma', type=float, default=0.99)
+    parser.add_argument('--n-step', type=int, default=3)
+    parser.add_argument('--target-update-freq', type=int, default=500)
+    parser.add_argument('--epoch', type=int, default=100)
     parser.add_argument('--step-per-epoch', type=int, default=100000)
     # TODO why 8?
     parser.add_argument('--step-per-collect', type=int, default=8)
-    # TODO understand where exactly this is used and why
-    # why is this a float?
-#    parser.add_argument('--update-per-step', type=float, default=0.1)
-    parser.add_argument('--update-per-step', type=float, default=0.6)
+    # TODO having a different update frequency for the autoencoder 
+    # and the policy is probably a smart thing to do
+    parser.add_argument('--update-per-step', type=float, default=0.1)
     parser.add_argument('--batch-size', type=int, default=64)
     parser.add_argument('--training-num', type=int, default=8)
-#    parser.add_argument('--training-num', type=int, default=2)
-    # tests aren't necessary as we're free to overfit as much as we want
-    # the training domain IS the testing domain
-#    parser.add_argument('--test-num', type=int, default=8)
-    parser.add_argument('--test-num', type=int, default=1)
+    parser.add_argument('--test-num', type=int, default=8)
     parser.add_argument('--logdir', type=str, default='log')
-    parser.add_argument('--log-name', type=str, default='ae_trained_as_policy')
+    parser.add_argument('--log-name', type=str, default='dqn_ae_parallel_good_arch')
     parser.add_argument('--render', type=float, default=0.)
     parser.add_argument(
         '--device', type=str, default='cuda' if torch.cuda.is_available() else 'cpu'
     )
     # NOTE: frame stacking needs to be 1 for what we're doing now
     # but let's keep it like a parameter here to avoid unnecessary code
+    # TODO you need to separate the frames-stack which the autoencoder gets
+    # from the stacking you give to the policy
+    # because the autoencoder as it is now does not account for velocity information
+    # which means that the policy has no velocity information and that's very important 
+    # when your goal is to learn how to manipulate dynamics
+    # TODO test reshaping the tensor in a shell until it works as expected
+    # i have no mental strength to do it now
     parser.add_argument('--frames-stack', type=int, default=2)
-#    parser.add_argument('--frames-stack', type=int, default=1)
-#    parser.add_argument('--frames-stack', type=int, default=4)
     parser.add_argument('--resume-path', type=str, default=None)
     parser.add_argument('--resume-id', type=str, default=None)
     parser.add_argument(

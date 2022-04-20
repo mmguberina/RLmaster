@@ -177,6 +177,7 @@ class AutoencoderLatentSpacePolicy(BasePolicy):
         if self.frames_stack == 1:
             batch.obs = to_torch(batch.obs, device=self.device).view(self.batch_size, self.frames_stack, 84, 84)
         else:
+            # it's the right shape if frames_stack != 1
             batch.obs = to_torch(batch.obs, device=self.device)
         with torch.no_grad():
             batch.embedded_obs = self.encoder(batch.obs)

@@ -19,6 +19,7 @@ from RLmaster.latent_representations.autoencoder_nn import CNNEncoderNew, CNNDec
 from RLmaster.util.collector_on_latent import CollectorOnLatent
 from tianshou.trainer import offpolicy_trainer
 from tianshou.utils import TensorboardLogger
+from tianshou.data import Batch, ReplayBuffer, to_numpy, to_torch
 
 """
 action are all random sampled
@@ -142,19 +143,53 @@ if __name__ == '__main__':
         train_loss = 0.0
         policy.train()
         losses_epoch = 0
+        # TODO makes this works
         for i in range(args.buffer_size // args.batch_size):
-            losses = policy.update(args.batch_size, buffer)
-            losses_epoch += losses["loss/autoencoder"]
-        print("loss at epoch", epoch, " = ", losses_epoch)
+#            losses = policy.update(args.batch_size, buffer)
+#            losses_epoch += losses["loss/autoencoder"]
+#        print("loss at epoch", epoch, " = ", losses_epoch)
 
-            #samples, indeces = buffer.sample(args.batch_size)
-            #images = images.to(device)
-            #optimizer_encoder.zero_grad()
-            #optimizer_decoder.zero_grad()
-            #encoded = encoder(images)
-            #decoded = decoder(encoded)
-            #loss = criterion(decoded, images)
-            #loss.backward()
-            #optimizer_encoder.step()
-            #optimizer_decoder.step()
-            #train_loss += loss.item() * images.size(0)
+            # but it doesn't work ,so let's go line by line
+            # policy.update
+            batch, indices = buffer.sample(args.batch_size)
+            policy.updating = True
+            batch = policy.process_fn(batch, buffer, indices) # just returns batch
+            # policy.learn
+            if policy.frames_stack == 1:
+                #batch.obs = to_torch(batch.obs, device=policy.device).view(policy.batch_size, policy.frames_stack, 84, 84)
+                batch.obs = torch.tensor(batch.obs, device=policy.device).view(policy.batch_size, policy.frames_stack, 84, 84)
+            else:
+                #batch.obs = to_torch(batch.obs, device=policy.device)
+                batch.obs = torch.tensor(batch.obs, device=policy.device)
+                # this does nothing to the autoencoder 
+    #        with torch.no_grad():
+    #            batch.embedded_obs = self.encoder(batch.obs)
+    # this policy is the rl policy
+    #        res = self.policy.learn(batch, input="embedded_obs", **kwargs)
+
+            # and now here pass again through encoder, pass trough decoder and do the update
+            policy.optim_encoder.zero_grad()
+            policy.optim_decoder.zero_grad()
+            decoded_obs = policy.decoder(policy.encoder(batch.obs))
+            # this line works in shell, but maybe i did something wrong there?
+            reconstruction_loss = policy.reconstruction_criterion(decoded_obs, batch.obs[:, -1, :, :].view(-1, 1, 84, 84))
+            reconstruction_loss.backward()
+            policy.optim_encoder.step()
+            policy.optim_decoder.step()
+            losses_epoch += reconstruction_loss.item()
+            # policy.update
+            policy.post_process_fn(batch, buffer, indices) # does weighting, which is = 1 
+            policy.updating = False
+        print("loss at epoch", epoch, " = ", losses_epoch / (args.buffer_size // args.batch_size))
+
+                #samples, indeces = buffer.sample(args.batch_size)
+                #images = images.to(device)
+                #optimizer_encoder.zero_grad()
+                #optimizer_decoder.zero_grad()
+                #encoded = encoder(images)
+                #decoded = decoder(encoded)
+                #loss = criterion(decoded, images)
+                #loss.backward()
+                #optimizer_encoder.step()
+                #optimizer_decoder.step()
+                #train_loss += loss.item() * images.size(0)

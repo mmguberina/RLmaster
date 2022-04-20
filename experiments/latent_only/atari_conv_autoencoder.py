@@ -12,6 +12,7 @@ import matplotlib.pyplot as plt
 import os
 from RLmaster.util.atari_dataset import AtariImageDataset, showSample
 from RLmaster.latent_representations.autoencoder_nn import CNNEncoder, CNNDecoder
+#from RLmaster.latent_representations.autoencoder_nn import CNNEncoderNew, CNNDecoderNew
 
 def evaluate(test_loader, encoder, decoder):
     test_loss= 0 
@@ -30,14 +31,15 @@ def evaluate(test_loader, encoder, decoder):
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 dir_name = "Pong-v4_dataset"
+log_dir = "./log/PongNoFrameskip-v4/from_stored_dataset2/"
 
 
 transform = transforms.ToTensor()
 
-train_dataset = AtariImageDataset(root_dir="/home/gospodar/chalmers/MASTER/RLmaster/RLmaster/util/", 
+train_dataset = AtariImageDataset(root_dir="~/MASTER/RLmaster/RLmaster/util/", 
                                   dir_name=dir_name, transform=transform, train=True)
 
-test_dataset = AtariImageDataset(root_dir="/home/gospodar/chalmers/MASTER/RLmaster/RLmaster/util/", 
+test_dataset = AtariImageDataset(root_dir="~/MASTER/RLmaster/RLmaster/util/", 
                                   dir_name=dir_name, transform=transform, train=False)
 
 #train_dataset = AtariImageDataset('dataset', train=True, download=False, transform=transform)
@@ -45,7 +47,8 @@ test_dataset = AtariImageDataset(root_dir="/home/gospodar/chalmers/MASTER/RLmast
 
 num_workers = 4
 batch_size = 32
-features_dim = 576
+#features_dim = 576
+features_dim = 3136
 
 train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=batch_size, num_workers=num_workers)
 test_loader = torch.utils.data.DataLoader(test_dataset, batch_size=batch_size, num_workers=num_workers)
@@ -55,8 +58,11 @@ images = dataiter.next()
 
 
 observation_shape = images[0].shape
+#encoder = CNNEncoderNew(observation_shape=observation_shape, device=device, features_dim=features_dim)
+#encoder = CNNEncoder(observation_shape=observation_shape, device=device, features_dim=features_dim)
 encoder = CNNEncoder(observation_shape=observation_shape, features_dim=features_dim)
 encoder.to(device)
+#decoder = CNNDecoderNew(observation_shape=observation_shape, n_flatten=encoder.n_flatten, features_dim=features_dim)
 decoder = CNNDecoder(observation_shape=observation_shape, n_flatten=encoder.n_flatten, features_dim=features_dim)
 decoder.to(device)
 
@@ -80,8 +86,8 @@ for epoch in range(1, n_epochs + 1):
             lowest_test_loss = test_loss
         else:
             print("overfitting could be (probably is) happening")
-        torch.save(encoder.state_dict(), "encoder_features_dim_" + str(features_dim) + "_{}.pt".format(epoch))
-        torch.save(decoder.state_dict(), "decoder_features_dim_" + str(features_dim) + "_{}.pt".format(epoch))
+        torch.save(encoder.state_dict(), os.path.join(log_dir, "encoder_features_dim_" + str(features_dim) + "_{}.pt".format(epoch)))
+        torch.save(decoder.state_dict(), os.path.join(log_dir, "decoder_features_dim_" + str(features_dim) + "_{}.pt".format(epoch)))
 
     train_loss = 0.0
     for images in train_loader:
@@ -98,5 +104,5 @@ for epoch in range(1, n_epochs + 1):
 
     train_loss = train_loss / len(train_loader)
     print('Epoch: {} \tTraining Loss: {:.6f}'.format(epoch, train_loss))
-torch.save(encoder.state_dict(), "encoder_features_dim_" + str(features_dim) + ".pt")
-torch.save(decoder.state_dict(), "decoder_features_dim_" + str(features_dim) + ".pt")
+torch.save(encoder.state_dict(), os.path.join(log_dir, "encoder_features_dim_" + str(features_dim) + ".pt"))
+torch.save(decoder.state_dict(), os.path.join(log_dir, "decoder_features_dim_" + str(features_dim) + ".pt"))
