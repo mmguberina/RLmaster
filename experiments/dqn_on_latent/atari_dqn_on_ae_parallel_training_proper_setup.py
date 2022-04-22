@@ -11,9 +11,7 @@ from RLmaster.util.save_load_hyperparameters import save_hyperparameters
 
 from tianshou.data import Collector, VectorReplayBuffer
 from tianshou.env import ShmemVectorEnv
-# TODO write the autoencoder only policy
-#from RLmaster.policy.autoencoder_only import AutoencoderOnly
-from RLmaster.policy.random import RandomPolicy
+from tianshou.policy import DQNPolicy
 from RLmaster.latent_representations.autoencoder_learning_as_policy_wrapper import AutoencoderLatentSpacePolicy
 from RLmaster.latent_representations.autoencoder_nn import CNNEncoderNew, CNNDecoderNew
 from RLmaster.util.collector_on_latent import CollectorOnLatent
@@ -29,7 +27,8 @@ action are all random sampled
 def get_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('--task', type=str, default='PongNoFrameskip-v4')
-    parser.add_argument('--features_dim', type=int, default=3136)
+    parser.add_argument('--latent-space-type', type=str, default='single-frame-predictor')
+    parser.add_argument('--features-dim', type=int, default=3136)
     parser.add_argument('--seed', type=int, default=0)
     parser.add_argument('--eps-test', type=float, default=0.005)
     parser.add_argument('--eps-train', type=float, default=1.)
@@ -47,7 +46,7 @@ def get_args():
     # TODO having a different update frequency for the autoencoder 
     # and the policy is probably a smart thing to do
     parser.add_argument('--update-per-step', type=float, default=0.1)
-    parser.add_argument('--batch-size', type=int, default=64)
+    parser.add_argument('--batch-size', type=int, default=32)
     parser.add_argument('--training-num', type=int, default=8)
     parser.add_argument('--test-num', type=int, default=8)
     parser.add_argument('--logdir', type=str, default='log')
@@ -89,9 +88,8 @@ def get_args():
 
 
 
-if __name__ == '__main__':
-#def test_dqn(args=get_args()):
-    args=get_args()
+def test_dqn(args=get_args()):
+#    args=get_args()
     env = make_atari_env(args)
     # this gives (1,84,84) w/ pixels in 0-1 range, as it should
     args.state_shape = env.observation_space.shape or env.observation_space.n
@@ -111,19 +109,34 @@ if __name__ == '__main__':
     torch.manual_seed(args.seed)
     train_envs.seed(args.seed)
     test_envs.seed(args.seed)
-    # in this experiment we're using the random policy
-    # which is just a placeholder really
-    rl_policy = RandomPolicy(args.action_shape)
-    encoder = CNNEncoderNew(observation_shape=args.state_shape, features_dim=args.features_dim, device=args.device).to(args.device)
-    decoder = CNNDecoderNew(observation_shape=args.state_shape, n_flatten=encoder.n_flatten, features_dim=args.features_dim).to(args.device)
+    q_net = DQNNoEncoder(args.action_shape, args.device).to(args.device)
+    if args.latent_space_type == 'single-frame-predictor':
+        # in this case, we don't pass the stacked frames.
+        # we unstack them, compress them, the stack the compressed ones and
+        # pass that to the policy
+        observation_shape = list(args.state_shape)
+        observation_shape[0] = 1 
+        observation_shape = tuple(observation_shape)
+        encoder = CNNEncoderNew(observation_shape=observation_shape, features_dim=args.features_dim, device=args.device).to(args.device)
+        decoder = CNNDecoderNew(observation_shape=observation_shape, n_flatten=encoder.n_flatten, features_dim=args.features_dim).to(args.device)
+    optim_q = torch.optim.Adam(q_net.parameters(), lr=args.lr)
     optim_encoder = torch.optim.Adam(encoder.parameters(), lr=args.lr)
     optim_decoder = torch.optim.Adam(decoder.parameters(), lr=args.lr)
     reconstruction_criterion = torch.nn.BCELoss()
+
+    rl_policy = DQNPolicy(
+        q_net,
+        optim_q,
+        args.gamma,
+        args.n_step,
+        target_update_freq=args.target_update_freq
+    )
     # the rl_policy is then passed into our autoencoder-wrapper policy
     # it's done this way because the compression to latent spaces
     # comes before using the rl policy.
     policy = AutoencoderLatentSpacePolicy(
         rl_policy,
+        args.latent_space_type,
         encoder,
         decoder,
         optim_encoder,
@@ -133,6 +146,7 @@ if __name__ == '__main__':
         args.frames_stack,
         args.device
     )
+    # TODO write this out
     if args.resume_path:
         policy.load_state_dict(torch.load(args.resume_path, map_location=args.device))
         print("Loaded agent from: ", args.resume_path)
@@ -161,6 +175,7 @@ if __name__ == '__main__':
     def save_fn(policy):
         torch.save(encoder.state_dict(), os.path.join(log_path, 'encoder.pth'))
         torch.save(decoder.state_dict(), os.path.join(log_path, 'decoder.pth'))
+        torch.save(q_net.state_dict(), os.path.join(log_path, 'q_net.pth'))
 
     def stop_fn(mean_rewards):
         if env.spec.reward_threshold:
@@ -171,30 +186,30 @@ if __name__ == '__main__':
             return False
 
     # nature DQN setting, linear decay in the first 1M steps
-    # NOTE none of this is a thing here because we're using a random policy,
     def train_fn(epoch, env_step):
         pass
-        # and not q-learning
-#        if env_step <= 1e6:
-#            eps = args.eps_train - env_step / 1e6 * \
-#                (args.eps_train - args.eps_train_final)
-#        else:
-#            eps = args.eps_train_final
-#        policy.set_eps(eps)
-#        if env_step % 1000 == 0:
-#            logger.write("train/env_step", env_step, {"train/eps": eps})
+        if env_step <= 1e6:
+            eps = args.eps_train - env_step / 1e6 * \
+                (args.eps_train - args.eps_train_final)
+        else:
+            eps = args.eps_train_final
+        policy.set_eps(eps)
+        if env_step % 1000 == 0:
+            logger.write("train/env_step", env_step, {"train/eps": eps})
 
     def test_fn(epoch, env_step):
         pass
         # NOTE none of this is a thing here because we're using a random policy,
-        #policy.set_eps(args.eps_test)
+        policy.set_eps(args.eps_test)
 
     def save_checkpoint_fn(epoch, env_step, gradient_step):
         # see also: https://pytorch.org/tutorials/beginner/saving_loading_models.html
         ckpt_path_encoder = os.path.join(log_path, 'checkpoint_encoder_epoch_' + str(epoch) + '.pth')
         ckpt_path_decoder = os.path.join(log_path, 'checkpoint_decoder_epoch_' + str(epoch) + '.pth')
+        ckpt_path_q_net = os.path.join(log_path, 'checkpoint_q_net_epoch_' + str(epoch) + '.pth')
         torch.save({'encoder': encoder.state_dict()}, ckpt_path_encoder)
         torch.save({'decoder': decoder.state_dict()}, ckpt_path_decoder)
+        torch.save({'q_net': decoder.state_dict()}, ckpt_path_q_net)
         return "useless string for a useless return"
 
     # watch agent's performance
@@ -234,8 +249,8 @@ if __name__ == '__main__':
 
 
     # test train_collector and start filling replay buffer
-    #train_collector.collect(n_step=args.batch_size * args.training_num)
-    train_collector.collect(n_step=args.buffer_size)
+    train_collector.collect(n_step=args.batch_size * args.training_num)
+    #train_collector.collect(n_step=args.buffer_size // 3)
 #    buffer.save_hdf5(os.path.join(log_path, 'buffer.h5'))
 #    print('buffer = saved to disk')
 #    exit()
@@ -268,5 +283,5 @@ if __name__ == '__main__':
     
 
 
-#if __name__ == '__main__':
-#    test_dqn(get_args())
+if __name__ == '__main__':
+    test_dqn(get_args())

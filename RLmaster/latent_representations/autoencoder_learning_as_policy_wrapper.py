@@ -36,6 +36,7 @@ class AutoencoderLatentSpacePolicy(BasePolicy):
     def __init__(
         self,
         policy: BasePolicy,
+        latent_space_type: str,
         encoder: CNNEncoderNew,
         decoder: CNNEncoderNew,
         optim_encoder: torch.optim.Optimizer,
@@ -50,6 +51,7 @@ class AutoencoderLatentSpacePolicy(BasePolicy):
     ) -> None:
         super().__init__(**kwargs)
         self.policy = policy
+        self.latent_space_type = latent_space_type
         self.encoder = encoder
         self.decoder = decoder
         self.optim_encoder = optim_encoder
@@ -81,6 +83,9 @@ class AutoencoderLatentSpacePolicy(BasePolicy):
         compute action over the given embedded observations with the inner policy.
         This function is called in the collector under torch.no_grad()
         and it's purpose is to select actions when filling to fill the ReplayBuffer.
+        The type of embedding depends on latent_space_type.
+        Since the various variations are so similar,
+        we just pass this parameter and implement them here.
 
         .. seealso::
 
@@ -128,7 +133,17 @@ class AutoencoderLatentSpacePolicy(BasePolicy):
         # the below should be:
         #batch.embedded_obs = self.encoder(batch[input])
         # but to avoid needing to change policy code it is:
-        batch.embedded_obs = to_numpy(self.encoder(batch[input]))
+        # here shape the observations to fit the chosen latent space type
+        if self.latent_space_type == 'single-frame-predictor':
+            # encode each one separately
+            obs = batch[input].reshape((-1, 1, 84, 84))
+            # and then restack
+            batch.embedded_obs = to_numpy(self.encoder(obs).view(-1, self.frames_stack, 
+                self.encoder.n_flatten))
+        else:
+        # TODO: write out the other cases (ex. forward prediction)
+            obs = batch[input]
+            batch.embedded_obs = to_numpy(self.encoder(obs))
         #batch.obs = to_numpy(embedded_obs)
         #print(batch.orig_obs.shape)
         return self.policy.forward(batch, state, input="embedded_obs", **kwargs)
@@ -180,7 +195,16 @@ class AutoencoderLatentSpacePolicy(BasePolicy):
             # it's the right shape if frames_stack != 1
             batch.obs = to_torch(batch.obs, device=self.device)
         with torch.no_grad():
-            batch.embedded_obs = self.encoder(batch.obs)
+            if self.latent_space_type == 'single-frame-predictor':
+                # encode each one separately
+                obs = batch[input].reshape((-1, 1, 84, 84))
+                # and then restack
+                batch.embedded_obs = to_numpy(self.encoder(obs).view(-1, self.frames_stack, 
+                    self.encoder.n_flatten))
+            else:
+            # TODO: write out the other cases (ex. forward prediction)
+                obs = batch[input]
+                batch.embedded_obs = to_numpy(self.encoder(obs))
             #batch.embedded_obs = self.encoder(to_torch(batch.obs).view(32, 1, 84, 84))
         # do policy learn on embedded
         # TODO make this work:
@@ -192,7 +216,8 @@ class AutoencoderLatentSpacePolicy(BasePolicy):
         # and now here pass again through encoder, pass trough decoder and do the update
         self.optim_encoder.zero_grad()
         self.optim_decoder.zero_grad()
-        decoded_obs = self.decoder(self.encoder(batch.obs))
+        #decoded_obs = self.decoder(self.encoder(batch.obs))
+        decoded_obs = self.decoder(self.encoder(obs))
         
 #        print("===================================")
 #        print("===================================")
