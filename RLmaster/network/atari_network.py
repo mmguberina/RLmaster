@@ -54,12 +54,16 @@ class DQNNoEncoder(nn.Module):
     def __init__(
         self,
         action_shape: Sequence[int],
+        frames_stack: int,
         device: Union[str, int, torch.device] = "cpu",
         input_dim: int = 3136,
     ) -> None:
         super().__init__()
         self.device = device
-        self.input_dim = input_dim
+        self.frames_stack = frames_stack
+        # for the linear layer first policy we do this
+        # TODO make this smart and modular
+        self.input_dim = self.frames_stack * input_dim
         self.net = nn.Sequential(
             #TODO make this not a stupid commented out line,
             # but define multiply with the number of frame stacks
@@ -79,7 +83,11 @@ class DQNNoEncoder(nn.Module):
         r"""Mapping: s -> Q(s, \*)."""
         obs = torch.as_tensor(obs, device=self.device, dtype=torch.float32)
         #obs = obs.reshape(-1, 4 * self.input_dim)
-        obs = obs.reshape(-1, self.input_dim)
+        # NOTE this was a stupid dirty hack i did to get training on the pretrained autoencoder
+        # and now i've cleaned that up before passing it here (as it should be, passing
+        # the correct observation to the network is most certainly not this class'
+        # responsibility)
+        #obs = obs.reshape(-1, self.input_dim)
         return self.net(obs), state
 
 

@@ -138,8 +138,12 @@ class AutoencoderLatentSpacePolicy(BasePolicy):
             # encode each one separately
             obs = batch[input].reshape((-1, 1, 84, 84))
             # and then restack
-            batch.embedded_obs = to_numpy(self.encoder(obs).view(-1, self.frames_stack, 
-                self.encoder.n_flatten))
+            #batch.embedded_obs = to_numpy(self.encoder(obs).view(-1, self.frames_stack, 
+            # we stack by combining into a single vector
+            # because now the first row is linear
+            # TODO make it work with cnn layers too
+            batch.embedded_obs = to_numpy(self.encoder(obs).view(-1, 
+                self.frames_stack * self.encoder.n_flatten))
         else:
         # TODO: write out the other cases (ex. forward prediction)
             obs = batch[input]

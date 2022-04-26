@@ -1,0 +1,6 @@
+forward
+---------
+1. (n_train_envs, frames_stack, 84, 84) - what you get when you step n_train_envs envs in parallel
+2. (n_train_envs * frames_stack, 1 , 84, 84) - what your single-frame-compressing autoencoder needs to compress every frame individually
+3. (n_train_envs * frames_stack, features_dim) - what you get out of your encoder
+4. (n_train_envs, frames_stack * features_dim) - what you want to give to the policy which has linear layer first - a batch of stacked

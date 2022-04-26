@@ -109,7 +109,7 @@ def test_dqn(args=get_args()):
     torch.manual_seed(args.seed)
     train_envs.seed(args.seed)
     test_envs.seed(args.seed)
-    q_net = DQNNoEncoder(args.action_shape, args.device).to(args.device)
+    q_net = DQNNoEncoder(args.action_shape, args.frames_stack, args.device).to(args.device)
     if args.latent_space_type == 'single-frame-predictor':
         # in this case, we don't pass the stacked frames.
         # we unstack them, compress them, the stack the compressed ones and
@@ -117,8 +117,10 @@ def test_dqn(args=get_args()):
         observation_shape = list(args.state_shape)
         observation_shape[0] = 1 
         observation_shape = tuple(observation_shape)
-        encoder = CNNEncoderNew(observation_shape=observation_shape, features_dim=args.features_dim, device=args.device).to(args.device)
-        decoder = CNNDecoderNew(observation_shape=observation_shape, n_flatten=encoder.n_flatten, features_dim=args.features_dim).to(args.device)
+        encoder = CNNEncoderNew(observation_shape=observation_shape, 
+                features_dim=args.features_dim, device=args.device).to(args.device)
+        decoder = CNNDecoderNew(observation_shape=observation_shape, 
+                n_flatten=encoder.n_flatten, features_dim=args.features_dim).to(args.device)
     optim_q = torch.optim.Adam(q_net.parameters(), lr=args.lr)
     optim_encoder = torch.optim.Adam(encoder.parameters(), lr=args.lr)
     optim_decoder = torch.optim.Adam(decoder.parameters(), lr=args.lr)
