@@ -97,7 +97,7 @@ class CollectorOnLatent(object):
         # use empty Batch for "state" so that self.data supports slicing
         # convert empty Batch to None when passing data to policy
         self.data = Batch(
-            obs={}, embedded_obs={}, act={}, rew={}, done={}, obs_next={}, info={}, policy={}
+            obs={}, obs_orig={}, act={}, rew={}, done={}, obs_next={}, info={}, policy={}
         )
         self.reset_env()
         if reset_buffer:
@@ -221,8 +221,9 @@ class CollectorOnLatent(object):
             # let's do the stupid thing with a helper variable.
             # this >>should<< be ok as python doesn't copy-assign mutable objects,
             # but only passes a reference to them
-            temp_var_for_embedded_obs = self.data.obs
-            self.data.update(obs=self.data.orig_obs, embedded_obs=temp_var_for_embedded_obs)
+            # NOTE did that in forward
+            #temp_var_for_embedded_obs = self.data.obs
+            #self.data.update(obs=self.data.orig_obs, embedded_obs=temp_var_for_embedded_obs)
             # update state / act / policy into self.data
             policy = result.get("policy", Batch())
             assert isinstance(policy, Batch)

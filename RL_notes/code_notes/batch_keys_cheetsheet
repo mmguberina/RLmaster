@@ -1,0 +1,41 @@
+1. obs
+------
+- should be actual obs you get from the environment (after env wrappers ofc), 
+  BUT then tianshou code would need to be changed because obs key is assumed everywhere,
+  and that's more annoying than dealing with the confusion.
+- THUS this key will be use for the EMBEDDED observations
+
+2. obs_orig
+-----------
+- the original obs you get from env.step
+
+3. act 
+------
+- outputs from the policy are processed (ex. argmax is done on outputs which are action scores) 
+  and then they get put here 
+
+4. rew 
+------
+- no necessary changes needed
+
+5. done
+-------
+- no necessary changes needed
+
+6. obs_next
+-----------
+- want this to be embedded obs like above
+- need to see how this is set up 
+
+? obs_next_orig
+---------------
+- implement if necessary
+
+7. info 
+-------
+- no necessary changes needed
+
+8. policy 
+---------
+- for hidden states and stuff, we don't use this 
+--> it's perma None

@@ -116,12 +116,14 @@ class AutoencoderLatentSpacePolicy(BasePolicy):
         # save original obs under new key called, say, orig_obs
         # copy-paste collector code into CollectorOnEmbeddedSpace
         # update the self.data batch not with obs=obs, but with obs=obs_orig or whatever
+        # ----> nvm, you can send a different key to forward
+        # -------> so save embedded_obs in batch and make that the input key
+        # ==================> yeah, but only in forward. goes to shit in other places. 
+        # ====================> TODO find a way to fix this.
         # TODO QUESTION: does it make sense to store the embedded observations too?
         # certainly not just to have autoencoder learning, but what when the policy is learning?
         # the policy learning will be more stable ....... maybe?
         # the autoencoder shifts with learning, ergo same obs is not the same embedded_obs with 
-        # ----> nvm, you can send a different key to forward
-        # -------> so save embedded_obs in batch and make that the input key
         # different autoencoders. thus after learning, the samples in the replay buffer are wrong.
         # if you recalculate the embeddings, the chosen action potentially changes.
         # and then what are you learning and updating?
@@ -134,6 +136,7 @@ class AutoencoderLatentSpacePolicy(BasePolicy):
         #batch.embedded_obs = self.encoder(batch[input])
         # but to avoid needing to change policy code it is:
         # here shape the observations to fit the chosen latent space type
+        batch.obs_orig = deepcopy(batch.obs)
         if self.latent_space_type == 'single-frame-predictor':
             # encode each one separately
             obs = batch[input].reshape((-1, 1, 84, 84))
@@ -142,7 +145,9 @@ class AutoencoderLatentSpacePolicy(BasePolicy):
             # we stack by combining into a single vector
             # because now the first row is linear
             # TODO make it work with cnn layers too
-            batch.embedded_obs = to_numpy(self.encoder(obs).view(-1, 
+            #batch.embedded_obs = to_numpy(self.encoder(obs).view(-1, 
+            #    self.frames_stack * self.encoder.n_flatten))
+            batch.obs = to_numpy(self.encoder(obs).view(-1, 
                 self.frames_stack * self.encoder.n_flatten))
         else:
         # TODO: write out the other cases (ex. forward prediction)
@@ -150,7 +155,8 @@ class AutoencoderLatentSpacePolicy(BasePolicy):
             batch.embedded_obs = to_numpy(self.encoder(obs))
         #batch.obs = to_numpy(embedded_obs)
         #print(batch.orig_obs.shape)
-        return self.policy.forward(batch, state, input="embedded_obs", **kwargs)
+        #return self.policy.forward(batch, state, input="embedded_obs", **kwargs)
+        return self.policy.forward(batch, state, **kwargs)
 
     def set_eps(self, eps: float) -> None:
         """Set the eps for epsilon-greedy exploration."""
@@ -159,7 +165,7 @@ class AutoencoderLatentSpacePolicy(BasePolicy):
         else:
             raise NotImplementedError()
 
-
+# TODO you need to embed obs_next here
     def process_fn(
         self, batch: Batch, buffer: ReplayBuffer, indices: np.ndarray
     ) -> Batch:

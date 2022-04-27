@@ -162,10 +162,10 @@ def test_dqn(args=get_args()):
         stack_num=args.frames_stack
     )
     # collector
-    #train_collector = CollectorOnLatent(policy, train_envs, buffer, exploration_noise=True)
-    #test_collector = CollectorOnLatent(policy, test_envs, exploration_noise=True)
-    train_collector = Collector(policy, train_envs, buffer, exploration_noise=True)
-    test_collector = Collector(policy, test_envs, exploration_noise=True)
+    train_collector = CollectorOnLatent(policy, train_envs, buffer, exploration_noise=True)
+    test_collector = CollectorOnLatent(policy, test_envs, exploration_noise=True)
+    #train_collector = Collector(policy, train_envs, buffer, exploration_noise=True)
+    #test_collector = Collector(policy, test_envs, exploration_noise=True)
     # log
     log_path = os.path.join(args.logdir, args.task, args.log_name)
     writer = SummaryWriter(log_path)
