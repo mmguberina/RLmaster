@@ -5,6 +5,7 @@ from typing import Any, Callable, Dict, List, Optional, Union
 import gym
 import numpy as np
 import torch
+from copy import deepcopy
 
 from tianshou.data import (
     Batch,
@@ -97,7 +98,8 @@ class CollectorOnLatent(object):
         # use empty Batch for "state" so that self.data supports slicing
         # convert empty Batch to None when passing data to policy
         self.data = Batch(
-            obs={}, obs_orig={}, act={}, rew={}, done={}, obs_next={}, info={}, policy={}
+            obs={}, obs_orig={}, act={}, rew={}, done={}, obs_next={}, 
+            obs_next_orig={}, info={}, policy={}
         )
         self.reset_env()
         if reset_buffer:
@@ -118,7 +120,14 @@ class CollectorOnLatent(object):
         if self.preprocess_fn:
             obs = self.preprocess_fn(obs=obs,
                                      env_id=np.arange(self.env_num)).get("obs", obs)
-        self.data.obs = obs
+        # NOTE first embedding
+        #if self.no_grad:
+        #    with torch.no_grad():
+        self.data.obs_orig = deepcopy(obs)
+        self.data.obs = self.policy.embed_obs(obs)
+        #else:
+        #    self.data.obs = self.policy.embed_obs(obs)
+
 
     def _reset_state(self, id: Union[int, List[int]]) -> None:
         """Reset the hidden state: self.data.state[id]."""
@@ -253,11 +262,24 @@ class CollectorOnLatent(object):
                         env_id=ready_env_ids,
                     )
                 )
+            self.data.obs_next_orig = deepcopy(self.data.obs_next)
+            if no_grad:
+                with torch.no_grad():
+                    self.data.obs_next = self.policy.embed_obs(self.data.obs_next)
+            else:
+                self.data.obs_next = self.policy.embed_obs(self.data.obs_next)
 
             if render:
                 self.env.render()
                 if render > 0 and not np.isclose(render, 0):
                     time.sleep(render)
+            #print("=======================================")
+            #print(self.data.obs.shape)
+            #print(self.data.obs_orig.shape)
+            #print(self.data.obs_next.shape)
+            #print(self.data.obs_next_orig.shape)
+            #print(self.data.rew.shape)
+            #print("=======================================")
 
             # add data into the buffer
             ptr, ep_rew, ep_len, ep_idx = self.buffer.add(
@@ -281,7 +303,14 @@ class CollectorOnLatent(object):
                     obs_reset = self.preprocess_fn(
                         obs=obs_reset, env_id=env_ind_global
                     ).get("obs", obs_reset)
+                obs_reset_orig = deepcopy(obs_reset)
+                if no_grad:
+                    with torch.no_grad():
+                        obs_reset = self.policy.embed_obs(obs_reset)
+                else:
+                    obs_reset = self.policy.embed_obs(obs_reset)
                 self.data.obs_next[env_ind_local] = obs_reset
+                self.data.obs_next_orig[env_ind_local] = obs_reset_orig
                 for i in env_ind_local:
                     self._reset_state(i)
 

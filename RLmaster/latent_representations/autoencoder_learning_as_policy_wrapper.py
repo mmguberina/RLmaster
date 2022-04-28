@@ -71,6 +71,26 @@ class AutoencoderLatentSpacePolicy(BasePolicy):
         self.decoder.train(mode)
         return self
 
+    # TODO write this out
+    # the point of this function is to act as the preprocessing
+    # function in collector.
+    # but, crucially, you need to ensure you keep the original observations as well
+    def embed_obs(self, obs_orig):
+        if self.latent_space_type == 'single-frame-predictor':
+            # encode each one separately
+            obs = obs_orig.reshape((-1, 1, 84, 84))
+            # and then restack
+            #batch.embedded_obs = to_numpy(self.encoder(obs).view(-1, self.frames_stack, 
+            # we stack by combining into a single vector
+            # because now the first row is linear
+            # TODO make it work with cnn layers too
+            #batch.embedded_obs = to_numpy(self.encoder(obs).view(-1, 
+            #    self.frames_stack * self.encoder.n_flatten))
+            obs = to_numpy(self.encoder(obs).view(
+                -1, self.frames_stack * self.encoder.n_flatten))
+        return obs
+
+
 
     def forward(
         self,
@@ -120,6 +140,12 @@ class AutoencoderLatentSpacePolicy(BasePolicy):
         # -------> so save embedded_obs in batch and make that the input key
         # ==================> yeah, but only in forward. goes to shit in other places. 
         # ====================> TODO find a way to fix this.
+        ################################################################################
+        ## SCREW EMBEDDING HERE THEN
+        ## DO IT IN THE COLLECTOR AS SOON AS A OBS POPS UP
+        # this function should be called action_selector because that's what it does
+        # and that's the only thing it should do
+        ################################################################################
         # TODO QUESTION: does it make sense to store the embedded observations too?
         # certainly not just to have autoencoder learning, but what when the policy is learning?
         # the policy learning will be more stable ....... maybe?
@@ -136,10 +162,10 @@ class AutoencoderLatentSpacePolicy(BasePolicy):
         #batch.embedded_obs = self.encoder(batch[input])
         # but to avoid needing to change policy code it is:
         # here shape the observations to fit the chosen latent space type
-        batch.obs_orig = deepcopy(batch.obs)
-        if self.latent_space_type == 'single-frame-predictor':
+        #batch.obs_orig = deepcopy(batch.obs)
+        #if self.latent_space_type == 'single-frame-predictor':
             # encode each one separately
-            obs = batch[input].reshape((-1, 1, 84, 84))
+            #obs = batch[input].reshape((-1, 1, 84, 84))
             # and then restack
             #batch.embedded_obs = to_numpy(self.encoder(obs).view(-1, self.frames_stack, 
             # we stack by combining into a single vector
@@ -147,12 +173,12 @@ class AutoencoderLatentSpacePolicy(BasePolicy):
             # TODO make it work with cnn layers too
             #batch.embedded_obs = to_numpy(self.encoder(obs).view(-1, 
             #    self.frames_stack * self.encoder.n_flatten))
-            batch.obs = to_numpy(self.encoder(obs).view(-1, 
-                self.frames_stack * self.encoder.n_flatten))
-        else:
+            #batch.obs = to_numpy(self.encoder(obs).view(-1, 
+            #    self.frames_stack * self.encoder.n_flatten))
+        #else:
         # TODO: write out the other cases (ex. forward prediction)
-            obs = batch[input]
-            batch.embedded_obs = to_numpy(self.encoder(obs))
+            #obs = batch[input]
+            #batch.embedded_obs = to_numpy(self.encoder(obs))
         #batch.obs = to_numpy(embedded_obs)
         #print(batch.orig_obs.shape)
         #return self.policy.forward(batch, state, input="embedded_obs", **kwargs)
@@ -200,28 +226,36 @@ class AutoencoderLatentSpacePolicy(BasePolicy):
 #        print(batch.shape)
 # NOTE: stupid hack for a stupid problem...
         if self.frames_stack == 1:
-            batch.obs = to_torch(batch.obs, device=self.device).view(self.batch_size, self.frames_stack, 84, 84)
+            #batch.obs = to_torch(batch.obs, device=self.device).view(self.batch_size, self.frames_stack, 84, 84)
+            batch.obs_orig = to_torch(batch.obs_orig, device=self.device).view(self.batch_size, self.frames_stack, 84, 84)
         else:
             # it's the right shape if frames_stack != 1
             batch.obs = to_torch(batch.obs, device=self.device)
-        with torch.no_grad():
-            if self.latent_space_type == 'single-frame-predictor':
-                # encode each one separately
-                obs = batch[input].reshape((-1, 1, 84, 84))
-                # and then restack
-                batch.embedded_obs = to_numpy(self.encoder(obs).view(-1, self.frames_stack, 
-                    self.encoder.n_flatten))
-            else:
-            # TODO: write out the other cases (ex. forward prediction)
-                obs = batch[input]
-                batch.embedded_obs = to_numpy(self.encoder(obs))
+            batch.obs_orig = to_torch(batch.obs_orig, device=self.device)
+    # this was already handeled
+    # NOTE however, we might want to re-do the embedding here, dunno tbh
+    # TODO try both, see if there's a difference
+    #    with torch.no_grad():
+    #        if self.latent_space_type == 'single-frame-predictor':
+    #            # encode each one separately
+    #            obs = batch[input].reshape((-1, 1, 84, 84))
+    #            # and then restack
+    #            batch.embedded_obs = to_numpy(self.encoder(obs).view(-1, self.frames_stack, 
+    #                self.encoder.n_flatten))
+    #        else:
+    #        # TODO: write out the other cases (ex. forward prediction)
+    #            obs = batch[input]
+    #            batch.embedded_obs = to_numpy(self.encoder(obs))
             #batch.embedded_obs = self.encoder(to_torch(batch.obs).view(32, 1, 84, 84))
         # do policy learn on embedded
         # TODO make this work:
         # 0) ensure you can actually pass input key through learn (not convinced that you can)
         # ---> a) save embedded_obs in replay buffer, use that
         # ---> b) pass the newly embedded (like we did now (make less sense overall intuitively but that says close to nothing))
-        res = self.policy.learn(batch, input="embedded_obs", **kwargs)
+        #res = self.policy.learn(batch, input="embedded_obs", **kwargs)
+        # ---> obs in buffer are now the embedded obs we had before
+        # otherwise recompress the batch you took here and pass that
+        res = self.policy.learn(batch, **kwargs)
 
         # and now here pass again through encoder, pass trough decoder and do the update
         self.optim_encoder.zero_grad()

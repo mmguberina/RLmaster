@@ -33,14 +33,15 @@ def get_args():
     parser.add_argument('--eps-test', type=float, default=0.005)
     parser.add_argument('--eps-train', type=float, default=1.)
     parser.add_argument('--eps-train-final', type=float, default=0.05)
-    parser.add_argument('--buffer-size', type=int, default=100000)
-#    parser.add_argument('--buffer-size', type=int, default=100)
+#    parser.add_argument('--buffer-size', type=int, default=100000)
+    parser.add_argument('--buffer-size', type=int, default=100)
     parser.add_argument('--lr', type=float, default=0.0001)
     parser.add_argument('--gamma', type=float, default=0.99)
     parser.add_argument('--n-step', type=int, default=3)
     parser.add_argument('--target-update-freq', type=int, default=500)
     parser.add_argument('--epoch', type=int, default=100)
-    parser.add_argument('--step-per-epoch', type=int, default=100000)
+#    parser.add_argument('--step-per-epoch', type=int, default=100000)
+    parser.add_argument('--step-per-epoch', type=int, default=100)
     # TODO why 8?
     parser.add_argument('--step-per-collect', type=int, default=8)
     # TODO having a different update frequency for the autoencoder 
@@ -87,9 +88,9 @@ def get_args():
     return args
 
 
-
-def test_dqn(args=get_args()):
-#    args=get_args()
+if __name__ == "__main__":
+#def test_dqn(args=get_args()):
+    args=get_args()
     env = make_atari_env(args)
     # this gives (1,84,84) w/ pixels in 0-1 range, as it should
     args.state_shape = env.observation_space.shape or env.observation_space.n
@@ -285,5 +286,5 @@ def test_dqn(args=get_args()):
     
 
 
-if __name__ == '__main__':
-    test_dqn(get_args())
+#if __name__ == '__main__':
+#    test_dqn(get_args())
