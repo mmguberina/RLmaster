@@ -11,7 +11,7 @@ from RLmaster.util.save_load_hyperparameters import save_hyperparameters
 
 from tianshou.data import Collector, VectorReplayBuffer
 from tianshou.env import ShmemVectorEnv
-from tianshou.policy import DQNPolicy
+from RLmaster.policy.dqn_fixed import DQNPolicy
 from RLmaster.latent_representations.autoencoder_learning_as_policy_wrapper import AutoencoderLatentSpacePolicy
 from RLmaster.latent_representations.autoencoder_nn import CNNEncoderNew, CNNDecoderNew
 from RLmaster.util.collector_on_latent import CollectorOnLatent
@@ -33,14 +33,16 @@ def get_args():
     parser.add_argument('--eps-test', type=float, default=0.005)
     parser.add_argument('--eps-train', type=float, default=1.)
     parser.add_argument('--eps-train-final', type=float, default=0.05)
-    parser.add_argument('--buffer-size', type=int, default=100000)
-#    parser.add_argument('--buffer-size', type=int, default=100)
+#    parser.add_argument('--buffer-size', type=int, default=100000)
+    parser.add_argument('--buffer-size', type=int, default=100)
     parser.add_argument('--lr', type=float, default=0.0001)
     parser.add_argument('--gamma', type=float, default=0.99)
     parser.add_argument('--n-step', type=int, default=3)
     parser.add_argument('--target-update-freq', type=int, default=500)
-    parser.add_argument('--epoch', type=int, default=100)
-    parser.add_argument('--step-per-epoch', type=int, default=100000)
+#    parser.add_argument('--epoch', type=int, default=100)
+    parser.add_argument('--epoch', type=int, default=5)
+#    parser.add_argument('--step-per-epoch', type=int, default=100000)
+    parser.add_argument('--step-per-epoch', type=int, default=100)
     # TODO why 8?
     parser.add_argument('--step-per-collect', type=int, default=8)
     # TODO having a different update frequency for the autoencoder 
@@ -64,7 +66,8 @@ def get_args():
     # when your goal is to learn how to manipulate dynamics
     # TODO test reshaping the tensor in a shell until it works as expected
     # i have no mental strength to do it now
-    parser.add_argument('--frames-stack', type=int, default=2)
+    #parser.add_argument('--frames-stack', type=int, default=2)
+    parser.add_argument('--frames-stack', type=int, default=1)
     parser.add_argument('--resume-path', type=str, default=None)
     parser.add_argument('--resume-id', type=str, default=None)
     parser.add_argument(

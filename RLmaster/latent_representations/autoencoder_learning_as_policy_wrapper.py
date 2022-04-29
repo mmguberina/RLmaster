@@ -4,8 +4,9 @@ import torch.nn.functional as F
 from copy import deepcopy
 from typing import Any, Callable, Dict, Optional, Tuple, Union
 
-from tianshou.data import Batch, ReplayBuffer, to_numpy, to_torch
+from tianshou.data import Batch, ReplayBuffer, to_numpy, to_torch, to_torch_as
 from tianshou.policy import BasePolicy
+from tianshou.policy.base import _gae_return, _nstep_return
 from RLmaster.latent_representations.autoencoder_nn import CNNEncoderNew, CNNDecoderNew
 
 class AutoencoderLatentSpacePolicy(BasePolicy):
@@ -35,7 +36,7 @@ class AutoencoderLatentSpacePolicy(BasePolicy):
 
     def __init__(
         self,
-        policy: BasePolicy,
+        rl_policy: BasePolicy,
         latent_space_type: str,
         encoder: CNNEncoderNew,
         decoder: CNNEncoderNew,
@@ -50,7 +51,7 @@ class AutoencoderLatentSpacePolicy(BasePolicy):
         **kwargs: Any,
     ) -> None:
         super().__init__(**kwargs)
-        self.policy = policy
+        self.rl_policy = rl_policy
         self.latent_space_type = latent_space_type
         self.encoder = encoder
         self.decoder = decoder
@@ -65,7 +66,7 @@ class AutoencoderLatentSpacePolicy(BasePolicy):
 
     def train(self, mode: bool = True) -> "AutoencoderLatentSpacePolicy":
         """Set the module in training mode."""
-        self.policy.train(mode)
+        self.rl_policy.train(mode)
         self.training = mode
         self.encoder.train(mode)
         self.decoder.train(mode)
@@ -150,15 +151,79 @@ class AutoencoderLatentSpacePolicy(BasePolicy):
             batch.embedded_obs = to_numpy(self.encoder(obs))
         #batch.obs = to_numpy(embedded_obs)
         #print(batch.orig_obs.shape)
-        return self.policy.forward(batch, state, input="embedded_obs", **kwargs)
+        return self.rl_policy.forward(batch, state, input="embedded_obs", **kwargs)
 
     def set_eps(self, eps: float) -> None:
         """Set the eps for epsilon-greedy exploration."""
-        if hasattr(self.policy, "set_eps"):
-            self.policy.set_eps(eps)  # type: ignore
+        if hasattr(self.rl_policy, "set_eps"):
+            self.rl_policy.set_eps(eps)  # type: ignore
         else:
             raise NotImplementedError()
 
+#    @staticmethod
+    def compute_nstep_return(
+        self,
+        batch: Batch,
+        buffer: ReplayBuffer,
+        indice: np.ndarray,
+        target_q_fn: Callable[[ReplayBuffer, np.ndarray], torch.Tensor],
+        gamma: float = 0.99,
+        n_step: int = 1,
+        rew_norm: bool = False,
+    ) -> Batch:
+        r"""Compute n-step return for Q-learning targets.
+
+        .. math::
+            G_t = \sum_{i = t}^{t + n - 1} \gamma^{i - t}(1 - d_i)r_i +
+            \gamma^n (1 - d_{t + n}) Q_{\mathrm{target}}(s_{t + n})
+
+        where :math:`\gamma` is the discount factor, :math:`\gamma \in [0, 1]`,
+        :math:`d_t` is the done flag of step :math:`t`.
+
+        :param Batch batch: a data batch, which is equal to buffer[indice].
+        :param ReplayBuffer buffer: the data buffer.
+        :param function target_q_fn: a function which compute target Q value
+            of "obs_next" given data buffer and wanted indices.
+        :param float gamma: the discount factor, should be in [0, 1]. Default to 0.99.
+        :param int n_step: the number of estimation step, should be an int greater
+            than 0. Default to 1.
+        :param bool rew_norm: normalize the reward to Normal(0, 1), Default to False.
+
+        :return: a Batch. The result will be stored in batch.returns as a
+            torch.Tensor with the same shape as target_q_fn's return tensor.
+        """
+        assert not rew_norm, \
+            "Reward normalization in computing n-step returns is unsupported now."
+        rew = buffer.rew
+        bsz = len(indice)
+        indices = [indice]
+        for _ in range(n_step - 1):
+            indices.append(buffer.next(indices[-1]))
+        indices = np.stack(indices)
+        # terminal indicates buffer indexes nstep after 'indice',
+        # and are truncated at the end of each episode
+        terminal = indices[-1]
+        batch_for_computing_returns = buffer[terminal]  # batch.obs_next: s_{t+n}
+        #print(type(batch_for_computing_returns))
+        #print(batch_for_computing_returns.shape)
+        #print(batch_for_computing_returns)
+        with torch.no_grad():
+            batch_for_computing_returns.obs_next = batch_for_computing_returns.obs_next.reshape(
+                    (-1, 1, 84, 84))
+            batch_for_computing_returns.obs_next = to_numpy(
+                    self.encoder(batch_for_computing_returns.obs_next).view(-1, 
+                self.frames_stack * self.encoder.n_flatten))
+            target_q_torch = target_q_fn(batch_for_computing_returns)  # (bsz, ?)
+        target_q = to_numpy(target_q_torch.reshape(bsz, -1))
+        target_q = target_q * BasePolicy.value_mask(buffer, terminal).reshape(-1, 1)
+        end_flag = buffer.done.copy()
+        end_flag[buffer.unfinished_index()] = True
+        target_q = _nstep_return(rew, end_flag, target_q, indices, gamma, n_step)
+
+        batch.returns = to_torch_as(target_q, target_q_torch)
+        if hasattr(batch, "weight"):  # prio buffer update
+            batch.weight = to_torch_as(batch.weight, target_q_torch)
+        return batch
 
     def process_fn(
         self, batch: Batch, buffer: ReplayBuffer, indices: np.ndarray
@@ -167,8 +232,16 @@ class AutoencoderLatentSpacePolicy(BasePolicy):
 
         Used in :meth:`update`. Check out :ref:`process_fn` for more information.
         """
+        # this ripped from dqn method
+        # no it shouldn't be
+        # but we went to disgusting hacking so here we are man
+        batch = self.compute_nstep_return(
+            batch, buffer, indices, self.rl_policy._target_q, self.rl_policy._gamma, 
+            self.rl_policy._n_step, self.rl_policy._rew_norm
+        )
         # we don't do anything here, just pass it further to inner policy pre-processing
-        return self.policy.process_fn(batch, buffer, indices)
+        #return self.rl_policy.process_fn(batch, buffer, indices)
+        return batch
 
 
     def post_process_fn(
@@ -180,7 +253,7 @@ class AutoencoderLatentSpacePolicy(BasePolicy):
         experience replay. Used in :meth:`update`.
         """
         # we don't do anything here, just pass it further to inner policy post-processing
-        self.policy.post_process_fn(batch, buffer, indices)
+        self.rl_policy.post_process_fn(batch, buffer, indices)
 
     def learn(self, batch: Batch, **kwargs: Any) -> Dict[str, float]:
         # pass through encoder with no_grad here
@@ -201,21 +274,27 @@ class AutoencoderLatentSpacePolicy(BasePolicy):
         with torch.no_grad():
             if self.latent_space_type == 'single-frame-predictor':
                 # encode each one separately
-                obs = batch[input].reshape((-1, 1, 84, 84))
+                obs = batch.obs.reshape((-1, 1, 84, 84))
                 # and then restack
-                batch.embedded_obs = to_numpy(self.encoder(obs).view(-1, self.frames_stack, 
-                    self.encoder.n_flatten))
-            else:
-            # TODO: write out the other cases (ex. forward prediction)
-                obs = batch[input]
-                batch.embedded_obs = to_numpy(self.encoder(obs))
+                #batch.embedded_obs = to_numpy(self.encoder(obs).view(-1, self.frames_stack, 
+                #    self.encoder.n_flatten))
+                # NOTE this is the one you want for conv layer first
+                #batch.obs = to_numpy(self.encoder(obs).view(-1, self.frames_stack, 
+                # and this is the one where you stack beforehand for the liner layer first
+                batch.obs = to_numpy(self.encoder(obs).view(-1, 
+                    self.frames_stack * self.encoder.n_flatten))
+#            else:
+#            # TODO: write out the other cases (ex. forward prediction)
+#                obs = batch[input]
+#                batch.embedded_obs = to_numpy(self.encoder(obs))
             #batch.embedded_obs = self.encoder(to_torch(batch.obs).view(32, 1, 84, 84))
         # do policy learn on embedded
         # TODO make this work:
         # 0) ensure you can actually pass input key through learn (not convinced that you can)
         # ---> a) save embedded_obs in replay buffer, use that
         # ---> b) pass the newly embedded (like we did now (make less sense overall intuitively but that says close to nothing))
-        res = self.policy.learn(batch, input="embedded_obs", **kwargs)
+        #res = self.rl_policy.learn(batch, input="embedded_obs", **kwargs)
+        res = self.rl_policy.learn(batch, **kwargs)
 
         # and now here pass again through encoder, pass trough decoder and do the update
         self.optim_encoder.zero_grad()
@@ -236,7 +315,12 @@ class AutoencoderLatentSpacePolicy(BasePolicy):
         # decoded_obs is of shape (batch_size, 1, 84, 84) and we want it to learn, say, the last frame only
         # which means we have to somehow correctly slice batch.obs so that only the last frames are left
         # tried it in shell, this worked 
-        reconstruction_loss = self.reconstruction_criterion(decoded_obs, batch.obs[:, -1, :, :].view(-1, 1, 84, 84))
+        #reconstruction_loss = self.reconstruction_criterion(decoded_obs, batch.obs[:, -1, :, :].view(-1, 1, 84, 84))
+
+        obs = obs.reshape((-1, self.frames_stack, 84, 84))
+        #print(decoded_obs.shape)
+        #print(obs.shape)
+        reconstruction_loss = self.reconstruction_criterion(decoded_obs, obs[:, -1, :, :].view(-1, 1, 84, 84))
         reconstruction_loss.backward()
         self.optim_encoder.step()
         self.optim_decoder.step()
