@@ -317,9 +317,11 @@ class AutoencoderLatentSpacePolicy(BasePolicy):
         # tried it in shell, this worked 
         #reconstruction_loss = self.reconstruction_criterion(decoded_obs, batch.obs[:, -1, :, :].view(-1, 1, 84, 84))
 
-        obs = obs.reshape((-1, self.frames_stack, 84, 84))
+        obs = obs.reshape((-1, self.frames_stack, 84, 84)).float()
         #print(decoded_obs.shape)
         #print(obs.shape)
+        #print(decoded_obs.dtype)
+        #print(obs.dtype)
         reconstruction_loss = self.reconstruction_criterion(decoded_obs, obs[:, -1, :, :].view(-1, 1, 84, 84))
         reconstruction_loss.backward()
         self.optim_encoder.step()

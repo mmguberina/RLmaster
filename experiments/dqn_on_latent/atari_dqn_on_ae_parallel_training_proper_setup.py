@@ -30,6 +30,7 @@ def get_args():
     parser.add_argument('--latent-space-type', type=str, default='single-frame-predictor')
     parser.add_argument('--features-dim', type=int, default=3136)
     parser.add_argument('--seed', type=int, default=0)
+    parser.add_argument("--scale-obs", type=int, default=0)
     parser.add_argument('--eps-test', type=float, default=0.005)
     parser.add_argument('--eps-train', type=float, default=1.)
     parser.add_argument('--eps-train-final', type=float, default=0.05)
@@ -49,8 +50,10 @@ def get_args():
     # and the policy is probably a smart thing to do
     parser.add_argument('--update-per-step', type=float, default=0.1)
     parser.add_argument('--batch-size', type=int, default=32)
-    parser.add_argument('--training-num', type=int, default=8)
-    parser.add_argument('--test-num', type=int, default=8)
+    #parser.add_argument('--training-num', type=int, default=8)
+    parser.add_argument('--training-num', type=int, default=2)
+    #parser.add_argument('--test-num', type=int, default=8)
+    parser.add_argument('--test-num', type=int, default=2)
     parser.add_argument('--logdir', type=str, default='log')
     parser.add_argument('--log-name', type=str, default='dqn_ae_parallel_good_arch')
     parser.add_argument('--render', type=float, default=0.)
@@ -91,9 +94,19 @@ def get_args():
 
 
 
-def test_dqn(args=get_args()):
-#    args=get_args()
-    env = make_atari_env(args)
+#def test_dqn(args=get_args()):
+if __name__ == "__main__": 
+    args=get_args()
+    #env = make_atari_env(args)
+    # we have another way now, should be faster
+    env, train_envs, test_envs = make_atari_env(
+        args.task,
+        args.seed,
+        args.training_num,
+        args.test_num,
+        scale=args.scale_obs,
+        frame_stack=args.frames_stack,
+    )
     # this gives (1,84,84) w/ pixels in 0-1 range, as it should
     args.state_shape = env.observation_space.shape or env.observation_space.n
     args.action_shape = env.action_space.shape or env.action_space.n
@@ -101,17 +114,17 @@ def test_dqn(args=get_args()):
     print("Observations shape:", args.state_shape)
     print("Actions shape:", args.action_shape)
     # make environments
-    train_envs = ShmemVectorEnv(
-        [lambda: make_atari_env(args) for _ in range(args.training_num)]
-    )
-    test_envs = ShmemVectorEnv(
-        [lambda: make_atari_env_watch(args) for _ in range(args.test_num)]
-    )
+    #train_envs = ShmemVectorEnv(
+    #    [lambda: make_atari_env(args) for _ in range(args.training_num)]
+    #)
+    #test_envs = ShmemVectorEnv(
+    #    [lambda: make_atari_env_watch(args) for _ in range(args.test_num)]
+    #)
     # seed
     np.random.seed(args.seed)
     torch.manual_seed(args.seed)
-    train_envs.seed(args.seed)
-    test_envs.seed(args.seed)
+    #train_envs.seed(args.seed)
+    #test_envs.seed(args.seed)
     q_net = DQNNoEncoder(args.action_shape, args.frames_stack, args.device).to(args.device)
     if args.latent_space_type == 'single-frame-predictor':
         # in this case, we don't pass the stacked frames.
@@ -288,5 +301,5 @@ def test_dqn(args=get_args()):
     
 
 
-if __name__ == '__main__':
-    test_dqn(get_args())
+#if __name__ == '__main__':
+#    test_dqn(get_args())
