@@ -51,9 +51,9 @@ def get_args():
     parser.add_argument('--update-per-step', type=float, default=0.1)
     parser.add_argument('--batch-size', type=int, default=32)
     #parser.add_argument('--training-num', type=int, default=8)
-    parser.add_argument('--training-num', type=int, default=2)
+    parser.add_argument('--training-num', type=int, default=1)
     #parser.add_argument('--test-num', type=int, default=8)
-    parser.add_argument('--test-num', type=int, default=2)
+    parser.add_argument('--test-num', type=int, default=1)
     parser.add_argument('--logdir', type=str, default='log')
     parser.add_argument('--log-name', type=str, default='dqn_ae_parallel_good_arch')
     parser.add_argument('--render', type=float, default=0.)
@@ -96,10 +96,12 @@ def get_args():
 
 #def test_dqn(args=get_args()):
 if __name__ == "__main__": 
+    torch.set_num_threads(1)
     args=get_args()
     #env = make_atari_env(args)
     # we have another way now, should be faster
-    env, train_envs, test_envs = make_atari_env(
+    #env, train_envs, test_envs = make_atari_env(
+    train_envs, test_envs = make_atari_env(
         args.task,
         args.seed,
         args.training_num,
@@ -108,8 +110,10 @@ if __name__ == "__main__":
         frame_stack=args.frames_stack,
     )
     # this gives (1,84,84) w/ pixels in 0-1 range, as it should
-    args.state_shape = env.observation_space.shape or env.observation_space.n
-    args.action_shape = env.action_space.shape or env.action_space.n
+    #args.state_shape = env.observation_space.shape or env.observation_space.n
+    #args.action_shape = env.action_space.shape or env.action_space.n
+    args.state_shape = train_envs.observation_space.shape or train_envs.observation_space.n
+    args.action_shape = train_envs.action_space.shape or train_envs.action_space.n
     # should be N_FRAMES x H x W
     print("Observations shape:", args.state_shape)
     print("Actions shape:", args.action_shape)
@@ -196,8 +200,8 @@ if __name__ == "__main__":
         torch.save(q_net.state_dict(), os.path.join(log_path, 'q_net.pth'))
 
     def stop_fn(mean_rewards):
-        if env.spec.reward_threshold:
-            return mean_rewards >= env.spec.reward_threshold
+        if train_envs.spec.reward_threshold:
+            return mean_rewards >= train_envs.spec.reward_threshold
         elif 'Pong' in args.task:
             return mean_rewards >= 20
         else:

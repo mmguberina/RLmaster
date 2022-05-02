@@ -31,9 +31,11 @@ def make_atari_env(task, seed, training_num, test_num, **kwargs):
                 "please set `x = x / 255.0` inside CNN network's forward function."
             )
         # parameters convertion
-        train_envs = env = envpool.make_gym(
+        #train_envs = env = envpool.make_gym(
+        train_envs = envpool.make_gym(
             task.replace("NoFrameskip-v4", "-v5"),
             num_envs=training_num,
+            num_threads=training_num,
             seed=seed,
             episodic_life=True,
             reward_clip=True,
@@ -41,7 +43,8 @@ def make_atari_env(task, seed, training_num, test_num, **kwargs):
         )
         test_envs = envpool.make_gym(
             task.replace("NoFrameskip-v4", "-v5"),
-            num_envs=training_num,
+            num_envs=test_num,
+            num_threads=test_num,
             seed=seed,
             episodic_life=False,
             reward_clip=False,
@@ -70,7 +73,8 @@ def make_atari_env(task, seed, training_num, test_num, **kwargs):
         env.seed(seed)
         train_envs.seed(seed)
         test_envs.seed(seed)
-    return env, train_envs, test_envs
+    #return env, train_envs, test_envs
+    return train_envs, test_envs
 
 
 def make_atari_env_watch(args):
