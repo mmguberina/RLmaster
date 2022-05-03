@@ -163,7 +163,8 @@ class CNNEncoderNew(nn.Module):
 
 # TODO change this to be convert via torch.data.to_tensor
     def forward(self, observations: torch.Tensor) -> torch.Tensor:
-        observations = torch.tensor(observations, dtype=torch.float32, device=self.device)
+        # the / 255 is now necessary because we switched to envpool and it does not downscale
+        observations = torch.tensor(observations, dtype=torch.float32, device=self.device) / 255
 #        return self.linear(self.encoder(observations))
         return self.encoder(observations)
 

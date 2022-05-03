@@ -17,7 +17,6 @@ import cv2
 
 # TODO just save the god damn observation space
 # in the encoder class and stop this nonsense
-transform = transforms.ToTensor()
 
 #features_dim = 576
 features_dim = 3136
@@ -25,10 +24,14 @@ features_dim = 3136
 #log_path = "../../experiments/latent_only/log/PongNoFrameskip-v4/unlabelled_experiment/"
 #log_path = "../../experiments/latent_only/log/PongNoFrameskip-v4/training_preloaded_buffer_fs_1/"
 log_path = "../../experiments/latent_only/log/PongNoFrameskip-v4/ae_trained_as_policy/"
+#log_path = "../../log/"
 #log_path_enc_dc = "../../experiments/latent_only/log/PongNoFrameskip-v4//"
 args = load_hyperparameters(log_path)
-env = make_atari_env(args)
+env, test_envs = make_atari_env(args.task, args.seed, 1, 1, frames_stack=args.frames_stack)
 observation_shape = env.observation_space.shape or env.observation_space.n
+observation_shape = list(args.state_shape)
+#observation_shape[0] = 1 
+observation_shape = tuple(observation_shape)
 
 #encoder = CNNEncoder(observation_shape=observation_shape, features_dim=features_dim)
 #decoder = CNNDecoder(observation_shape=observation_shape, n_flatten=encoder.n_flatten, features_dim=features_dim)
@@ -59,21 +62,20 @@ decoder.load_state_dict(torch.load(log_path + decoder_name, map_location=torch.d
 #print(obs.shape)
 #exit()
 #env = AutoencoderEnv(env, encoder, decoder, args.frames_stack)
-env = make_atari_env(args)
+#env = make_atari_env(args)
 env.reset()
-print(env)
+#print(env)
 
 # would be much better if you stretched and scaled 
 # the output image
 # 84x84 is hard to see
 # and you need to see
 # NOTE TOTENSOR IS SOME EVIL BULLSHIT THAT FUCKED EVERYTHING UP!!!!!!!!!!!!!!!!!!!!!
-transform = transforms.ToTensor()
-for i in range(5000):
-    obs, reward, done, info = env.step(env.action_space.sample())
-    #obs = transform(obs)
+for i in range(500):
+    obs, reward, done, info = env.step(np.array([env.action_space.sample()]))
     obs = torch.tensor(obs)
-    obs = obs.view([1,args.frames_stack,84,84])
+#    print(obs.shape)
+    obs = obs[:,:-2,:,:].view(1,2,84,84) / 255
     #obs = np.ceil(obs * 255).astype(np.uint8).reshape((84,84))
     with torch.no_grad():
         #obs = decoder(encoder(obs.reshape((1,1,84,84))))

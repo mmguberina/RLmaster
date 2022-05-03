@@ -29,8 +29,10 @@ action are all random sampled
 def get_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('--task', type=str, default='PongNoFrameskip-v4')
+    parser.add_argument('--latent-space-type', type=str, default='single-frame-predictor')
     parser.add_argument('--features_dim', type=int, default=3136)
     parser.add_argument('--seed', type=int, default=0)
+    parser.add_argument("--scale-obs", type=int, default=0)
     parser.add_argument('--buffer-size', type=int, default=100000)
 #    parser.add_argument('--buffer-size', type=int, default=100)
     parser.add_argument('--lr', type=float, default=0.001)
@@ -55,7 +57,7 @@ def get_args():
 #    parser.add_argument('--test-num', type=int, default=8)
     parser.add_argument('--test-num', type=int, default=1)
     parser.add_argument('--logdir', type=str, default='log')
-    parser.add_argument('--log-name', type=str, default='ae_trained_as_policy')
+    parser.add_argument('--log-name', type=str, default='ae_trained_as_policy_3136')
     parser.add_argument('--render', type=float, default=0.)
     parser.add_argument(
         '--device', type=str, default='cuda' if torch.cuda.is_available() else 'cpu'
@@ -90,21 +92,30 @@ def get_args():
 
 if __name__ == '__main__':
 #def test_dqn(args=get_args()):
+    torch.set_num_threads(1)
     args=get_args()
-    env = make_atari_env(args)
+    #env = make_atari_env(args)
+    train_envs, test_envs = make_atari_env(
+        args.task,
+        args.seed,
+        args.training_num,
+        args.test_num,
+        scale=args.scale_obs,
+        frame_stack=args.frames_stack,
+    )
     # this gives (1,84,84) w/ pixels in 0-1 range, as it should
-    args.state_shape = env.observation_space.shape or env.observation_space.n
-    args.action_shape = env.action_space.shape or env.action_space.n
+    args.state_shape = train_envs.observation_space.shape or train_envs.observation_space.n
+    args.action_shape = train_envs.action_space.shape or train_envs.action_space.n
     # should be N_FRAMES x H x W
     print("Observations shape:", args.state_shape)
     print("Actions shape:", args.action_shape)
     # make environments
-    train_envs = ShmemVectorEnv(
-        [lambda: make_atari_env(args) for _ in range(args.training_num)]
-    )
-    test_envs = ShmemVectorEnv(
-        [lambda: make_atari_env_watch(args) for _ in range(args.test_num)]
-    )
+#    train_envs = ShmemVectorEnv(
+#        [lambda: make_atari_env(args) for _ in range(args.training_num)]
+#    )
+#    test_envs = ShmemVectorEnv(
+#        [lambda: make_atari_env_watch(args) for _ in range(args.test_num)]
+#    )
     # seed
     np.random.seed(args.seed)
     torch.manual_seed(args.seed)
@@ -113,8 +124,20 @@ if __name__ == '__main__':
     # in this experiment we're using the random policy
     # which is just a placeholder really
     rl_policy = RandomPolicy(args.action_shape)
-    encoder = CNNEncoderNew(observation_shape=args.state_shape, features_dim=args.features_dim, device=args.device).to(args.device)
-    decoder = CNNDecoderNew(observation_shape=args.state_shape, n_flatten=encoder.n_flatten, features_dim=args.features_dim).to(args.device)
+
+    if args.latent_space_type == 'single-frame-predictor':
+        # in this case, we don't pass the stacked frames.
+        # we unstack them, compress them, the stack the compressed ones and
+        # pass that to the policy
+        observation_shape = list(args.state_shape)
+        observation_shape[0] = 1 
+        observation_shape = tuple(observation_shape)
+        encoder = CNNEncoderNew(observation_shape=observation_shape, 
+                features_dim=args.features_dim, device=args.device).to(args.device)
+        decoder = CNNDecoderNew(observation_shape=observation_shape, 
+                n_flatten=encoder.n_flatten, features_dim=args.features_dim).to(args.device)
+#    encoder = CNNEncoderNew(observation_shape=args.state_shape, features_dim=args.features_dim, device=args.device).to(args.device)
+#    decoder = CNNDecoderNew(observation_shape=args.state_shape, n_flatten=encoder.n_flatten, features_dim=args.features_dim).to(args.device)
     optim_encoder = torch.optim.Adam(encoder.parameters(), lr=args.lr)
     optim_decoder = torch.optim.Adam(decoder.parameters(), lr=args.lr)
     reconstruction_criterion = torch.nn.BCELoss()
@@ -123,6 +146,7 @@ if __name__ == '__main__':
     # comes before using the rl policy.
     policy = AutoencoderLatentSpacePolicy(
         rl_policy,
+        args.latent_space_type,
         encoder,
         decoder,
         optim_encoder,
@@ -162,8 +186,8 @@ if __name__ == '__main__':
         torch.save(decoder.state_dict(), os.path.join(log_path, 'decoder.pth'))
 
     def stop_fn(mean_rewards):
-        if env.spec.reward_threshold:
-            return mean_rewards >= env.spec.reward_threshold
+        if train_envs.spec.reward_threshold:
+            return mean_rewards >= train_envs.spec.reward_threshold
         elif 'Pong' in args.task:
             return mean_rewards >= 20
         else:
