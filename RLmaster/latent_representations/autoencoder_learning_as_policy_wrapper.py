@@ -8,6 +8,7 @@ from tianshou.data import Batch, ReplayBuffer, to_numpy, to_torch, to_torch_as
 from tianshou.policy import BasePolicy
 from tianshou.policy.base import _gae_return, _nstep_return
 from RLmaster.latent_representations.autoencoder_nn import CNNEncoderNew, CNNDecoderNew
+from RLmaster.policy.dqn_fixed import DQNPolicy
 
 class AutoencoderLatentSpacePolicy(BasePolicy):
     """
@@ -235,13 +236,16 @@ class AutoencoderLatentSpacePolicy(BasePolicy):
         # this ripped from dqn method
         # no it shouldn't be
         # but we went to disgusting hacking so here we are man
-        batch = self.compute_nstep_return(
-            batch, buffer, indices, self.rl_policy._target_q, self.rl_policy._gamma, 
-            self.rl_policy._n_step, self.rl_policy._rew_norm
-        )
-        # we don't do anything here, just pass it further to inner policy pre-processing
-        #return self.rl_policy.process_fn(batch, buffer, indices)
-        return batch
+        # do the below depending on underlying policy
+        if isinstance(self.rl_policy, DQNPolicy):
+            batch = self.compute_nstep_return(
+                batch, buffer, indices, self.rl_policy._target_q, self.rl_policy._gamma, 
+                self.rl_policy._n_step, self.rl_policy._rew_norm
+            )
+            return batch
+        else:
+            # we don't do anything here, just pass it further to inner policy pre-processing
+            return self.rl_policy.process_fn(batch, buffer, indices)
 
 
     def post_process_fn(
@@ -300,6 +304,7 @@ class AutoencoderLatentSpacePolicy(BasePolicy):
         self.optim_encoder.zero_grad()
         self.optim_decoder.zero_grad()
         #decoded_obs = self.decoder(self.encoder(batch.obs))
+        obs = (obs / 255).float()
         decoded_obs = self.decoder(self.encoder(obs))
         
 #        print("===================================")
@@ -317,7 +322,7 @@ class AutoencoderLatentSpacePolicy(BasePolicy):
         # tried it in shell, this worked 
         #reconstruction_loss = self.reconstruction_criterion(decoded_obs, batch.obs[:, -1, :, :].view(-1, 1, 84, 84))
 
-        obs = obs.reshape((-1, self.frames_stack, 84, 84)).float()
+        #obs = obs.reshape((-1, self.frames_stack, 84, 84)).float()
         #print(decoded_obs.shape)
         #print(obs.shape)
         #print(decoded_obs.dtype)

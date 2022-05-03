@@ -153,6 +153,12 @@ if __name__ == "__main__":
         args.n_step,
         target_update_freq=args.target_update_freq
     )
+#    print(rl_policy.__class__)
+#    if isinstance(rl_policy, DQNPolicy):
+#        print("i4t is")
+#    print(type(rl_policy.__class__))
+#    exit()
+#    no_nex()
     # the rl_policy is then passed into our autoencoder-wrapper policy
     # it's done this way because the compression to latent spaces
     # comes before using the rl policy.
