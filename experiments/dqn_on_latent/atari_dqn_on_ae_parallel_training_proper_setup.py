@@ -172,7 +172,6 @@ if __name__ == "__main__":
     policy = AutoencoderLatentSpacePolicy(
         rl_policy,
         args.latent_space_type,
-        args.pass_q_grads_to_encoder,
         encoder,
         decoder,
         optim_encoder,
@@ -180,7 +179,8 @@ if __name__ == "__main__":
         reconstruction_criterion,
         args.batch_size,
         args.frames_stack,
-        args.device
+        args.device,
+        args.pass_q_grads_to_encoder
     )
     # TODO write this out
     if args.resume_path:

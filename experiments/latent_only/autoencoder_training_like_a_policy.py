@@ -29,7 +29,7 @@ action are all random sampled
 def get_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('--task', type=str, default='PongNoFrameskip-v4')
-    parser.add_argument('--latent-space-type', type=str, default='single-frame-predictor')
+    parser.add_argument('--latent-space-type', type=str, default='forward-frame-predictor')
     parser.add_argument('--features_dim', type=int, default=3136)
     parser.add_argument('--seed', type=int, default=0)
     parser.add_argument("--scale-obs", type=int, default=0)
@@ -124,6 +124,7 @@ if __name__ == '__main__':
     # in this experiment we're using the random policy
     # which is just a placeholder really
     rl_policy = RandomPolicy(args.action_shape)
+    observation_shape = args.state_shape
 
     if args.latent_space_type == 'single-frame-predictor':
         # in this case, we don't pass the stacked frames.
@@ -132,10 +133,11 @@ if __name__ == '__main__':
         observation_shape = list(args.state_shape)
         observation_shape[0] = 1 
         observation_shape = tuple(observation_shape)
-        encoder = CNNEncoderNew(observation_shape=observation_shape, 
-                features_dim=args.features_dim, device=args.device).to(args.device)
-        decoder = CNNDecoderNew(observation_shape=observation_shape, 
-                n_flatten=encoder.n_flatten, features_dim=args.features_dim).to(args.device)
+    encoder = CNNEncoderNew(observation_shape=observation_shape, 
+            features_dim=args.features_dim, device=args.device).to(args.device)
+    decoder = CNNDecoderNew(observation_shape=observation_shape, 
+            n_flatten=encoder.n_flatten, features_dim=args.features_dim).to(args.device)
+
 #    encoder = CNNEncoderNew(observation_shape=args.state_shape, features_dim=args.features_dim, device=args.device).to(args.device)
 #    decoder = CNNDecoderNew(observation_shape=args.state_shape, n_flatten=encoder.n_flatten, features_dim=args.features_dim).to(args.device)
     optim_encoder = torch.optim.Adam(encoder.parameters(), lr=args.lr)
@@ -257,8 +259,8 @@ if __name__ == '__main__':
 
 
     # test train_collector and start filling replay buffer
-    #train_collector.collect(n_step=args.batch_size * args.training_num)
-    train_collector.collect(n_step=args.buffer_size)
+    train_collector.collect(n_step=args.batch_size * args.training_num)
+    #train_collector.collect(n_step=args.buffer_size)
 #    buffer.save_hdf5(os.path.join(log_path, 'buffer.h5'))
 #    print('buffer = saved to disk')
 #    exit()

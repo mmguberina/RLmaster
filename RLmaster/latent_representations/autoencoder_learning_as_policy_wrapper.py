@@ -39,7 +39,6 @@ class AutoencoderLatentSpacePolicy(BasePolicy):
         self,
         rl_policy: BasePolicy,
         latent_space_type: str,
-        pass_policy_grad_to_encoder: bool,
         encoder: CNNEncoderNew,
         decoder: CNNEncoderNew,
         optim_encoder: torch.optim.Optimizer,
@@ -48,6 +47,7 @@ class AutoencoderLatentSpacePolicy(BasePolicy):
         batch_size: int,
         frames_stack: int,
         device: str = "cpu",
+        pass_policy_grad_to_encoder: bool = False,
         lr_scale: float = 0.001,
         **kwargs: Any,
     ) -> None:
@@ -322,8 +322,8 @@ class AutoencoderLatentSpacePolicy(BasePolicy):
         res = self.rl_policy.learn(batch, **kwargs)
 
         #decoded_obs = self.decoder(self.encoder(batch.obs))
-        obs = (obs / 255).float()
-        decoded_obs = self.decoder(self.encoder(obs))
+        #batch.obs = (batch.obs / 255).float()
+        decoded_obs = self.decoder(self.encoder(batch.obs))
         
 #        print("===================================")
 #        print("===================================")
@@ -345,7 +345,13 @@ class AutoencoderLatentSpacePolicy(BasePolicy):
         #print(obs.shape)
         #print(decoded_obs.dtype)
         #print(obs.dtype)
-        reconstruction_loss = self.reconstruction_criterion(decoded_obs, obs[:, -1, :, :].view(-1, 1, 84, 84))
+        if self.latent_space_type == 'single-frame-predictor':
+            reconstruction_loss = self.reconstruction_criterion(decoded_obs, obs[:, -1, :, :].view(-1, 1, 84, 84))
+        if self.latent_space_type == 'forward-frame-predictor':
+            batch.obs_next = torch.tensor(batch.obs_next)
+#            print(batch.obs_next.shape)
+#            print(batch.obs_next[:, -1, :, :].shape)
+            reconstruction_loss = self.reconstruction_criterion(decoded_obs, batch.obs_next[:, -1, :, :].view(-1, 1, 84, 84) / 255)
         reconstruction_loss.backward()
         self.optim_encoder.step()
         self.optim_decoder.step()

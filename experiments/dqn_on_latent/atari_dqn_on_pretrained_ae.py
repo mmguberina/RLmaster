@@ -21,6 +21,7 @@ def get_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('--task', type=str, default='PongNoFrameskip-v4')
     parser.add_argument('--seed', type=int, default=0)
+    parser.add_argument('--features-dim', type=int, default=3136)
     parser.add_argument('--eps-test', type=float, default=0.005)
     parser.add_argument('--eps-train', type=float, default=1.)
     parser.add_argument('--eps-train-final', type=float, default=0.05)
@@ -37,6 +38,7 @@ def get_args():
     parser.add_argument('--training-num', type=int, default=8)
     parser.add_argument('--test-num', type=int, default=8)
     parser.add_argument('--logdir', type=str, default='log')
+    parser.add_argument('--log-name', type=str, default='dqn_pretrained_ae_which_forward_predicts')
     parser.add_argument('--render', type=float, default=0.)
     parser.add_argument('--encoder-path', type=str, default="../latent_only/encoder_features_dim_3136.pt")
     parser.add_argument(
