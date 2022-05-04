@@ -38,8 +38,8 @@ observation_shape = tuple(observation_shape)
 #encoder.load_state_dict(torch.load("../../experiments/latent_only/encoder_features_dim_{}.pt".format(features_dim), map_location=torch.device('cpu')))
 #decoder.load_state_dict(torch.load("../../experiments/latent_only/decoder_features_dim_{}.pt".format(features_dim), map_location=torch.device('cpu')))
 
-encoder_name = "checkpoint_encoder_epoch_2.pth"
-decoder_name = "checkpoint_decoder_epoch_4.pth"
+encoder_name = "checkpoint_encoder_epoch_14.pth"
+decoder_name = "checkpoint_decoder_epoch_20.pth"
 #encoder_name = "encoder.pth"
 #decoder_name = "decoder.pth"
 #encoder_name = "encoder_features_dim_3136.pt"

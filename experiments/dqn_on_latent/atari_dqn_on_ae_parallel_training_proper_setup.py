@@ -144,7 +144,11 @@ if __name__ == "__main__":
                 features_dim=args.features_dim, device=args.device).to(args.device)
         decoder = CNNDecoderNew(observation_shape=observation_shape, 
                 n_flatten=encoder.n_flatten, features_dim=args.features_dim).to(args.device)
-    optim_q = torch.optim.Adam(q_net.parameters(), lr=args.lr)
+    if args.pass_q_grads_to_encoder == False:
+        optim_q = torch.optim.Adam(q_net.parameters(), lr=args.lr)
+    else:
+        optim_q = torch.optim.Adam([{'params': q_net.parameters()}, 
+                {'params': encoder.parameters()}], lr=args.lr)
     optim_encoder = torch.optim.Adam(encoder.parameters(), lr=args.lr)
     optim_decoder = torch.optim.Adam(decoder.parameters(), lr=args.lr)
     reconstruction_criterion = torch.nn.BCELoss()

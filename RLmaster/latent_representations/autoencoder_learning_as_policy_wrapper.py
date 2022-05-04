@@ -39,7 +39,7 @@ class AutoencoderLatentSpacePolicy(BasePolicy):
         self,
         rl_policy: BasePolicy,
         latent_space_type: str,
-        pass_q_grads_to_encoder: bool,
+        pass_policy_grad_to_encoder: bool,
         encoder: CNNEncoderNew,
         decoder: CNNEncoderNew,
         optim_encoder: torch.optim.Optimizer,
@@ -49,13 +49,12 @@ class AutoencoderLatentSpacePolicy(BasePolicy):
         frames_stack: int,
         device: str = "cpu",
         lr_scale: float = 0.001,
-        pass_policy_grad: bool = False,
         **kwargs: Any,
     ) -> None:
         super().__init__(**kwargs)
         self.rl_policy = rl_policy
         self.latent_space_type = latent_space_type
-        self.pass_q_grads_to_encoder = pass_q_grads_to_encoder
+        self.pass_policy_grad_to_encoder = pass_policy_grad_to_encoder
         self.encoder = encoder
         self.decoder = decoder
         self.optim_encoder = optim_encoder
@@ -64,7 +63,6 @@ class AutoencoderLatentSpacePolicy(BasePolicy):
         self.device = device
         self.batch_size = batch_size
         self.frames_stack = frames_stack
-        self.pass_policy_grad = pass_policy_grad
         self.lr_scale = lr_scale
 
     def train(self, mode: bool = True) -> "AutoencoderLatentSpacePolicy":
@@ -277,7 +275,12 @@ class AutoencoderLatentSpacePolicy(BasePolicy):
         else:
             # it's the right shape if frames_stack != 1
             batch.obs = to_torch(batch.obs, device=self.device)
-        if self.pass_q_grads_to_encoder == False:
+
+        # we zero grad this here in because maybe we want both grads
+        self.optim_encoder.zero_grad()
+        self.optim_decoder.zero_grad()
+
+        if self.pass_policy_grad_to_encoder == False:
             with torch.no_grad():
                 if self.latent_space_type == 'single-frame-predictor':
                     # encode each one separately
@@ -315,11 +318,9 @@ class AutoencoderLatentSpacePolicy(BasePolicy):
         # ---> a) save embedded_obs in replay buffer, use that
         # ---> b) pass the newly embedded (like we did now (make less sense overall intuitively but that says close to nothing))
         #res = self.rl_policy.learn(batch, input="embedded_obs", **kwargs)
+        # this will also pass q-grads through the encoder if encoder params are given to q_optim
         res = self.rl_policy.learn(batch, **kwargs)
 
-        # and now here pass again through encoder, pass trough decoder and do the update
-        self.optim_encoder.zero_grad()
-        self.optim_decoder.zero_grad()
         #decoded_obs = self.decoder(self.encoder(batch.obs))
         obs = (obs / 255).float()
         decoded_obs = self.decoder(self.encoder(obs))
