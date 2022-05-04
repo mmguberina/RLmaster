@@ -23,14 +23,14 @@ features_dim = 3136
 
 #log_path = "../../experiments/latent_only/log/PongNoFrameskip-v4/unlabelled_experiment/"
 #log_path = "../../experiments/latent_only/log/PongNoFrameskip-v4/training_preloaded_buffer_fs_1/"
-log_path = "../../experiments/latent_only/log/PongNoFrameskip-v4/ae_trained_as_policy/"
-#log_path = "../../log/"
-#log_path_enc_dc = "../../experiments/latent_only/log/PongNoFrameskip-v4//"
+#log_path = "../../experiments/latent_only/log/PongNoFrameskip-v4/ae_trained_as_policy/"
+log_path = "../../log/dqn_ae_parallel_good_arch_fs_4_ex_big_init_collect/"
+#log_path_enc_dc = "../../experiments/latent_only/log/PongNoFrameskip-v4/"
 args = load_hyperparameters(log_path)
 env, test_envs = make_atari_env(args.task, args.seed, 1, 1, frames_stack=args.frames_stack)
 observation_shape = env.observation_space.shape or env.observation_space.n
 observation_shape = list(args.state_shape)
-#observation_shape[0] = 1 
+observation_shape[0] = 1 
 observation_shape = tuple(observation_shape)
 
 #encoder = CNNEncoder(observation_shape=observation_shape, features_dim=features_dim)
@@ -38,8 +38,10 @@ observation_shape = tuple(observation_shape)
 #encoder.load_state_dict(torch.load("../../experiments/latent_only/encoder_features_dim_{}.pt".format(features_dim), map_location=torch.device('cpu')))
 #decoder.load_state_dict(torch.load("../../experiments/latent_only/decoder_features_dim_{}.pt".format(features_dim), map_location=torch.device('cpu')))
 
-encoder_name = "checkpoint_encoder_epoch_1.pth"
-decoder_name = "checkpoint_decoder_epoch_1.pth"
+encoder_name = "checkpoint_encoder_epoch_2.pth"
+decoder_name = "checkpoint_decoder_epoch_4.pth"
+#encoder_name = "encoder.pth"
+#decoder_name = "decoder.pth"
 #encoder_name = "encoder_features_dim_3136.pt"
 #decoder_name = "decoder_features_dim_3136.pt"
 encoder = CNNEncoderNew(observation_shape=observation_shape, features_dim=features_dim, device='cpu')
@@ -70,12 +72,11 @@ env.reset()
 # the output image
 # 84x84 is hard to see
 # and you need to see
-# NOTE TOTENSOR IS SOME EVIL BULLSHIT THAT FUCKED EVERYTHING UP!!!!!!!!!!!!!!!!!!!!!
-for i in range(500):
+for i in range(5000):
     obs, reward, done, info = env.step(np.array([env.action_space.sample()]))
     obs = torch.tensor(obs)
 #    print(obs.shape)
-    obs = obs[:,:-2,:,:].view(1,2,84,84) / 255
+    obs = obs[:,-1,:,:].view(1,1,84,84) / 255
     #obs = np.ceil(obs * 255).astype(np.uint8).reshape((84,84))
     with torch.no_grad():
         #obs = decoder(encoder(obs.reshape((1,1,84,84))))

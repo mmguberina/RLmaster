@@ -39,6 +39,7 @@ class AutoencoderLatentSpacePolicy(BasePolicy):
         self,
         rl_policy: BasePolicy,
         latent_space_type: str,
+        pass_q_grads_to_encoder: bool,
         encoder: CNNEncoderNew,
         decoder: CNNEncoderNew,
         optim_encoder: torch.optim.Optimizer,
@@ -54,6 +55,7 @@ class AutoencoderLatentSpacePolicy(BasePolicy):
         super().__init__(**kwargs)
         self.rl_policy = rl_policy
         self.latent_space_type = latent_space_type
+        self.pass_q_grads_to_encoder = pass_q_grads_to_encoder
         self.encoder = encoder
         self.decoder = decoder
         self.optim_encoder = optim_encoder
@@ -275,7 +277,20 @@ class AutoencoderLatentSpacePolicy(BasePolicy):
         else:
             # it's the right shape if frames_stack != 1
             batch.obs = to_torch(batch.obs, device=self.device)
-        with torch.no_grad():
+        if self.pass_q_grads_to_encoder == False:
+            with torch.no_grad():
+                if self.latent_space_type == 'single-frame-predictor':
+                    # encode each one separately
+                    obs = batch.obs.reshape((-1, 1, 84, 84))
+                    # and then restack
+                    #batch.embedded_obs = to_numpy(self.encoder(obs).view(-1, self.frames_stack, 
+                    #    self.encoder.n_flatten))
+                    # NOTE this is the one you want for conv layer first
+                    #batch.obs = to_numpy(self.encoder(obs).view(-1, self.frames_stack, 
+                    # and this is the one where you stack beforehand for the liner layer first
+                    batch.obs = to_numpy(self.encoder(obs).view(-1, 
+                        self.frames_stack * self.encoder.n_flatten))
+        else:
             if self.latent_space_type == 'single-frame-predictor':
                 # encode each one separately
                 obs = batch.obs.reshape((-1, 1, 84, 84))
@@ -287,6 +302,8 @@ class AutoencoderLatentSpacePolicy(BasePolicy):
                 # and this is the one where you stack beforehand for the liner layer first
                 batch.obs = to_numpy(self.encoder(obs).view(-1, 
                     self.frames_stack * self.encoder.n_flatten))
+
+
 #            else:
 #            # TODO: write out the other cases (ex. forward prediction)
 #                obs = batch[input]

@@ -28,6 +28,7 @@ def get_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('--task', type=str, default='PongNoFrameskip-v4')
     parser.add_argument('--latent-space-type', type=str, default='single-frame-predictor')
+    parser.add_argument('--pass-q-grads-to-encoder', type=bool, default=True)
     parser.add_argument('--features-dim', type=int, default=3136)
     parser.add_argument('--seed', type=int, default=0)
     parser.add_argument("--scale-obs", type=int, default=0)
@@ -42,10 +43,11 @@ def get_args():
     parser.add_argument('--target-update-freq', type=int, default=500)
     parser.add_argument('--epoch', type=int, default=50)
 #    parser.add_argument('--epoch', type=int, default=5)
-    parser.add_argument('--step-per-epoch', type=int, default=100000)
-#    parser.add_argument('--step-per-epoch', type=int, default=100)
+#    parser.add_argument('--step-per-epoch', type=int, default=100000)
+    parser.add_argument('--step-per-epoch', type=int, default=100)
     # TODO why 8?
-    parser.add_argument('--step-per-collect', type=int, default=12)
+    #parser.add_argument('--step-per-collect', type=int, default=12)
+    parser.add_argument('--step-per-collect', type=int, default=6)
     # TODO having a different update frequency for the autoencoder 
     # and the policy is probably a smart thing to do
     #parser.add_argument('--update-per-step', type=float, default=0.1)
@@ -56,7 +58,7 @@ def get_args():
     #parser.add_argument('--test-num', type=int, default=8)
     parser.add_argument('--test-num', type=int, default=1)
     parser.add_argument('--logdir', type=str, default='log')
-    parser.add_argument('--log-name', type=str, default='dqn_ae_parallel_good_arch_fs_1')
+    parser.add_argument('--log-name', type=str, default='dqn_ae_parallel_good_arch_fs_4_passing_q_grads')
     parser.add_argument('--render', type=float, default=0.)
     parser.add_argument(
         '--device', type=str, default='cuda' if torch.cuda.is_available() else 'cpu'
@@ -166,6 +168,7 @@ if __name__ == "__main__":
     policy = AutoencoderLatentSpacePolicy(
         rl_policy,
         args.latent_space_type,
+        args.pass_q_grads_to_encoder,
         encoder,
         decoder,
         optim_encoder,
