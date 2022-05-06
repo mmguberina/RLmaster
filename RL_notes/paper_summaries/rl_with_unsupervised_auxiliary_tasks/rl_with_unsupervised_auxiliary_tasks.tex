@@ -1,0 +1,64 @@
+\documentclass{article}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsfonts}
+\usepackage[T1]{fontenc}
+\usepackage{bm}
+\usepackage{array}
+\usepackage{graphicx}
+\usepackage[utf8]{inputenc}
+
+\title{Paper summary: Reinforcement learning with unsupervised auxiliary tasks}
+
+\begin{document}
+\maketitle
+
+
+\section{Idea in few sentances}
+
+
+
+\section{Explanation of the central concept}
+
+
+
+
+\section{Methodology}
+
+
+\section{Initial rambly notes}
+
+
+\subsection{Abstract}
+In DRL one could use not just the reward signal, but other training signals
+to improve the process of learning to maximize reward.
+These can be formulated as pseudo-reward function and also maximized.
+An example is image reconstruction loss.
+
+
+\subsection{Introduction}
+In problems we try to tackle with reinforcement learning, 
+the agents are observing a sensorimotor stream.
+The rewards are often sparse and we'd like to do something useful in their absence,
+for example learn how to predict the sensorimotor stream in an unsupervised manner.
+[Consider a baby trying to maximize redness in its field of vision].
+
+
+\subsection{Method}
+Add auxiliary tasks as rewards to the objective, namely construct the overall objective as:
+\begin{equation}
+		\argmax_{\theta} E_{ \pi } \left[ R_{ 1:\infty } \right]  +
+		\lambda_{ c } \sum_{c \in \mathcal{C}}^{} E_{ \pi_{ c } } \left[ R_{ 1:\infty }^{ (c) } \right] 
+\end{equation}
+where $ r_{ t }^{ (c) }  $ is the auxiliary reward at time t.
+
+nvm, this paper is a reward-for-exploration type of paper, does not help me directly.
+
+\subsection{Other stuff}
+
+
+
+
+
+
+\end{document}
