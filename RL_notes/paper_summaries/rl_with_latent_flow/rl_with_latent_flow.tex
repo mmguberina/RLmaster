@@ -1,0 +1,112 @@
+\documentclass{article}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsfonts}
+\usepackage[T1]{fontenc}
+\usepackage{bm}
+\usepackage{array}
+\usepackage{graphicx}
+\usepackage[utf8]{inputenc}
+
+\title{Paper summary: Reinforcement learning with latent flow}
+
+\begin{document}
+\maketitle
+
+
+\section{Idea in few sentances}
+
+
+
+\section{Explanation of the central concept}
+
+
+
+
+\section{Methodology}
+
+
+\section{Initial rambly notes}
+
+
+\subsection{Abstract}
+Temporal information is essential for learning effictive policies with RL.
+Current state-of-the-art RL algorithms either assume that this information is present 
+in the state space, or give it via a heuristic like frame stacking.
+However, in current video classification, explicit encodings of temporal information
+like optical flow or two-stream architectures are used in state-of-the-art methods.
+Inspired by this, the paper introduces Flow of LAtents for
+REinforcement learning (Flare) --- a network architecture for RL 
+which explicitly encodes temporal information through latent vector differences.
+Flare achieves the same performance as state-based RL (but without access to the state velocity,
+only positional state information) and is the most sample-efficient model-free pixel-based RL algorithm
+on 500k and 1M step benchmarks.
+
+
+\undertext{Optical flow}
+\fbox{
+\parbox{\textwidth}{
+Boils down to taking a derivative of the image with respect to both time and
+positions.
+Consider how a pixel changes from a frame to the next frame (removed from the initial frame by $ dt  $):
+\begin{equation}
+		I(x,y,t) = I(x +dx, y + dy, t + dt)
+\end{equation}
+We do Taylor on this, remove common terms and divide by $ dt  $ to get:
+\begin{equation}
+		f_{ x }u + f_{ y }v + f_{ t } = 0
+\end{equation}
+where
+\begin{align}
+		f_{ x } = \frac{\partial f}{\partial x} &; f_{ y } = \frac{\partial f}{\partial y} \\
+		u = \frac{dx}{dt} &; v = \frac{dy}{dt} 
+\end{align}
+}}
+
+
+
+
+\subsection{Introduction}
+RL holds a promise (amen brother)...
+Passing a stack of most recent frames as an input to the CNN can be intepreted
+as a form of early fusion.
+In contrast, modern video recognition systems employ optical flow and late fusion,
+where individual frames are individually processed with CNN layers before fusion and
+downstream processing.
+However, integrating such an approach to RL is not trivial.
+Flare is the proposed solution and it can be intepreted as a \textit{structured late fusion} architecture.
+Along with the achievements listed in the abstract,
+Rainbow + Flare outperforms the baseline on 5/8 challenging Atari games at the 100M step benchmark.
+
+CNN with frame stacking was the way until 2016.
+Then CNN for embedding followed by an LSTM to aggregate temporal information became the best thing.
+
+\subsection{Background}
+\paragraph{SAC} Ya know it.
+
+\paragraph{RL with augmented data (RAD)}
+RAD is a training technique which pre-processes raw pixel observations by applying random data augmentations (ex.
+random traslations, cropping,..). It takes RL algorithms to the next level (actual quote, i love it).
+It's a thing they used because there's no reason not to.
+
+
+\subsection{Motivation}
+The RL policy learns nothing from positional information alone.
+Full-state access can receive all the necessary information.
+
+\subsection{Method}
+Individually embed each frame with a CNN.
+Substract each 2 consequtive embeddings. Pass both the embeddings
+and the differences between them to the policy.
+These differences are called latent flow.
+We do this because generating optical flow on the fly is too slow
+for RL applications in real-time control.
+
+\subsection{Other stuff}
+
+
+
+
+
+
+\end{document}

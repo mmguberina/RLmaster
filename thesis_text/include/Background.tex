@@ -1,0 +1,109 @@
+% CREATED BY DAVID FRISK, 2016
+\chapter{Background}
+
+\textbf{Markove Decision Processes(MDPs)}:\\
+
+Markov decision processes  model decision making in discrete, stochastic, sequential environments[9].The formal definition of Markov decision process can be summarised in  the tuple $\mathcal{M} = \{\mathcal{S}, \mathcal{A},\mathcal{P(S_0)}, \mathcal{T}, r\}$[8].
+The goal of the model is that an agent inhabits a  stochastic environment in a response to action choice made by the agent[9]. \\
+
+The environment consists of the the Transition function, $\mathcal{T} : \mathcal{S} \times \mathcal{A} \to \mathcal{(PS)}$.\\  and the reward function ($r(s_t, a_t)$), $r : \mathcal{S} \times \mathcal{A} \to \mathbb{R}$.In MDPs the transition probability and reward only depends on the current state and the action chosen by the agent  but not the past state and action.
+
+The agent acts in environment according to a policy $\mathcal{\pi} : \mathcal{S} \to \mathcal{(PS)}$.policy learned can be off policy where the behaviour policy is different from the policy used for action selection one common example is Q-learning or on-policy methods which attempts to evaluate or improve the policy that is used to make decision.\\
+The former state-action value function (Q function for short)can be computes recursively with dynamic programming: 
+\begin{equation}
+   	Q^\pi (s,a) = E_s'[r + \gamma E_a'~\pi(s') [Q^\pi(s',a')]|s,a,\pi]
+   	
+   	\end{equation}
+ 
+optimal q value under deterministic policy
+\begin{equation} a = argmax_a'\epsilon A Q^*(s,a')
+\end{equation} 
+
+\begin{equation}
+	  Q^* (s,a) = \max_\pi  Q^\pi(s,a)
+		
+\end{equation}
+
+if the optimal function satisfies the bellman equation:
+\begin{equation}
+    Q^* (s,a) = E_s' [r + \gamma max(\bm{a'}) Q^* (s',a')| s,a,\pi]
+\end{equation}
+
+The advantage function  describes “how good” the action a is, compared to the expected return when following direct policy pi.
+
+\begin{equation}
+    A^\pi (s,a) = Q^\pi(s,a)- V^\pi(s)
+    \end{equation}
+
+The value function V measures the how good it is to be in a particular state s. The Q function, however, measures the the value of choosing a particular action when in this state[6].\\
+
+\textbf{Deep Reinforcement Learning and DQN}\\
+
+(paraphrase)After deep learning  has shown remarkable results in learning from raw pixel data in computer vision it's application has been adopted to solve many classical learning problems.The goal of Deep Reinforcement Learning is to connect reinforcement learning algorithm to deep neural network which operates directly on RGB images and efficiently process training data by using stochastic gradient updates[2].\\
+
+The use of label data and the assumption the distribution of data to be identical and independent through out training process in deep learning makes it complex to use it directly into reinforcement learning algorithms which must be able to learn from sparse ,noisy and delayed reward and highly correlated data.To address this issues and successfully apply deep learning to reinforcement learning [2] used experience replay mechanism[15] which randomly samples previous transitions, and thereby smooths the training distribution over many past behaviors.Convolutional neural network was used to  learn successful control policies from raw video data in complex reinforcement learning environment.The network is trained with a variant of Q-learning algorithm,with stochastic gradient descent to update the weights.
+
+This architecture was based on Tesauro’s TD-Gammon architecture [17]which updates the parameters of the network that estimates the value function directly from on-policy samples of experience. Similar to this approach the online network  in DQN utilize a technique known as experience replay [18] where the agent’s experiences at each time-step, $\mathcal e_t = (s_t,a_t,r_t,s_t+1)$ is stored in a data set $\mathcal D = e1 , ..., e_N $ pooled over many episodes into a replay memory.By drawing random samples from this pool of stored experiences  the Q-learning is updated.After performing experience replay, the agent selects and executes an action according to an ε-greedy policy.The use of experience replay and target networks enables relatively stable learning of Q values, and led to super human performance on several Atari games.\\
+
+The advantage of using Deep Q-learning over Q-learning  includes allowing  to have greater sample efficiency,reduced variance by randomising the sample bias and avoiding being stuck in local minimum.Drawback  DQNs are it only handle discrete,low-dimensional action space.\\
+
+
+\subsection{Extension of DQN }
+
+Several Studies were performed to increase the performance of DQNs(Paraphrase).
+
+\subsubsection{Double Deep Q-networks: DDQN}
+
+DQN suffer from overestimation bias due to due to the maximization step in optimisation function in Q-learning.Q-learning can overestimate actions that have been tried often and the estimations can be higher than any realistic optimistic estimate .Double Q-learning [19], addresses this overestimation by decoupling, in the maximization performed for the bootstrap target, the selection of the action from its evaluation.Double Q-learning stores two Q-functions,The average of the two Q values for each action and then performed $\mathcal{\epsilon}$-greedy exploration with the resulting average Q values.It was successfully combined with DQN to reduce  overestimations.\textbf{ TODOS: DDQN  target equation}
+
+\subsubsection{Prioritized replay}
+
+The main use of replay buffer is to sample transitions with maximum probability.Both DQN and DDQN samples experiences uniformly.Prioritized replay [20] samples transitions using the maximum priority ,providing a bias towards recent transitions and stochastic transitions  even when there is little left to learn about them.
+
+\subsubsection{Dueling Network}
+
+Dueling Network was designed for  value based learning,this architecture separates the representation of sate-value and state-dependent action advantages without supervision[6].its consists of two streams that represents the value and advantage functions,while sharing a common convolutional feature learning module.This network has a single Q-learning network with two streams that replace DQN architecture[3]. 
+
+\begin{equation}
+    Q(s,a; \theta,\alpha,\beta) = V(s,\theta,\beta) + A(s,a; \theta,\alpha)
+\end{equation}
+
+\textbf{if needed TODO ADD EQUATION:factorization of action values}
+
+\subsubsection{Multi-step learning}
+
+Previously stated extension of DQN have indicated that the use deep learning has enhanced the learning capability of Q-learning.The performance of  Q-learning is still limited by greedy action selection after accumulating a single reward.An alternative approach was multi-step targets:
+ 
+ \begin{equation}
+		y_{j,t} = \sum_{t'=t}^{t+N-1} \gamma^{t-t'}    r_{j,t'} + \gamma^N  \max_{\bm{a}_{j,t+N}}Q_{\phi'}(\bm{s}_{j,t+N}, \bm{a}_{j,t+N}) 
+\end{equation}
+
+A multi-step variant of DQN is then defined by minimizing
+the alternative loss[16],
+
+\begin{equation}
+	    R_t^{(n)} +  \gamma_t^{(n)}  \max_{a'} q_\theta^{-}(S_{t+n},a') - q_{\theta}(S_t,A_t)
+\end{equation}
+  
+
+\subsubsection{Noisy Nets}
+
+The one limitation of $\mathcal{\epsilon}$-greedy policy  is many actions must be executed to collect the first reward.Noisy Nets proposed a noisy linear layer that combines  a deterministic and noisy stream.Depending on the learning rate the network ignores to learn the noisy stream.
+
+\subsubsection{Integrated Agent:Rainbow}
+
+
+In the Rainbow architecture [16]  tries combine the above six method stated above all together.Distributional loss (3) was replaced with a multi-step variant.The target distribution was constructed  by contracting the value distribution in St+n according to the cumulative discount, and shifting it by the truncated n-step discounted return. multi-step distributional loss with double Q-learning by using the greedy action in St+n selected according to the online network as the bootstrap action a∗t+n, and evaluating such action using the target network.
+
+\textbf{TODO ADD EQUATION:target distribution}
+
+
+
+
+
+
+
+
+
+
+

@@ -26,12 +26,56 @@
 
 
 \subsection{Abstract}
-
+The latent space used is constructed using time-contrastive networks (TCN).
+The time-contrastive networks are extended in the following way:
+they take multiple frames as input - this allows for more accurate
+position and velocity attribute encoding.
+The embedding network is trained in a self-supervised approach.
+The overall training is a two-step process.
 
 
 \subsection{Introduction}
+The contributions are the following ones:
+\begin{enumerate}
+		\item multi-frame TCNs work better than single-frame ones fro
+				statisc and motion attribute classification
+		\item RL policies learned from pixels using mfTCN outperform learning from scratch
+				or by using positional velocity encoders
+		\item policies trained in this way are competitive to those
+				who had access to the true state space
+\end{enumerate}
 
 \subsection{Method}
+\subsubsection{Base network}
+The base network is a CNN.
+The mfTCN embeddings are used on top of its representations.
+In math, the base network encodes the hidden features $ h_{ t }  $ at time $ t  $
+from an input image $ I_{ t }  $:
+\begin{equation}
+		h_{ t } = \text{CNN}(I_{ t })
+\end{equation}
+
+\subsubsection{Temporal aggregation}
+The available options to aggregate temporal information are:
+temporal averaging, temporal convolutions or RNNs.
+Here 3D temporal convolutions are used:
+\begin{equation}
+		\phi_{ t } = \text{Conv3D} (h_{ t }, h_{ t-s  \dots}, h_{ t - (n-1) \times s })
+\end{equation}
+
+\subsubsection{Dimensionality reduction}
+After temporal aggregation, the resulting data is in the form
+of a 4D convolutional feature map: (time, height, width, channels).
+This is compressed by using a fully connected layer:
+\begin{equation}
+		\text{mfTCN}_{ t } = \text{FC}(\phi_{ t })
+\end{equation}
+
+\subsubsection{Time-contrastive learning}
+n-pairs loss from K. Sohn ``Improved deep metric learning with multi-class n-pair loss objective''.
+is used as the loss function.
+Read the paper if you want to know more.
+
 
 \subsection{Other stuff}
 

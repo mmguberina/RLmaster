@@ -33,3 +33,13 @@ then using that for q-learning?
 2. frame predicting
 3. try passing the both q and reconstruction loss through the encoder
 4. renormalize the bottleneck layer
+
+
+new meeting
+-----------
+1. parallel learning doesn't work 'cos of latent space distribution shift
+---> some cool regularization?
+---> dropping this completely?
+2. better ways of encoding temporal information instead of forward prediction?
+---> will test those, ex. reinforcement learning with latent flow paper?
+- people adopted single-frame-compression with CNN which then goes to an LSTM

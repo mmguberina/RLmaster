@@ -7,6 +7,7 @@ from RLmaster.util.atari_wrapper import make_atari_env, AutoencoderEnv
 #from RLmaster.latent_representations.autoencoder_nn import CNNEncoder, CNNDecoder
 from RLmaster.latent_representations.autoencoder_nn import CNNEncoderNew, CNNDecoderNew
 from RLmaster.util.save_load_hyperparameters import load_hyperparameters
+from collections import deque
 
 import torch
 import torch.nn as nn
@@ -24,22 +25,26 @@ features_dim = 3136
 #log_path = "../../experiments/latent_only/log/PongNoFrameskip-v4/unlabelled_experiment/"
 #log_path = "../../experiments/latent_only/log/PongNoFrameskip-v4/training_preloaded_buffer_fs_1/"
 #log_path = "../../experiments/latent_only/log/PongNoFrameskip-v4/ae_trained_as_policy/"
-log_path = "../../log/dqn_ae_parallel_good_arch_fs_4_passing_q_grads/"
+#log_path = "../../log/dqn_ae_parallel_good_arch_fs_4_passing_q_grads/"
+log_path = "../../log/ae_trained_as_policy_3136/"
 #log_path_enc_dc = "../../experiments/latent_only/log/PongNoFrameskip-v4/"
 args = load_hyperparameters(log_path)
+# TODO fix this bug where frames_stack is not done in make_atari_env, but elsewhere
+#args.frames_stack = 2
 env, test_envs = make_atari_env(args.task, args.seed, 1, 1, frames_stack=args.frames_stack)
 observation_shape = env.observation_space.shape or env.observation_space.n
-observation_shape = list(args.state_shape)
-observation_shape[0] = 1 
-observation_shape = tuple(observation_shape)
-
+if args.latent_space_type == "single-frame-predictor":
+    observation_shape = list(args.state_shape)
+    observation_shape[0] = 1 
+    observation_shape = tuple(observation_shape)
+#print(observation_shape)
 #encoder = CNNEncoder(observation_shape=observation_shape, features_dim=features_dim)
 #decoder = CNNDecoder(observation_shape=observation_shape, n_flatten=encoder.n_flatten, features_dim=features_dim)
 #encoder.load_state_dict(torch.load("../../experiments/latent_only/encoder_features_dim_{}.pt".format(features_dim), map_location=torch.device('cpu')))
 #decoder.load_state_dict(torch.load("../../experiments/latent_only/decoder_features_dim_{}.pt".format(features_dim), map_location=torch.device('cpu')))
 
-encoder_name = "checkpoint_encoder_epoch_3.pth"
-decoder_name = "checkpoint_decoder_epoch_4.pth"
+encoder_name = "checkpoint_encoder_epoch_1.pth"
+decoder_name = "checkpoint_decoder_epoch_1.pth"
 #encoder_name = "encoder.pth"
 #decoder_name = "decoder.pth"
 #encoder_name = "encoder_features_dim_3136.pt"
@@ -72,6 +77,9 @@ env.reset()
 # the output image
 # 84x84 is hard to see
 # and you need to see
+queue = deque([], maxlen=args.frames_stack)
+print(queue)
+exit()
 for i in range(5000):
     obs, reward, done, info = env.step(np.array([env.action_space.sample()]))
     obs = torch.tensor(obs)
