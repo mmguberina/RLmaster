@@ -9,6 +9,8 @@
 \usepackage[english]{babel}							% Language settings
 \usepackage[utf8]{inputenc}							% Input settings
 \usepackage{amsmath}								% Mathematical expressions (American mathematical society)
+\usepackage{bm}
+\usepackage{array}
 \usepackage{amssymb}								% Mathematical symbols (American mathematical society)
 \usepackage{graphicx}								% Figures
 \usepackage{subfig}									% Enables subfigures
@@ -28,6 +30,34 @@
 \usepackage{float} 									% Enables object position enforcement using [H]
 \usepackage{parskip}								% Enables vertical spaces correctly 
 \usepackage{datetime} %date formatting tools
+
+% cleaner math
+\newcommand{\argmin}{\arg\!\min} 
+\newcommand{\argmax}{\arg\!\max} 
+\usepackage[makeroom]{cancel}
+
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta}
+\usetikzlibrary{shapes.geometric, arrows}
+%\usepackage{tikz-graph}
+%\usetikzlibrary{bayesnet}
+%\usetikzlibrary{shapes.geometric}
+%\usetikzlibrary{trees}
+\usetikzlibrary{positioning}
+\tikzstyle{rec} = [rectangle,  minimum width=2cm, minimum height=1cm, text centered, draw=black]
+\tikzstyle{arrow} = [thick,->,>=stealth]
+\tikzstyle{arrow_red} = [thick,->,>=stealth, color=red]
+\tikzstyle{mcs} = [circle, draw=black] 
+\tikzstyle{mcsb} = [circle, draw=black, fill=black!10] 
+
+% bibtex
+\usepackage[
+backend=biber,
+style=alphabetic,
+sorting=ynt
+]{biblatex}
+
+\addbibresource{bibliography.bib}
 
 
 % OPTIONAL SETTINGS (DELETE OR COMMENT TO SUPRESS)

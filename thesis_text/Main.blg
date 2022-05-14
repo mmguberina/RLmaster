@@ -1,0 +1,17 @@
+[0] Config.pm:312> INFO - This is Biber 2.15
+[1] Config.pm:315> INFO - Logfile is 'Main.blg'
+[86] biber:330> INFO - === Sun May 15, 2022, 00:24:23
+[101] Biber.pm:415> INFO - Reading 'Main.bcf'
+[195] Biber.pm:952> INFO - Found 15 citekeys in bib section 0
+[212] Biber.pm:4334> INFO - Processing section 0
+[224] Biber.pm:4523> INFO - Looking for bibtex format file 'bibliography.bib' for section 0
+[225] bibtex.pm:1682> INFO - LaTeX decoding ...
+[243] bibtex.pm:1494> INFO - Found BibTeX data source 'bibliography.bib'
+[393] Utils.pm:395> WARN - I didn't find a database entry for 'erainbow' (section 0)
+[424] UCollate.pm:68> INFO - Overriding locale 'en-US' defaults 'normalization = NFD' with 'normalization = prenormalized'
+[424] UCollate.pm:68> INFO - Overriding locale 'en-US' defaults 'variable = shifted' with 'variable = non-ignorable'
+[424] Biber.pm:4162> INFO - Sorting list 'ynt/global//global/global' of type 'entry' with template 'ynt' and locale 'en-US'
+[424] Biber.pm:4168> INFO - No sort tailoring available for locale 'en-US'
+[442] bbl.pm:651> INFO - Writing 'Main.bbl' with encoding 'UTF-8'
+[454] bbl.pm:754> INFO - Output to Main.bbl
+[454] Biber.pm:128> INFO - WARNINGS: 1

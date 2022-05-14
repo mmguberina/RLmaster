@@ -1,24 +1,94 @@
+\boolfalse {citerequest}\boolfalse {citetracker}\boolfalse {pagetracker}\boolfalse {backtracker}\relax 
 \babel@toc {english}{}
+\defcounter {refsection}{0}\relax 
 \contentsline {chapter}{List of Figures}{xi}{chapter*.3}%
+\defcounter {refsection}{0}\relax 
 \contentsline {chapter}{List of Tables}{xiii}{chapter*.4}%
+\defcounter {refsection}{0}\relax 
 \contentsline {chapter}{\numberline {1}Introduction}{1}{chapter.1}%
+\defcounter {refsection}{0}\relax 
 \contentsline {chapter}{\numberline {2}Background}{5}{chapter.2}%
-\contentsline {subsection}{\numberline {2.0.1}Extension of DQN }{7}{subsection.2.0.1}%
-\contentsline {subsubsection}{\numberline {2.0.1.1}Double Deep Q-networks: DDQN}{7}{subsubsection.2.0.1.1}%
-\contentsline {subsubsection}{\numberline {2.0.1.2}Prioritized replay}{7}{subsubsection.2.0.1.2}%
-\contentsline {subsubsection}{\numberline {2.0.1.3}Dueling Network}{7}{subsubsection.2.0.1.3}%
-\contentsline {subsubsection}{\numberline {2.0.1.4}Multi-step learning}{7}{subsubsection.2.0.1.4}%
-\contentsline {subsubsection}{\numberline {2.0.1.5}Noisy Nets}{8}{subsubsection.2.0.1.5}%
-\contentsline {subsubsection}{\numberline {2.0.1.6}Integrated Agent:Rainbow}{8}{subsubsection.2.0.1.6}%
-\contentsline {chapter}{\numberline {3}Methods }{9}{chapter.3}%
-\contentsline {subsection}{\numberline {3.0.1}Enviroment and Preprocessing}{9}{subsection.3.0.1}%
-\contentsline {subsection}{\numberline {3.0.2}Deep Auto-encoder and Model Architecture}{9}{subsection.3.0.2}%
-\contentsline {subsection}{\numberline {3.0.3}Training the RL Agent}{10}{subsection.3.0.3}%
-\contentsline {chapter}{\numberline {4}Results}{11}{chapter.4}%
-\contentsline {subsection}{\numberline {4.0.1}Two Step Training}{11}{subsection.4.0.1}%
-\contentsline {subsection}{\numberline {4.0.2}Parallel Training}{11}{subsection.4.0.2}%
-\contentsline {chapter}{\numberline {5}Conclusion}{13}{chapter.5}%
-\contentsline {section}{\numberline {5.1}Discussion}{13}{section.5.1}%
-\contentsline {section}{\numberline {5.2}Conclusion}{13}{section.5.2}%
-\contentsline {chapter}{Bibliography}{15}{section.5.2}%
+\defcounter {refsection}{0}\relax 
+\contentsline {section}{\numberline {2.1}Introduction to reinforcement learning}{5}{section.2.1}%
+\defcounter {refsection}{0}\relax 
+\contentsline {subsection}{\numberline {2.1.1}Problem setting}{5}{subsection.2.1.1}%
+\defcounter {refsection}{0}\relax 
+\contentsline {subsection}{\numberline {2.1.2}Bandit problems}{6}{subsection.2.1.2}%
+\defcounter {refsection}{0}\relax 
+\contentsline {subsection}{\numberline {2.1.3}Markov Decision Processes}{6}{subsection.2.1.3}%
+\defcounter {refsection}{0}\relax 
+\contentsline {subsection}{\numberline {2.1.4}Key concepts in reinforcement learning}{7}{subsection.2.1.4}%
+\defcounter {refsection}{0}\relax 
+\contentsline {subsubsection}{\numberline {2.1.4.1}Policy}{7}{subsubsection.2.1.4.1}%
+\defcounter {refsection}{0}\relax 
+\contentsline {subsubsection}{\numberline {2.1.4.2}Goal of reinforcement learning}{8}{subsubsection.2.1.4.2}%
+\defcounter {refsection}{0}\relax 
+\contentsline {subsubsection}{\numberline {2.1.4.3}Value functions}{9}{subsubsection.2.1.4.3}%
+\defcounter {refsection}{0}\relax 
+\contentsline {section}{\numberline {2.2}Classes of reinforcement learning algorithms}{9}{section.2.2}%
+\defcounter {refsection}{0}\relax 
+\contentsline {subsection}{\numberline {2.2.1}Policy gradients}{9}{subsection.2.2.1}%
+\defcounter {refsection}{0}\relax 
+\contentsline {subsubsection}{\numberline {2.2.1.1}Baselines}{10}{subsubsection.2.2.1.1}%
+\defcounter {refsection}{0}\relax 
+\contentsline {subsubsection}{\numberline {2.2.1.2}Off-policy gradients}{11}{subsubsection.2.2.1.2}%
+\defcounter {refsection}{0}\relax 
+\contentsline {paragraph}{\numberline {2.2.1.2.1}Advanced policy gradient}{11}{paragraph.2.2.1.2.1}%
+\defcounter {refsection}{0}\relax 
+\contentsline {subsection}{\numberline {2.2.2}Actor-critic algorithms}{12}{subsection.2.2.2}%
+\defcounter {refsection}{0}\relax 
+\contentsline {subsection}{\numberline {2.2.3}Value function methods}{14}{subsection.2.2.3}%
+\defcounter {refsection}{0}\relax 
+\contentsline {subsubsection}{\numberline {2.2.3.1}Dynamic programming}{14}{subsubsection.2.2.3.1}%
+\defcounter {refsection}{0}\relax 
+\contentsline {section}{\numberline {2.3}Deep Reinforcement Learning and DQN}{14}{section.2.3}%
+\defcounter {refsection}{0}\relax 
+\contentsline {subsection}{\numberline {2.3.1}Extension of DQN }{15}{subsection.2.3.1}%
+\defcounter {refsection}{0}\relax 
+\contentsline {subsubsection}{\numberline {2.3.1.1}Double Deep Q-networks: DDQN}{15}{subsubsection.2.3.1.1}%
+\defcounter {refsection}{0}\relax 
+\contentsline {subsubsection}{\numberline {2.3.1.2}Prioritized replay}{15}{subsubsection.2.3.1.2}%
+\defcounter {refsection}{0}\relax 
+\contentsline {subsubsection}{\numberline {2.3.1.3}Dueling Network}{15}{subsubsection.2.3.1.3}%
+\defcounter {refsection}{0}\relax 
+\contentsline {subsubsection}{\numberline {2.3.1.4}Multi-step learning}{16}{subsubsection.2.3.1.4}%
+\defcounter {refsection}{0}\relax 
+\contentsline {subsubsection}{\numberline {2.3.1.5}Noisy Nets}{16}{subsubsection.2.3.1.5}%
+\defcounter {refsection}{0}\relax 
+\contentsline {subsubsection}{\numberline {2.3.1.6}Integrated Agent:Rainbow}{16}{subsubsection.2.3.1.6}%
+\defcounter {refsection}{0}\relax 
+\contentsline {section}{\numberline {2.4}Problems with RL}{16}{section.2.4}%
+\defcounter {refsection}{0}\relax 
+\contentsline {section}{\numberline {2.5}general computer vision stuff}{16}{section.2.5}%
+\defcounter {refsection}{0}\relax 
+\contentsline {section}{\numberline {2.6}general latent space learning}{16}{section.2.6}%
+\defcounter {refsection}{0}\relax 
+\contentsline {section}{\numberline {2.7}Related Work}{17}{section.2.7}%
+\defcounter {refsection}{0}\relax 
+\contentsline {subsection}{\numberline {2.7.1}Current state-of-the-art}{17}{subsection.2.7.1}%
+\defcounter {refsection}{0}\relax 
+\contentsline {subsection}{\numberline {2.7.2}Related to our work}{17}{subsection.2.7.2}%
+\defcounter {refsection}{0}\relax 
+\contentsline {chapter}{\numberline {3}Methods }{19}{chapter.3}%
+\defcounter {refsection}{0}\relax 
+\contentsline {subsection}{\numberline {3.0.1}Enviroment and Preprocessing}{19}{subsection.3.0.1}%
+\defcounter {refsection}{0}\relax 
+\contentsline {subsection}{\numberline {3.0.2}Deep Auto-encoder and Model Architecture}{19}{subsection.3.0.2}%
+\defcounter {refsection}{0}\relax 
+\contentsline {subsection}{\numberline {3.0.3}Training the RL Agent}{20}{subsection.3.0.3}%
+\defcounter {refsection}{0}\relax 
+\contentsline {chapter}{\numberline {4}Results}{21}{chapter.4}%
+\defcounter {refsection}{0}\relax 
+\contentsline {subsection}{\numberline {4.0.1}Two Step Training}{21}{subsection.4.0.1}%
+\defcounter {refsection}{0}\relax 
+\contentsline {subsection}{\numberline {4.0.2}Parallel Training}{21}{subsection.4.0.2}%
+\defcounter {refsection}{0}\relax 
+\contentsline {chapter}{\numberline {5}Conclusion}{23}{chapter.5}%
+\defcounter {refsection}{0}\relax 
+\contentsline {section}{\numberline {5.1}Discussion}{23}{section.5.1}%
+\defcounter {refsection}{0}\relax 
+\contentsline {section}{\numberline {5.2}Conclusion}{23}{section.5.2}%
+\defcounter {refsection}{0}\relax 
+\contentsline {chapter}{Bibliography}{25}{section.5.2}%
+\defcounter {refsection}{0}\relax 
 \contentsline {chapter}{\numberline {A}Appendix 1}{I}{appendix.A}%

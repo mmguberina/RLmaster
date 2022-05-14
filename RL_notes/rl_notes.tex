@@ -938,7 +938,7 @@ The way to do this is to use a state-dependent baseline, namely:
 		\left( \left( \sum_{t'=t}^{T} \gamma^{t' -t} r(\bm{s}_{i,t'}, \bm{a}_{i,t'}) \right)  - \hat{V}^\pi_\theta(\bm{s}_{i,t}) \right) 
 \end{equation}
 Exercise: use a previous proof to derive this (will do such things when I circle back to this when I do Sutton's book).
-Anyway, this does not lower the variane as much as the actor-critic, but it's certainly substantially better than the vannila policy gradient with a constant baseline.
+Anyway, this does not lower the variance as much as the actor-critic, but it's certainly substantially better than the vannila policy gradient with a constant baseline.
 Next question: can we make the baseline depend on not just the state, but the action as well? Would that lead to even lower variance?
 Yes, but it is complicating life.
 State and action dependent baselines are sometimes refered to as ``controlled variance'' in the literature.
@@ -971,7 +971,7 @@ Thus far we've had
 \hat{A}^\pi_C (\bm{s}_{t}, \bm{a}_{t}) =
 r(\bm{s}_{t}, \bm{a}_{t}) + \gamma \hat{V}^\pi_\theta(\bm{s}_{t+1}) - \hat{V}^\pi_\theta(\bm{s}_t)
 \end{equation}
-which had lower variane and higher bias,
+which had lower variance and higher bias,
 and we've had the Monte Carlo advantage estimate:
 \begin{equation}
 		\hat{A}^\pi_{MC} (\bm{s}_{t}, \bm{a}_{t}) =
@@ -987,7 +987,7 @@ Thus it makes sence to cut off with the value estimate after some n number of ti
 This is called the n-step return estimator:
 \begin{equation}
 		\hat{A}^\pi_n (\bm{s}_{t}, \bm{a}_{t}) =
-		\sum_{t'=t}^{t+n} \gamma{t'-t} r(\bm{s}_{t'}, \bm{a}_{t'})
+		\sum_{t'=t}^{t+n} \gamma^{t'-t} r(\bm{s}_{t'}, \bm{a}_{t'})
 		- \hat{V}^\pi_\theta(\bm{s}_t) + \gamma^n \hat{V}^\pi_\theta(\bm{s}_{t+n})
 \end{equation}
 Using $n>1$ often works better! Actually, in most cases
@@ -1081,7 +1081,7 @@ what's relevant in the argmax):
 So we can skip the policy and compute the values directly!
 With this we get the value  iteration algorithm:
 \begin{enumerate}
-		\item set $Q(\bm{s}, \bm{a}) \leftarrow r (\bm{s}, \bm{a}) + \gamma E[V(\bm{s}']$
+		\item set $Q(\bm{s}, \bm{a}) \leftarrow r (\bm{s}, \bm{a}) + \gamma E[V(\bm{s}')]$
 		\item set $V(\bm{s}) \leftarrow \max_{\bm{a}} Q(\bm{s}, \bm{a})$
 \end{enumerate}
 You can even plug step 2 into step 1 lel.
@@ -1527,7 +1527,7 @@ This looks like the policy iteration algorithm:
 \end{enumerate}
 So in a sense, the policy gradient algorithm is a bit gentler than the policy iteration algorithm.
 This is desireable if the advantage estimator is not perfect. Then you cna collect more samples
-and imporve the advatage estimator.
+and imporve the advantage estimator.
 
 Let's reinterpret policy gradient as policy iteration.
 \subsection{Policy gradient as policy iteration}

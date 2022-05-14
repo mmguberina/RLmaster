@@ -14,8 +14,9 @@ the quality of those actions.
 By repeatedly exploring the effects of various sequences of actions, the agent
 can find, i.e. learn, the sequence of actions which lead to its goal.
 Here it is important to discuss what a goal is.
-To formalize the process outlined above, one needs to described
-in purely mathematical terms, and that includes the goal as well.
+To formalize the process outlined above, one needs to describe it
+in purely mathematical terms.
+Thus, among other things, the goal needs to be described numerically.
 To achieve that, the notion of a reward function is used:
 it maps every state of the environment to a number which denotes
 its value called the reward. 
@@ -73,9 +74,14 @@ The subsequent utilization of neural networks in reinforcement learning,
 dubbed deep reinforcement learning,
 led to impressive results such as achieving better-than-human
 perfomance on Atari games, in the game of go and in many others.
+Because large amounts of data are required for neural network training
+and thus for reinforcement learning algorithms which utilize them,
+most of these results are achieved in computer-simulated environments.
+\footnote{Simulated environments run as fast as the computers they run on,
+		which enables generating thousands of trials in seconds.}
 These recent success were kick-started by Deep Q-Networks (DQN) algorithm which,
 by utilizing convolutional neural network, crucially enabled the agents to successfully learn from raw pixels.
-Learning from pixels is incredibly important for most practical applications,
+Learning from pixels is incredibly important for many practical applications,
 such as those in robotics
 where it is usually impossible to get full access to the state of the environment.
 The state then needs to be inferred from obsevations such as those from cameras.
@@ -85,7 +91,7 @@ Observations from sensors such as cameras do not explicitly provide such informa
 However, since humans and animals are able to utilize such observations to achieve their
 goals, we know that they implicitely hold enough information about the true state
 of the world for successful goal completetion.}
-Due to these incredible results in simulated environments,
+Due to incredible results achieved in simulated environments,
 reinforcement learning holds the promise of solving
 many incredibly important engineering problems, for example robotic manipulation
 and grasping.
@@ -183,11 +189,17 @@ but we haven't found a systematic analysis of it accross an array of
 model-free algorithms.
 Related work will be discussed in its own chapter.
 
-In total, our contributions are the following:
+In total, our contributions will be the following:
 \begin{enumerate}
-		\item nothing yet, more tests need to be done, the code is ready,
-				but the hyperparameters are not.
+	\item A systematic analysis of utilizing autoencoders for learning lower-dimensional
+	representations for greater sample-efficiency in combination with different
+	reinforcement learning algorithms.
+	\item Ideally, finding algorithms which achieve the same or better performance with the autoencoder
+	as without it, but doing so more efficiently.
+	\item Defining a clear direction for further research based on the previous two contributions.
 \end{enumerate}
+
+
 
 
 
