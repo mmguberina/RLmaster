@@ -1,0 +1,19 @@
+[0] Config.pm:312> INFO - This is Biber 2.15
+[0] Config.pm:315> INFO - Logfile is 'Main.blg'
+[90] biber:330> INFO - === Wed May 18, 2022, 21:09:17
+[106] Biber.pm:415> INFO - Reading 'Main.bcf'
+[201] Biber.pm:952> INFO - Found 20 citekeys in bib section 0
+[218] Biber.pm:4334> INFO - Processing section 0
+[229] Biber.pm:4523> INFO - Looking for bibtex format file 'bibliography.bib' for section 0
+[232] bibtex.pm:1682> INFO - LaTeX decoding ...
+[271] bibtex.pm:1494> INFO - Found BibTeX data source 'bibliography.bib'
+[458] Utils.pm:395> WARN - I didn't find a database entry for 'drlthatmatters' (section 0)
+[458] Utils.pm:395> WARN - I didn't find a database entry for 'yarats' (section 0)
+[458] Utils.pm:395> WARN - I didn't find a database entry for 'auto-encoder for Efficient Embedded Reinforcement Learning' (section 0)
+[498] UCollate.pm:68> INFO - Overriding locale 'en-US' defaults 'normalization = NFD' with 'normalization = prenormalized'
+[499] UCollate.pm:68> INFO - Overriding locale 'en-US' defaults 'variable = shifted' with 'variable = non-ignorable'
+[499] Biber.pm:4162> INFO - Sorting list 'ynt/global//global/global' of type 'entry' with template 'ynt' and locale 'en-US'
+[499] Biber.pm:4168> INFO - No sort tailoring available for locale 'en-US'
+[522] bbl.pm:651> INFO - Writing 'Main.bbl' with encoding 'UTF-8'
+[538] bbl.pm:754> INFO - Output to Main.bbl
+[538] Biber.pm:128> INFO - WARNINGS: 3

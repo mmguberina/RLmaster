@@ -1,0 +1,362 @@
+\section{General latent space learning}
+TODO: throw in citations (ex. pilco, embed2control etc)
+As discussed in the introduction, learning control from images is 
+very desirable. Images, and observations in general, only implicitely 
+provide information about the underlying state. 
+Finding a good policy from observations, especially images,
+is much more difficult than finding a policy with direct state access
+because the state first needs to be infered from those observations.
+Reinforcement learning algorithms can by themselves implicitely extract
+the relevant information from observations, but this at best results
+in much less sample-efficient training and at worst results
+in complete failure.
+Often a problem which a reinforcement learning algorithm can solve
+with direct state access, can not achieve any progress when
+provided only image observations.
+
+It is clear from the previous section that
+amazing results were achieved in the field of computer vision.
+However, to leverage these results for the purposes of reinforcement
+learning, the methods in question need to be applied for state estimation.
+This is a drastically different problem than for example image classification.
+The key difference is that now dynamics need to be inferred.
+While neural network arhictectures like the convolutional neural network
+are able to achieve great successes in timeless problems, 
+neural architectures like LSTMs aimed at learning from sequential data
+comparatively perform much worse.
+Results in problems such as video prediction or action classification leave much to be desired.
+
+Having that said, the learning signal generated from for example
+image reconstruction loss is substantially stronger than the reward signal,
+especially in settings with sparse rewards where it is 
+not present most of the time.
+Thus it stands to reason that somehow leveraging the learning
+signal from some computer vision method should aid the reinforcement learning 
+process. 
+One way to do this is to explicitely use such methods to learn 
+a function which maps from observations to states
+and then use reinforcement learning methods these learned state
+represetantions.
+This approach is explored in this section, mainly with the help
+of the 
+\cite{staterepresentationlearningoverview}
+overview paper.
+Here we discuss state represetantion learning for control in general
+as this will allow for a broader contextualization of our own work.
+Importantly, this does not concern learning a model 
+which can be used to achieve control through planning,
+altough there are of course similarities between these approaches.
+
+In general, represetantion learning algorithm are designed to learn
+abstract features that characterize data.
+In the simplest forms they include methods such as k nearest neighbors.
+In state represetantion learning (SRL) the learned features
+are of low dimension, evolve through time and are depended
+on actions of an agent.
+The last point is particularly important because in reinforcement learning,
+features that do not influence the agent and that can not be influenced
+by the agent are not relevant for the problem of optimally controlling the agent.
+Also, simply reducing the dimensionality of the input to a reinforcement learning
+agent results in a computationally easier learning problem,
+which can make a difference between the solution being feasible or infeasible.
+Ideally, state  represetantion learning should be done in an without explicit supervision
+as it can then be done in tandem with the likewise unsupervised reinforcement learning.
+
+While we assume that state-transitions have the Markov property,
+partial observability denies the possibility of having a one-to-one
+correspondence between each observation and state ---
+an object whose position is required may be occluded by another.
+Thus prior observations have affect the mapping to the current state.
+Images in particular also do not encode kinematic or dynamic information:
+to get that crucial information a sequence of images is required.
+Hence we define the SRL task as learning
+a represetantion $ \tilde{\bm{s}}_{t} \in \tilde{\cal{S}}  $ of dimension $ K  $
+with characteristics similar to those of true states $ \bm{s}_{t} \in \mathcal{S} $.
+In particular, the represetantion is a mapping of the history of 
+observation to the current state: $ \tilde{\bm{s}}_{t} = \phi(\bm{o}_{1:t}  $.
+Actions $ \bm{a}_{1:t}  $ and rewards $ r_{ 1:t }  $ can also be added
+to the parameters of $ \phi  $.
+This can help in extracting only the information relevant for the agent and its task.
+Often the represetantion is learned by using the reconstruction loss;
+$ \hat{\bm{o}_{t}}  $ denotes the reconstruction of $ \bm{o}_{t}  $.
+
+In the context of reinforcement learning, state representations should
+ideally have the following properties:
+\begin{itemize}
+		\item have the Markov property 
+		\item be able to represent the current state well enough for policy improvement
+		\item be able to generalize to unseen states with similar features
+		\item be low dimensional
+\end{itemize}
+
+With this we can introduce 4 different stategies for learning latent space models:
+the auto-encoder, the forward model, the inverse model and the model
+with prior.
+In the figures below, the white nodes are inputs and the gray nodes are outputs.
+The dashed rectangles are fitted around variables with which the loss is calculated.
+
+\subsection{Auto-encoder}
+The idea behind the auto-encoder is to just learn a lower-dimensional embedding
+of the observation space. This should make the learning problem easier due to the
+dimensionality reduction.
+The auto-encoder may be trained to denoise the observations by passing an observation
+with artificially added noise to the encoder, but then calculating the reconstruction
+loss on the image without the added noise.
+Formally this can be written as
+\begin{align}
+		\bm{s}_{t} &= \phi (\bm{o}_{t}; \theta_{ \phi }) \\
+		\hat{\bm{o}_{t}} &= \phi^{ -1 } (\bm{s}_{t}; \theta_{ \phi^{ -1 } })
+\end{align}
+where $ \theta_{ \phi }  $ and
+$ \theta_{ \phi^{ -1 } }  $ are the parameters learned for the encoder and decoder respectively.
+
+\begin{figure}[htpb]
+\begin{center}
+\begin{tikzpicture}[scale=1, transform shape, node distance=1.5cm]
+		\node (st) [mcsb] {$\bm{s}_{t} $};
+		\node (ot) [mcs, below of=st] {$\bm{o}_{t}$};
+		\node (othat) [mcsb, right of=ot] {$\hat{\bm{o}}_{t} $};
+		\draw [arrow] (ot) -- (st);
+		\draw [arrow] (st) -- (othat);
+		\node[draw,dashed,inner sep=1.5mm,fit=(ot) (othat) ] {};
+\end{tikzpicture}
+\end{center}
+		\caption{Auto-encoder: learned by reconstructing the observation (one-to-one).
+				The observation is the input and the computed state is the vector at
+				the auto-encoder's bottleneck layer, i.e. is the output of the encoder
+				part of the auto-encoder network.
+		The loss is calculated between the true observation and the reconstructing observation (which
+		is obtained by passing the observation though both the encoder and the decoder).}
+\end{figure}
+
+\subsection{Forward model}
+The auto-encoder does not encode dynamic information.
+Since that information is necessary for control, usually a few consequtive
+observations (or their embeddings) are stacked and passed to the reinforcement learning algorithm.
+This way the information about the dynamics is implicitly provided.
+While doing so works, it could be made more efficient by embedding the dynamic
+information as well.
+One way to achieve this is to trained a model to predict future state representations.
+A model can also be observations directly, 
+of course provided that the network in question has a bottleneck layer from which
+the learned representations can be extracted.
+Since learning on sequential information is difficult and would also benefit from
+lowering the dimensionality, learning a forward model can be done in two steps:
+first, learning an auto-encoder to embed individual frames and then 
+learning a predictive model in the embedded space.
+In the schematic we show the case where predictions are learned from embeddings
+because it is the structurally more complex scheme.
+Formally, we have
+\begin{equation}
+		\hat{\tilde{\bm{s}}}_{ t+1 } = f (\tilde{\bm{s}_{t}}, \bm{a}_{t}; \theta_{ \text{forward} })
+\end{equation}
+%This however supposes that all states (and the corresponding observations) are accessible 
+%prior to the beggining of the training process.
+The forward model can be constrained to have linear transition between 
+$ \tilde{\bm{s}}_{t}  $ and $ \tilde{\bm{s}}_{t+1}  $, thereby
+imposing simple linear dynamics in the learned state space.
+Depending on the problem, if this is done well enough, learning a control law can be avoided and instead
+schemes like model-predictive control can be employed.
+
+\begin{figure}[htpb]
+\begin{center}
+\begin{tikzpicture}[scale=1, transform shape, node distance=1.5cm]
+		\node (at) [mcs] {$\bm{a}_{t} $};
+		\node (st) [mcsb, below of=at] {$\tilde{\bm{s}}_{t} $};
+		\node (sthatplus1) [mcsb, right of=at] {$\hat{\tilde{\bm{s}}}_{t+1} $};
+		\node (stplus1) [mcsb, right of=st] {$\tilde{\bm{s}}_{t+1} $};
+		\node (ot) [mcs, below of=st] {$\bm{o}_{t}$};
+		\node (otplus1) [mcs, right of=ot] {$\hat{\bm{o}}_{t} $};
+		\draw [arrow] (at) -- (sthatplus1);
+		\draw [arrow] (st) -- (sthatplus1);
+		\draw [arrow] (ot) -- (st);
+		\draw [arrow] (otplus1) -- (stplus1);
+		\node[draw,dashed,inner sep=1.5mm,fit=(sthatplus1) (stplus1) ] {};
+\end{tikzpicture}
+\end{center}
+		\caption{Forward model: predicting the future state from the state-action pair.
+				The loss is computer from comparing the predicted state against the true next state
+				(the states being the learned states).
+				This can also be done directly by predicting the next observation and comparing against it.
+				}
+\end{figure}
+
+
+
+\subsection{Inverse model}
+The introducing predictions solves the problem of not embedding the dynamic
+information.
+However, not all information in the observation is relevant for control.
+Consider a computer game where images feature decorative backgrounds ---
+those decorations are irrelevant for playing the game well.
+If the reconstruction loss is computed from entire observation,
+that information is also carried over into the embedded space.
+However, if the model is trained to predict actions,
+it is only incentivised to use information which the agent can affect.
+Thus, due to less information being required,
+the inverse model should produce a more compact embedding.
+Formally, we can write this as:
+\begin{equation}
+		\hat{\bm{a}_{t}} = g (\tilde{\bm{s}_{t}}, \tilde{\bm{s}_{t+1}}; \theta_{ \text{inverse} })
+\end{equation}
+If the inverse model is neural network, we can recover the embedding by discarding
+the last few layers and use their outputs to produce the embeddings.
+
+\begin{figure}[htpb]
+\begin{center}
+\begin{tikzpicture}[scale=1, transform shape, node distance=1.5cm]
+		\node (at) [mcs] {$\bm{a}_{t} $};
+		\node (athat) [mcsb, below of=at] {$\hat{\bm{a}}_{t} $};
+		\node (nothing) [below of=st] {};
+		\node (sttilde) [mcsb, left of=nothing] {$\tilde{\bm{s}}_{t} $};
+		\node (stildetplus1) [mcsb, right of=nothing] {$\tilde{\bm{s}}_{t+1} $};
+		\node (ot) [mcs, below of=sttilde] {$\bm{o}_{t}$};
+		\node (otplus1) [mcs, below of=stildetplus1] {$\bm{o}_{t+1} $};
+		\draw [arrow] (ot) -- (sttilde);
+		\draw [arrow] (otplus1) -- (stildetplus1);
+		\draw [arrow] (sttilde) -- (athat);
+		\draw [arrow] (stildetplus1) -- (athat);
+		\node[draw,dashed,inner sep=1.5mm,fit=(at) (athat) ] {};
+\end{tikzpicture}
+\end{center}
+		\caption{Inverse model: predicting the action between two concequtive states.
+				The loss is computer from comparing the predicted action between two consequtive states
+				against the true action that
+				was taken by the agent between those two states.
+				(the states being the learned states).
+				}
+\end{figure}
+
+\subsection{Using prior knowledge to constrain the state space}
+Of course, not everything need be learned in every problem.
+While in general hand-engineered features are worse than learned ones,
+there are other ways to provide prior knowledge to the learning system.
+For example, convolutional neural network by their architecture encode
+the fact that nearby pixels are related.
+In the SRL context we already mention the possibility of constraining 
+the model to linear transitions, but there are other available techniques
+like for example
+constraining temporal continuity or the principle of causality.
+Furthermore, priors can be defined as additional objectives or loss functions.
+For example, additional loss can be provided if embeddings from
+consequtive observation are drastically different.
+This is called the slowness principle.
+
+\subsection{Using hybring objectives}
+The approaches outlined thus far can be combined into hybrid
+approaches.
+TODO: throw a reference or two from the overview paper you're going over,
+for example embed2control.
+
+\subsection{Common neural network architectures}
+\subsubsection{AE}
+Deterministic auto-encoder
+\subsubsection{DAE}
+Denoising auto-encoder
+\subsubsection{VAE}
+Variational auto-encoder
+\subsubsection{Siamese networks}
+Networks that share parameters.
+
+\section{Model-based reinforcement learning}
+TODO
+Introduce just the idea for the sole purpose of
+showing why we aren't doing model-based reinforcement learning,
+but instead opting for model-free with state representation learning.
+
+
+\chapter{Related Work}
+As said in the introduction, the goal of the thesis is to use
+state representation learning to increase the efficiency 
+and finals results of model-free reinforcement learning.
+We are now ready to discuss the specifics of our approach.
+Firstly, we limit ourselves to image observations and discrete action spaces.
+In particular, we limit ourselves to Atari57 games as they are common benchmarks in the field
+for discrete action spaces.
+As shall be seen in the following text, a lot of recent work in state-representation learning
+for model-free reinforcement learning has been done in robotics problems with 
+continous action spaces. %---> you sure about that fam??
+% maybe do drqv2 but with image reconstruction loss as well?
+% yarats didn't try that
+Our goal will mostly be to transfer these successes to the discrete action space setting,
+namely to DQN and Rainbow algorithms as the basis, instead of SAC and DDPG.
+Importantly, since we are concerned with finding ways to make  reinforcement learning
+more sample-efficient, we will be using only off-policy algorithms.
+Secondly, we are particularly interested in the problem of simultaneous training
+of the state representations and the policy.
+The reason for this is that two-step training is often not available.
+This state of affairs is the natural setting for problems where reinforcement learning
+is a good solution: the problems where exploration is necessary due to
+either the high complexity of the dynamics or unanticipatable events.
+Parallel training of the state representations and the policy necessitates
+instability in policy training due to the fact the state estimations
+change even for same observations as the state representation are learned.
+Hence, related work that focuses on solving or at least ameliorating this issue 
+is of particular importance to our work.
+Finally, we want our method to be robust not just in the sense that it works
+across a wide array of problems, but in the sense that it can be 
+easily added to a variety of reinforcement learning algorithms
+and yield a positive result. In other words, it should function as a module
+which can be easily added to new algorithms.
+Furthermore, it should work well with other improvements as those suggested
+in some of the following related work.
+For clarity, we divide our discussion of related work in there categories:
+prior work on top of which we build, work which utilizes some of the same
+techniques we employ for different goal, or which achieves the same goals
+in different, but related ways and work which is strongly related to our own
+from which derived inspiration to our approach.
+
+\section{Work on top of which we build}
+\begin{enumerate}
+		\item algs we use: \cite{rainbow}, \cite{sac}
+		\item (us, historic) deep Auto-Encoder Neural Networks in Reinforcement Learning 
+				\cite{firstaeinrl}
+\end{enumerate}
+
+
+\section{Current state-of-the-art on Atari}
+\begin{enumerate}
+		\item (discuss some state of the art ); \cite{agent57}
+\end{enumerate}
+
+\section{Work whose techniques we share}
+\begin{enumerate}
+		\item (not us, but things that can be done with image loss): \cite{lossisitsownreward}, 
+				\cite{rlwauxloss} is the aux loss paper, also uses rewards for aux goals.
+				point here is you can use other losses and make them intrinsic rewards.
+		\item (us as inspiration) \cite{icm} - here the importance of embedding only
+				observations relevant for the agent are discussed.
+				they used this to improve exploration though.
+\end{enumerate}
+
+
+\section{Work achieving same goals as us, but differently}
+\begin{enumerate}
+		\item (not us but same high-level idea): data-augmentation like \cite{drqv1},
+				\cite{drqv2}, \cite{rad},
+\cite{imageaugmentationisallyouneed},
+				contrastive loss like \cite{curl}, 
+				\cite{flow}, 
+				\cite{invariantrepwithoutreconstruction}
+\end{enumerate}
+TODO
+First explain \cite{rad} which just throws image augmentation over sampled observations.
+In \cite{drqv1}, the authors go further by using multiple augmentations over the same image
+to regularize the Q-function. The expected return calculated for each of the augmented 
+versions of an observation. Then the average of those is calculated and passed
+as the predicted expected return. This greatly stabilizes Q-learning
+and allows it to learn with much greater sample-efficiency.
+Since what is developed is a regularization technique, it can
+be seamlessly applied to various reinforcement learning algorithms.
+In \cite{drqv2}, the authors futher improve \cite{drqv1} by introducing several
+changes to their overall algorithm.
+
+In \cite{curl}, contrastive loss is used instead.
+
+
+\section{Strongly related to our work}
+\begin{enumerate}
+		\item 
+		\item (us) yarats improving sample efficiency \cite{sac+ae}, \cite{laser}
+\end{enumerate}
+

@@ -41,82 +41,86 @@
 \defcounter {refsection}{0}\relax 
 \contentsline {subsubsection}{\numberline {2.2.3.1}Dynamic programming}{14}{subsubsection.2.2.3.1}%
 \defcounter {refsection}{0}\relax 
-\contentsline {section}{\numberline {2.3}Deep Reinforcement Learning and DQN}{14}{section.2.3}%
+\contentsline {section}{\numberline {2.3}Deep Learning }{14}{section.2.3}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{\numberline {2.3.1}Extension of DQN }{15}{subsection.2.3.1}%
+\contentsline {subsection}{\numberline {2.3.1}Auto Encoders : Preliminary location}{14}{subsection.2.3.1}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subsubsection}{\numberline {2.3.1.1}Double Deep Q-networks: DDQN}{15}{subsubsection.2.3.1.1}%
+\contentsline {section}{\numberline {2.4}Deep Reinforcement Learning and DQN}{16}{section.2.4}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subsubsection}{\numberline {2.3.1.2}Prioritized replay}{15}{subsubsection.2.3.1.2}%
+\contentsline {subsection}{\numberline {2.4.1}Extension of DQN }{16}{subsection.2.4.1}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subsubsection}{\numberline {2.3.1.3}Dueling Network}{15}{subsubsection.2.3.1.3}%
+\contentsline {subsubsection}{\numberline {2.4.1.1}Double Deep Q-networks: DDQN}{16}{subsubsection.2.4.1.1}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subsubsection}{\numberline {2.3.1.4}Multi-step learning}{16}{subsubsection.2.3.1.4}%
+\contentsline {subsubsection}{\numberline {2.4.1.2}Prioritized replay}{17}{subsubsection.2.4.1.2}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subsubsection}{\numberline {2.3.1.5}Noisy Nets}{16}{subsubsection.2.3.1.5}%
+\contentsline {subsubsection}{\numberline {2.4.1.3}Dueling Network}{17}{subsubsection.2.4.1.3}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subsubsection}{\numberline {2.3.1.6}Integrated Agent:Rainbow}{16}{subsubsection.2.3.1.6}%
+\contentsline {subsubsection}{\numberline {2.4.1.4}Multi-step learning}{17}{subsubsection.2.4.1.4}%
 \defcounter {refsection}{0}\relax 
-\contentsline {section}{\numberline {2.4}Problems with RL}{16}{section.2.4}%
+\contentsline {subsubsection}{\numberline {2.4.1.5}Noisy Nets}{17}{subsubsection.2.4.1.5}%
 \defcounter {refsection}{0}\relax 
-\contentsline {section}{\numberline {2.5}general computer vision stuff}{17}{section.2.5}%
+\contentsline {subsubsection}{\numberline {2.4.1.6}Integrated Agent:Rainbow}{18}{subsubsection.2.4.1.6}%
 \defcounter {refsection}{0}\relax 
-\contentsline {section}{\numberline {2.6}General latent space learning}{17}{section.2.6}%
+\contentsline {section}{\numberline {2.5}Problems with RL}{18}{section.2.5}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{\numberline {2.6.1}Auto-encoder}{18}{subsection.2.6.1}%
+\contentsline {section}{\numberline {2.6}general computer vision stuff}{18}{section.2.6}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{\numberline {2.6.2}Forward model}{18}{subsection.2.6.2}%
+\contentsline {section}{\numberline {2.7}General latent space learning}{18}{section.2.7}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{\numberline {2.6.3}Inverse model}{19}{subsection.2.6.3}%
+\contentsline {subsection}{\numberline {2.7.1}Auto-encoder}{20}{subsection.2.7.1}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{\numberline {2.6.4}Using prior knowledge to constrain the state space}{20}{subsection.2.6.4}%
+\contentsline {subsection}{\numberline {2.7.2}Forward model}{20}{subsection.2.7.2}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{\numberline {2.6.5}Using hybring objectives}{20}{subsection.2.6.5}%
+\contentsline {subsection}{\numberline {2.7.3}Inverse model}{21}{subsection.2.7.3}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{\numberline {2.6.6}Common neural network architectures}{21}{subsection.2.6.6}%
+\contentsline {subsection}{\numberline {2.7.4}Using prior knowledge to constrain the state space}{21}{subsection.2.7.4}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subsubsection}{\numberline {2.6.6.1}AE}{21}{subsubsection.2.6.6.1}%
+\contentsline {subsection}{\numberline {2.7.5}Using hybring objectives}{22}{subsection.2.7.5}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subsubsection}{\numberline {2.6.6.2}DAE}{21}{subsubsection.2.6.6.2}%
+\contentsline {subsection}{\numberline {2.7.6}Common neural network architectures}{22}{subsection.2.7.6}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subsubsection}{\numberline {2.6.6.3}VAE}{21}{subsubsection.2.6.6.3}%
+\contentsline {subsubsection}{\numberline {2.7.6.1}AE}{22}{subsubsection.2.7.6.1}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subsubsection}{\numberline {2.6.6.4}Siamese networks}{21}{subsubsection.2.6.6.4}%
+\contentsline {subsubsection}{\numberline {2.7.6.2}DAE}{22}{subsubsection.2.7.6.2}%
 \defcounter {refsection}{0}\relax 
-\contentsline {section}{\numberline {2.7}Model-based reinforcement learning}{21}{section.2.7}%
+\contentsline {subsubsection}{\numberline {2.7.6.3}VAE}{22}{subsubsection.2.7.6.3}%
+\defcounter {refsection}{0}\relax 
+\contentsline {subsubsection}{\numberline {2.7.6.4}Siamese networks}{22}{subsubsection.2.7.6.4}%
+\defcounter {refsection}{0}\relax 
+\contentsline {section}{\numberline {2.8}Model-based reinforcement learning}{22}{section.2.8}%
 \defcounter {refsection}{0}\relax 
 \contentsline {chapter}{\numberline {3}Related Work}{23}{chapter.3}%
 \defcounter {refsection}{0}\relax 
-\contentsline {section}{\numberline {3.1}Work on top of which we build}{23}{section.3.1}%
+\contentsline {section}{\numberline {3.1}Work on top of which we build}{24}{section.3.1}%
 \defcounter {refsection}{0}\relax 
-\contentsline {section}{\numberline {3.2}Current state-of-the-art on Atari}{24}{section.3.2}%
+\contentsline {section}{\numberline {3.2}Current state-of-the-art on Atari, Agent 57}{24}{section.3.2}%
 \defcounter {refsection}{0}\relax 
 \contentsline {section}{\numberline {3.3}Work whose techniques we share}{24}{section.3.3}%
 \defcounter {refsection}{0}\relax 
 \contentsline {section}{\numberline {3.4}Work achieving same goals as us, but differently}{24}{section.3.4}%
 \defcounter {refsection}{0}\relax 
-\contentsline {section}{\numberline {3.5}Strongly related to our work}{24}{section.3.5}%
+\contentsline {section}{\numberline {3.5}Strongly related to our work}{25}{section.3.5}%
 \defcounter {refsection}{0}\relax 
-\contentsline {chapter}{\numberline {4}Methods }{25}{chapter.4}%
+\contentsline {chapter}{\numberline {4}Methods }{27}{chapter.4}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{\numberline {4.0.1}Enviroment and Preprocessing}{25}{subsection.4.0.1}%
+\contentsline {subsection}{\numberline {4.0.1}Enviroment and Preprocessing}{27}{subsection.4.0.1}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{\numberline {4.0.2}Deep Auto-encoder and Model Architecture}{25}{subsection.4.0.2}%
+\contentsline {subsection}{\numberline {4.0.2}Deep Auto-encoder and Model Architecture}{27}{subsection.4.0.2}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{\numberline {4.0.3}Training the RL Agent}{26}{subsection.4.0.3}%
+\contentsline {subsection}{\numberline {4.0.3}Training the RL Agent}{28}{subsection.4.0.3}%
 \defcounter {refsection}{0}\relax 
-\contentsline {chapter}{\numberline {5}Results}{27}{chapter.5}%
+\contentsline {chapter}{\numberline {5}Results}{29}{chapter.5}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{\numberline {5.0.1}Two Step Training}{27}{subsection.5.0.1}%
+\contentsline {subsection}{\numberline {5.0.1}Two Step Training}{29}{subsection.5.0.1}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{\numberline {5.0.2}Parallel Training}{27}{subsection.5.0.2}%
+\contentsline {subsection}{\numberline {5.0.2}Parallel Training}{29}{subsection.5.0.2}%
 \defcounter {refsection}{0}\relax 
-\contentsline {chapter}{\numberline {6}Conclusion}{29}{chapter.6}%
+\contentsline {chapter}{\numberline {6}Conclusion}{31}{chapter.6}%
 \defcounter {refsection}{0}\relax 
-\contentsline {section}{\numberline {6.1}Discussion}{29}{section.6.1}%
+\contentsline {section}{\numberline {6.1}Discussion}{31}{section.6.1}%
 \defcounter {refsection}{0}\relax 
-\contentsline {section}{\numberline {6.2}Conclusion}{29}{section.6.2}%
+\contentsline {section}{\numberline {6.2}Conclusion}{31}{section.6.2}%
 \defcounter {refsection}{0}\relax 
-\contentsline {chapter}{Bibliography}{31}{section.6.2}%
+\contentsline {chapter}{Bibliography}{33}{section.6.2}%
 \defcounter {refsection}{0}\relax 
 \contentsline {chapter}{\numberline {A}Appendix 1}{I}{appendix.A}%

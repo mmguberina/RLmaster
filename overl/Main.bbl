@@ -256,74 +256,6 @@
       \field{title}{Soft actor-critic algorithms and applications}
       \field{year}{2018}
     \endentry
-    \entry{rainbow}{inproceedings}{}
-      \name{author}{10}{}{%
-        {{hash=1640e78f1e643c3d6f8e8c5b4b50896c}{%
-           family={Hessel},
-           familyi={H\bibinitperiod},
-           given={Matteo},
-           giveni={M\bibinitperiod}}}%
-        {{hash=2627fbd818853e670084cf0b17107962}{%
-           family={Modayil},
-           familyi={M\bibinitperiod},
-           given={Joseph},
-           giveni={J\bibinitperiod}}}%
-        {{hash=8f907b286e4dfa23c758547d1987830b}{%
-           family={Van\bibnamedelima Hasselt},
-           familyi={V\bibinitperiod\bibinitdelim H\bibinitperiod},
-           given={Hado},
-           giveni={H\bibinitperiod}}}%
-        {{hash=a56e72b23778a835bdade7d0511e43a3}{%
-           family={Schaul},
-           familyi={S\bibinitperiod},
-           given={Tom},
-           giveni={T\bibinitperiod}}}%
-        {{hash=46cc21fb5dec973c05ceb0f321e02ca0}{%
-           family={Ostrovski},
-           familyi={O\bibinitperiod},
-           given={Georg},
-           giveni={G\bibinitperiod}}}%
-        {{hash=d5a44cbf0d05e4c50b512bb0c1368d2f}{%
-           family={Dabney},
-           familyi={D\bibinitperiod},
-           given={Will},
-           giveni={W\bibinitperiod}}}%
-        {{hash=c1a26cb7f963abdf071da408366e83a1}{%
-           family={Horgan},
-           familyi={H\bibinitperiod},
-           given={Dan},
-           giveni={D\bibinitperiod}}}%
-        {{hash=f31963abd2aa43dd3aafc40aa1252a05}{%
-           family={Piot},
-           familyi={P\bibinitperiod},
-           given={Bilal},
-           giveni={B\bibinitperiod}}}%
-        {{hash=50bebf4ece6d98f0ecef1bcff295ab7e}{%
-           family={Azar},
-           familyi={A\bibinitperiod},
-           given={Mohammad},
-           giveni={M\bibinitperiod}}}%
-        {{hash=89dbd30410c2085cd059f32c57d4593e}{%
-           family={Silver},
-           familyi={S\bibinitperiod},
-           given={David},
-           giveni={D\bibinitperiod}}}%
-      }
-      \strng{namehash}{04c4fc38c232f5c2360309d90f2dc80e}
-      \strng{fullhash}{935ab31a938728d933e98242460f9894}
-      \strng{bibnamehash}{04c4fc38c232f5c2360309d90f2dc80e}
-      \strng{authorbibnamehash}{04c4fc38c232f5c2360309d90f2dc80e}
-      \strng{authornamehash}{04c4fc38c232f5c2360309d90f2dc80e}
-      \strng{authorfullhash}{935ab31a938728d933e98242460f9894}
-      \field{labelalpha}{Hes+18}
-      \field{sortinit}{2}
-      \field{sortinithash}{ed39bb39cf854d5250e95b1c1f94f4ed}
-      \field{labelnamesource}{author}
-      \field{labeltitlesource}{title}
-      \field{booktitle}{Thirty-second AAAI conference on artificial intelligence}
-      \field{title}{Rainbow: Combining improvements in deep reinforcement learning}
-      \field{year}{2018}
-    \endentry
     \entry{staterepresentationlearningoverview}{article}{}
       \name{author}{4}{}{%
         {{hash=5df208e714096b2c067956b5334953cd}{%
@@ -854,6 +786,9 @@
       \field{year}{2021}
     \endentry
   \enddatalist
+  \missing{auto-encoder for Efficient Embedded Reinforcement Learning}
+  \missing{drlthatmatters}
+  \missing{yarats}
 \endrefsection
 \endinput
 

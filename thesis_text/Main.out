@@ -28,19 +28,33 @@
 \BOOKMARK [3][-]{subsubsection.2.3.1.6}{Integrated Agent:Rainbow}{subsection.2.3.1}% 28
 \BOOKMARK [1][-]{section.2.4}{Problems with RL}{chapter.2}% 29
 \BOOKMARK [1][-]{section.2.5}{general computer vision stuff}{chapter.2}% 30
-\BOOKMARK [1][-]{section.2.6}{general latent space learning}{chapter.2}% 31
-\BOOKMARK [1][-]{section.2.7}{Related Work}{chapter.2}% 32
-\BOOKMARK [2][-]{subsection.2.7.1}{Current state-of-the-art}{section.2.7}% 33
-\BOOKMARK [2][-]{subsection.2.7.2}{Related to our work}{section.2.7}% 34
-\BOOKMARK [0][-]{chapter.3}{Methods }{}% 35
-\BOOKMARK [1][-]{subsection.3.0.1}{Enviroment and Preprocessing}{chapter.3}% 36
-\BOOKMARK [2][-]{subsection.3.0.2}{Deep Auto-encoder and Model Architecture}{subsection.3.0.1}% 37
-\BOOKMARK [2][-]{subsection.3.0.3}{Training the RL Agent}{subsection.3.0.1}% 38
-\BOOKMARK [0][-]{chapter.4}{Results}{}% 39
-\BOOKMARK [1][-]{subsection.4.0.1}{Two Step Training}{chapter.4}% 40
-\BOOKMARK [2][-]{subsection.4.0.2}{Parallel Training}{subsection.4.0.1}% 41
-\BOOKMARK [0][-]{chapter.5}{Conclusion}{}% 42
-\BOOKMARK [1][-]{section.5.1}{Discussion}{chapter.5}% 43
-\BOOKMARK [1][-]{section.5.2}{Conclusion}{chapter.5}% 44
-\BOOKMARK [0][-]{section.5.2}{Bibliography}{}% 45
-\BOOKMARK [0][-]{appendix.A}{Appendix 1}{}% 46
+\BOOKMARK [1][-]{section.2.6}{General latent space learning}{chapter.2}% 31
+\BOOKMARK [2][-]{subsection.2.6.1}{Auto-encoder}{section.2.6}% 32
+\BOOKMARK [2][-]{subsection.2.6.2}{Forward model}{section.2.6}% 33
+\BOOKMARK [2][-]{subsection.2.6.3}{Inverse model}{section.2.6}% 34
+\BOOKMARK [2][-]{subsection.2.6.4}{Using prior knowledge to constrain the state space}{section.2.6}% 35
+\BOOKMARK [2][-]{subsection.2.6.5}{Using hybring objectives}{section.2.6}% 36
+\BOOKMARK [2][-]{subsection.2.6.6}{Common neural network architectures}{section.2.6}% 37
+\BOOKMARK [3][-]{subsubsection.2.6.6.1}{AE}{subsection.2.6.6}% 38
+\BOOKMARK [3][-]{subsubsection.2.6.6.2}{DAE}{subsection.2.6.6}% 39
+\BOOKMARK [3][-]{subsubsection.2.6.6.3}{VAE}{subsection.2.6.6}% 40
+\BOOKMARK [3][-]{subsubsection.2.6.6.4}{Siamese networks}{subsection.2.6.6}% 41
+\BOOKMARK [1][-]{section.2.7}{Model-based reinforcement learning}{chapter.2}% 42
+\BOOKMARK [0][-]{chapter.3}{Related Work}{}% 43
+\BOOKMARK [1][-]{section.3.1}{Work on top of which we build}{chapter.3}% 44
+\BOOKMARK [1][-]{section.3.2}{Current state-of-the-art on Atari}{chapter.3}% 45
+\BOOKMARK [1][-]{section.3.3}{Work whose techniques we share}{chapter.3}% 46
+\BOOKMARK [1][-]{section.3.4}{Work achieving same goals as us, but differently}{chapter.3}% 47
+\BOOKMARK [1][-]{section.3.5}{Strongly related to our work}{chapter.3}% 48
+\BOOKMARK [0][-]{chapter.4}{Methods }{}% 49
+\BOOKMARK [1][-]{subsection.4.0.1}{Enviroment and Preprocessing}{chapter.4}% 50
+\BOOKMARK [2][-]{subsection.4.0.2}{Deep Auto-encoder and Model Architecture}{subsection.4.0.1}% 51
+\BOOKMARK [2][-]{subsection.4.0.3}{Training the RL Agent}{subsection.4.0.1}% 52
+\BOOKMARK [0][-]{chapter.5}{Results}{}% 53
+\BOOKMARK [1][-]{subsection.5.0.1}{Two Step Training}{chapter.5}% 54
+\BOOKMARK [2][-]{subsection.5.0.2}{Parallel Training}{subsection.5.0.1}% 55
+\BOOKMARK [0][-]{chapter.6}{Conclusion}{}% 56
+\BOOKMARK [1][-]{section.6.1}{Discussion}{chapter.6}% 57
+\BOOKMARK [1][-]{section.6.2}{Conclusion}{chapter.6}% 58
+\BOOKMARK [0][-]{section.6.2}{Bibliography}{}% 59
+\BOOKMARK [0][-]{appendix.A}{Appendix 1}{}% 60

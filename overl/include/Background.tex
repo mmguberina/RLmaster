@@ -165,7 +165,7 @@ $ r  $ is the reward function $r : \mathcal{S} \times \mathcal{A} \to \mathbb{R}
 It should also be noted that now the transition operator is a tensor.
 Let $\mu_{t,j} = p(s_t = j), \xi_{t,k} = p(a_t = k), \mathcal{T}_{i,j,k} = p(s_{t+1} = i | s_t =j, a_t =k) $.
 Then $\mu_{t+1,i} = \sum_{j,k}^{} \mathcal{T}_{i,j,k} \mu_{t,j} \xi_{t,k}$.
-Hence $ \mathcal{T}  $ retains its linearity.
+Hence $ \mathcal{T}  $ remains its linearity.
 
 Finally, partial observability also needs to be accounted for.
 To do so, a partially observable Markov decision process (POMDP) needs to be constructed.
@@ -667,6 +667,67 @@ TODO:
 				approximation (introduce the bellman operator as well)
 \end{enumerate}
 
+
+\section{Deep Learning }
+
+TODO:
+\begin{enumerate}
+		\item Introduce to deep learning and advances in computer vision
+	\end{enumerate}
+
+
+
+\subsection{Auto Encoders : Preliminary location}
+
+
+Reinforcement learning requires learning from large  high-dimensional image data-set.For example, In Atari games the environment is composed of images with 210 * 160 pixels and 128 color palette.Each image is made up of hundreds of pixels, so each data point has hundreds of dimensions.The manifold hypothesis states that real-world high-dimensional data actually consists of low-dimensional data that is embedded in the high-dimensional space. This is the motivation behind dimensionality reduction techniques, which try to take high-dimensional data and project it onto a lower-dimensional surface.
+
+Autoencoders are a special kind of neural network used to perform dimensionality reduction. They act as an identity function, such that an auto encoder learns to output whatever is the input.They are  composed of two networks, an encoder e and a decoder d.
+
+The encoder learns a non-linear transformation  that projects the data from the original high-dimensional input space X to a lower-dimensional latent space Z.This is called latent  vector  $z=e(x) $ .A latent vector is a low-dimensional representation of a data point that contains information about x.This is commonly known  as latent space representation,it contains all the important information needed to represent raw data points.Auto encoders manipulates the "closeness" of data in the latent space.
+
+A decoder learns a non-linear transformation d:Z→X that projects the latent vectors back into the original high-dimensional input space X. This transformation takes the latent vector and reconstruct the original input data : 
+
+\begin{equation}
+     z = e(x)  	\rightarrow  \hat{x}=d(z)=d(e(x))
+\end{equation}
+
+The autoencoder is trained to minimize the difference between the input x and the reconstruction $\hat{x}$ using a kind of reconstruction loss.\\ 
+
+In traditional auto encoders the latent vector should be easily decoded back to the original image as a result the latent space z can become disjoint and non-continuous. Variational autoencoders try to solve this problem.
+
+In variational autoencoders, inputs are mapped to a probability distribution over latent vectors, and a latent vector is then sampled from that distribution. As a result the decoder becomes more robust at decoding latent vectors.
+
+Specifically, instead of mapping the input $x$ to a latent vector $z=e(x)$, 
+we map it instead to a mean vector $\mu(x)$ 
+and a vector of standard deviations $\sigma(x)$. 
+These parametrize a diagonal Gaussian distribution $\cal{N}(\mu, \sigma)$, 
+from which we then sample a latent vector $z \sim \cal{N}(\mu, \sigma)$.
+
+
+This is generally accomplished by replacing the last layer of a traditional autoencoder with two layers, each of which output $\mu(x)$
+and $\sigma(x)$. An exponential activation is often added to $\sigma(x)$ to ensure the result is positive.
+
+However, this does not completely solve the problem. 
+There may still be gaps in the latent space because the outputted means may 
+be significantly different and the standard deviations may be small. 
+To reduce that, an auxiliary loss is added that penalizes 
+the distribution $p(z|x)$ for being too far from the standard normal distribution 
+$\cal{N}(0,1)$. This penalty term is the 
+Kullback-Leibler(KL) divergence between $p(z|x)$ and $\cal{N}(0,1)$, 
+which is given by\(\mathbb{KL}\left( \mathcal{N}(\mu, \sigma) \parallel \mathcal{N}(0, 1) \right) = \sum_{x \in X} \left( \sigma^2 + \mu^2 - \log \sigma - \frac{1}{2} \right)\).This expression applies to two univariate Gaussian distributions by summing KL divergence for each dimension we are able to  extend it to our diagonal Gaussian distributions.
+
+This loss is useful for two reasons. First, we cannot train the encoder network by gradient descent without it, since gradients cannot flow through sampling (which is a non-differentiable operation). Second, by penalizing the KL divergence in this manner, we can encourage the latent vectors to occupy a more centralized and uniform location. In essence, we force the encoder to find latent vectors that approximately follow a standard Gaussian distribution that the decoder can then effectively decode.
+
+TODO:
+\begin{enumerate}
+		\item Discuss the latent rep embedding diff with traditional AE and Varational AE with marko and chechk the recostrauction loss for both
+		
+		\item Include argument on the Architecture  of our final AE used for RL
+	\end{enumerate}
+
+
+
 \section{Deep Reinforcement Learning and DQN}
 
 (paraphrase)After deep learning  has shown remarkable results in learning from raw pixel data in computer vision it's application has been adopted to solve many classical learning problems.The goal of Deep Reinforcement Learning is to connect reinforcement learning algorithm to deep neural network which operates directly on RGB images and efficiently process training data by using stochastic gradient updates[2].\\
@@ -741,10 +802,8 @@ The one limitation of $\mathcal{\epsilon}$-greedy policy  is many actions must b
 \subsubsection{Integrated Agent:Rainbow}
 
 
-In the Rainbow architecture [16]  tries combine the above six 
-method stated above all together.Distributional loss (3) 
-was replaced with a multi-step variant.
-The target distribution was constructed  by contracting the value distribution 
+In the Rainbow architecture [16]  several architecture changes included the one stated above where applied to DQN .Distributional loss  
+was replaced with a multi-step variant. The target distribution was constructed  by contracting the value distribution 
 in St+n according to the cumulative discount, 
 and shifting it by the truncated n-step discounted return. 
 multi-step distributional loss with double Q-learning by using the greedy action in St+n 
@@ -754,6 +813,19 @@ selected according to the online network as the bootstrap action $a \cdot t+n,$ 
 
 \section{Problems with RL}
 ex. drl that matters paper
+\cite{drlthatmatters}
+
 
 \section{general computer vision stuff}
+Classifiers can't directly help RL, but things like object detectors might.
+Also learned models.
+But then we don't have end-to-end learning (it's important to explain why).
+
+
+
+
+
+
+
+
 
