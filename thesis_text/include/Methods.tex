@@ -1,39 +1,76 @@
 % CREATED BY DAVID FRISK, 2016
 \chapter{Methods }
 
-In this section, we will explain the architecture of our auto-encoder and reinforcement learning algorithm. This includes a description of the environment and preprocessing  in Section 3.0.1., the collection of training data for the auto-encoder and model architecture in section 3.0.2. and the training of the RL agent in Section  3.0.3.
+In this section, we will explain the architecture of our auto-encoder and reinforcement learning algorithm. 
+This includes a description of the environment and preprocessing  
+in Section 3.0.1., 
+the collection of training data for the auto-encoder and model architecture in section 
+3.0.2. and the training of the RL agent in Section  3.0.3.
 
 
 \subsection{Enviroment and Preprocessing}
 [!ADD MORE HERE ]
 
-We perform a comprehensive evaluation of our proposed method on the Arcade Learning Environment (Bellemare et al., 2013), which is composed of 57 Atari games. The challenge is to deploy a single algorithm and architecture, with a fixed set of hyper-parameters, to learn to play all the games given embedded latent space representation of the environment from auto encoder and game rewards. This environment is very demanding because it is both comprised of a large number of highly diverse games and the observations are high-dimensional.\\
+We perform a comprehensive evaluation of our 
+proposed method on the Arcade Learning Environment (Bellemare et al., 2013), 
+which is composed of 57 Atari games. 
+The challenge is to deploy a single algorithm and architecture, 
+with a fixed set of hyper-parameters, 
+to learn to play all the games given embedded latent space 
+representation of the environment from auto encoder and game rewards. 
+This environment is very demanding because it is both 
+comprised of a large number of highly diverse games and the observations are high-dimensional.
 
-Working with raw Atari frames, which are 210 x 160 pixel pictures with a 128 color palette, is computationally expensive, therefore we do a basic preprocessing step to reduce the input dimensionality. The raw frames are preprocessed by down sampling to a 110 x 84 picture and transforming their RGB representation to gray-scale.Cropping an 84 x 84 rectangle of the image that nearly captures the playing area yields the final input representation to encoder part of the auto encoder.
+Working with raw Atari frames, 
+which are 210 x 160 pixel pictures with a 
+128 color palette, is computationally expensive, therefore we do a 
+basic preprocessing step to reduce the input dimensionality. 
+The raw frames are preprocessed by down sampling to a 110 x 84 
+picture and transforming their RGB representation to gray-scale.
+Cropping an 84 x 84 rectangle of the image that nearly 
+captures the playing area yields the final input representation to encoder part of the auto encoder.
 
 
 \subsection{Deep Auto-encoder and Model Architecture}
 [!ADD MORE HERE AFTER NAP]
 
-The first step in the process is to collect data to train the auto-encoder. we run a data collection module to generate the 100000 frame for each stated under the result section.The raw images are transformed to tensors and then trained a variational autoencoder with the objective of re-constructing the original image fed to the network. The auto-encoder was trained for maximum  100 epochs.When reconstructing an image with a network bottleneck, the encoder is forced to compress the original image to a smaller dimensional vector in the latent space.
+The first step in the process is to collect data to train the auto-encoder. 
+we run a data collection module to generate the 100000 frame 
+for each stated under the result section.
+The raw images are transformed to tensors and then trained a variational autoencoder 
+with the objective of re-constructing the original image fed to the network. 
+The auto-encoder was trained for maximum  100 epochs.
+When reconstructing an image with a network bottleneck, 
+the encoder is forced to compress the original image to a smaller dimensional vector in the latent space.
 
-[By compressing the raw pixels environment to smaller dimensional vector in the latent space we aim to improve the training time it takes for the integrated Rl agent developed by [16] and the shift in the latent space representation and its impact on the RL agent learning performance.We show this in more detail in the following sections.]
+[By compressing the raw pixels environment to smaller dimensional 
+vector in the latent space we aim to improve the training 
+time it takes for the integrated Rl agent developed by [16] 
+and the shift in the latent space representation and its impact on 
+the RL agent learning performance.We show this in more detail in the following sections.]
 
 
 \subsection{Training the RL Agent} [!ADD MORE HERE ]
 
-In this paper we integrate auto encoder with integrated agent called Rainbow[12],the selection of this architecture  was based it's ability to out perform all the previous architecture.our main focus was to experiment with the latent space representation of the environment.To address this we set up two experiment architectures one two step training and parallel training.\\
+In this paper we integrate auto encoder with integrated agent 
+called Rainbow[12],the selection of this architecture  was 
+based it's ability to out perform all the previous architecture.
+our main focus was to experiment with the latent space representation 
+of the environment.To address this we set up two experiment architectures one two step training and parallel training.\\
 
-\textbf{Two step Training}: First,we train the auto encoder with the prepossessed data and the weights of the encoder are saved in file for training the agent.In this set up the auto encoder is not updated such that we have a static representation of the environment.
+\textbf{Two step Training}: First,
+we train the auto encoder with the prepossessed data and the 
+weights of the encoder are saved in file for training the agent.
+In this set up the auto encoder is not updated such that we have a static representation of the environment.
 
 second,we train the integrated agent with the results from the auto encoder.\\
 
 \textbf{Parallel Training}:
-In this set up the agent is trained using the dynamic state representation from the encoder as we train both the auto encoder and the integrated agent in parallel.This introduces stochasticity of the environment to the training  and in real life control system we believe that this will set a new paradigm on the use RL.
-
-
-
-
+In this set up the agent is trained using the dynamic 
+state representation from the encoder as we train both the auto 
+encoder and the integrated agent in parallel.
+This introduces stochasticity of the environment to the training  and 
+in real life control system we believe that this will set a new paradigm on the use RL.
 
 
 

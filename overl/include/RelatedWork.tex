@@ -273,17 +273,28 @@ As said in the introduction, the goal of the thesis is to use
 state representation learning to increase the efficiency 
 and finals results of model-free reinforcement learning.
 We are now ready to discuss the specifics of our approach.
-Firstly, we limit ourselves to image observations and discrete action spaces.In particular, we limit ourselves to Atari57 games as they are common benchmarks in the field for discrete action spaces.\\
-As shall be seen in the following sections, some recent work in state-representation learning for  model-free reinforcement learning has been done in robotics problems with continuous action spaces(\cite{yarats},\cite{}, \cite{},).\\
+Firstly, we limit ourselves to image observations and discrete action spaces.
+In particular, we limit ourselves to Atari57 games as they are common benchmarks in the field 
+for discrete action spaces.
+As shall be seen in the following sections, 
+some recent work in state-representation learning for  
+model-free reinforcement learning has been done in robotics 
+problems with continuous action spaces(\cite{yarats},\cite{}, \cite{},).\\
 
 Our goal will mostly be to transfer these successes to the discrete action space setting,namely to DQN and Rainbow algorithms as the basis, instead of SAC and DDPG. In the initial architecture of DQN and Rainbow ,They separately learn state representations from which current observations can be reconstructed, and train a forward model on the learned states. The main limitation of these approaches is the inefficiency of the reconstruction objective, which leads to representations that contain unnecessary information about the observations.
 
  %---> you sure about that fam??
 % maybe do drqv2 but with image reconstruction loss as well?
 % yarats didn't try that
-Importantly, since we are concerned with finding ways to make  reinforcement learning more sample-efficient, we will be using only off-policy algorithms. Secondly, we are particularly interested in the problem of simultaneous training of the state representations and the policy.
+Importantly, since we are concerned with finding ways to make  
+reinforcement learning more sample-efficient, 
+we will be using only off-policy algorithms. 
+Secondly, we are particularly interested in the problem of 
+simultaneous training of the state representations and the policy.
 The reason for this is that two-step training is often not available.
-This state of affairs is the natural setting for problems where reinforcement learning is a good solution: the problems where exploration is necessary due to either the high complexity of the dynamics or unanticipatable events.
+This state of affairs is the natural setting for problems where reinforcement learning 
+is a good solution: the problems where exploration is necessary due to 
+either the high complexity of the dynamics or unanticipatable events.
 Parallel training of the state representations and the policy necessitates
 instability in policy training due to the fact the state estimations
 change even for same observations as the state representation are learned.
@@ -292,26 +303,49 @@ is of particular importance to our work.
 Finally, we want our method to be robust not just in the sense that it works
 across a wide array of problems, but in the sense that it can be 
 easily added to a variety of reinforcement learning algorithms
-and yield a positive result. In other words, it should function as a module which can be easily added to new algorithms.
-Furthermore, it should work well with other improvements as those suggested in some of the following related work.
+and yield a positive result. In other words, it should function as a module 
+which can be easily added to new algorithms.
+Furthermore, it should work well with other improvements as those suggested 
+in some of the following related work.
 For clarity, we divide our discussion of related work in three categories:
 prior work on top of which we build, work which utilizes some of the same
 techniques we employ for different goal, or which achieves the same goals
-in different, but related ways and work which is strongly related to our own from which derived inspiration to our approach.
+in different, but related ways and work which is strongly related to our own 
+from which derived inspiration to our approach.
 
 \section{Work on top of which we build}
 
-As stated in section 2.4.1.6 Integrated agent  was built by integrating the previous extensions of DQN in to one agent.Prioritized replay and multi-step learning were the two most crucial components.compared to the previous benchmarks rainbow was able to improve both  data efficiency and final performance.
+As stated in section 2.4.1.6 Integrated agent  
+was built by integrating the previous extensions of DQN in to one agent.
+Prioritized replay and multi-step learning were the two most crucial components.
+compared to the previous benchmarks rainbow was able to improve both  
+data efficiency and final performance.
 
 TODOs: \cite{sac}
  
 The use of deep Auto-Encoder Neural Networks in Reinforcement Learning is till in its early stage.The application of auto-encoders in dimensionality reduction has played a major role in reducing training time and data efficiency
- \cite{auto-encoder for Efficient Embedded Reinforcement Learning}.Introducing auto encoders in batch RL resulted in learning from raw pixels with out previously augmenting the data manually or prepossessing \cite{firstaeinrl}; this closes the  existing gap between the  between the high dimensionality of visual observations and the low dimensionality of state spaces.
+ \cite{auto-encoder for Efficient Embedded Reinforcement Learning}.
+ Introducing auto encoders in batch RL resulted in learning from 
+ raw pixels with out previously augmenting the data manually or 
+ prepossessing \cite{firstaeinrl}; this closes the  
+ existing gap between the  between the high dimensionality of 
+ visual observations and the low dimensionality of state spaces.
 
 
 \section{Current state-of-the-art on Atari, Agent 57}
 
-Agent 57 \cite{agent57}  was the first deep RL agent that out performs the standard human benchmark on all 57 Atari games.It was built on  on top of the Never Give Up(NGU) agent. which combines two ideas: first, the curiosity-driven exploration, and second, distributed deep RL agents, in particular R2D2.The agent was able to balance the learning of different skills that are required to perform well on such diverse set of games: exploration and exploitation and long-term credit assignment.In order to achieve this a neural network was trained to parameterize a family of policies ranging from very exploratory to purely exploitative,by using adaptive  mechanism polices were prioritized throughout the training process.
+Agent 57 \cite{agent57}  was the first deep RL agent that out performs 
+the standard human benchmark on all 57 Atari games.
+It was built on  on top of the Never Give Up(NGU) agent. 
+which combines two ideas: first, 
+the curiosity-driven exploration, and second, 
+distributed deep RL agents, in particular R2D2.
+The agent was able to balance the learning of different 
+skills that are required to perform well on such diverse set of games: 
+exploration and exploitation and long-term credit assignment.
+In order to achieve this a neural network was trained to parameterize 
+a family of policies ranging from very exploratory to purely exploitative,
+by using adaptive  mechanism polices were prioritized throughout the training process.
 
 
 

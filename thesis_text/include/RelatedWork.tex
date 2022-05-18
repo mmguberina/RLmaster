@@ -275,11 +275,11 @@ In particular, we limit ourselves to Atari57 games as they are common benchmarks
 for discrete action spaces.
 As shall be seen in the following text, a lot of recent work in state-representation learning
 for model-free reinforcement learning has been done in robotics problems with 
-continous action spaces. %---> you sure about that fam??
+continous action spaces, for example \cite{sac+ae}. %---> you sure about that fam??
 % maybe do drqv2 but with image reconstruction loss as well?
 % yarats didn't try that
-Our goal will mostly be to transfer these successes to the discrete action space setting,
-namely to DQN and Rainbow algorithms as the basis, instead of SAC and DDPG.
+%Our goal will mostly be to transfer these successes to the discrete action space setting,
+%namely to DQN and Rainbow algorithms as the basis, instead of SAC and DDPG.
 Importantly, since we are concerned with finding ways to make  reinforcement learning
 more sample-efficient, we will be using only off-policy algorithms.
 Secondly, we are particularly interested in the problem of simultaneous training
@@ -300,7 +300,7 @@ and yield a positive result. In other words, it should function as a module
 which can be easily added to new algorithms.
 Furthermore, it should work well with other improvements as those suggested
 in some of the following related work.
-For clarity, we divide our discussion of related work in there categories:
+For clarity, we divide our discussion of related work in three categories:
 prior work on top of which we build, work which utilizes some of the same
 techniques we employ for different goal, or which achieves the same goals
 in different, but related ways and work which is strongly related to our own
@@ -312,6 +312,38 @@ from which derived inspiration to our approach.
 		\item (us, historic) deep Auto-Encoder Neural Networks in Reinforcement Learning 
 				\cite{firstaeinrl}
 \end{enumerate}
+
+As stated in section 2.4.1.6 Integrated agent  
+was built by integrating the previous extensions of DQN in to one agent.
+Prioritized replay and multi-step learning were the two most crucial components.
+compared to the previous benchmarks rainbow was able to improve both  
+data efficiency and final performance.
+
+TODOs: \cite{sac}
+ 
+The use of deep Auto-Encoder Neural Networks in Reinforcement Learning is till in its early stage.The application of auto-encoders in dimensionality reduction has played a major role in reducing training time and data efficiency
+ \cite{auto-encoder for Efficient Embedded Reinforcement Learning}.
+ Introducing auto encoders in batch RL resulted in learning from 
+ raw pixels with out previously augmenting the data manually or 
+ prepossessing \cite{firstaeinrl}; this closes the  
+ existing gap between the  between the high dimensionality of 
+ visual observations and the low dimensionality of state spaces.
+
+
+\section{Current state-of-the-art on Atari, Agent 57}
+
+Agent 57 \cite{agent57}  was the first deep RL agent that out performs 
+the standard human benchmark on all 57 Atari games.
+It was built on  on top of the Never Give Up(NGU) agent. 
+which combines two ideas: first, 
+the curiosity-driven exploration, and second, 
+distributed deep RL agents, in particular R2D2.
+The agent was able to balance the learning of different 
+skills that are required to perform well on such diverse set of games: 
+exploration and exploitation and long-term credit assignment.
+In order to achieve this a neural network was trained to parameterize 
+a family of policies ranging from very exploratory to purely exploitative,
+by using adaptive  mechanism polices were prioritized throughout the training process.
 
 
 \section{Current state-of-the-art on Atari}
