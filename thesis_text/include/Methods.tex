@@ -1,11 +1,62 @@
-% CREATED BY DAVID FRISK, 2016
-\chapter{Methods }
+\chapter{Methods}
+\section{Problems to be tackled}
+As stated previously, the goal is to learn effective state representations
+while training the policy.
+We indentify the following obstacles obstructing this goal:
+\begin{enumerate}
+		\item to learn effective state representations which make the whole
+		process more efficient, the learning algorithm needs to be incentivesed
+		to embedded information relevant to the agent
+		while discarding irrelevant information
+\item as new state representations are learned, the old representations need
+		to change as little as possible so as not to compromize what
+		the policy has learned
+\end{enumerate}
 
-In this section, we will explain the architecture of our auto-encoder and reinforcement learning algorithm. 
-This includes a description of the environment and preprocessing  
-in Section 3.0.1., 
-the collection of training data for the auto-encoder and model architecture in section 
-3.0.2. and the training of the RL agent in Section  3.0.3.
+
+\section{Hypotheses}
+We posit the following hypotheses about features which make state representation 
+effective:
+\begin{enumerate}
+		\item representations which encode the dynamic information
+such as velocities will perform better than those which do not
+\item representations which are learned solely on observations 
+		and not both observations and the agent's actions
+		will yield worse results
+\item learning procedures which try to model only the information
+		relevant to the agent will perform even better
+\item sharing information between the policy and the state representations
+		will be benefitial
+\end{enumerate}
+
+To test whether the learning state representations helps we compare the results
+against training the policy directly on observations.
+To test the whether parallel training of the policy and the state representations
+hinders the learning process, we compare the results against the alternative training procedure
+of first learning the state representations,
+fixing them and then training the policy on these representations, i.e. the two-step training procedure.
+Finally, to test our hypotheses about the properties of state representations which yield
+higher effectiveness, we compare results of differently designed and trained state representations.
+In particular, we use an autoencoder which only reconstructs the observations given to it
+as the baseline case.
+To test whether embedding dynamic information helps, we train the same autoencoder to
+be a forward predictor. Its inputs are a number of consequtive observations and it's output 
+is the subsequent observation.
+We do this with and without also adding the agents actions as the input.
+To test whether making dynamic information more explicit helps,
+in another version we also pass the differences of each two consequtive frames.
+To test whether incentivising the state representation model to only focus on the
+dynamic information relevant to the agent helps, we train an inverse dynamics model and
+use the embeddings it generates as state representations.
+Finally, to test whether use nonlinear function approximators
+to representant policies are causing problems, we also train a tabular policy.
+
+
+%In this section, we will explain the architecture of our auto-encoder and reinforcement learning algorithm. 
+%This includes a description of the environment and preprocessing  
+%in Section 3.0.1., 
+%the collection of training data for the auto-encoder and model architecture in section 
+%3.0.2. and the training of the RL agent in Section  3.0.3.
 
 
 \subsection{Enviroment and Preprocessing}

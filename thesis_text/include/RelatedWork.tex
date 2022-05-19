@@ -284,7 +284,8 @@ Importantly, since we are concerned with finding ways to make  reinforcement lea
 more sample-efficient, we will be using only off-policy algorithms.
 Secondly, we are particularly interested in the problem of simultaneous training
 of the state representations and the policy.
-The reason for this is that two-step training is often not available.
+The reason for this is that two-step training is often not available because not all
+state transitions can be observed beforehand.
 This state of affairs is the natural setting for problems where reinforcement learning
 is a good solution: the problems where exploration is necessary due to
 either the high complexity of the dynamics or unanticipatable events.
@@ -296,7 +297,7 @@ is of particular importance to our work.
 Finally, we want our method to be robust not just in the sense that it works
 across a wide array of problems, but in the sense that it can be 
 easily added to a variety of reinforcement learning algorithms
-and yield a positive result. In other words, it should function as a module
+to a positive effect. In other words, it should function as a module
 which can be easily added to new algorithms.
 Furthermore, it should work well with other improvements as those suggested
 in some of the following related work.
