@@ -49,15 +49,17 @@
 \BOOKMARK [1][-]{section.3.4}{Work whose techniques we share}{chapter.3}% 49
 \BOOKMARK [1][-]{section.3.5}{Work achieving same goals as us, but differently}{chapter.3}% 50
 \BOOKMARK [1][-]{section.3.6}{Strongly related to our work}{chapter.3}% 51
-\BOOKMARK [0][-]{chapter.4}{Methods }{}% 52
-\BOOKMARK [1][-]{subsection.4.0.1}{Enviroment and Preprocessing}{chapter.4}% 53
-\BOOKMARK [2][-]{subsection.4.0.2}{Deep Auto-encoder and Model Architecture}{subsection.4.0.1}% 54
-\BOOKMARK [2][-]{subsection.4.0.3}{Training the RL Agent}{subsection.4.0.1}% 55
-\BOOKMARK [0][-]{chapter.5}{Results}{}% 56
-\BOOKMARK [1][-]{subsection.5.0.1}{Two Step Training}{chapter.5}% 57
-\BOOKMARK [2][-]{subsection.5.0.2}{Parallel Training}{subsection.5.0.1}% 58
-\BOOKMARK [0][-]{chapter.6}{Conclusion}{}% 59
-\BOOKMARK [1][-]{section.6.1}{Discussion}{chapter.6}% 60
-\BOOKMARK [1][-]{section.6.2}{Conclusion}{chapter.6}% 61
-\BOOKMARK [0][-]{section.6.2}{Bibliography}{}% 62
-\BOOKMARK [0][-]{appendix.A}{Appendix 1}{}% 63
+\BOOKMARK [0][-]{chapter.4}{Methods}{}% 52
+\BOOKMARK [1][-]{section.4.1}{Problems to be tackled}{chapter.4}% 53
+\BOOKMARK [1][-]{section.4.2}{Hypotheses}{chapter.4}% 54
+\BOOKMARK [2][-]{subsection.4.2.1}{Enviroment and Preprocessing}{section.4.2}% 55
+\BOOKMARK [2][-]{subsection.4.2.2}{Deep Auto-encoder and Model Architecture}{section.4.2}% 56
+\BOOKMARK [2][-]{subsection.4.2.3}{Training the RL Agent}{section.4.2}% 57
+\BOOKMARK [0][-]{chapter.5}{Results}{}% 58
+\BOOKMARK [1][-]{subsection.5.0.1}{Two Step Training}{chapter.5}% 59
+\BOOKMARK [2][-]{subsection.5.0.2}{Parallel Training}{subsection.5.0.1}% 60
+\BOOKMARK [0][-]{chapter.6}{Conclusion}{}% 61
+\BOOKMARK [1][-]{section.6.1}{Discussion}{chapter.6}% 62
+\BOOKMARK [1][-]{section.6.2}{Conclusion}{chapter.6}% 63
+\BOOKMARK [0][-]{section.6.2}{Bibliography}{}% 64
+\BOOKMARK [0][-]{appendix.A}{Appendix 1}{}% 65

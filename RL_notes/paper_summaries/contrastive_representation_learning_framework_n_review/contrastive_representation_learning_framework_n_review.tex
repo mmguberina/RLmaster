@@ -1,0 +1,148 @@
+\documentclass{article}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsfonts}
+\usepackage[T1]{fontenc}
+\usepackage{bm}
+\usepackage{array}
+\usepackage{graphicx}
+\usepackage[utf8]{inputenc}
+
+\title{Paper summary: Contrastive representation learning: a framework and review}
+
+\begin{document}
+\maketitle
+
+
+\section{Idea in few sentances}
+
+
+
+\section{Explanation of the central concept}
+
+
+
+
+\section{Methodology}
+
+
+\section{Initial rambly notes}
+
+
+\subsection{Abstract}
+Authors systematically go over what Contrastive representation learning is.
+
+
+\subsection{Introduction}
+Representation learning refers to the process of learning a parametric mapping from raw input data domain
+to a feature vector or tensor, in the hope of capturing and extracting more abstract and useful concepts
+that can improve performance of downstream tasks.
+Often this includes dimensionality reduction.
+The goal of representation learning is for this mapping to meaningfully generalize well
+on new data.
+
+A good representation has the following properties:
+\begin{enumerate}
+		\item it is locally smooth
+		\item it is temporally and spatially coherent in a sequence of observations
+		\item has multiple, hierarchically organised explanatory factors which
+		\item are shared across tasks
+		\item has simple dependencies
+		\item is sparsly activated for a specific input
+\end{enumerate}
+
+In deep learning this became that good representation are:
+\begin{enumerate}
+		\item \textbf{distributed} representations can represent an exponential amount 
+				of configuration for their size
+		\item \textbf{abstract and invariant}
+		\item \textbf{disentangled representation}: each feature should be 
+				as disentangled as from another as possible
+\end{enumerate}
+
+
+\subsection{Representation learning}
+The process of extracting representations from observations,
+or inferring latent variables in a probabilistic view of a dataset,  is often called \textbf{inference}.
+There are \textbf{generative} and \textbf{discriminative} models.
+
+Generative models learn representations by modelling the data distribution
+$ p(\bm{x}_{})  $. Such a model can generate realistic examples.
+Evaluating the conditional distribution $ p (y | \bm{x}_{})  $
+it done via Bayes rule.
+
+Discriminative models model the conditional distribution $ p (y | \bm{x}_{})  $
+directly.
+Discriminative modelling consists of first the inference
+that extracts latent variables
+$ p(\bm{v}_{}| \bm{x}_{})  $
+which are then used to make downstream decision
+from those variables $ p (y|\bm{v}_{})  $.
+
+The benefit of discriminative models are that you don't have to go through
+an expensive process of learning $ p (\bm{x}_{})  $.
+That's also harder to evaluate.
+This is especially evident if you just want a lower dimensional distribution.
+
+\subsection{Contrastive representation learning}
+Intuitively, it's learning by comparing.
+So instead of needing data labels $ y  $ for datapoints $ \bm{x}$,
+you need to define a similarity distribution which allows you to
+sample a positive input $ \bm{x}_{}^{ + } \sim p^{ + } (\cdot | \bm{x}_{})  $
+and a data distribution for a negative input $ \bm{x}_{}^{ - } \sim p^{ - } (\cdot | \bm{x}_{})  $,
+with respect to an input sample $ \bm{x}_{}  $.
+``Similar'' inputs should be mapped close together, and ``dissimilar'' samples
+should be mapped further away in the embedding space.
+
+Let's explain how this would work with the example of image-based instance discrimination.
+The goal is to learn a representation by maximizing agreement of the encoded features (embeddings)
+between two differently augmented views of the same images,
+while simultaneously minimizing the agreement between different images.
+To avoid model maximizing agreement through low-level visual cues, views
+from the same image are generated through a series of strong image augmentation methods.
+Let $ \mathcal{T}  $ be a set of image transformation operations where
+$ t, t' \sim \mathcal{T}  $ are two different transformations sampled independently from $ \mathcal{T}  $.
+There transformations include ex. cropping, resizing, blurring, color distortion or perspective distortion.
+A $ (\bm{x}_{q}, \bm{x}_{k})  $ pair of query and key views is positive when these 2 views
+are created with different transformations on the same image,
+i.e. $ \bm{x}_{q} = t (\bm{x}_{})  $ and $ \bm{x}_{k} = t' (\bm{x}_{})  $,
+and is negative otherwise.
+A feature encoder $ e (\cdot)  $ then extracts feature vectors from all augmented data samples 
+$ \bm{v}_{} = e (\bm{x}_{})  $. This is usually ResNet, in which case 
+$ \bm{v}_{} \in \mathcal{R}^{ d }  $ is the output of the average pooling layer.
+Each $ v  $ is then fed into a projection head $ h (\cdot)  $ made up of
+a small multi-layer perceptron to obtain a metric embedding $ \bm{z}_{} = h (\bm{v}_{})  $,
+where $ \bm{z}_{} \in \mathcal{R}^{ d' }  $ with $ d' < d  $.
+All vectors are then normalized to be unit vectors.
+Then you take a batch of these metric embedding pairs $ \left\{ (\bm{z}_{i}, \bm{z}_{i}') \right\}   $,
+with $ (\bm{z}_{i}, \bm{z}_{i}')  $ being the metric embeddings of
+$ (\bm{x}_{q}, \bm{x}_{k})  $ of the same image
+are fed into the contrastive loss function which does what we said 3 times already.
+The general form of popular loss functon such as InfoNCE and NT-Xent
+is:
+\begin{equation}
+		\mathcal{L}_{ i } = - \log \frac{\exp (\bm{z}_{i}^{ T }\bm{z}_{i}'/\tau)}{\sum_{j=0}^{K} \exp (\bm{z}_{i} \cdot \bm{z}_{j}')/\tau} 
+\end{equation}
+where $ \tau  $ is the temperature parameter.
+The sum is over one positive and $ K  $ negative pairs in the same minibatch.
+
+
+\subsection{Other stuff}
+This is just the first  ~20\% of the paper. 
+The rest goes into different application of contrastive learning and
+different losses, encoder and head architectures etc.
+
+An interesting application to us is contrastive learning on sequences.
+A common assumption there is the slowness principle, whereby you say that
+a small subsequence of observations is a positive example because things don't change that quickly.
+Another subsequence found in some other time-slice is then a negative example.
+This is used in for example multi-frame Time-Contractive Network (TCN).
+Of course you can also do the previously described transformations on those video frames.
+
+
+
+
+
+
+
+\end{document}
