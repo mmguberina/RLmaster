@@ -113,3 +113,4 @@ through the encoder. some (probably different) type of regularization is necessa
 
 #### Regularization options
 a) droupout
+b) sac+ae solved this, use that regularization
