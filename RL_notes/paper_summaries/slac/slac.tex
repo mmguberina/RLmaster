@@ -1,0 +1,216 @@
+\documentclass{article}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsfonts}
+\usepackage[T1]{fontenc}
+\usepackage{bm}
+\usepackage{array}
+\usepackage{graphicx}
+\usepackage[utf8]{inputenc}
+\usepackage{csquotes}
+
+
+\title{Paper summary: Stochastic latent actor-critic: 
+deep reinforcement learning with a latent variable model}
+
+\begin{document}
+\maketitle
+
+
+\section{Idea in few sentances}
+
+\section{Explanation of the central concept}
+
+\section{Methodology}
+
+
+\section{Initial rambly notes}
+
+
+\subsection{Abstract}
+Stochastic latent actor-critic (SLAC):
+unifies stochastic sequential models and RL into a single method
+by learning a companct latent representation and then performing RL in the model's learned latent space.
+In continuos actions spaces, on images, simultaneous training of representations
+and policy, latent representation and latent-space dynamics are learned jointly.
+
+\subsection{Introduction}
+A predictive model is trained.
+It combines learning stochastic sequential models and RL into a single model,
+performing RL in the model's learned latent space.
+By formalizing the control problem as an inference problem 
+within a POMDP, it can be show that variational inference leads to the objective of
+the SLAC algorithm.
+Unlike model-based approaches which compound model error when planning, SLAC 
+performs infinite horizon optimization.
+
+\subsubsection{Preliminary: maximum entropy RL in fully observable MDPs}
+MDP, states $ \bm{s}_{t} \in \mathcal{S}  $, actions $ \bm{a}_{t} \in \mathcal{A}  $,
+rewards $ r_{ t }  $, initial state distribution $ p (\bm{s}_{1})  $,
+stochastic transition distribution $ p (\bm{s}_{t+1}  \bm{s}_{t}, \bm{a}_{t} )  $.
+Standard RL aims to learn parameters $ \phi  $ under policy
+$ \theta_{ \phi } (\bm{a}_{t}| \bm{s}_{t} )  $ s.t. the expected
+sum of rewards is maximized under the induced trajectory distribution $ \rho_{ \pi }  $.
+This can be modified to include an entropy term, such that the policy also maximizes
+the expected entropy $ \mathcal{H} (\pi_{ \phi } (\cdot|\bm{s}_{t}))  $.
+This is built on here.
+The resulting objective in maximum entropy RL is:
+\begin{equation}
+		\sum_{t=1}^{T} \mathbb{E}_{ (\bm{s}_{t}, \bm{a}_{t} ) \sim \rho_{ \pi } }
+		\left[ 
+r (\bm{s}_{t}, \bm{a}_{t} ) + \alpha \mathcal{H} (\pi_{ \phi (\cdot| \bm{s}_{t}) })
+		\right] 
+\end{equation}
+where $ \alpha  $ is the temperature parameter for balancing between reward and entropy contributions 
+to the objective.
+SAC uses this to derive soft policy iteration.
+SAC has the critic $ Q_{ \theta }  $ and actor $ \pi_{ \phi }  $
+The soft Q-function parameters $ \theta  $ are optimized to minimize the soft Bellman residual:
+\begin{equation}
+J_{ Q } (\theta) =
+\frac{1}{2} \left( 
+Q_{ \theta } (\bm{s}_{t}, \bm{a}_{t} ) -
+\left( 
+r_{ t } + \gamma \mathbb{E}_{ \bm{a}_{t+1} \sim \pi_{ \phi } }
+\left[ 
+		Q_{ \bar{\theta} } (\bm{s}_{t+1}, \bm{a}_{t+1} ) -
+		\alpha \log \pi_{ \phi } (\bm{a}_{t+1}| \bm{s}_{t+1} )
+\right] 
+\right) 
+\right)^{ 2 } 
+\end{equation}
+where $ \bar{\theta}  $ are delayed parameters.
+The policy parameters $ \phi  $ are optimized to update the policy towards the exponential of the soft Q-function,
+resulting in policy loss:
+\begin{equation}
+		J_{ \pi } (\phi) =
+		\mathbb{E}_{ \bm{a}_{t} \sim \pi_{ \phi } } 
+		\left[ 
+\alpha \log (\pi_{ \phi } (\bm{a}_{t}| \bm{s}_{t} )) - Q_{ \theta } (\bm{s}_{t}, \bm{a}_{t} )
+		\right] 
+\end{equation}
+
+\subsubsection{Preliminary: sequential latent variable models and
+amortized variational inference in POMDPs}
+Latent variable models with
+amortized variational inference are used.
+Image is $ \bm{x}_{}  $, generated latent representation is $ \bm{z}_{}  $.
+The model is learned by maximizing the probability of each observed $ \bm{x}_{}  $
+from some training set under the entire generative process
+\begin{equation}
+		p (\bm{x}_{}) = \int
+		p (\bm{x}_{}|\bm{z}_{}) p (\bm{z}_{}) d \bm{z}_{}
+\end{equation}
+This is intractable to compute due to the marginalization of the latent variables $ \bm{z}_{}  $.
+In amortized variational inference, the evidence lower bound for log-likelihood is used:
+\begin{equation}
+		\log p (\bm{x}_{}) \geq
+		\mathbb{E}_{ \bm{z}_{} \sim q }
+		\left[ 
+\log p (\bm{z}_{}| \bm{x}_{})
+		\right] 
+		- D_{ KL } (q (\bm{z}_{}| \bm{x}_{}) || p (\bm{z}_{}))
+\end{equation}
+$ \log p (\bm{x}_{})  $ is maximized by learning an encoder $ q (\bm{z}_{}| \bm{x}_{})  $
+and a decoder $ p (\bm{x}_{}| \bm{z}_{})  $ and directly performing
+gradient descent of the right hand side of the equation.
+Then the distributions of interest are the prior $ p (\bm{z}_{})  $,
+the observation model $ p (\bm{x}_{} | \bm{z}_{})  $ and the variational 
+approximate posterior $ q (\bm{z}_{}| \bm{x}_{})  $.
+
+To extend such models to sequential decision making,
+actions and temporal structure moust by incorporated to the latent state.
+Since we're now in the POMDP setting, we don't have states, only
+observations $ \bm{x}_{t} \in \mathcal{X}  $ and latent states
+$ \bm{z}_{t} \in \mathcal{Z}  $.
+The transition distributions are now $ p (\bm{z}_{t+1}| \bm{z}_{t}, \bm{a}_{t})  $
+and the observation model is $ p (\bm{x}_{t} | \bm{z}_{t})  $.
+As VAEs, a generative model can be learned by maximizing the log-likelihood.
+Importantly, $ \bm{x}_{t}  $ alone can not give $ \bm{z}_{t}  $ ---
+for that previous observations also must be taken into account.
+Hence the need for sequential latent variable models.
+The distributions of interest are $ p (\bm{z}_{1})  $ and
+$ p (\bm{z}_{t+1}| \bm{z}_{t}, \bm{a}_{t})  $,
+the observation model $ p (\bm{x}_{t} | \bm{z}_{t})  $
+and the approximate variational posteriors
+$ q (\bm{z}_{1}| \bm{x}_{1})  $ and
+$ q (\bm{z}_{t+1}| \bm{x}_{t+1}, \bm{z}_{t}, \bm{a}_{t})  $.
+With these, the log-likelihood of the observations ca be bounded:
+\begin{equation}
+\log p (\bm{x}_{1:\tau+1} | \bm{a}_{1:\tau}) \geq
+\mathbb{E}_{ \bm{z}_{1:\tau +1} \sim q }
+\left[ 
+		\sum_{t=0}^{\tau} \log p (\bm{x}_{t+1}|\bm{z}_{t+1}) -
+		D_{ KL } \left( 
+q (\bm{z}_{t+1}|\bm{x}_{t+1}, \bm{z}_{t}, \bm{a}_{t}) 
+|| p (\bm{z}_{t+1}|\bm{z}_{t},\bm{a}_{t})
+		\right) 
+\right] 
+\end{equation}
+Where a few obvious conditionals have been dropped.
+Prior work has dealt with these non-Markovian state transitions
+with recurrent networks or probabilistic state-space models.
+Here, a stochastic latent variable model is trained.
+
+\subsection{Joint modelling and control as inference}
+In the MDP setting, the control problem can be embedded into the MDP
+graphical model by introducing a binary random variable $ \mathcal{O}_{ t }  $
+which indicates if the time step $ t  $ is optimal.
+If it's distribution is chosen to be $ p (\mathcal{O}_{ t } =1 | \bm{s}_{t}, \bm{a}_{t} )
+= \exp (r (\bm{s}_{t}, \bm{a}_{t} ))$, then the maximization
+of $ p (\mathcal{O}_{ 1:T })  $ via approximate inference in that model
+yields the optimal policy for the maximum entropy objective.
+Now this is extended to the POMDP setting.
+Analogously, we get
+$ p (\mathcal{O}_{ t } =1 | \bm{z}_{t}, \bm{a}_{t} ) = \exp (r (\bm{z}_{t}, \bm{a}_{t} ))$.
+But now not only the likelihood of optimality variables in maximized,
+but also the maximum entropy policies,
+thus maximizing the marginal likelihood 
+$ p (\bm{x}_{1:\tau+1}, \mathcal{O}_{ \tau+1:T }|\bm{a}_{1:\tau})  $,
+in order to learn the model and the policy at the same time.
+This objective represent both the likelihood of the observed data
+from the past $ \tau + 1  $ steps,
+as well as the optimality of the agent's action for future steps, hence
+combining both representation learning and control into a single graphical model.
+
+The variational distribution is factorized into a product of 
+\textit{recognition} terms 
+$ q (\bm{z}_{t+1} | \bm{x}_{t+1} , \bm{z}_{t}, \bm{a}_{t})  $,
+\textit{dynamics terms}
+$ p (\bm{z}_{t+1}| \bm{z}_{t}, \bm{a}_{t})  $ and
+\textit{policy} terms
+$ \pi (\bm{a}_{t} | \bm{x}_{1:t}, \bm{a}_{1:t-1})  $:
+\begin{equation}
+q (\bm{z}_{1:T}, \bm{a}_{\tau +1:T}| \bm{x}_{1:\tau+1}, \bm{a}_{1:\tau}) =
+\prod_{t=0}^{\tau}   q (\bm{z}_{t+1} | \bm{x}_{t+1} , \bm{z}_{t}, \bm{a}_{t}) 
+\prod_{t=\tau +1}^{T-1}   p (\bm{z}_{t+1}| \bm{z}_{t}, \bm{a}_{t}) 
+\prod_{t=\tau +1}^{T}   \pi (\bm{a}_{t} | \bm{x}_{1:t}, \bm{a}_{1:t-1})  
+\end{equation}
+The dynamics for future timesteps is used to 
+prevent the agent from taking optimistic steps.
+This posterior can then be used to obtain the evidence lower bound (ELBO)
+of the likelihood.
+It is in turn separated into training the latent variable model and
+maximized the entropy of RL.
+I'm not going into this as I can't understand it without much more effort.
+The latent model is a specific VAE and I don't exactly understand
+the vannila VAE anyway.
+Also I never derived SAC and I don't know anything
+about messaging passing in statistics so I certainly can't follow 
+how the maximum entropy actor-critic is employed here.
+Let's call it good because unlike other more complex generative models
+it actually integrates them into the POMDP (which is the case,
+but I have to take it on belief here).
+
+
+
+\subsection{Method}
+
+\subsection{Other stuff}
+
+
+
+
+
+
+\end{document}

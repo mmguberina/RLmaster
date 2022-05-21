@@ -1,0 +1,134 @@
+\documentclass{article}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsfonts}
+\usepackage[T1]{fontenc}
+\usepackage{bm}
+\usepackage{array}
+\usepackage{graphicx}
+\usepackage[utf8]{inputenc}
+\usepackage{csquotes}
+
+\title{Paper summary: Image augmentation is all you need: 
+regularizing deep reinforcement learning from pixels}
+
+\begin{document}
+\maketitle
+
+
+\section{Idea in few sentences}
+
+
+
+\section{Explanation of the central concept}
+
+
+\section{Methodology}
+
+
+\section{Initial rambly notes}
+
+
+\subsection{Abstract}
+The method is dubbed DrQ: Data regularized Q.
+Can be combined with any model-free RL alg.
+Works better than CURL.
+
+\subsection{Introduction}
+Direct quote:
+\begin{displayquote}
+Simultaneously training a convolutional encoder alongside a policy network is challenging when given
+limited environment interaction, strong correlation between samples
+and a typically sparse reward signal.
+Naive attempts to use a large capacity encoder result in severe over-fitting,
+and smaller encoders produce impoverished representations that limit task performance.
+\end{displayquote}
+The authors identify that you can go with the following:
+\begin{enumerate}
+		\item pretraining with self-supervised learning (SSL), followed by supervised learning
+		\item supervised learning with an additional auxiliary loss
+		\item supervised learning with data augmentation
+\end{enumerate}
+The problem is, in sample-efficient RL you're working with $ 10^{ 4 } - 10^{ 5 }  $ transitions
+from a few hundred trajectories.
+The authors opt for a data augmentation approach.
+This is used, of course, generate more samples without sampling trajectories, but
+also to regularize the Q-function --- and nothing more. Hence,
+no additional losses are needed.
+
+\subsection{Method}
+The idea is to use optimality invariant state transformations.
+This is defined
+as a mapping
+$ f : \mathcal{S} \times \mathcal{T} \to \mathcal{S}  $ 
+that preserves the Q-values:
+\begin{equation}
+		Q (\bm{s}_{}, \bm{a}_{} ) = Q (f (\bm{s}, \bm{\nu}), \bm{a} ), \forall \bm{s} \in \mathcal{S}, 
+		\bm{a}_{} \in \mathcal{A} \text{ and } \bm{\nu} \in \mathcal{T}
+\end{equation}
+where $ \bm{\nu}  $ are the parameters of $ f (\cdot)  $ drawn from the set
+of all possible parameters $ \mathcal{T} $ ,ex.
+random image translations.
+This enables variance reduction in Q-value estimates.
+This works as follows.
+For an arbitrary distribution of states $ \mu(\cdot)  $
+and policy $ \pi  $, instead of using a single
+sample $ \bm{s}_{}^{ * } \sim \mu (\cdot), 
+\bm{a}_{}^{ * } \sim \pi (\cdot|\bm{s}_{}^{ * })  $, with the expectation:
+\begin{equation}
+\mathbb{E}_{ \bm{s}_{} \sim \mu (\cdot), \bm{a}_{} \sim \pi (\cdot|\bm{s}_{}) }
+\left[ Q (\bm{s}_{}, \bm{a}_{} ) \right] \approx
+Q (\bm{s}_{}^{ * }, \bm{a}_{}^{ * } )
+\end{equation}
+we can generate $ K  $ samples via random transformations and use the 
+following estimate with lower variance:
+\begin{equation}
+\mathbb{E}_{ \bm{s}_{} \sim \mu (\cdot), \bm{a}_{} \sim \pi (\cdot|\bm{s}_{}) }
+\left[ Q (\bm{s}_{}, \bm{a}_{} ) \right]  \approx
+\frac{1}{K} \sum_{k=1}^{K} Q (f (\bm{s}_{}^{ * }, \bm{\nu}_{k}), \bm{a}_{k})
+\end{equation}
+where $ \bm{\nu}_{k} \in \mathcal{T}  $ and
+$ \bm{a}_{k} \sim \pi (\cdot |f (\bm{s}_{}^{ * }, \bm{\nu}_{k}), \bm{a}_{k} )  $.
+This suggest two distinct ways to regularize the Q-function.
+First, use data augmentation to compute target values for every transition tuple
+$ \left( \bm{s}_{i}, \bm{a}_{i}, r_{ i }, \bm{s}_{i}' \right)   $ as
+\begin{equation}
+		\label{eq-aug-batch-sample}
+y_{ i } = r_{ i } + \gamma \frac{1}{K}  \sum_{k=1}^{K} 
+Q_{ \theta } (f (\bm{s}_{i}', \bm{\nu}_{i,k}'), \bm{a}_{i,k}')
+\end{equation}
+where $ \bm{a}_{i,k}' \sim \pi (\cdot | f (\bm{s}_{i}', \bm{\nu}_{i,k}'))  $ and
+where $ \bm{\nu}_{i,k}' \in \mathcal{T} $ corresponds
+to a transformation parameter of $ \bm{s}_{i}'  $.
+Then the Q-function is updated using these targets through an SGD update
+with learning rate $ \lambda_{ \theta }  $:
+\begin{equation}
+		\theta \leftarrow \theta -
+		\lambda_{ \theta } \nabla_{ \theta } \frac{1}{N}  \sum_{i=1}^{N} 
+		(Q_{ \theta } (f (\bm{s}_{i}, \bm{\nu}_{i}), \bm{a}_{i}) - y_{ i })^{ 2 }
+\end{equation}
+\ref{eq-aug-batch-sample} can also be used for
+different augmentations of $ \bm{s}_{i}  $, resulting in the second
+regularization approach:
+\begin{equation}
+\theta \leftarrow \theta -
+\lambda_{ \theta } \nabla_{ \theta } \frac{1}{NM}  \sum_{i=1,m=1}^{N,M} 
+(Q_{ \theta } (f (\bm{s}_{i}, \bm{\nu}_{i,m}), \bm{a}_{i}) - y_{ i })^{ 2 }
+\end{equation}
+where $ \bm{\nu}_{i,m}  $ and $ \bm{\nu}_{i,k}'  $
+are drawn independently.
+
+
+\subsection{DrQ}
+If $ \left[ K=1, M=1 \right]   $ is exactly RAD
+up to choice of hyper-parameters and data augmentation functions.
+DrQ uses $ \left[ K=2, M=2 \right]   $.
+
+
+
+
+
+
+
+
+\end{document}
