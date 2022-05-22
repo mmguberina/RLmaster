@@ -1,5 +1,22 @@
 \section{General latent space learning}
 TODO: throw in citations (ex. pilco, embed2control etc)
+
+BIG TODO:\\
+============================================\\
+clearly deliniate generative and discriminative models:
+--- generative models are AEs, VAEs, GANs,
+and are trained to learn the distribution of inputs
+by somehow using reconstruction loss and have different
+levels of statistical modelling complexity.
+--- discriminative models don't have decoders
+because they are not trained to learn the distribution of inputs.
+instead, they are only trained to learn a coherent mapping
+into a latent space. this can be done for example
+by contrastive learning.\\
+there are also bisimulation metrics and you better find out
+what those are.
+===============================================
+
 As discussed in the introduction, learning control from images is 
 very desirable. Images, and observations in general, only implicitely 
 provide information about the underlying state. 

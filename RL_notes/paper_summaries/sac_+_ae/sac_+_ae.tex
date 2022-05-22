@@ -1,0 +1,62 @@
+\documentclass{article}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsfonts}
+\usepackage[T1]{fontenc}
+\usepackage{bm}
+\usepackage{array}
+\usepackage{graphicx}
+\usepackage[utf8]{inputenc}
+\usepackage{csquotes}
+
+\title{Paper summary: Improving sample efficiency in model-free reinforcement learning from images}
+
+\begin{document}
+\maketitle
+
+
+\section{Idea in few sentances}
+
+
+\section{Explanation of the central concept}
+
+
+\section{Methodology}
+
+
+\section{Initial rambly notes}
+
+
+\subsection{Abstract}
+Fitting a high-capacity encoder to extract features (state information)
+from images with only the reward signal leads to poor performance.
+One option is to incorporate reconstruction loss into an off-policy algorithm,
+but that often leads to training instability.
+Investigtion into why shows variational autoencoders to be a problem.
+
+\subsection{Introduction}
+Some solutions to low sample efficiency are:
+\begin{enumerate}
+		\item use an off-policy algorithm
+		\item add an auxiliary task with an unsupervised objective
+\end{enumerate}
+The simplest auxiliary task is an autoencoder with a pixel reconstruction objective.
+Prior works uses a two-step training procedure,
+but this often leads to lower final performance.
+\begin{displayquote}
+	We confirm that a pixel reconstruction loss is vital for learning a good
+	representation, specifically when trained jointly,
+	but requires careful design choices to succeed.
+\end{displayquote}
+
+
+\subsection{Method}
+
+\subsection{Other stuff}
+
+
+
+
+
+
+\end{document}

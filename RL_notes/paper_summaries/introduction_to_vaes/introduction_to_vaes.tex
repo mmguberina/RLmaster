@@ -1,0 +1,362 @@
+\documentclass{article}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsfonts}
+\usepackage[T1]{fontenc}
+\usepackage{bm}
+\usepackage{array}
+\usepackage{graphicx}
+\usepackage[utf8]{inputenc}
+
+\title{An Introduction to variational autoencoders (VAEs)}
+
+\begin{document}
+\maketitle
+The idea here is to understand just enough to explain what these things
+are and to understand how and why they're used where they are used.
+No detailed knowledge is required at the moment of writing.
+\section{Introduction}
+\subsection{Motivation}
+Discriminative modelling aims to learn a predictor given the observations,
+while generative models has the more general objetive of learning a joint
+distribution over all the variables.
+Generative models are in line with making theories in science.
+They enable hypothesis testing.
+They require stronger assumptions than purely discriminative models,
+which often leads to a higher asymptotic bias when the model is wrong.
+
+The goal is to find abstactions of the world
+which can be used for multiple prediction tasks downstream.
+More concretely, the goal is to find disentagled,
+semantically meaningful, statistically independent and causal factors
+of variation in data --- this is called unsupervised representation learning.
+VAEs are employed for this purpose.
+This can also be viewed as an implicit form of regularization:
+by forcing the representations to be meaningful for data generation,
+we bias the inverse of that process, i.e. mapping from input to representation,
+into a certain mould.
+
+VAEs can be split in two coupled, but independently parametrized parts:
+the encoder, or the recognition model,
+and the decoder, or the generative model.
+One advantage of the VAE framework, relative to ordinary variational inference (VI),
+it that the recognition model (also called inference model) is now
+a (stochastic) function of input variables, making in more efficient on large
+data sets: the recognition model uses one set of parameters to model 
+the relation between input and latent variables and as such is called
+``amortized inference''.
+This is reasonably fast because by construction the recognition model
+can be done using a single forwardpass from input to latent variables.
+The price paid for this is that sampling induces sampling nois in the gradients
+required for learning.
+The key VAE contribution is that this variance can be counteracted by
+what is known as the ``reparametrization trick'' (reorganized gradient computation
+which reduces variance).
+
+VAEs marry graphical models and deep learning.
+The generative model is a Bayesian network of form
+$ p (\bm{x}_{}| \bm{z}_{})p (\bm{z}_{})  $,
+or in the case of multiple stochastic layers, a hierarchy such as:
+$ p (\bm{x}_{}| \bm{z}_{L})p (\bm{z}_{L}|\bm{z}_{L-1})\cdots p (\bm{z}_{1}|\bm{z}_{0})  $.
+Similarly, the recognition model is also a conditional Bayesian network of
+form $ p (\bm{z}_{}|\bm{x}_{})  $ which can also be a hierarchy of
+stochastic layers.
+Inside each conditional may be a deep neural network,
+e.g. $ \bm{z}_{}|\bm{x}_{} \sim f (\bm{x}_{}, \bm{\epsilon}_{})  $
+with $ f  $ being the neural network mapping and $ \bm{\epsilon}_{}  $ a
+noise random variable.
+Its learning algorithm is a mix of classical (amortized, variational)
+expectation maximization, but with the reparametrization trick
+ends up backpropagating through the many layers of the deep neural networks
+embedded inside it.
+You can play with VAEs by adding attention layers,
+extending them to dynamical models etc.
+GANs create great realistic images, but lack full support of the data.
+VAEs, like other likelihood-based models, generate more dispersed samples,
+but are better density models in terms of likelihood creation.
+
+
+\subsection{Probabilistic models and variational inference}
+Probabilistic models are a formalization of knowledge and skill.
+The degree and nature of uncertainty is specified in terms
+of (conditional) probability distributions.
+Let $ \bm{x}_{}  $ be the vector represeting the set of all observed
+variables whose joint distribution we would like to model.
+We assume $ \bm{x}_{}  $ is a random sample of an unknown distribution
+$ p^{ * } (\bm{x}_{})  $.
+We attempt to approximate this process with a chosen model $ p_{ \bm{\theta}_{} } (\bm{x}_{})  $.
+\textit{Learning} is most comonly the process of searching for values of parameters
+$ \bm{\theta}_{}  $ such that for any observed $ \bm{x}_{}  $:
+\begin{equation}
+		p_{ \bm{\theta}_{} } (\bm{x}_{}) \approx  p^{ * } (\bm{x}_{})  
+\end{equation}
+
+\subsubsection{Conditional models}
+Often we're actually interested in learning not $ p_{ \bm{\theta}_{} } (\bm{x}_{})  $,
+but $ p_{ \bm{\theta}_{} } (\bm{y}_{}|\bm{x}_{})  $
+that approximates $  p^{ * } (\bm{y}_{}|\bm{x}_{})    $.
+Here $ \bm{x}_{}  $ is the input, ex. and image,
+and $ \bm{y}_{}  $ is something we're interested in like a class label.
+To simplify notation, unconditional modelling is assumed,
+but it is almost always applicable to conditional modelling.
+
+\subsection{Directed graphical models and neural networks}
+We can parametrize conditional distributions with neural networks.
+VAEs in particular work with \textit{directed} probabilistic models,
+also know as \textit{probabilistic graphical models} (PGMs)
+or \textit{Bayesian networks}.
+The joint distribution over the variables of such models
+factorizes as a product of prior and conditional distributions:
+\begin{equation}
+p_{ \bm{\theta}_{} } (\bm{x}_{1}, \dots, \bm{x}_{M}) =
+\prod_{j=1}^{M} p_{ \bm{\theta}_{} } (\bm{x}_{j}| Pa (\bm{x}_{j})) 
+\end{equation}
+where $ P a (\bm{x}_{j})  $ is the set of parent variables of node $ j  $ in
+the directed graph. For root nodes the parents are an empty set,
+i.e. that distribution is unconditional.
+Before you'd parametrize each conditional distribution with
+ex. a linear model, and now we do it with neural networks:
+\begin{align}
+		\bm{\eta}_{} &= \text{NeuralNet} (P a (\bm{x}_{}))\\
+		p_{ \bm{\theta}_{} } (\bm{x}_{}|Pa (\bm{x}_{})) &= p_{ \bm{\theta}_{} } (\bm{x}_{}|\bm{\eta}_{})
+\end{align}
+
+\paragraph{Training}
+Let dataset be $ \mathcal{D}  $.
+In fully observed models you know what you'd do:
+\begin{equation}
+		\log p_{ \bm{\theta}_{} } (\mathcal{D}) = \sum_{\bm{x}_{} \in \mathcal{D}}^{} 
+		\log p_{ \bm{\theta}_{} } (\bm{x}_{})
+\end{equation}
+
+\subsubsection{Maximum likelihood and minibatch SGD}
+The most common criterion of probabilistic models
+is maximum likelihood (ML).
+Maximization of the log-likelihood criterion is equivalent to minimization
+of KL divergence betwen data and model distributions.
+Chain rule, minibatch, etc, you know it.
+For the sake of notation, dataset has size $ N_{ \mathcal{D} }  $,
+minibatch is called $ \mathcal{M}  $. Then
+\begin{equation}
+\frac{1}{N_{ \mathcal{D} }} \nabla_{ \bm{\theta}_{} }\log p_{ \bm{\theta}_{} } (\mathcal{D}) \simeq
+\frac{1}{N_{ \mathcal{M} }} \nabla_{ \bm{\theta}_{} }\log p_{ \bm{\theta}_{} } (\mathcal{M})  =
+\frac{1}{N_{ \mathcal{M} }} \sum_{\bm{x}_{}\in \mathcal{M}}^{} \nabla_{ \bm{\theta}_{} }\log p_{ \bm{\theta}_{} } (\mathcal{x})  
+\end{equation}
+
+\subsubsection{Bayesian inference}
+From a Bayesian perspective, ML can be improved
+through \textit{maximum a posteriori} (MAP) estimation,
+or even further, inference of a full approximate posterior distribution over parameters.
+
+\subsection{Learning and inference in deep latent variable models}
+Fully observed directed models can be extended into
+directed models with latent variables.
+\textit{Latent variables} are variables that are a part of the model,
+but which we don't observe (are not it dataset).
+Typical label is $ \bm{z}_{}  $.
+In the case of unconditional modelling of $ \bm{x}_{}  $,
+the directed graphical model would then represet
+a joint $ p_{ \bm{\theta}_{} } (\bm{x}_{}, \bm{z}_{})  $.
+The marginal is then:
+\begin{equation}
+		p_{ \bm{\theta}_{} } (\bm{x}_{}) = 
+		\int_{}^{} p_{ \bm{\theta}_{} } (\bm{x}_{}, \bm{z}_{}) d\bm{z}_{}
+\end{equation}
+This is also called the \textit{marginal likelihood} or 
+the \textit{model evidence} when taken as a function of $ \bm{\theta}_{}  $.
+
+\subsubsection{Deep latent variable models}
+\textit{Deep latent variable models} (DLVM) denote a latent variable
+model $  p_{ \bm{\theta}_{} } (\bm{x}_{}, \bm{z}_{})    $
+whose distributions are parametrized with neural networks.
+Can be conditioned on some context, giving
+$   p_{ \bm{\theta}_{} } (\bm{x}_{}, \bm{z}_{}|\bm{y}_{})      $.
+Cool thing is that while the directed model is relatively simple,
+$ p (\bm{x}_{})  $ can be wild.
+
+\subsubsection{Intractabilities}
+The main difficulty with maximum likelihood learning in DLVMs
+is that the marginal probability of data under the model
+is typically intractable.
+This is due to $ p_{ \bm{\theta}_{} } (\bm{x}_{}) = \int_{}^{} p_{ \bm{\theta}_{} } (\bm{x}_{}, \bm{z}_{}) d\bm{z}_{}  $
+which does not have an analytic solution or efficient estimator.
+Hence you can't differentiate it w.r.t its parameters and optimize it.
+$ p_{ \bm{\theta}_{} } (\bm{x}_{})  $ is intractable due to
+the intractability of $ p_{ \bm{\theta}_{} } (\bm{z}_{}|\bm{x}_{})  $.
+While $ p_{ \bm{\theta}_{} } (\bm{x}_{}, \bm{z}_{})  $ is efficient to compute,
+\begin{equation}
+		 p_{ \bm{\theta}_{} } (\bm{z}_{}|\bm{x}_{})   = 
+		 \frac{ p_{ \bm{\theta}_{} } (\bm{x}_{}, \bm{z}_{})  }{p_{ \bm{\theta}_{} } (\bm{x}_{})} 
+\end{equation}
+gives problem in DLVMs.
+Hence we need approximate inference techniques.
+
+\section{Varitional autoencoders}
+\subsection{Encoder or approximate posterior}
+To solve intractabilities, we introduce
+a parametric \textit{inference model} $ q_{ \bm{\phi}_{}} (\bm{z}_{}|\bm{x}_{})  $.
+This model is called the \textit{encoder} or \textit{recognition model}/
+$ \bm{\phi}_{}  $ are called the \textit{variational parameters}.
+They are optimized s.t.:
+\begin{equation}
+		 q_{ \bm{\phi}_{}} (\bm{z}_{}|\bm{x}_{})  \approx
+p_{ \bm{\theta}_{} } (\bm{z}_{}|\bm{x}_{})
+\end{equation}
+Like a DLVM, the inference model can be almost any directed graphical model:
+\begin{equation}
+		q_{ \bm{\phi}_{}} (\bm{z}_{}|\bm{x}_{}) = 
+		q_{ \bm{\phi}_{}} (\bm{z}_{1}, \dots, \bm{z}_{M}|\bm{x}_{}) =
+		\prod_{j=1}^{M} q_{ \\bm{\phi}_{} (\bm{z}_{j}| P a (\bm{z}_{j}), \bm{x}_{}) } 
+\end{equation}
+This can also be a neural network.
+In this case, parameters $ \bm{\phi}_{}  $ include the weights and biases, ex.
+\begin{align}
+		(\bm{\mu}_{}, \log \bm{\sigma}_{}) &= \text{EncoderNeuralNet}_{ \bm{\phi}_{} } (\bm{x}_{})\\
+		q_{ \bm{\phi}_{} } (\bm{z}_{}|\bm{x}_{}) &=
+		\mathcal{N} (\bm{z}_{}; \bm{\mu}_{}, \text{diag} (\bm{\sigma}_{}))
+\end{align}
+Typically, one encoder is used to perform posterior inference
+over all of the datapoints in the dataset.
+The strategy used in VAEs of sharing variational parameters across datapoints is also called
+\textit{amortized variational inference}.
+
+\subsection{Evidence lower bound (ELBO)}
+The optimization objetive of the VAE, like other variational methods,
+is the \textit{evidence lower bound (ELBO)}.
+It is typically derived with Jensen's inequality, but here it isn't:
+\begin{align}
+		\log p_{ \bm{\theta}_{} } (\bm{x}_{}) 
+&= \mathbb{E}_{ q_{ \bm{\phi}_{} } (\bm{z}_{}|\bm{x}_{}) } \left[ \log p_{ \bm{\theta}_{} } (\bm{x}_{}) \right] \\
+&= \mathbb{E}_{ q_{ \bm{\phi}_{} } (\bm{z}_{}|\bm{x}_{}) } \left[ \log 
+\frac{p_{ \bm{\theta}_{} } (\bm{x}_{}, \bm{z}_{})}{p_{ \bm{\theta}_{} } (\bm{z}_{}| \bm{x}_{})} 
+\right] \\
+&= \mathbb{E}_{ q_{ \bm{\phi}_{} } (\bm{z}_{}|\bm{x}_{}) } \left[ \log 
+\frac{p_{ \bm{\theta}_{} } (\bm{x}_{}, \bm{z}_{})}{q_{ \bm{\phi}_{} } (\bm{z}_{}| \bm{x}_{})} 
+\frac{q_{ \bm{\phi}_{} } (\bm{z}_{}| \bm{x}_{})}{p_{ \bm{\theta}_{} } (\bm{z}_{}| \bm{x}_{})} 
+\right] \\
+&= 
+\underbrace{\mathbb{E}_{ q_{ \bm{\phi}_{} } (\bm{z}_{}|\bm{x}_{}) } \left[ \log 
+		\frac{p_{ \bm{\theta}_{} } (\bm{x}_{}, \bm{z}_{})}{q_{ \bm{\phi}_{} } (\bm{z}_{}| \bm{x}_{})} \right]}_{ 
+= \mathcal{L}_{ \bm{\theta}_{}, \bm{\phi}_{}} (\bm{x}_{}) \text{ELBO} }
++
+\underbrace{\mathbb{E}_{ q_{ \bm{\phi}_{} } (\bm{z}_{}|\bm{x}_{}) } \left[ \log 
+		\frac{q_{ \bm{\phi}_{} } (\bm{z}_{}| \bm{z}_{})}{p_{ \bm{\theta}_{} } (\bm{z}_{}| \bm{x}_{})}\right] }_{ 
+= \mathcal{D}_{KL} (q_{ \bm{\phi}_{} }(\bm{z}_{}|\bm{x}_{})||
+p_{ \bm{\theta}_{} (\bm{z}_{}|\bm{x}_{})}) }
+\end{align}
+
+$ D_{ KL }  $ is non-negative and 0 iff $ q_{ \bm{\phi}_{} } (\bm{z}_{}|\bm{x}_{})  $ equals
+the true distribution.
+The first term is called the \textit{variational lower bound} or
+\textit{evidence lower bound}.
+Due to non-negativity of $ D_{ KL }  $, ELBO is a lower bound
+on the log-likelihood of the data:
+\begin{align}
+		\mathcal{L}_{ \bm{\theta}_{}, \bm{\phi}_{} } (\bm{x}_{}) &=
+\log p_{ \theta } (\bm{x}_{}) - D_{ KL } (q_{ \bm{\phi}_{} } (\bm{z}_{}|\bm{x}_{}) 
+|| p_{ \bm{\theta}_{} } (\bm{z}_{}|\bm{x}_{})) \\
+&\leq
+\log p_{ \bm{\theta}_{} } (\bm{x}_{})
+\end{align}
+So, $D_{ KL } (q_{ \bm{\phi}_{} } (\bm{z}_{}|\bm{x}_{}) 
+|| p_{ \bm{\theta}_{} } (\bm{z}_{}|\bm{x}_{}))$
+determines two distances:
+\begin{enumerate}
+		\item by definition the approximate posterior from the true posterior
+		\item the gap between ELBO $ \mathcal{L}_{ \bm{\theta}_{}, \bm{\phi}_{} }  $
+				and the marginal likelihood $ \log p_{ \bm{\theta}_{} } (\bm{x}_{})  $:
+				this is also called the \textit{tightness of the bound}
+\end{enumerate}
+Thus, by maximizing ELBO w.r.t. parameters $ \bm{\theta}_{}, \bm{\phi}_{}  $,
+we'll concurently optimize:
+\begin{enumerate}
+		\item approximately maximize the marginal likelihood $ p_{ \bm{\theta}_{} } (\bm{x}_{})  $, which
+				means that the generative model will become better
+		\item minimize the KL divergence of the approximation $ q_{ \bm{\phi}_{} (\bm{z}_{}|\bm{x}_{}) }  $
+				from the true posterior $  p_{ \bm{\theta}_{} } (\bm{z}_{}|\bm{x}_{}) $
+\end{enumerate}
+We do this optimization with SGD.
+Given a dataset, ELBO is the sum (or average) of individual point ELBO's.
+Individual-datapoint ELBO is intractable in general, but there are good 
+unbiased estimators of
+$ \tilde{\nabla}_{ \bm{\theta}_{}, \bm{\phi}_{} } \mathcal{L}_{ \bm{\theta}_{}, \bm{\phi}_{}   }  (\bm{x}_{}) $.
+
+Grad of ELBO w.r.t. generative model parameters $ \bm{\theta}_{}  $ are simple to obtain:
+\begin{align}
+		\nabla_{ \bm{\theta}_{} } \mathcal{L}_{ \bm{\theta}_{}, \bm{\phi}_{} } (\bm{x}_{}) &=
+\nabla_{ \bm{\theta}_{} } \mathbb{E}_{ q_{ \bm{\phi}_{} } (\bm{z}_{}|\bm{x}_{}) }
+\left[ 
+\log p_{ \bm{\theta}_{} (\bm{x}_{}, \bm{z}_{}) }-
+\log q_{ \bm{\phi}_{} (\bm{z}_{}| \bm{x}_{}) }
+\right]
+&=
+ \mathbb{E}_{ q_{ \bm{\phi}_{} } (\bm{z}_{}|\bm{x}_{}) }
+\left[ 
+\nabla_{ \bm{\theta}_{} }\left(   
+\log p_{ \bm{\theta}_{} (\bm{x}_{}, \bm{z}_{}) }-
+\log q_{ \bm{\phi}_{} (\bm{z}_{}| \bm{x}_{}) }
+\right)
+\right]
+&\simeq
+\nabla_{ \bm{\theta}_{} }
+\left( 
+\log p_{ \bm{\theta}_{} (\bm{x}_{}, \bm{z}_{}) }-
+\log q_{ \bm{\phi}_{} (\bm{z}_{}| \bm{x}_{}) }
+\right) 
+&=
+\nabla_{ \bm{\theta}_{} }
+\log p_{ \bm{\theta}_{} (\bm{x}_{}, \bm{z}_{}) }
+\end{align}
+where we used a Monte-Carlo estimator of the second line
+and $ \bm{z}_{}  $ is a random saple from $ q_{ \bm{\phi}_{} } (\bm{z}_{}|\bm{x}_{})  $.
+
+\subsection{Reparametrization trick}
+Unbiased gradiest w.r.t. variational parameters $ \bm{\phi}_{}  $
+are more difficult to obtain.
+For this we'll use the reparametrization trick.
+This is just a change of variable
+which is cool over the gradient of expectation
+and we can get a Monte-Carlo estimator.
+It essentially ``externalizes'' the noise in $ \bm{z}_{}  $.
+I'm not going to write this out.
+Point is you get your estimate and can do gradient descent
+and it's all easy to implement in say PyTorch.
+Usually the reparametrization is done with a normally distributed variable.
+It's all interesting and you should go read it.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\end{document}
