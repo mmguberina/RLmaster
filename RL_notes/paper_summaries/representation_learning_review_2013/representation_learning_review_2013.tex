@@ -13,7 +13,27 @@
 \begin{document}
 \maketitle
 
-\section{Introduction}
+\section{What makes aa representation good}
+\begin{enumerate}
+		\item \textit{smoothness}: $ f  $ s.t. $ x \approx y  $ implies
+				$ f(x) \approx f (y)  $
+		\item \textit{multiple explanatory factors} a.k.a. disentangling 
+				features
+		\item \textit{semi-supervised learning}: for input $ Z  $ and target $ Y  $,
+				learning $ P (X)  $ helps learning $ P (Y|X)  $ because
+				features of $ X  $ help explain $ Y  $
+		\item \textit{shared factors across tasks}: like previous point,
+				but also works for different $ Y  $s
+		\item \textit{manifolds}: probability mass concentrates
+				in regions with much smaller dimensionality than data itself
+		\item \textit{natural clustering}: different values of categorical variables
+				are associated with separate manifolds.
+		\item \textit{temporal and spatial coherence}:
+				consecutive or spatially nearby observations
+				thend to be associated with the same value of relevant categorical
+				concepts or result in small surface move on the surface of the manifold
+		\item \textit{sparsity}:
+\end{enumerate}
 
 
 

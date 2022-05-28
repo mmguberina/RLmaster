@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.21 (TeX Live 2020) (preloaded format=pdflatex 2020.9.19)  22 MAY 2022 21:11
+This is pdfTeX, Version 3.14159265-2.6-1.40.21 (TeX Live 2020) (preloaded format=pdflatex 2020.9.19)  28 MAY 2022 01:24
 entering extended mode
  \write18 enabled.
  %&-line parsing enabled.
@@ -261,25 +261,30 @@ LaTeX Warning: No \author given.
 {/mnt/bigp/texlive/texcopy/texlive/2020/texmf-var/fonts/map/pdftex/updmap/pdfte
 x.map}] (./representation_learning_review_2013.aux) ) 
 Here is how much of TeX's memory you used:
- 3131 strings out of 480876
- 43070 string characters out of 5907582
- 277974 words of memory out of 5000000
- 18704 multiletter control sequences out of 15000+600000
- 546340 words of font info for 61 fonts, out of 8000000 for 9000
+ 3159 strings out of 480876
+ 43367 string characters out of 5907582
+ 279974 words of memory out of 5000000
+ 18722 multiletter control sequences out of 15000+600000
+ 551482 words of font info for 79 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  40i,6n,37p,251b,202s stack positions out of 5000i,500n,10000p,200000b,80000s
 {/mnt/bigp/texlive/texcopy
 /texlive/2020/texmf-dist/fonts/enc/dvips/cm-super/cm-super-t1.enc}</mnt/bigp/te
-xlive/texcopy/texlive/2020/texmf-dist/fonts/type1/public/cm-super/sfbx1440.pfb>
-</mnt/bigp/texlive/texcopy/texlive/2020/texmf-dist/fonts/type1/public/cm-super/
-sfrm1000.pfb></mnt/bigp/texlive/texcopy/texlive/2020/texmf-dist/fonts/type1/pub
-lic/cm-super/sfrm1200.pfb></mnt/bigp/texlive/texcopy/texlive/2020/texmf-dist/fo
-nts/type1/public/cm-super/sfrm1728.pfb>
-Output written on representation_learning_review_2013.pdf (1 page, 37971 bytes)
+xlive/texcopy/texlive/2020/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb
+></mnt/bigp/texlive/texcopy/texlive/2020/texmf-dist/fonts/type1/public/amsfonts
+/cm/cmr10.pfb></mnt/bigp/texlive/texcopy/texlive/2020/texmf-dist/fonts/type1/pu
+blic/amsfonts/cm/cmsy10.pfb></mnt/bigp/texlive/texcopy/texlive/2020/texmf-dist/
+fonts/type1/public/cm-super/sfbx1440.pfb></mnt/bigp/texlive/texcopy/texlive/202
+0/texmf-dist/fonts/type1/public/cm-super/sfrm1000.pfb></mnt/bigp/texlive/texcop
+y/texlive/2020/texmf-dist/fonts/type1/public/cm-super/sfrm1200.pfb></mnt/bigp/t
+exlive/texcopy/texlive/2020/texmf-dist/fonts/type1/public/cm-super/sfrm1728.pfb
+></mnt/bigp/texlive/texcopy/texlive/2020/texmf-dist/fonts/type1/public/cm-super
+/sfti1000.pfb>
+Output written on representation_learning_review_2013.pdf (1 page, 96767 bytes)
 .
 PDF statistics:
- 25 PDF objects out of 1000 (max. 8388607)
- 17 compressed objects within 1 object stream
+ 41 PDF objects out of 1000 (max. 8388607)
+ 29 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
  1 words of extra memory for PDF output out of 10000 (max. 10000000)
 
