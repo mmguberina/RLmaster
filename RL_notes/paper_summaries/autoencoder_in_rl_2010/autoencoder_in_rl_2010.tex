@@ -1,0 +1,55 @@
+\documentclass{article}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsfonts}
+\usepackage[T1]{fontenc}
+\usepackage{bm}
+\usepackage{array}
+\usepackage{graphicx}
+\usepackage[utf8]{inputenc}
+
+\title{Paper summary: Deep autoencoder neural networks in reinforcement learning}
+
+\begin{document}
+\maketitle
+
+
+\section{Idea in few sentances}
+
+\section{Explanation of the central concept}
+
+\section{Methodology}
+
+
+\section{Initial rambly notes}
+\subsection{Abstract}
+It is important that the feature spaces resenmbe existing similarities and spatial relations
+between observations, thus enabling useful policy learning.
+Several methods to improve the topology of the feature space are proposed.
+
+\subsection{Introduction}
+Nothing new.
+
+
+\subsection{Method}
+They re-encode all observations after every encoder update because
+the feature space and its semantics are changed.
+This also makes the approximation of the Q-function invalid.
+But this way, through re-encoding, this is ok.
+
+\subsection{Variations and optimizations}
+\begin{enumerate}
+		\item sparse networks.
+		\item reusing old q-values.
+		\item re-train the autoencoder when there's a lot of new observations
+				(say their number is the same as that of the older ones)
+\end{enumerate}
+
+\subsection{Other stuff}
+
+
+
+
+
+
+\end{document}

@@ -29,6 +29,7 @@ def get_args():
     parser.add_argument('--task', type=str, default='PongNoFrameskip-v4')
     parser.add_argument('--latent-space-type', type=str, default='single-frame-predictor')
     parser.add_argument('--pass-q-grads-to-encoder', type=bool, default=True)
+    parser.add_argument('--alternating-training-frequency', type=int, default=1000)
     parser.add_argument('--features-dim', type=int, default=3136)
     parser.add_argument('--seed', type=int, default=0)
     parser.add_argument("--scale-obs", type=int, default=0)
@@ -180,7 +181,8 @@ if __name__ == "__main__":
         args.batch_size,
         args.frames_stack,
         args.device,
-        args.pass_q_grads_to_encoder
+        args.pass_q_grads_to_encoder,
+        args.alternating_training_frequency
     )
     # TODO write this out
     if args.resume_path:

@@ -48,6 +48,7 @@ class AutoencoderLatentSpacePolicy(BasePolicy):
         frames_stack: int,
         device: str = "cpu",
         pass_policy_grad_to_encoder: bool = False,
+        alternating_training_frequency: int = 1000,
         lr_scale: float = 0.001,
         **kwargs: Any,
     ) -> None:
@@ -55,6 +56,7 @@ class AutoencoderLatentSpacePolicy(BasePolicy):
         self.rl_policy = rl_policy
         self.latent_space_type = latent_space_type
         self.pass_policy_grad_to_encoder = pass_policy_grad_to_encoder
+        self.alternating_training_frequency = alternating_training_frequency
         self.encoder = encoder
         self.decoder = decoder
         self.optim_encoder = optim_encoder
@@ -323,7 +325,9 @@ class AutoencoderLatentSpacePolicy(BasePolicy):
 
         #decoded_obs = self.decoder(self.encoder(batch.obs))
         #batch.obs = (batch.obs / 255).float()
-        decoded_obs = self.decoder(self.encoder(batch.obs))
+        encoded_obs = self.encoder(batch.obs)
+        decoded_obs = self.decoder(encoded_obs)
+
         
 #        print("===================================")
 #        print("===================================")
@@ -352,7 +356,14 @@ class AutoencoderLatentSpacePolicy(BasePolicy):
 #            print(batch.obs_next.shape)
 #            print(batch.obs_next[:, -1, :, :].shape)
             reconstruction_loss = self.reconstruction_criterion(decoded_obs, batch.obs_next[:, -1, :, :].view(-1, 1, 84, 84) / 255)
-        reconstruction_loss.backward()
+        # L2 penalty on latent representation:
+        latent_loss = (0.5 * encoded_obs.pow(2).sum(1)).mean()
+        # throwing a sample loss in there to see what happens
+        loss = reconstruction_loss + latent_loss * 10**-6
+
+
+        #reconstruction_loss.backward()
+        loss.backward()
         self.optim_encoder.step()
         self.optim_decoder.step()
         res.update(

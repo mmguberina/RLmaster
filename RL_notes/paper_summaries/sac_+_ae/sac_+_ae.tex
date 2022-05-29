@@ -8,6 +8,8 @@
 \usepackage{graphicx}
 \usepackage[utf8]{inputenc}
 \usepackage{csquotes}
+\newcommand{\argmin}{\arg\!\min} 
+\newcommand{\argmax}{\arg\!\max} 
 
 \title{Paper summary: Improving sample efficiency in model-free reinforcement learning from images}
 
@@ -48,6 +50,109 @@ but this often leads to lower final performance.
 	representation, specifically when trained jointly,
 	but requires careful design choices to succeed.
 \end{displayquote}
+There are 3 contributions:
+\begin{enumerate}
+		\item methodical study of the issues involved with combining autoencoders with model-free RL
+				in the off-policy setting, resulting in SAC+AE
+		\item demonstating SAC+AE does its thing robustly
+		\item open-source code of SAC+AE
+\end{enumerate}
+
+\subsection{Related work}
+The 2010 AE paper re-encodes after every AE update, which is unfeasible for large problems.
+In Finn et al. in Learning visual feature spaces for robotic manipulation with deep spatial autoencoders,
+authors pretrain and the linear policy is trained separately. This does not translate to end-to-end methods
+which are to be developed here.
+Other stuff was unstable and hindered policy learning performance.
+Model-based stuff is cool and is efficient, but it is super britle and sensitive to hyperparameters
+due to multiple different auxiliary losses, ex. dynamics loss, reward loss, decoder loss,
+in addition to policy and/or value optimizations.
+
+\subsection{Background}
+\subsubsection{SAC}
+Maximum entropy objective:
+\begin{equation}
+\pi^{ * } = \argmax_{\pi} \sum_{t=1}^{T} \mathbb{E}_{ (\bm{s}_{t}, \bm{a}_{t} ) \sim \rho_{ \pi } }
+\left[ r_{ t } + \alpha \mathcal{H} (\pi (\cdot|\bm{s}_{t})) \right] 
+\end{equation}
+This is used to derive soft policy iteration.
+Soft Bellman residual:
+\begin{equation}
+		J (Q) = \mathbb{E}_{ (\bm{s}_{t}, \bm{a}_{t}, r_{ t }, \bm{s}_{t+1} ) \sim \mathcal{D} }
+		\left[ 
+\left( Q (\bm{s}_{t}, \bm{a}_{t} ) - r_{ t } - \gamma \bar{V} (\bm{s}_{t+1}) \right)^{ 2 } 
+		\right] 
+\end{equation}
+where the target value function $ \bar{V}  $ is approximate via Monte-Carlo estimate
+of
+\begin{equation}
+\bar{V} (\bm{s}_{t}) = \mathbb{E}_{ \bm{a}_{t} \sim \pi }
+\left[ 
+\bar{Q} (\bm{s}_{t}, \bm{a}_{t} ) - \alpha \log \pi (\bm{a}_{t}| \bm{s}_{t} )
+\right] 
+\end{equation}
+The policy improvement step then attempts to project a parametric policy
+$ \pi (\bm{a}_{t}| \bm{s}_{t} )  $ by minimizing KL divergence between the policy
+and a Boltzmann distribution induced by the Q-function using
+the objective:
+\begin{equation}
+J (\pi) = \mathbb{\bm{s}_{t} \sim \mathcal{D}} \left[ 
+D_{ KL } (\pi (\cdot| \bm{s}_{t})|| \mathcal{Q} (\bm{s}_{t}, \cdot))
+\right] 
+\end{equation}
+where $ \mathcal{Q} (\bm{s}_{t}, \cdot) \propto \exp \left\{ 
+\frac{1}{\alpha}  Q (\bm{s}_{t}, \cdot)
+\right\}   $
+
+\subsubsection{Image-based observations and autoencoders}
+AE is represented as a convolutional encoder
+$ g_{ \phi }  $ that maps an image observation $ \bm{o}_{t}  $
+to a low-dimensional latent vector $ \bm{z}_{t}  $,
+and a deconvolutional decoder $ f_{ \phi } : \mathcal{Z} \to \mathcal{O} $ .
+Both the encoder and decoder and trained simultaneously by maximizing the
+expected log-likelihood
+\begin{equation}
+		J (AE) = \mathbb{E}_{ \bm{o}_{t} \sim \mathcal{D} } 
+		\left[ \log p_{ \theta } (\bm{o}_{t}| \bm{z}_{t}) \right] 
+\end{equation}
+where $ \bm{z}_{t} = g_{ \phi } (\bm{o}_{t})  $.
+
+In the $ \beta  $-VAE case, the objective is:
+\begin{equation}
+		J (VAE) = \mathbb{E}_{ \bm{o}_{t} \sim \mathcal{D} }
+		\left[ \mathbb{E}_{ \bm{z}_{t} \sim q_{ \phi } (\bm{z}_{t}|\bm{o}_{t}) } 
+\left[ \log p_{ \theta } (\bm{o}_{t}|\bm{z}_{t}) \right] 
+		\right] 
+		- \beta D_{ KL } (q_{ \phi } (\bm{z}_{t}|\bm{o}_{t}) || p (\bm{z}_{t}))
+\end{equation}
+where the variational distribution is parametrized as
+$ q_{ \phi } (\bm{z}_{t}|\bm{o}_{t}) = 
+\mathcal{N} (\bm{z}_{t}|\mu_{ \phi } (\bm{o}_{t}), \sigma^{ 2 }_{ \phi } (\bm{o}_{t}))  $.
+The latent vector $ \bm{z}_{t}  $ is the used by an RL algorithm instead of
+the unavailable true state $ \bm{s}_{t}  $.
+
+\subsection{Representation learning with image reconstruction}
+For a model-free RL algorithm, learning from pixels yield much worse results
+than learning from state.
+Prior works has shown that using auxiliary supervision to learn state representations
+helps.
+The focus of this work is to examine the use of image reconstruction loss as the auxiliary loss.
+Task-dependent auxiliary loss and world models are avoided in this work.
+
+The authors tried to use a $ \beta  $-VAE, but only on current frames,
+instead of a sequence of frames.
+They tried alternating the training, and observed an positive correlation between 
+performance and alternation frequency, but the final result didn't close the performance gap.
+They tried updating the $ \beta  $-VAE encoder with actor-critic gradients,
+but this led to severe instability in traning.
+They conclude that they resulted from the stochasic nature of 
+$ \beta  $-VAEs and the non-stationary gradient from the actor.
+
+\subsubsection{Alternating representation learning with a  $ \beta  $-VAE}
+First thing is to confirm that alternative training between the AE and RL algorithm.
+
+
+
 
 
 \subsection{Method}
