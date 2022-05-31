@@ -358,7 +358,11 @@ class AutoencoderLatentSpacePolicy(BasePolicy):
 #            print(batch.obs_next[:, -1, :, :].shape)
             reconstruction_loss = self.reconstruction_criterion(decoded_obs, batch.obs_next[:, -1, :, :].view(-1, 1, 84, 84) / 255)
         # L2 penalty on latent representation:
-        latent_loss = (0.5 * encoded_obs.pow(2).sum(1)).mean()
+        # this is wrong for single-frame-predictor
+        if self.latent_space_type == 'forward-frame-predictor':
+            latent_loss = (0.5 * encoded_obs.pow(2).sum(1)).mean()
+        if self.latent_space_type == 'single-frame-predictor':
+            latent_loss = (0.5 * encoded_obs.pow(2).sum(0)).mean()
         # throwing a sample loss in there to see what happens
         loss = reconstruction_loss + latent_loss * 10**-6
 
