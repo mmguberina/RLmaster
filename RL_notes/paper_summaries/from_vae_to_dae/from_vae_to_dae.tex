@@ -25,14 +25,59 @@
 
 \section{Initial rambly notes}
 
-
 \subsection{Abstract}
+Learning VAEs from data poses unanswered theoretical questions and considerable practical challenges.
+This work proposes a generative model that is simpler, deterministic, easier to train,
+while retaining some VAE advantages.
+Namely, the observation is that sampling a stochastic encoder in Gaussian VAE can be interpreted as injecting
+noise into the input of a deterministic decoder.
+The authors examine this and other regularization schemes to give smooth and meaningful latent
+space without forcing it to conform to an arbitrarily chosen prior.
 
 
 \subsection{Introduction}
+VAEs are great, but you have to choose between sample quality and reconstruction quality.
+In practise, this is attributed to overly simplistic priors or to the inherent over-regularization
+induced by the KL term in the VAE objective.
+The objective and the setup itself is problematic, read chunk of text in Introduction to see what.
+
+The paper's contributions are the following:
+\begin{enumerate}
+		\item introducing the regularized autoencoder (RAE) framework as a drop-in replacement for many common VAE archs
+		\item proposing an ex-post density estimation scheme which improves sample quality for (some letter)AEs
+				without the need to retrin models
+		\item conducting rigorous empirical evaluation
+\end{enumerate}
 
 
 \subsection{Method}
+We work in VAE setting.
+$ E_{ \phi }  $ is the encoder, $ D_{ \theta }  $ is the decoder.
+The encoder deterministically maps a data point $ \bm{x}_{}  $ to
+the mean $ \mu_{ \phi } (\bm{x}_{})  $ and variance $ \sigma_{ \phi } ( \bm{x}_{})  $
+in the latent space.
+The input to $ D_{ \theta }  $ is then the mean $ \mu_{ \phi } (\bm{x}_{})  $
+augmented with Gaussian noise scaled by $ \sigma_{ \phi } (\bm{x}_{})  $
+via the reparametrizing trick.
+Authors argue that this noise injection is a key factor in having a regularized decoder (
+noise injection as a mean to regularize neural networks is a well-known technique).
+Thus training the RAE involves minimizing the simplified loss:
+\begin{equation}
+		\mathcal{L}_{ \text{RAE} } = 
+\mathcal{L}_{ \text{REC} } + \beta \mathcal{L}^{ \text{RAE} }_{ \bm{z}_{} } 
++ \lambda \mathcal{L}_{ \text{REG} }
+\end{equation}
+where $ \mathcal{L}_{ \text{REG} }  $ represents the explicit regularizer for $ D_{ \theta }  $,
+and $ \mathcal{L}^{ \text{RAE} }_{ \bm{z}_{} } = \frac{1}{2} ||\bm{z}_{}||_{ 2 }^{ 2 }  $,
+which is equivalent to contraining the size of the learned latent space, which is needed
+to prevent unbounded optimization.
+One option for $ \mathcal{L}_{ \text{REG} }  $ is Tikhonov regularization
+since it is known to be related to the addition of low-magnitude input noise.
+In this framework this equates to 
+$ \mathcal{L}_{ \text{REG} } = \mathcal{L}_{ L_{ 2 } } = ||\theta||^{ 2 }_{ 2 } $.
+There's also the \textbf{gradient penalty} and
+\textbf{spectral normalization}.
+
 
 \subsection{Other stuff}
 

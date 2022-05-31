@@ -29,7 +29,8 @@ action are all random sampled
 def get_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('--task', type=str, default='PongNoFrameskip-v4')
-    parser.add_argument('--latent-space-type', type=str, default='forward-frame-predictor')
+#    parser.add_argument('--latent-space-type', type=str, default='forward-frame-predictor')
+    parser.add_argument('--latent-space-type', type=str, default='single-frame-predictor')
 #    parser.add_argument('--latent-space-type', type=str, default='inverse-dynamics-model')
     parser.add_argument('--pass-q-grads-to-encoder', type=bool, default=False)
     parser.add_argument('--alternating-training-frequency', type=int, default=1000)
@@ -44,14 +45,14 @@ def get_args():
 #    parser.add_argument('--target-update-freq', type=int, default=500)
     parser.add_argument('--target-update-freq', type=int, default=5)
 #    parser.add_argument('--epoch', type=int, default=100)
-    parser.add_argument('--epoch', type=int, default=5)
-    parser.add_argument('--step-per-epoch', type=int, default=100000)
+    parser.add_argument('--epoch', type=int, default=50)
+    parser.add_argument('--step-per-epoch', type=int, default=1000)
     # TODO why 8?
     parser.add_argument('--step-per-collect', type=int, default=8)
     # TODO understand where exactly this is used and why
     # why is this a float?
-#    parser.add_argument('--update-per-step', type=float, default=0.1)
-    parser.add_argument('--update-per-step', type=float, default=0.6)
+    parser.add_argument('--update-per-step', type=float, default=0.1)
+#    parser.add_argument('--update-per-step', type=float, default=0.6)
     parser.add_argument('--batch-size', type=int, default=64)
     parser.add_argument('--training-num', type=int, default=8)
 #    parser.add_argument('--training-num', type=int, default=2)
@@ -60,7 +61,7 @@ def get_args():
 #    parser.add_argument('--test-num', type=int, default=8)
     parser.add_argument('--test-num', type=int, default=1)
     parser.add_argument('--logdir', type=str, default='log')
-    parser.add_argument('--log-name', type=str, default='ae_trained_as_policy_3136')
+    parser.add_argument('--log-name', type=str, default='ae_single-frame-trained_as_policy_3136')
 #    parser.add_argument('--log-name', type=str, default='inverse_dynamics_model_1')
     parser.add_argument('--render', type=float, default=0.)
     parser.add_argument(
@@ -68,9 +69,9 @@ def get_args():
     )
     # NOTE: frame stacking needs to be 1 for what we're doing now
     # but let's keep it like a parameter here to avoid unnecessary code
-    parser.add_argument('--frames-stack', type=int, default=2)
+#    parser.add_argument('--frames-stack', type=int, default=2)
 #    parser.add_argument('--frames-stack', type=int, default=1)
-#    parser.add_argument('--frames-stack', type=int, default=4)
+    parser.add_argument('--frames-stack', type=int, default=4)
     parser.add_argument('--resume-path', type=str, default=None)
     parser.add_argument('--resume-id', type=str, default=None)
     parser.add_argument(

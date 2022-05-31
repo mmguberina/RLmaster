@@ -113,4 +113,7 @@ through the encoder. some (probably different) type of regularization is necessa
 
 #### Regularization options
 a) droupout
-b) sac+ae solved this, use that regularization
+b) sac+ae solved this, use that regularization -> L2 and LayerNorm
+c) data augmentation can regularize both the autoencoder and the q-network (drq)
+d) adding noise to latent space can regularize the decoder (RAE)
+e) while denoising AE (DAE) serves its purpose, it can also (like data augmetation) serve as regularization

@@ -85,48 +85,48 @@
 \defcounter {refsection}{0}\relax 
 \contentsline {subsubsection}{\numberline {2.7.6.3}VAE}{22}{subsubsection.2.7.6.3}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subsubsection}{\numberline {2.7.6.4}Siamese networks}{22}{subsubsection.2.7.6.4}%
+\contentsline {subsubsection}{\numberline {2.7.6.4}Siamese networks}{23}{subsubsection.2.7.6.4}%
 \defcounter {refsection}{0}\relax 
-\contentsline {section}{\numberline {2.8}Model-based reinforcement learning}{22}{section.2.8}%
+\contentsline {section}{\numberline {2.8}Model-based reinforcement learning}{23}{section.2.8}%
 \defcounter {refsection}{0}\relax 
-\contentsline {chapter}{\numberline {3}Related Work}{23}{chapter.3}%
+\contentsline {chapter}{\numberline {3}Related Work}{25}{chapter.3}%
 \defcounter {refsection}{0}\relax 
-\contentsline {section}{\numberline {3.1}Work on top of which we build}{23}{section.3.1}%
+\contentsline {section}{\numberline {3.1}Work on top of which we build}{25}{section.3.1}%
 \defcounter {refsection}{0}\relax 
-\contentsline {section}{\numberline {3.2}Current state-of-the-art on Atari, Agent 57}{24}{section.3.2}%
+\contentsline {section}{\numberline {3.2}Current state-of-the-art on Atari, Agent 57}{26}{section.3.2}%
 \defcounter {refsection}{0}\relax 
-\contentsline {section}{\numberline {3.3}Current state-of-the-art on Atari}{24}{section.3.3}%
+\contentsline {section}{\numberline {3.3}Current state-of-the-art on Atari}{26}{section.3.3}%
 \defcounter {refsection}{0}\relax 
-\contentsline {section}{\numberline {3.4}Work whose techniques we share}{24}{section.3.4}%
+\contentsline {section}{\numberline {3.4}Work whose techniques we share}{26}{section.3.4}%
 \defcounter {refsection}{0}\relax 
-\contentsline {section}{\numberline {3.5}Work achieving same goals as us, but differently}{24}{section.3.5}%
+\contentsline {section}{\numberline {3.5}Work achieving same goals as us, but differently}{26}{section.3.5}%
 \defcounter {refsection}{0}\relax 
-\contentsline {section}{\numberline {3.6}Strongly related to our work}{25}{section.3.6}%
+\contentsline {section}{\numberline {3.6}Strongly related to our work}{27}{section.3.6}%
 \defcounter {refsection}{0}\relax 
-\contentsline {chapter}{\numberline {4}Methods}{27}{chapter.4}%
+\contentsline {chapter}{\numberline {4}Methods}{29}{chapter.4}%
 \defcounter {refsection}{0}\relax 
-\contentsline {section}{\numberline {4.1}Problems to be tackled}{27}{section.4.1}%
+\contentsline {section}{\numberline {4.1}Problems to be tackled}{29}{section.4.1}%
 \defcounter {refsection}{0}\relax 
-\contentsline {section}{\numberline {4.2}Hypotheses}{27}{section.4.2}%
+\contentsline {section}{\numberline {4.2}Hypotheses}{29}{section.4.2}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{\numberline {4.2.1}Enviroment and Preprocessing}{28}{subsection.4.2.1}%
+\contentsline {subsection}{\numberline {4.2.1}Enviroment and Preprocessing}{30}{subsection.4.2.1}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{\numberline {4.2.2}Deep Auto-encoder and Model Architecture}{28}{subsection.4.2.2}%
+\contentsline {subsection}{\numberline {4.2.2}Deep Auto-encoder and Model Architecture}{30}{subsection.4.2.2}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{\numberline {4.2.3}Training the RL Agent}{28}{subsection.4.2.3}%
+\contentsline {subsection}{\numberline {4.2.3}Training the RL Agent}{30}{subsection.4.2.3}%
 \defcounter {refsection}{0}\relax 
-\contentsline {chapter}{\numberline {5}Results}{31}{chapter.5}%
+\contentsline {chapter}{\numberline {5}Results}{33}{chapter.5}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{\numberline {5.0.1}Two Step Training}{31}{subsection.5.0.1}%
+\contentsline {subsection}{\numberline {5.0.1}Two Step Training}{33}{subsection.5.0.1}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{\numberline {5.0.2}Parallel Training}{31}{subsection.5.0.2}%
+\contentsline {subsection}{\numberline {5.0.2}Parallel Training}{33}{subsection.5.0.2}%
 \defcounter {refsection}{0}\relax 
-\contentsline {chapter}{\numberline {6}Conclusion}{33}{chapter.6}%
+\contentsline {chapter}{\numberline {6}Conclusion}{35}{chapter.6}%
 \defcounter {refsection}{0}\relax 
-\contentsline {section}{\numberline {6.1}Discussion}{33}{section.6.1}%
+\contentsline {section}{\numberline {6.1}Discussion}{35}{section.6.1}%
 \defcounter {refsection}{0}\relax 
-\contentsline {section}{\numberline {6.2}Conclusion}{33}{section.6.2}%
+\contentsline {section}{\numberline {6.2}Conclusion}{35}{section.6.2}%
 \defcounter {refsection}{0}\relax 
-\contentsline {chapter}{Bibliography}{35}{section.6.2}%
+\contentsline {chapter}{Bibliography}{37}{section.6.2}%
 \defcounter {refsection}{0}\relax 
 \contentsline {chapter}{\numberline {A}Appendix 1}{I}{appendix.A}%

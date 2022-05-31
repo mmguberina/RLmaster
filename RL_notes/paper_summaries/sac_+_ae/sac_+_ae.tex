@@ -149,9 +149,22 @@ They conclude that they resulted from the stochasic nature of
 $ \beta  $-VAEs and the non-stationary gradient from the actor.
 
 \subsubsection{Alternating representation learning with a  $ \beta  $-VAE}
-First thing is to confirm that alternative training between the AE and RL algorithm.
+First thing is to confirm that alternative training between the VAE and RL algorithm.
+Let $ N  $ be the number of updates steps of one before the switch.
+The authors observe a positive correlation between $ N  $ getting smaller and more efficient learning.
 
+\subsubsection{Joint representation learning with a $ \beta  $-VAE}
+Now the goal is to learn a latent representation that is well aligned with the 
+underlying RL objective.
+This is achieved by updating the encoder network with actor and/or critic
+gradients along with reconstruction gradients.
+This is unstable and unusable with $ \beta  $-VAE.
 
+\subsubsection{Stabilizing joint representation learning}
+Smaller $ \beta  $ values help due to their reduction in VAE stochasicity.
+Not using actor's gradients improves performance even further.
+This leads to the conclusion that stochasicity hurts and that
+a deterministic encoder will do better.
 
 
 

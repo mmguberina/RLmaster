@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.21 (TeX Live 2020) (preloaded format=pdflatex 2020.9.19)  20 MAY 2022 03:23
+This is pdfTeX, Version 3.14159265-2.6-1.40.21 (TeX Live 2020) (preloaded format=pdflatex 2020.9.19)  31 MAY 2022 13:14
 entering extended mode
  \write18 enabled.
  %&-line parsing enabled.
@@ -1720,40 +1720,42 @@ LaTeX Warning: Citation 'raibow' on page 17 undefined on input line 803.
 LaTeX Warning: Citation 'drlthatmatters' on page 18 undefined on input line 815
 .
 
-) (./include/RelatedWork.tex [18]
-Underfull \vbox (badness 10000) has occurred while \output is active []
+) (./include/RelatedWork.tex
+Overfull \hbox (376.60938pt too wide) in paragraph at lines 4--19
+\T1/lmr/m/n/12 there are also bisim-u-la-tion met-rics and you bet-ter find out
+ what those are. =============================================== 
+ []
 
- [19]
-[20] [21] [22]
-Chapter 3.
-[23
+[18] [19] [20] [21] [22] [23] [24
 
 ]
+Chapter 3.
+[25]
 
 LaTeX Warning: Citation 'auto-encoder for Efficient Embedded Reinforcement Lear
-ning' on page 24 undefined on input line 326.
+ning' on page 26 undefined on input line 343.
 
 
-Overfull \hbox (268.71985pt too wide) in paragraph at lines 325--332
+Overfull \hbox (268.71985pt too wide) in paragraph at lines 342--349
 \T1/lmr/m/n/12 played a ma-jor role in re-duc-ing train-ing time and data ef-fi
 -ciency [[]].
  []
 
-[24]) (./include/Methods.tex [25] [26
+[26]) (./include/Methods.tex [27] [28
 
 ]
 Chapter 4.
-[27]
+[29]
 Underfull \hbox (badness 10000) in paragraph at lines 104--109
 
  []
 
-[28]
+[30]
 Underfull \hbox (badness 10000) in paragraph at lines 115--116
 
  []
 
-) (./include/Results.tex [29] [30
+) (./include/Results.tex [31] [32
 
 ]
 Chapter 5.
@@ -1761,11 +1763,11 @@ Chapter 5.
 Package hyperref Warning: Difference (2) between bookmark levels is greater 
 (hyperref)                than one, level fixed on input line 6.
 
-) (./include/Conclusion.tex [31] [32
+) (./include/Conclusion.tex [33] [34
 
 ]
 Chapter 6.
-) [33] [34
+) [35] [36
 
 ]
 Overfull \hbox (6.89708pt too wide) in paragraph at lines 77--77
@@ -1773,7 +1775,7 @@ Overfull \hbox (6.89708pt too wide) in paragraph at lines 77--77
 mr/m/n/12 33 (2020), pp. 19884^^U
  []
 
-[35
+[37
 
 ]
 Overfull \hbox (0.79663pt too wide) in paragraph at lines 77--77
@@ -1781,7 +1783,7 @@ Overfull \hbox (0.79663pt too wide) in paragraph at lines 77--77
 v preprint arXiv:2107.09645
  []
 
-[36] (./include/backmatter/Appendix_1.tex
+[38] (./include/backmatter/Appendix_1.tex
 Appendix A.
 ) [1
 
@@ -1811,9 +1813,9 @@ Package logreq Info: Writing requests to 'Main.run.xml'.
 
  ) 
 Here is how much of TeX's memory you used:
- 34357 strings out of 480876
- 670390 string characters out of 5907582
- 1410503 words of memory out of 5000000
+ 34359 strings out of 480876
+ 670404 string characters out of 5907582
+ 1410504 words of memory out of 5000000
  49041 multiletter control sequences out of 15000+600000
  648801 words of font info for 106 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
@@ -1849,10 +1851,10 @@ e1/public/lm/lmsy6.pfb></mnt/bigp/texlive/texcopy/texlive/2020/texmf-dist/fonts
 onts/type1/public/amsfonts/symbols/msbm10.pfb></mnt/bigp/texlive/texcopy/texliv
 e/2020/texmf-dist/fonts/type1/urw/helvetic/uhvb8a.pfb></mnt/bigp/texlive/texcop
 y/texlive/2020/texmf-dist/fonts/type1/urw/helvetic/uhvr8a.pfb>
-Output written on Main.pdf (51 pages, 1302435 bytes).
+Output written on Main.pdf (53 pages, 1303782 bytes).
 PDF statistics:
- 940 PDF objects out of 1000 (max. 8388607)
- 823 compressed objects within 9 object streams
- 236 named destinations out of 1000 (max. 500000)
+ 948 PDF objects out of 1000 (max. 8388607)
+ 829 compressed objects within 9 object streams
+ 238 named destinations out of 1000 (max. 500000)
  639 words of extra memory for PDF output out of 10000 (max. 10000000)
 

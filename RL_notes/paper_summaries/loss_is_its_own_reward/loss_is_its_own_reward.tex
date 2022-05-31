@@ -1,0 +1,47 @@
+\documentclass{article}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsfonts}
+\usepackage[T1]{fontenc}
+\usepackage{bm}
+\usepackage{array}
+\usepackage{graphicx}
+\usepackage[utf8]{inputenc}
+
+\title{Paper summary: Loss is its own reward: self-supervision for reinforcement learning}
+
+\begin{document}
+\maketitle
+
+
+\section{Idea in few sentances}
+
+
+\section{Explanation of the central concept}
+
+\section{Methodology}
+
+\section{Initial rambly notes}
+
+\subsection{Abstract}
+Using only expected return is weak, can be remedied by auxiliary loss.
+
+\subsection{Introduction}
+If you train an agent and save just the feature extracting portion of the network
+and use that to retrain the agent, the agent learns faster.
+Thus having feature extraction is better than not having it.
+Also, while reward may be sparse, self-supervised auxiliary losses aren't.
+You can go for discriminative (self-supervised) or generative (unsupervised)
+learning objectives.
+
+
+\subsection{Method}
+
+\subsection{Other stuff}
+
+
+
+
+
+
+\end{document}
