@@ -1,5 +1,6 @@
 import torch
 import torch.nn as nn
+from tianshou.data import to_torch
 from torchvision import transforms
 from ..util.atari_dataset import AtariImageDataset
 import matplotlib.pyplot as plt
@@ -9,7 +10,6 @@ import numpy as np
 # but everyone uses this anyway
 # make it usable
 class CNNEncoder(nn.Module):
-
     def __init__(self, observation_shape, 
             features_dim: int = 3136):
         super(CNNEncoder, self).__init__()
@@ -20,13 +20,13 @@ class CNNEncoder(nn.Module):
         # TODO this makes sense only if there's a linear layer afterward
         # and there won't be one for now
         # i.e. this will be overwritten
-        self._features_dim = features_dim
+        self.features_dim = features_dim
 
         # it is assumed that the obversations went through WarpFrame 
         # environment wrapper first
         # so 1xHxW images (channels first) are assumed
         n_input_channels = self.observation_shape[0]
-        if self._features_dim == 3136:
+        if self.features_dim == 3136:
             self.encoder = nn.Sequential(
                 nn.Conv2d(n_input_channels, 32, kernel_size=8, stride=4, padding=0),
                 nn.ReLU(),
@@ -37,7 +37,7 @@ class CNNEncoder(nn.Module):
                 nn.Flatten(),
             )
 
-        if self._features_dim == 576:
+        if self.features_dim == 576:
             self.encoder = nn.Sequential(
                 nn.Conv2d(n_input_channels, 64, kernel_size=8, stride=4, padding=0),
                 nn.ReLU(),
@@ -67,7 +67,7 @@ class CNNDecoder(nn.Module):
     def __init__(self, observation_shape, n_flatten, features_dim: int = 3136):
         super(CNNDecoder, self).__init__()
         self.observation_shape = observation_shape
-        self._features_dim = features_dim
+        self.features_dim = features_dim
         n_input_channels = self.observation_shape[0]
 
 #        self.linear = nn.Sequential(
@@ -75,7 +75,7 @@ class CNNDecoder(nn.Module):
 #            nn.ReLU(),
 #        )
 
-        if self._features_dim == 3136:
+        if self.features_dim == 3136:
             self.deconv = nn.Sequential(
                 nn.ConvTranspose2d(64, 64, kernel_size=3, stride=1, padding=0),
                 nn.ReLU(),
@@ -85,7 +85,7 @@ class CNNDecoder(nn.Module):
                 nn.Sigmoid(),
             )
 
-        if self._features_dim == 576:
+        if self.features_dim == 576:
             self.deconv = nn.Sequential(
                 nn.ConvTranspose2d(64, 64, kernel_size=2, stride=1, padding=0),
                 nn.ReLU(),
@@ -99,10 +99,10 @@ class CNNDecoder(nn.Module):
 
     def forward(self, latent_observations: torch.Tensor) -> torch.Tensor:
 #        after_lin = self.linear(latent_observations)
-        if self._features_dim == 3136:
+        if self.features_dim == 3136:
             deconv = latent_observations.view(-1, 64, 7, 7)
 
-        if self._features_dim == 576:
+        if self.features_dim == 576:
             deconv = latent_observations.view(-1, 64, 3, 3)
         obs = self.deconv(deconv)
 #        print(obs.shape)
@@ -122,13 +122,13 @@ class CNNEncoderNew(nn.Module):
         # TODO this makes sense only if there's a linear layer afterward
         # and there won't be one for now
         # i.e. this will be overwritten
-        self._features_dim = features_dim
+        self.features_dim = features_dim
 
         # it is assumed that the obversations went through WarpFrame 
         # environment wrapper first
         # so 1xHxW images (channels first) are assumed
         n_input_channels = self.observation_shape[0]
-        if self._features_dim == 3136:
+        if self.features_dim == 3136:
             self.encoder = nn.Sequential(
                 nn.Conv2d(n_input_channels, 32, kernel_size=8, stride=4, padding=0),
                 nn.ReLU(),
@@ -139,7 +139,7 @@ class CNNEncoderNew(nn.Module):
                 nn.Flatten(),
             )
 
-        if self._features_dim == 576:
+        if self.features_dim == 576:
             self.encoder = nn.Sequential(
                 nn.Conv2d(n_input_channels, 64, kernel_size=8, stride=4, padding=0),
                 nn.ReLU(),
@@ -172,7 +172,7 @@ class CNNDecoderNew(nn.Module):
     def __init__(self, observation_shape, n_flatten, features_dim: int = 3136):
         super(CNNDecoderNew, self).__init__()
         self.observation_shape = observation_shape
-        self._features_dim = features_dim
+        self.features_dim = features_dim
         n_input_channels = self.observation_shape[0]
 
 #        self.linear = nn.Sequential(
@@ -180,7 +180,7 @@ class CNNDecoderNew(nn.Module):
 #            nn.ReLU(),
 #        )
         # this always returns a single frame, as it should
-        if self._features_dim == 3136:
+        if self.features_dim == 3136:
             self.deconv = nn.Sequential(
                 nn.ConvTranspose2d(64, 64, kernel_size=3, stride=1, padding=0),
                 nn.ReLU(),
@@ -191,7 +191,7 @@ class CNNDecoderNew(nn.Module):
             )
 
         # last layer needs to give 1 frame back, regardless of the stacking
-        if self._features_dim == 576:
+        if self.features_dim == 576:
             self.deconv = nn.Sequential(
                 nn.ConvTranspose2d(64, 64, kernel_size=2, stride=1, padding=0),
                 nn.ReLU(),
@@ -205,14 +205,75 @@ class CNNDecoderNew(nn.Module):
 
     def forward(self, latent_observations: torch.Tensor) -> torch.Tensor:
 #        after_lin = self.linear(latent_observations)
-        if self._features_dim == 3136:
+        if self.features_dim == 3136:
             deconv = latent_observations.view(-1, 64, 7, 7)
 
-        if self._features_dim == 576:
+        if self.features_dim == 576:
             deconv = latent_observations.view(-1, 64, 3, 3)
         obs = self.deconv(deconv)
 #        print(obs.shape)
         return obs
 
+class RAE_ENC(nn.Module):
+    def __init__(self, device, observation_shape, features_dim, num_layers=4, num_filters=32):
+        super().__init__()
+        assert len(observation_shape) == 3
+        self.device = device
+        self.features_dim = features_dim
+        self.num_layers = num_layers
+        self.conv_layers = nn.ModuleList(
+            [nn.Conv2d(observation_shape[0], num_filters, 3, stride=2)])
+        for i in range(num_layers -1):
+            self.conv_layers.append(nn.Conv2d(num_filters, num_filters, 3, stride=1))
+        out_dim = 35
+        self.fc = nn.Linear(num_filters * out_dim * out_dim, self.features_dim)
+        self.ln = nn.LayerNorm(self.features_dim)
 
+    def reparametrize(self, mu, logstd):
+        std = torch.exp(logstd)
+        eps = torch.randn_like(std)
+        return mu + eps * std
+
+    def forward_conv(self, obs):
+        obs = to_torch(obs, device=self.device, dtype=torch.float) / 255.
+        conv = torch.relu(self.conv_layers[0](obs))
+        for i in range(1, self.num_layers):
+            conv = torch.relu(self.conv_layers[i](conv))
+        h = conv.view(conv.size(0), -1)
+        return h
+
+    def forward(self, obs, detach=False):
+        h = self.forward_conv(obs)
+        if detach:
+            h = h.detach()
+
+        h = self.fc(h)
+        h = self.ln(h)
+        h = torch.tanh(h)
+
+        return h
+
+class RAE_DEC(nn.Module):
+    def __init__(self, device, observation_shape, features_dim, num_layers=4, num_filters=32):
+        super().__init__()
+        self.device = device
+        self.features_dim = features_dim
+        self.num_layers = num_layers
+        self.num_filters = num_filters
+        self.out_dim = 35
+
+        self.fc = nn.Linear(features_dim, num_filters * self.out_dim * self.out_dim)
+        self.deconv_layers = nn.ModuleList()
+        for i in range(self.num_layers - 1):
+            self.deconv_layers.append(nn.ConvTranspose2d(num_filters, num_filters, 3, stride=1))
+        self.deconv_layers.append(
+             nn.ConvTranspose2d(num_filters, observation_shape[0], 3, stride=2, output_padding=1))
+
+    def forward(self, h):
+        h = torch.relu(self.fc(h))
+        h = h.view(-1, self.num_filters, self.out_dim, self.out_dim)
+        for i in range(self.num_layers - 1):
+            h = torch.relu(self.deconv_layers[i](h))
+        obs = self.deconv_layers[-1](h)
+        return obs
 

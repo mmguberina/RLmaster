@@ -26,8 +26,8 @@ features_dim = 3136
 #log_path = "../../experiments/latent_only/log/PongNoFrameskip-v4/training_preloaded_buffer_fs_1/"
 #log_path = "../../experiments/latent_only/log/PongNoFrameskip-v4/ae_trained_as_policy/"
 #log_path = "../../log/dqn_ae_parallel_good_arch_fs_4_passing_q_grads/"
-#log_path = "../../log/ae_single-frame-trained_as_policy_3136/"
-log_path = "../../experiments/latent_only/log/PongNoFrameskip-v4/ae_single-frame-trained_as_policy_3136/"
+log_path = "../../log/ae_single-frame-trained_as_policy_3136_3/"
+#log_path = "../../experiments/latent_only/log/PongNoFrameskip-v4/ae_single-frame-trained_as_policy_3136/"
 #log_path_enc_dc = "../../experiments/latent_only/log/PongNoFrameskip-v4/"
 args = load_hyperparameters(log_path)
 # TODO fix this bug where frames_stack is not done in make_atari_env, but elsewhere
