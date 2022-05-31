@@ -70,7 +70,8 @@ class DQNNoEncoder(nn.Module):
             # under the condition that blabla
             #nn.Linear(self.input_dim *4, 512), nn.ReLU(inplace=True),
             nn.Linear(self.input_dim, 512), nn.ReLU(inplace=True),
-            nn.Linear(512, np.prod(action_shape))
+            nn.Linear(512, 256), nn.ReLU(inplace=True),
+            nn.Linear(256, np.prod(action_shape))
         )
         self.output_dim = np.prod(action_shape)
 

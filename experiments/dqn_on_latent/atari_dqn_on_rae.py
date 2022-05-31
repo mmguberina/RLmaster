@@ -133,7 +133,7 @@ if __name__ == "__main__":
     torch.manual_seed(args.seed)
     #train_envs.seed(args.seed)
     #test_envs.seed(args.seed)
-    q_net = DQNNoEncoder(args.action_shape, args.frames_stack, args.device).to(args.device)
+    q_net = DQNNoEncoder(args.action_shape, args.frames_stack, args.device, input_dim=features_dim).to(args.device)
     if args.latent_space_type == 'single-frame-predictor':
         # in this case, we don't pass the stacked frames.
         # we unstack them, compress them, the stack the compressed ones and
