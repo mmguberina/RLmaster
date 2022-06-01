@@ -215,7 +215,7 @@ class AutoencoderLatentSpacePolicy(BasePolicy):
                     (-1, 1, 84, 84))
             batch_for_computing_returns.obs_next = to_numpy(
                     self.encoder(batch_for_computing_returns.obs_next).view(-1, 
-                self.frames_stack * self.encoder.n_flatten))
+                self.frames_stack * self.encoder.features_dim))
             target_q_torch = target_q_fn(batch_for_computing_returns)  # (bsz, ?)
         target_q = to_numpy(target_q_torch.reshape(bsz, -1))
         target_q = target_q * BasePolicy.value_mask(buffer, terminal).reshape(-1, 1)
@@ -356,7 +356,9 @@ class AutoencoderLatentSpacePolicy(BasePolicy):
         self.optim_decoder.step()
         res.update(
             {
-                "loss/autoencoder": reconstruction_loss.item(),
+                # this appears to be causing some wild cuda error
+                "loss/autoencoder": loss.item(),
+#                "loss/autoencoder": loss,
             }
         )
         return res

@@ -151,7 +151,7 @@ if __name__ == "__main__":
         optim_q = torch.optim.Adam([{'params': q_net.parameters()}, 
                 {'params': encoder.parameters()}], lr=args.lr)
     optim_encoder = torch.optim.Adam(encoder.parameters(), lr=args.lr)
-    optim_decoder = torch.optim.Adam(decoder.parameters(), lr=args.lr)
+    optim_decoder = torch.optim.Adam(decoder.parameters(), lr=args.lr, weight_decay=10**-7)
     reconstruction_criterion = torch.nn.BCELoss()
 
     rl_policy = DQNPolicy(
