@@ -1,0 +1,88 @@
+\documentclass{article}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsfonts}
+\usepackage[T1]{fontenc}
+\usepackage{bm}
+\usepackage{array}
+\usepackage{graphicx}
+\usepackage[utf8]{inputenc}
+
+\title{Paper summary: Decoupling representation learning from reinforcement learning}
+
+\begin{document}
+\maketitle
+
+
+\section{Idea in few sentances}
+
+
+
+\section{Explanation of the central concept}
+
+
+
+
+\section{Methodology}
+
+
+\section{Initial rambly notes}
+
+
+\subsection{Abstract}
+Here, representation learning is decoupled from reinforcement learning.
+To this end a novel unsupervised learning (UL) task is devised: augmented temporal contrast (ATC),
+which trains a CNN encoder to associate pairs of observations separated by a short time difference, under image 
+augmentations and a using a contrastive loss.
+
+\subsection{Introduction}
+Claim: the decoupling has not been successful before due to a lack of an adequate unsupervised learning task.
+The encoder is updated only with UL,
+and the policy is trained independently on compressed (latent) images.
+For UL, InfoNCE loss is used.
+Image augmentation consists of random shift. A momentum encoder is used to process the positives.
+A learned predictor further processes the anchor code prior to contrasting.
+
+\subsection{Method: augmented temporal contrast}
+Requires a model to associate an observation $ \bm{o}_{t}  $
+with one from a near-future time step $ \bm{o}_{t+k}  $.
+Within a batch, stochastic data augmentation to the observations is applied, namely random crop.
+The architecture consists of four learned components:
+\begin{enumerate}
+		\item a convolutional \textit{encoder} $ f_{ \theta }  $ which processes the anchor observation
+				into the latent image $ \bm{z}_{t} = f_{ \theta } (\text{AUG}(\bm{o}_{t}))  $
+		\item a linear \textit{global compressor} $ g_{ \phi }  $ to produce a small
+				latent code vector $ \bm{c}_{t} = g_{ \phi } (\bm{z}_{t})  $
+		\item a residual \textit{predictor} $ h_{ \psi }  $ which acts as an implicit forward model
+				to advance the code $ \bm{p}_{t} = h_{ \psi } (\bm{c}_{t}) + \bm{c}_{t} $
+		\item a \textit{contrastive transformation matrix} $ W  $.
+\end{enumerate}
+To process the positive observation $ \bm{o}_{t+k}  $ into the target code
+$ \bm{\bar{c}}_{t+k} = g_{ \bar{\phi} } (f_{ \bar{\theta} } (\text{AUG} (\bm{o}_{t+k})))  $,
+a momentum encoder is used, parametrized as a slowly moving average of the weights form the learned encoder and compressor layer:
+\begin{arrange}
+		\bar{\theta} &\leftarrow (1 - \tau) \bar{\theta} + \tau \theta \\
+		\bar{\phi} &\leftarrow (1 - \tau) \bar{\phi} + \tau \phi \\
+\end{arrange}
+The convolutional encoder $ f_{ \theta }  $ alone is shared with the RL agent.
+
+InfoNCE loss using logits computed bilinearly is used:
+$ l = \bm{p}_{t} W \bm{\bar{c}}_{t+k}  $.
+In this implementation, every anchor in the training batch utilizes the positives correspnding to all
+other anchors as its negative examples.
+In practise the loss function is:
+\begin{equation}
+\mathcal{L}^{ \text{ATC} } = - \mathbb{E}_{ \mathcal{O} } \left[ 
+\log \frac{\exp l_{ i, i+ }}{\sum_{\bm{o}_{j} \in \mathcal{O}}^{} \exp l_{ i,j+ } } 
+\right] 
+\end{equation}
+
+
+\subsection{Other stuff}
+
+
+
+
+
+
+\end{document}

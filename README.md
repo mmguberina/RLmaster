@@ -99,7 +99,24 @@ We have the following ideas for this:
 a) an autoencoder which compresses each frame individually
 b) an autoencoder which takes in several consecutive frames and predicts the next frame.
 c) an inverse dynamics model (takes 2 consecutive frames and predicts the action which resulted in this transition)
+The problem with b) and c) is that you can't easily intergrate this into the autoencoder.
+Thing is, CNN layers are designed for, and can only be used for, feature extraction
+from images. You can't just slap an action as an additional input --- it's not a pixel 
+to be convoluted over. So you actually need separate predictor, which for all we care
+can be just a MLP, no need for recursive style nets, we're fine with going 1 step into the future.
+Also, reconstruction loss by itself is fundamentally a stupid idea if you aim to reconstruct everything.
+And contrastive learning is clearly not what you want in a small data regime like efficient RL.
+Self-predictive representations solves this by bootstrapping the representation learning --- 
+there's no reconstruction loss, only latent losses, which are not constructed through
+contrastive learning, by comparing with a exponentially averaged encoder.
+Crazy stuff, but it works. Crucially, this allows you to formulate your forward and inverse
+and whatever loss --- you're boostrapping everything after all (even more crazy).
+That's a reasonable thing to try (authors also provide the code, god bless them).
+Alternatively, you can go for mutual-information based stuff.
+And finally, another option, which works only for forward prediction,
+is something like FLARE (substact subsequent frames).
 
+#### training styles
 We can go about training the autoencoder in different ways:
 a) fully training it before training the agent, i.e. doing a 2-step procedure.
 b) doing the same as in a), but using the encoder not to compress frames, but as a pre-trained
@@ -107,13 +124,18 @@ feature-selection part of the policy network. the agent is then trained as if no
 network initialization is changed.
 c) training the autoencoder and the agent in parallel. by itself this doesn't work because
 the latent space the encoder creates changes as the autoencoder keeps being updated.
-some kind of strong regularization can maybe make this work.
-d) same as c), but also including passing the policy gradients (or whatever other rl gradients)
+some kind of strong regularization is needed to make this work.
+d) same as c), but also including passing the value function gradients 
 through the encoder. some (probably different) type of regularization is necessary to get this to work.
+(it just works better lol)
+
+
+
 
 #### Regularization options
-a) droupout
-b) sac+ae solved this, use that regularization -> L2 and LayerNorm
+a) droupout 
+b) sac+ae solved this, use that regularization -> L2 and LayerNorm ===> solved the problem
 c) data augmentation can regularize both the autoencoder and the q-network (drq)
-d) adding noise to latent space can regularize the decoder (RAE)
+d) adding noise to latent space can regularize the decoder (RAE) (sac+ae didn't actually use this lol)
 e) while denoising AE (DAE) serves its purpose, it can also (like data augmetation) serve as regularization
+

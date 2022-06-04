@@ -3,6 +3,14 @@ import datetime
 import os
 import pprint
 
+##################################################
+######## TODO TODO ########################
+# repurpose rainbow network (has its own forward etc)
+# to work with our shit (remove CNN layers basically)
+##################################################
+
+
+
 import numpy as np
 import torch
 from atari_network import RainbowNoConvLayers

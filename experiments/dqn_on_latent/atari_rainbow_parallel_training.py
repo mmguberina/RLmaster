@@ -1,3 +1,4 @@
+
 import argparse
 import os
 import pprint
@@ -12,8 +13,9 @@ from RLmaster.util.save_load_hyperparameters import save_hyperparameters
 from tianshou.data import Collector, VectorReplayBuffer
 from tianshou.env import ShmemVectorEnv
 from RLmaster.policy.dqn_fixed import DQNPolicy
+from tianshou.policy import RainbowPolicy
 from RLmaster.latent_representations.autoencoder_learning_as_policy_wrapper import AutoencoderLatentSpacePolicy
-from RLmaster.latent_representations.autoencoder_nn import RAE_ENC, RAE_DEC, CNNEncoderNew, CNNDecoderNew
+from RLmaster.latent_representations.autoencoder_nn import CNNEncoderNew, CNNDecoderNew
 from RLmaster.util.collector_on_latent import CollectorOnLatent
 from tianshou.trainer import offpolicy_trainer
 from tianshou.utils import TensorboardLogger
@@ -30,7 +32,7 @@ def get_args():
     parser.add_argument('--latent-space-type', type=str, default='single-frame-predictor')
     parser.add_argument('--pass-q-grads-to-encoder', type=bool, default=True)
     parser.add_argument('--alternating-training-frequency', type=int, default=1000)
-    parser.add_argument('--features-dim', type=int, default=50)
+    parser.add_argument('--features-dim', type=int, default=3136)
     parser.add_argument('--seed', type=int, default=0)
     parser.add_argument("--scale-obs", type=int, default=0)
     parser.add_argument('--eps-test', type=float, default=0.005)
@@ -40,12 +42,15 @@ def get_args():
 #    parser.add_argument('--buffer-size', type=int, default=100)
     parser.add_argument('--lr', type=float, default=0.0001)
     parser.add_argument('--gamma', type=float, default=0.99)
+    parser.add_argument('--num-atoms', type=int, default=51)
+    parser.add_argument('--v-min', type=float, default=-10.)
+    parser.add_argument('--v-max', type=float, default=10.)
     parser.add_argument('--n-step', type=int, default=3)
     parser.add_argument('--target-update-freq', type=int, default=500)
     parser.add_argument('--epoch', type=int, default=50)
 #    parser.add_argument('--epoch', type=int, default=5)
-    parser.add_argument('--step-per-epoch', type=int, default=100000)
-#    parser.add_argument('--step-per-epoch', type=int, default=100)
+#    parser.add_argument('--step-per-epoch', type=int, default=100000)
+    parser.add_argument('--step-per-epoch', type=int, default=100)
     # TODO why 8?
     #parser.add_argument('--step-per-collect', type=int, default=12)
     parser.add_argument('--step-per-collect', type=int, default=6)
@@ -59,7 +64,7 @@ def get_args():
     #parser.add_argument('--test-num', type=int, default=8)
     parser.add_argument('--test-num', type=int, default=1)
     parser.add_argument('--logdir', type=str, default='log')
-    parser.add_argument('--log-name', type=str, default='dqn_rae_parallel_good_arch_fs_4_passing_q_grads')
+    parser.add_argument('--log-name', type=str, default='dqn_ae_parallel_good_arch_fs_4_passing_q_grads')
     parser.add_argument('--render', type=float, default=0.)
     parser.add_argument(
         '--device', type=str, default='cuda' if torch.cuda.is_available() else 'cpu'
@@ -133,7 +138,7 @@ if __name__ == "__main__":
     torch.manual_seed(args.seed)
     #train_envs.seed(args.seed)
     #test_envs.seed(args.seed)
-    q_net = DQNNoEncoder(args.action_shape, args.frames_stack, args.device, input_dim=args.features_dim).to(args.device)
+    q_net = DQNNoEncoder(args.action_shape, args.frames_stack, args.device).to(args.device)
     if args.latent_space_type == 'single-frame-predictor':
         # in this case, we don't pass the stacked frames.
         # we unstack them, compress them, the stack the compressed ones and
@@ -141,14 +146,10 @@ if __name__ == "__main__":
         observation_shape = list(args.state_shape)
         observation_shape[0] = 1 
         observation_shape = tuple(observation_shape)
-        #encoder = CNNEncoderNew(observation_shape=observation_shape, 
-        #        features_dim=args.features_dim, device=args.device).to(args.device)
-        encoder = RAE_ENC(args.device, observation_shape, 
-                args.features_dim).to(args.device)
-        #decoder = CNNDecoderNew(observation_shape=observation_shape, 
-        #        n_flatten=encoder.n_flatten, features_dim=args.features_dim).to(args.device)
-        decoder = RAE_DEC(args.device, observation_shape, 
-                args.features_dim).to(args.device)
+        encoder = CNNEncoderNew(observation_shape=observation_shape, 
+                features_dim=args.features_dim, device=args.device).to(args.device)
+        decoder = CNNDecoderNew(observation_shape=observation_shape, 
+                n_flatten=encoder.n_flatten, features_dim=args.features_dim).to(args.device)
     if args.pass_q_grads_to_encoder == False:
         optim_q = torch.optim.Adam(q_net.parameters(), lr=args.lr)
     else:
@@ -156,9 +157,9 @@ if __name__ == "__main__":
                 {'params': encoder.parameters()}], lr=args.lr)
     optim_encoder = torch.optim.Adam(encoder.parameters(), lr=args.lr)
     optim_decoder = torch.optim.Adam(decoder.parameters(), lr=args.lr, weight_decay=10**-7)
-    reconstruction_criterion = torch.nn.MSELoss()
+    reconstruction_criterion = torch.nn.BCELoss()
 
-    rl_policy = DQNPolicy(
+    rl_policy = RainbowPolicy(
         q_net,
         optim_q,
         args.gamma,

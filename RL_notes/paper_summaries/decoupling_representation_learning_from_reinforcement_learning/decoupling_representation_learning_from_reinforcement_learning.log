@@ -1,9 +1,9 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.21 (TeX Live 2020) (preloaded format=pdflatex 2020.9.19)  1 JUN 2022 20:37
+This is pdfTeX, Version 3.14159265-2.6-1.40.21 (TeX Live 2020) (preloaded format=pdflatex 2020.9.19)  4 JUN 2022 16:35
 entering extended mode
  \write18 enabled.
  %&-line parsing enabled.
-**rl_with_self_predictive_representations.tex
-(./rl_with_self_predictive_representations.tex
+**decoupling_representation_learning_from_reinforcement_learning.tex
+(./decoupling_representation_learning_from_reinforcement_learning.tex
 LaTeX2e <2020-02-02> patch level 5
 L3 programming layer <2020-09-06>
 (/mnt/bigp/texlive/texcopy/texlive/2020/texmf-dist/tex/latex/base/article.cls
@@ -157,8 +157,10 @@ d-pdftex.def
 File: l3backend-pdftex.def 2020-09-11 L3 backend support: PDF output (pdfTeX)
 \l__kernel_color_stack_int=\count188
 \l__pdf_internal_box=\box49
-) (./rl_with_self_predictive_representations.aux)
-\openout1 = `rl_with_self_predictive_representations.aux'.
+)
+(./decoupling_representation_learning_from_reinforcement_learning.aux)
+\openout1 = `decoupling_representation_learning_from_reinforcement_learning.aux
+'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 13.
 LaTeX Font Info:    ... okay on input line 13.
@@ -259,38 +261,33 @@ LaTeX Warning: No \author given.
 [1
 
 {/mnt/bigp/texlive/texcopy/texlive/2020/texmf-var/fonts/map/pdftex/updmap/pdfte
-x.map}] [2] (./rl_with_self_predictive_representations.aux) ) 
-Here is how much of TeX's memory you used:
- 3163 strings out of 480876
- 43451 string characters out of 5907582
- 279998 words of memory out of 5000000
- 18724 multiletter control sequences out of 15000+600000
- 553034 words of font info for 81 fonts, out of 8000000 for 9000
- 1141 hyphenation exceptions out of 8191
- 40i,6n,37p,255b,202s stack positions out of 5000i,500n,10000p,200000b,80000s
-{/mnt/bigp/texlive
-/texcopy/texlive/2020/texmf-dist/fonts/enc/dvips/cm-super/cm-super-t1.enc}</mnt
-/bigp/texlive/texcopy/texlive/2020/texmf-dist/fonts/type1/public/amsfonts/cm/cm
-mi10.pfb></mnt/bigp/texlive/texcopy/texlive/2020/texmf-dist/fonts/type1/public/
-amsfonts/cm/cmmi7.pfb></mnt/bigp/texlive/texcopy/texlive/2020/texmf-dist/fonts/
-type1/public/amsfonts/cm/cmmib10.pfb></mnt/bigp/texlive/texcopy/texlive/2020/te
-xmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></mnt/bigp/texlive/texcopy/te
-xlive/2020/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb></mnt/bigp/texliv
-e/texcopy/texlive/2020/texmf-dist/fonts/type1/public/amsfonts/symbols/msam10.pf
-b></mnt/bigp/texlive/texcopy/texlive/2020/texmf-dist/fonts/type1/public/cm-supe
-r/sfbx1000.pfb></mnt/bigp/texlive/texcopy/texlive/2020/texmf-dist/fonts/type1/p
-ublic/cm-super/sfbx1200.pfb></mnt/bigp/texlive/texcopy/texlive/2020/texmf-dist/
-fonts/type1/public/cm-super/sfbx1440.pfb></mnt/bigp/texlive/texcopy/texlive/202
-0/texmf-dist/fonts/type1/public/cm-super/sfrm1000.pfb></mnt/bigp/texlive/texcop
-y/texlive/2020/texmf-dist/fonts/type1/public/cm-super/sfrm1200.pfb></mnt/bigp/t
-exlive/texcopy/texlive/2020/texmf-dist/fonts/type1/public/cm-super/sfrm1728.pfb
-></mnt/bigp/texlive/texcopy/texlive/2020/texmf-dist/fonts/type1/public/cm-super
-/sfti1000.pfb>
-Output written on rl_with_self_predictive_representations.pdf (2 pages, 156289 
-bytes).
-PDF statistics:
- 64 PDF objects out of 1000 (max. 8388607)
- 46 compressed objects within 1 object stream
- 0 named destinations out of 1000 (max. 500000)
- 1 words of extra memory for PDF output out of 10000 (max. 10000000)
+x.map}]
 
+! LaTeX Error: Environment arrange undefined.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.63 \begin{arrange}
+                    
+? 
+! Emergency stop.
+ ...                                              
+                                                  
+l.63 \begin{arrange}
+                    
+Your command was ignored.
+Type  I <command> <return>  to replace it with another command,
+or  <return>  to continue without it.
+
+ 
+Here is how much of TeX's memory you used:
+ 3164 strings out of 480876
+ 43703 string characters out of 5907582
+ 280009 words of memory out of 5000000
+ 18725 multiletter control sequences out of 15000+600000
+ 553792 words of font info for 82 fonts, out of 8000000 for 9000
+ 1141 hyphenation exceptions out of 8191
+ 40i,6n,37p,278b,202s stack positions out of 5000i,500n,10000p,200000b,80000s
+!  ==> Fatal error occurred, no output PDF file produced!

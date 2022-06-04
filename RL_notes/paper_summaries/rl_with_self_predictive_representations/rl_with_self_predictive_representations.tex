@@ -25,12 +25,43 @@
 
 \subsection{Abstract}
 Learning from a small number of examples is a problem for RL.
-
+Proposal: leverage self-supervised objectives based on visual input 
+and sequential interaction with the environment.
+The resulting method, Self-Predictive Representations (SPR), trains an agent to predict its own
+latent space representations multiple steps into the future.
+Target representations for future states are computed with an encoder which is an exponential
+moving average of the agent's parameters,
+and the predictions are made using a learned transition model.
+This alone outperforms other methods, but is made even better by adding 
+data augmentation to the future prediction loss.
+The benchmark is 100K Atari (400K frames).
 
 \subsection{Introduction}
-
+Dyamics model does not rely on reconstructing states.
+The algorithm starts with Data-efficient rainbow with the SPR loss
+and is evaluated with and without data augmentation.
+Notably, SPR outperforms human expert on 7/26 games using the same amount of experience.
 
 \subsection{Method}
+\subsubsection{Self-Predictive representations}
+Let $ (\bm{s}_{t:t+K}, \bm{a}_{t:t+K} )  $ be a sequence of $ K+1  $ previously experienced states
+and actions sampled from a replay buffer, where $ K  $ is the maximum number of steps into the future 
+which we want to predict.
+
+\paragraph{Online network}
+An \textit{online encoder} $ f_{ o }  $ transforms observed states $ \bm{s}_{t}  $ into 
+representatins $ \bm{z}_{t} \triangleq f_{ o } (\bm{s}_{t})  $.
+These representations are used in an objective that encourages them
+to be \textit{predictive} of future observations up to some fixed
+temporal offset $ K  $, given a sequence of $ K  $ actions
+to perform.
+
+Rather than predicting representations produce by the online encoder,
+it JUST FUCKING BOOTSTRAPS EVERYTHING?!?!?!?
+This is some crazy stuff man.
+The bootstrapping is explained in: bootstrap you own latent:
+a new approach to self-supervised learning.
+Will have to look into this more
 
 \subsection{Other stuff}
 
