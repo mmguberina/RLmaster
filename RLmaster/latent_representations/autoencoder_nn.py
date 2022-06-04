@@ -235,7 +235,8 @@ class RAE_ENC(nn.Module):
         return mu + eps * std
 
     def forward_conv(self, obs):
-        obs = to_torch(obs, device=self.device, dtype=torch.float) / 255.
+        obs = torch.tensor(obs, dtype=torch.float32, device=self.device) / 255
+        #obs = to_torch(obs, device=self.device, dtype=torch.float) / 255.
         conv = torch.relu(self.conv_layers[0](obs))
         for i in range(1, self.num_layers):
             conv = torch.relu(self.conv_layers[i](conv))
