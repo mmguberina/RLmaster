@@ -5,7 +5,7 @@ import pprint
 
 import numpy as np
 import torch
-from RLmaster.network.atari_network import DQNNoEncoder
+from RLmaster.network.atari_network import DQNNoEncoder, RainbowNoConvLayers
 from RLmaster.util.atari_wrapper import wrap_deepmind, make_atari_env, make_atari_env_watch
 from torch.utils.tensorboard import SummaryWriter
 from RLmaster.util.save_load_hyperparameters import save_hyperparameters
@@ -15,16 +15,10 @@ from tianshou.env import ShmemVectorEnv
 from RLmaster.policy.dqn_fixed import DQNPolicy
 from tianshou.policy import RainbowPolicy
 from RLmaster.latent_representations.autoencoder_learning_as_policy_wrapper import AutoencoderLatentSpacePolicy
-from RLmaster.latent_representations.autoencoder_nn import CNNEncoderNew, CNNDecoderNew
+from RLmaster.latent_representations.autoencoder_nn import RAE_ENC, RAE_DEC
 from RLmaster.util.collector_on_latent import CollectorOnLatent
 from tianshou.trainer import offpolicy_trainer
 from tianshou.utils import TensorboardLogger
-
-"""
-action are all random sampled
-1 frame (1,84,84) -> pass through autoencoder -> 1 frame (1,84,84)
-"""
-
 
 def get_args():
     parser = argparse.ArgumentParser()
@@ -32,7 +26,7 @@ def get_args():
     parser.add_argument('--latent-space-type', type=str, default='single-frame-predictor')
     parser.add_argument('--pass-q-grads-to-encoder', type=bool, default=True)
     parser.add_argument('--alternating-training-frequency', type=int, default=1000)
-    parser.add_argument('--features-dim', type=int, default=3136)
+    parser.add_argument('--features-dim', type=int, default=50)
     parser.add_argument('--seed', type=int, default=0)
     parser.add_argument("--scale-obs", type=int, default=0)
     parser.add_argument('--eps-test', type=float, default=0.005)
@@ -40,31 +34,40 @@ def get_args():
     parser.add_argument('--eps-train-final', type=float, default=0.05)
     parser.add_argument('--buffer-size', type=int, default=100000)
 #    parser.add_argument('--buffer-size', type=int, default=100)
-    parser.add_argument('--lr', type=float, default=0.0001)
+    parser.add_argument('--lr', type=float, default=0.000625)
     parser.add_argument('--gamma', type=float, default=0.99)
     parser.add_argument('--num-atoms', type=int, default=51)
     parser.add_argument('--v-min', type=float, default=-10.)
     parser.add_argument('--v-max', type=float, default=10.)
+    parser.add_argument("--noisy-std", type=float, default=0.1)
+    parser.add_argument("--is-dueling", action="store_true", default=True)
+    parser.add_argument("--no-noisy", action="store_true", default=False)
+    parser.add_argument("--no-priority", action="store_true", default=False)
+    parser.add_argument("--alpha", type=float, default=0.5)
+    parser.add_argument("--beta", type=float, default=0.4)
+    parser.add_argument("--beta-final", type=float, default=1.)
+    parser.add_argument("--beta-anneal-step", type=int, default=5000000)
+    parser.add_argument("--no-weight-norm", action="store_true", default=False)
     parser.add_argument('--n-step', type=int, default=3)
     parser.add_argument('--target-update-freq', type=int, default=500)
     parser.add_argument('--epoch', type=int, default=50)
 #    parser.add_argument('--epoch', type=int, default=5)
-#    parser.add_argument('--step-per-epoch', type=int, default=100000)
-    parser.add_argument('--step-per-epoch', type=int, default=100)
+    parser.add_argument('--step-per-epoch', type=int, default=100000)
+#    parser.add_argument('--step-per-epoch', type=int, default=100)
     # TODO why 8?
     #parser.add_argument('--step-per-collect', type=int, default=12)
-    parser.add_argument('--step-per-collect', type=int, default=6)
+    parser.add_argument('--step-per-collect', type=int, default=10)
     # TODO having a different update frequency for the autoencoder 
     # and the policy is probably a smart thing to do
-    #parser.add_argument('--update-per-step', type=float, default=0.1)
-    parser.add_argument('--update-per-step', type=float, default=1)
+    parser.add_argument('--update-per-step', type=float, default=0.1)
+    #parser.add_argument('--update-per-step', type=float, default=1)
     parser.add_argument('--batch-size', type=int, default=64)
-    #parser.add_argument('--training-num', type=int, default=8)
-    parser.add_argument('--training-num', type=int, default=6)
+    parser.add_argument('--training-num', type=int, default=10)
+    #parser.add_argument('--training-num', type=int, default=6)
     #parser.add_argument('--test-num', type=int, default=8)
     parser.add_argument('--test-num', type=int, default=1)
     parser.add_argument('--logdir', type=str, default='log')
-    parser.add_argument('--log-name', type=str, default='dqn_ae_parallel_good_arch_fs_4_passing_q_grads')
+    parser.add_argument('--log-name', type=str, default='raibow_ae_parallel_good_arch_fs_4_passing_q_grads')
     parser.add_argument('--render', type=float, default=0.)
     parser.add_argument(
         '--device', type=str, default='cuda' if torch.cuda.is_available() else 'cpu'
@@ -138,7 +141,7 @@ if __name__ == "__main__":
     torch.manual_seed(args.seed)
     #train_envs.seed(args.seed)
     #test_envs.seed(args.seed)
-    q_net = DQNNoEncoder(args.action_shape, args.frames_stack, args.device).to(args.device)
+    #rainbow_net = DQNNoEncoder(args.action_shape, args.frames_stack, args.device).to(args.device)
     if args.latent_space_type == 'single-frame-predictor':
         # in this case, we don't pass the stacked frames.
         # we unstack them, compress them, the stack the compressed ones and
@@ -146,23 +149,35 @@ if __name__ == "__main__":
         observation_shape = list(args.state_shape)
         observation_shape[0] = 1 
         observation_shape = tuple(observation_shape)
-        encoder = CNNEncoderNew(observation_shape=observation_shape, 
-                features_dim=args.features_dim, device=args.device).to(args.device)
-        decoder = CNNDecoderNew(observation_shape=observation_shape, 
-                n_flatten=encoder.n_flatten, features_dim=args.features_dim).to(args.device)
-    if args.pass_q_grads_to_encoder == False:
-        optim_q = torch.optim.Adam(q_net.parameters(), lr=args.lr)
-    else:
-        optim_q = torch.optim.Adam([{'params': q_net.parameters()}, 
-                {'params': encoder.parameters()}], lr=args.lr)
+        encoder = RAE_ENC(args.device, observation_shape, args.features_dim).to(args.device)
+        decoder = RAE_DEC(args.device, observation_shape, args.features_dim).to(args.device)
+        rl_input_dim = args.features_dim * args.frames_stack
     optim_encoder = torch.optim.Adam(encoder.parameters(), lr=args.lr)
     optim_decoder = torch.optim.Adam(decoder.parameters(), lr=args.lr, weight_decay=10**-7)
     reconstruction_criterion = torch.nn.BCELoss()
 
+    # TODO FINISH FIX
+    rainbow_net = RainbowNoConvLayers(args.action_shape, 
+                                 args.num_atoms,
+                                 args.noisy_std,
+                                 args.device,
+                                 args.is_dueling,
+                                 args.noisy_std,
+                                 rl_input_dim).to(args.device)
+
+    if args.pass_q_grads_to_encoder == False:
+        optim_q = torch.optim.Adam(rainbow_net.parameters(), lr=args.lr)
+    else:
+        optim_q = torch.optim.Adam([{'params': rainbow_net.parameters()}, 
+                {'params': encoder.parameters()}], lr=args.lr)
+
     rl_policy = RainbowPolicy(
-        q_net,
+        rainbow_net,
         optim_q,
         args.gamma,
+        args.num_atoms,
+        args.v_min,
+        args.v_max,
         args.n_step,
         target_update_freq=args.target_update_freq
     )
@@ -218,7 +233,7 @@ if __name__ == "__main__":
     def save_fn(policy):
         torch.save(encoder.state_dict(), os.path.join(log_path, 'encoder.pth'))
         torch.save(decoder.state_dict(), os.path.join(log_path, 'decoder.pth'))
-        torch.save(q_net.state_dict(), os.path.join(log_path, 'q_net.pth'))
+        torch.save(rainbow_net.state_dict(), os.path.join(log_path, 'rainbow_net.pth'))
 
     def stop_fn(mean_rewards):
         if train_envs.spec.reward_threshold:
@@ -249,10 +264,10 @@ if __name__ == "__main__":
         # see also: https://pytorch.org/tutorials/beginner/saving_loading_models.html
         ckpt_path_encoder = os.path.join(log_path, 'checkpoint_encoder_epoch_' + str(epoch) + '.pth')
         ckpt_path_decoder = os.path.join(log_path, 'checkpoint_decoder_epoch_' + str(epoch) + '.pth')
-        ckpt_path_q_net = os.path.join(log_path, 'checkpoint_q_net_epoch_' + str(epoch) + '.pth')
+        ckpt_path_rainbow_net = os.path.join(log_path, 'checkpoint_rainbow_net_epoch_' + str(epoch) + '.pth')
         torch.save({'encoder': encoder.state_dict()}, ckpt_path_encoder)
         torch.save({'decoder': decoder.state_dict()}, ckpt_path_decoder)
-        torch.save({'q_net': decoder.state_dict()}, ckpt_path_q_net)
+        torch.save({'rainbow_net': decoder.state_dict()}, ckpt_path_rainbow_net)
         return "useless string for a useless return"
 
     # watch agent's performance

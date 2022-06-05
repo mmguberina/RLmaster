@@ -28,7 +28,8 @@ action are all random sampled
 
 def get_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--task', type=str, default='PongNoFrameskip-v4')
+#    parser.add_argument('--task', type=str, default='PongNoFrameskip-v4')
+    parser.add_argument('--task', type=str, default='BreakoutNoFrameskip-v4')
 #    parser.add_argument('--latent-space-type', type=str, default='forward-frame-predictor')
     parser.add_argument('--latent-space-type', type=str, default='single-frame-predictor')
 #    parser.add_argument('--latent-space-type', type=str, default='inverse-dynamics-model')
@@ -147,7 +148,7 @@ if __name__ == '__main__':
 #    encoder = CNNEncoderNew(observation_shape=args.state_shape, features_dim=args.features_dim, device=args.device).to(args.device)
 #    decoder = CNNDecoderNew(observation_shape=args.state_shape, n_flatten=encoder.n_flatten, features_dim=args.features_dim).to(args.device)
     optim_encoder = torch.optim.Adam(encoder.parameters(), lr=args.lr)
-    optim_decoder = torch.optim.Adam(decoder.parameters(), lr=args.lr)
+    optim_decoder = torch.optim.Adam(decoder.parameters(), lr=args.lr, weight_decay=10**-7)
     #reconstruction_criterion = torch.nn.BCELoss()
     reconstruction_criterion = torch.nn.MSELoss()
     # the rl_policy is then passed into our autoencoder-wrapper policy

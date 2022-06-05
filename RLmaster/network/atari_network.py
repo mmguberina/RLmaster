@@ -124,8 +124,8 @@ class C51(DQN):
         obs = obs.view(-1, self.action_num, self.num_atoms)
         return obs, state
 
-
-class Rainbow(DQN):
+# TODO FINISH THIS
+class Rainbow(DQNNoEncoder):
     """Reference: Rainbow: Combining Improvements in Deep Reinforcement Learning.
 
     For advanced usage (how to customize the network), please refer to
@@ -134,9 +134,6 @@ class Rainbow(DQN):
 
     def __init__(
         self,
-        c: int,
-        h: int,
-        w: int,
         action_shape: Sequence[int],
         num_atoms: int = 51,
         noisy_std: float = 0.5,
@@ -189,10 +186,6 @@ class Rainbow(DQN):
 
 
 class RainbowNoConvLayers(nn.Module):
-    """
-    not inheriting from DQN as the idea here is
-    to have a pretrained autoencoder instead of that
-    """
 
     def __init__(
         self,
@@ -202,11 +195,11 @@ class RainbowNoConvLayers(nn.Module):
         device: Union[str, int, torch.device] = "cpu",
         is_dueling: bool = True,
         is_noisy: bool = True,
-        output_dim: int = 3136,
+        input_dim: int = 50,
     ) -> None:
         super().__init__()
         self.device = device
-        self.output_dim = output_dim
+        self.input_dim = input_dim
         self.action_num = np.prod(action_shape)
         self.num_atoms = num_atoms
 
@@ -216,13 +209,13 @@ class RainbowNoConvLayers(nn.Module):
             else:
                 return nn.Linear(x, y)
         self.Q = nn.Sequential(
-            linear(self.output_dim, 512), nn.ReLU(inplace=True),
+            linear(self.input_dim, 512), nn.ReLU(inplace=True),
             linear(512, self.action_num * self.num_atoms)
         )
         self._is_dueling = is_dueling
         if self._is_dueling:
             self.V = nn.Sequential(
-                linear(self.output_dim, 512), nn.ReLU(inplace=True),
+                linear(self.input_dim, 512), nn.ReLU(inplace=True),
                 linear(512, self.num_atoms)
             )
         self.output_dim = self.action_num * self.num_atoms
@@ -234,7 +227,8 @@ class RainbowNoConvLayers(nn.Module):
         info: Dict[str, Any] = {},
     ) -> Tuple[torch.Tensor, Any]:
         r"""Mapping: x -> Z(x, \*)."""
-        print(obs.shape)
+#        print(obs.shape)
+# potentially you need torch.tensor (it works even though it's not the best)
         obs = torch.as_tensor(obs, device=self.device, dtype=torch.float32)
         q = self.Q(obs)
         q = q.view(-1, self.action_num, self.num_atoms)
@@ -246,8 +240,8 @@ class RainbowNoConvLayers(nn.Module):
             logits = q
         probs = logits.softmax(dim=2)
 
-        print("probs.shape")
-        print(probs.shape)
+#        print("probs.shape")
+#        print(probs.shape)
         return probs, state
 
 
