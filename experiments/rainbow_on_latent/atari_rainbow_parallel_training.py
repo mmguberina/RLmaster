@@ -108,7 +108,7 @@ def get_args():
 
 #def test_dqn(args=get_args()):
 if __name__ == "__main__": 
-    torch.set_num_threads(1)
+#    torch.set_num_threads(1)
     args=get_args()
     #env = make_atari_env(args)
     # we have another way now, should be faster

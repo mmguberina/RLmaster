@@ -234,9 +234,11 @@ class AutoencoderLatentSpacePolicy(BasePolicy):
             batch.obs = to_torch(batch.obs, device=self.device).view(self.batch_size, self.frames_stack, 84, 84)
         else:
             # it's the right shape if frames_stack != 1
-            batch.obs = to_torch(batch.obs, device=self.device, dtype=torch.float)
+            #batch.obs = to_torch(batch.obs, device=self.device, dtype=torch.float)
+            batch.obs = torch.tensor(batch.obs, device=self.device, dtype=torch.float)
             # added for rainbow
-            batch.obs_next = to_torch(batch.obs_next, device=self.device, dtype=torch.float)
+            #batch.obs_next = to_torch(batch.obs_next, device=self.device, dtype=torch.float)
+            batch.obs_next = torch.tensor(batch.obs_next, device=self.device, dtype=torch.float)
 
         # we zero grad this here in because maybe we want both grads
         self.optim_encoder.zero_grad()
