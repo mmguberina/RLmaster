@@ -163,7 +163,7 @@ if __name__ == "__main__":
                                  args.device,
                                  args.is_dueling,
                                  args.noisy_std,
-                                 rl_input_dim).to(args.device)
+                                 rl_input_dim)#.to(args.device)
 
     if args.pass_q_grads_to_encoder == False:
         optim_q = torch.optim.Adam(rainbow_net.parameters(), lr=args.lr)
