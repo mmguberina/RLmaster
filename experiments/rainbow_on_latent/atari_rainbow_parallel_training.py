@@ -180,7 +180,7 @@ if __name__ == "__main__":
         args.v_max,
         args.n_step,
         target_update_freq=args.target_update_freq
-    )
+    ).to(args.device)
 #    print(rl_policy.__class__)
 #    if isinstance(rl_policy, DQNPolicy):
 #        print("i4t is")

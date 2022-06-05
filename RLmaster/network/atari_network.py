@@ -229,7 +229,8 @@ class RainbowNoConvLayers(nn.Module):
         r"""Mapping: x -> Z(x, \*)."""
 #        print(obs.shape)
 # potentially you need torch.tensor (it works even though it's not the best)
-        obs = torch.as_tensor(obs, device=self.device, dtype=torch.float32)
+#        obs = torch.as_tensor(obs, device=self.device, dtype=torch.float32)
+        obs = torch.tensor(obs, device=self.device, dtype=torch.float32)
         q = self.Q(obs)
         q = q.view(-1, self.action_num, self.num_atoms)
         if self._is_dueling:
