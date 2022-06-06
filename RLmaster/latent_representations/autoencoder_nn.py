@@ -278,3 +278,31 @@ class RAE_DEC(nn.Module):
         obs = self.deconv_layers[-1](h)
         return obs
 
+
+class RAE_predictive_DEC(nn.Module):
+    def __init__(self, device, observation_shape, features_dim, frames_stack, num_layers=4, num_filters=32):
+        super().__init__()
+        self.device = device
+        self.features_dim = features_dim
+        self.num_layers = num_layers
+        self.num_filters = num_filters
+        self.frames_stack = frames_stack
+        self.out_dim = 35
+
+        # the + frames_stack -1  is for actions
+        self.fc = nn.Linear(features_dim * frames_stack + frames_stack - 1, 
+                num_filters * self.out_dim * self.out_dim)
+        self.deconv_layers = nn.ModuleList()
+        for i in range(self.num_layers - 1):
+            self.deconv_layers.append(nn.ConvTranspose2d(num_filters, num_filters, 3, stride=1))
+        self.deconv_layers.append(
+             nn.ConvTranspose2d(num_filters, observation_shape[0], 3, stride=2, output_padding=1))
+
+    def forward(self, h, a):
+        h = torch.concat(h, a)
+        h = torch.relu(self.fc(h))
+        h = h.view(-1, self.num_filters, self.out_dim, self.out_dim)
+        for i in range(self.num_layers - 1):
+            h = torch.relu(self.deconv_layers[i](h))
+        obs = self.deconv_layers[-1](h)
+        return obs

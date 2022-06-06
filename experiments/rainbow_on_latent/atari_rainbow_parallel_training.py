@@ -10,7 +10,7 @@ from RLmaster.util.atari_wrapper import wrap_deepmind, make_atari_env, make_atar
 from torch.utils.tensorboard import SummaryWriter
 from RLmaster.util.save_load_hyperparameters import save_hyperparameters
 
-from tianshou.data import Collector, VectorReplayBuffer
+from tianshou.data import Collector, VectorReplayBuffer, PrioritizedVectorReplayBuffer
 from tianshou.env import ShmemVectorEnv
 from RLmaster.policy.dqn_fixed import DQNPolicy
 from tianshou.policy import RainbowPolicy
@@ -48,7 +48,8 @@ def get_args():
     parser.add_argument("--beta-final", type=float, default=1.)
     parser.add_argument("--beta-anneal-step", type=int, default=5000000)
     parser.add_argument("--no-weight-norm", action="store_true", default=False)
-    parser.add_argument('--n-step', type=int, default=3)
+    #parser.add_argument('--n-step', type=int, default=3)
+    parser.add_argument('--n-step', type=int, default=20)
     parser.add_argument('--target-update-freq', type=int, default=500)
     parser.add_argument('--epoch', type=int, default=50)
 #    parser.add_argument('--epoch', type=int, default=5)
@@ -154,7 +155,7 @@ if __name__ == "__main__":
         rl_input_dim = args.features_dim * args.frames_stack
     optim_encoder = torch.optim.Adam(encoder.parameters(), lr=args.lr)
     optim_decoder = torch.optim.Adam(decoder.parameters(), lr=args.lr, weight_decay=10**-7)
-    reconstruction_criterion = torch.nn.BCELoss()
+    reconstruction_criterion = torch.nn.MSELoss()
 
     # TODO FINISH FIX
     rainbow_net = RainbowNoConvLayers(args.action_shape, 
@@ -210,13 +211,25 @@ if __name__ == "__main__":
         print("Loaded agent from: ", args.resume_path)
     # replay buffer: `save_last_obs` and `stack_num` can be removed together
     # when you have enough RAM
-    buffer = VectorReplayBuffer(
-        args.buffer_size,
-        buffer_num=len(train_envs),
-        ignore_obs_next=True,
-        save_only_last_obs=True,
-        stack_num=args.frames_stack
-    )
+    if args.no_priority:
+        buffer = VectorReplayBuffer(
+            args.buffer_size,
+            buffer_num=len(train_envs),
+            ignore_obs_next=True,
+            save_only_last_obs=True,
+            stack_num=args.frames_stack
+        )
+    else:
+        buffer = PrioritizedVectorReplayBuffer(
+            args.buffer_size,
+            buffer_num=len(train_envs),
+            ignore_obs_next=True,
+            save_only_last_obs=True,
+            stack_num=args.frames_stack,
+            alpha=args.alpha,
+            beta=args.beta,
+            weight_norm=not args.no_weight_norm
+        )
     # collector
     #train_collector = CollectorOnLatent(policy, train_envs, buffer, exploration_noise=True)
     #test_collector = CollectorOnLatent(policy, test_envs, exploration_noise=True)
