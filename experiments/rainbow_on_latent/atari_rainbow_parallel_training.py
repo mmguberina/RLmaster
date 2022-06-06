@@ -267,6 +267,15 @@ if __name__ == "__main__":
         policy.set_eps(eps)
         if env_step % 1000 == 0:
             logger.write("train/env_step", env_step, {"train/eps": eps})
+        if not args.no_priority:
+            if env_step <= args.beta_anneal_step:
+                beta = args.beta - env_step / args.beta_anneal_step * \
+                        (args.beta - args.beta_final)
+            else:
+                beta = args.beta_final
+            buffer.set_beta(beta)
+            if env_step % 1000 == 0:
+                logger.write("train/env_step", env_step, {"train/beta": beta})
 
     def test_fn(epoch, env_step):
         pass
