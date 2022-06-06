@@ -152,9 +152,8 @@ class CNNEncoderNew(nn.Module):
                 nn.Flatten(),
             )
 
-
-
         # Compute shape by doing one forward pass
+        # this is useless as this is the input lel
         with torch.no_grad():
             n_flatten = np.prod(self.encoder(torch.zeros(1, observation_shape[0],
                         observation_shape[1], observation_shape[2])).shape[1:])

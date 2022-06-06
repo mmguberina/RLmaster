@@ -15,7 +15,7 @@ from tianshou.env import ShmemVectorEnv
 from RLmaster.policy.dqn_fixed import DQNPolicy
 from tianshou.policy import RainbowPolicy
 from RLmaster.latent_representations.autoencoder_learning_as_policy_wrapper import AutoencoderLatentSpacePolicy
-from RLmaster.latent_representations.autoencoder_nn import RAE_ENC, RAE_DEC
+from RLmaster.latent_representations.autoencoder_nn import RAE_ENC, RAE_DEC, CNNEncoderNew, CNNDecoderNew
 from RLmaster.util.collector_on_latent import CollectorOnLatent
 from tianshou.trainer import offpolicy_trainer
 from tianshou.utils import TensorboardLogger
@@ -26,7 +26,7 @@ def get_args():
     parser.add_argument('--latent-space-type', type=str, default='single-frame-predictor')
     parser.add_argument('--pass-q-grads-to-encoder', type=bool, default=True)
     parser.add_argument('--alternating-training-frequency', type=int, default=1000)
-    parser.add_argument('--features-dim', type=int, default=50)
+    parser.add_argument('--features-dim', type=int, default=3136)
     parser.add_argument('--seed', type=int, default=0)
     parser.add_argument("--scale-obs", type=int, default=0)
     parser.add_argument('--eps-test', type=float, default=0.005)
@@ -40,7 +40,7 @@ def get_args():
     parser.add_argument('--v-min', type=float, default=-10.)
     parser.add_argument('--v-max', type=float, default=10.)
     parser.add_argument("--noisy-std", type=float, default=0.1)
-    parser.add_argument("--is-dueling", action="store_true", default=True)
+    parser.add_argument("--no-dueling", action="store_true", default=False)
     parser.add_argument("--no-noisy", action="store_true", default=False)
     parser.add_argument("--no-priority", action="store_true", default=False)
     parser.add_argument("--alpha", type=float, default=0.5)
@@ -150,8 +150,14 @@ if __name__ == "__main__":
         observation_shape = list(args.state_shape)
         observation_shape[0] = 1 
         observation_shape = tuple(observation_shape)
-        encoder = RAE_ENC(args.device, observation_shape, args.features_dim).to(args.device)
-        decoder = RAE_DEC(args.device, observation_shape, args.features_dim).to(args.device)
+        #encoder = RAE_ENC(args.device, observation_shape, args.features_dim).to(args.device)
+        #decoder = RAE_DEC(args.device, observation_shape, args.features_dim).to(args.device)
+        encoder = CNNEncoderNew(observation_shape=observation_shape, 
+                features_dim=args.features_dim, device=args.device).to(args.device)
+        decoder = CNNDecoderNew(observation_shape=observation_shape, 
+                n_flatten=encoder.n_flatten, features_dim=args.features_dim).to(args.device)
+        print("encoder.n_flatten")
+        print(encoder.n_flatten)
         rl_input_dim = args.features_dim * args.frames_stack
     optim_encoder = torch.optim.Adam(encoder.parameters(), lr=args.lr)
     optim_decoder = torch.optim.Adam(decoder.parameters(), lr=args.lr, weight_decay=10**-7)
@@ -162,7 +168,7 @@ if __name__ == "__main__":
                                  args.num_atoms,
                                  args.noisy_std,
                                  args.device,
-                                 args.is_dueling,
+                                 not args.no_dueling,
                                  args.noisy_std,
                                  rl_input_dim)#.to(args.device)
 

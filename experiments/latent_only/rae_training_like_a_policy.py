@@ -34,6 +34,7 @@ def get_args():
     parser.add_argument('--latent-space-type', type=str, default='single-frame-predictor')
 #    parser.add_argument('--latent-space-type', type=str, default='inverse-dynamics-model')
     parser.add_argument('--pass-q-grads-to-encoder', type=bool, default=False)
+    parser.add_argument('--data-aug', type=bool, default=True)
     parser.add_argument('--alternating-training-frequency', type=int, default=1000)
     parser.add_argument('--features_dim', type=int, default=50)
     parser.add_argument('--seed', type=int, default=0)

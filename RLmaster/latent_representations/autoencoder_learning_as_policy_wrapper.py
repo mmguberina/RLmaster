@@ -202,7 +202,7 @@ class AutoencoderLatentSpacePolicy(BasePolicy):
         Used in :meth:`update`. Check out :ref:`process_fn` for more information.
         """
         # this ripped from dqn method
-        # no it shouldn't be
+        # no, it shouldn't be
         # but we went to disgusting hacking so here we are man
         # do the below depending on underlying policy
         if isinstance(self.rl_policy, DQNPolicy):

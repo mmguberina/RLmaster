@@ -15,6 +15,7 @@ from torchvision import transforms
 from RLmaster.util.atari_dataset import AtariImageDataset
 #import matplotlib.pyplot as plt
 import cv2
+from time import sleep
 
 # TODO just save the god damn observation space
 # in the encoder class and stop this nonsense
@@ -29,7 +30,7 @@ features_dim = 50
 #log_path = "../../log/dqn_ae_parallel_good_arch_fs_4_passing_q_grads/"
 #log_path = "../../log/ae_single-frame-trained_as_policy_3136_4/"
 #log_path = "../../log/rae_single-frame-trained_as_policy_1/"
-log_path = "../../log/raibow_ae_parallel_good_arch_fs_4_passing_q_grads/"
+log_path = "../../log/raibow_ae_parallel_good_arch_fs_4_passing_q_grads_6/"
 #log_path = "../../experiments/latent_only/log/PongNoFrameskip-v4/ae_single-frame-trained_as_policy_3136/"
 #log_path_enc_dc = "../../experiments/latent_only/log/PongNoFrameskip-v4/"
 args = load_hyperparameters(log_path)
@@ -53,8 +54,8 @@ if args.latent_space_type == "forward-frame-predictor":
 #encoder.load_state_dict(torch.load("../../experiments/latent_only/encoder_features_dim_{}.pt".format(features_dim), map_location=torch.device('cpu')))
 #decoder.load_state_dict(torch.load("../../experiments/latent_only/decoder_features_dim_{}.pt".format(features_dim), map_location=torch.device('cpu')))
 
-encoder_name = "checkpoint_encoder_epoch_1.pth"
-decoder_name = "checkpoint_decoder_epoch_3.pth"
+encoder_name = "checkpoint_encoder_epoch_6.pth"
+decoder_name = "checkpoint_decoder_epoch_8.pth"
 #encoder_name = "encoder.pth"
 #decoder_name = "decoder.pth"
 #encoder_name = "encoder_features_dim_3136.pt"
@@ -93,6 +94,7 @@ env.reset()
 #print(queue)
 #exit()
 for i in range(5000):
+    sleep(0.02)
     obs, reward, done, info = env.step(np.array([env.action_space.sample()]))
     #obs = torch.tensor(obs)
     #obs = torch.tensor(obs)[:,:-2,:,:].view(1, args.frames_stack, 84, 84)
