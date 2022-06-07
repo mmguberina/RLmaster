@@ -73,32 +73,7 @@ as depicted in Fig.1, an agent interacts with an unknown environment in a sequen
 The ultimate goal is to maximize the rewards.
 For one thing, the agent takes advantage of existing knowledge of the environment.
 For another, the agent investigates an unfamiliar environment.
-%Reinforcement Learning, which includes Multi-Armed Bandit (MAB), Markov Decision Process (MDP), and Partially observable Markov Decision Process, is always used to formalize the exploit-exploration trade-off (POMDP).
 
-%\begin{figure}[H]
-%\includegraphics[width=12cm]{figure/RL_representation.pdf}
-%\caption{An agent sequentially interaction with unknown environment and receive the rewards }
-%\centering
-%\end{figure}
-
-%According to many studies of Reinforcement Learning,the unknown environment can described by multiple elements  including observations $\Omega$, states S, actions A, reward function R, state transition probability T, and conditional observation probabilities O.Bandit, MDP, and POMDP models the environment by considering different elements respectively.The formalisation of reward and policy in each model is different kinds of which leads to multiple techniques to learn.In the table 1  the relationship among bandit, MDP, RL, and decision theory are presented.In the next section we discuss the formalisation of MDPs for modern reinforcement learning.
-
-
-\begin{table}[H]
-\caption{Li Zhou ,relationship among bandit, MDP, RL, and decision theory}
-\begin{tabular} {l|l|l}\hline\hline
-$Learn model out come$  &  Mutlti armed bandits  &   RL \\ \hline
-$Given model of stocastic out comes $ &  Decision Theory & MDP  \\ \hline\hline
-$    $ &  Actions dont  
-change state of the world & Actions change 
-state of the world  \\ \hline\hline
-\end{tabular}
-\end{table}
-
-%\textbf{TODO ADD EQUATION:
-%   -FIT THE TABLE
-%   -copy past the related work from the other notes
-%   -rewrite some of the algorithms}
  
 \subsection{Markov Decision Processes}
 %\cite{gehring2017convolutional}
@@ -123,11 +98,11 @@ The schematic of a Markov chain is shown in \ref{fig:markov-chain}.
 \label{fig:markov-chain}
 \end{figure}
 
-Formally, a Markov chain $ \mathcal{M}  $is the defined by its state space
-$ \mathcal{S}  $ with discrete or continous state $ \bm{s} \in \mathcal{S}  $
+Formally, a Markov chain $ \mathcal{M}  $is defined by its state space
+$ \mathcal{S}  $ with discrete or continuous state $ \bm{s} \in \mathcal{S}  $
 and the transition operator $ \mathcal{T}  $.
 The notation $ \bm{s}_{ t }  $ denotes the state at time $ t  $ and it is a vector of real numbers.
-The transition operator allow for a succinct description of environment dynamics.
+The transition operator allows for a succinct description of environment dynamics.
 For a transition probability $ p(s_{ t+1 }|s_{ t })  $,
 let $ \mu_{ t,i } = p (\bm{s}_{t} = i)  $ and
 $ \mathcal{T}_{ i,j } = p (\bm{s}_{t+1} = i|\bm{s}_{t} = j )  $.
@@ -160,18 +135,18 @@ It's schematic can be seen in \ref{fig:mdp}.
 The Markov decision process is thus defined by the tuple
 $ \mathcal{M} = \{\mathcal{S}, \mathcal{A}, \mathcal{T}, r\}  $.
 $ \mathcal{A}  $ denotes the action space, where
-$ \bm{a}_{} \in \mathcal{A}  $ is a continous or discrete action and
+$ \bm{a}_{} \in \mathcal{A}  $ is a continuous or discrete action and
 $ r  $ is the reward function $r : \mathcal{S} \times \mathcal{A} \to \mathbb{R}$.
-It should also be noted that now the transition operator is a tensor.
+It should also be noted that the transition operator is now a tensor.
 Let $\mu_{t,j} = p(s_t = j), \xi_{t,k} = p(a_t = k), \mathcal{T}_{i,j,k} = p(s_{t+1} = i | s_t =j, a_t =k) $.
 Then $\mu_{t+1,i} = \sum_{j,k}^{} \mathcal{T}_{i,j,k} \mu_{t,j} \xi_{t,k}$.
-Hence $ \mathcal{T}  $ retains its linearity.
+Therefore, $ \mathcal{T}  $ retains its linearity.
 
 Finally, partial observability also needs to be accounted for.
 To do so, a partially observable Markov decision process (POMDP) needs to be constructed.
 This is done by augmenting the Markov decision process to also include
 the observation space $ \mathcal{O}  $, where observations $ \bm{o}_{} \in \mathcal{O} $
-denote the discrete or continous observations
+denote the discrete or continuous observations
 and the emission probability $ \mathcal{E}  $ which describes the probability 
 $ p(\bm{o}_{t} | \bm{s}_{t})  $ of getting the observation $ \bm{o}_{t}  $ when in state  $\bm{s}_{t}$.
 The schematic can be seen in \ref{fig:pomdp}.
@@ -200,7 +175,7 @@ The schematic can be seen in \ref{fig:pomdp}.
 \label{fig:pomdp}
 \end{figure}
 It is important to note that not all elements of POMDP are present in every problem: for example,
-the reward may be a determinstic function of the state and so on.
+the reward may be a deterministic function of the state and so on.
 In general through the text, to aid in simplifying notation, only the necessary elements will be explicity referenced
 in sketches and written out in the equations (most often using just the Markov decision process).
 %However, POMDP fully describes the setting in which reinforcement learning algorithms can be defined.
@@ -224,7 +199,7 @@ in sketches and written out in the equations (most often using just the Markov d
 \subsubsection{Policy}
 With the problem space being formally defined,
 we may introduce definitions which will allow the construction
-of reinforcement learning algorithm.
+of a reinforcement learning algorithm.
 The reinforcement learning problem can be defined in finite or infinite time horizons.
 Different environments usually naturally fall in either category.
 For the agent to learn, it needs to be able to try out different actions from the same, 
@@ -261,15 +236,15 @@ we usually write $ \pi_{ \theta } $.
 \subsubsection{Goal of reinforcement learning}
 For simpler notation, the finite horizon form
 is assumed for the following definitions.
-Since the environment is modelled as a Markov decision process,
-we can write the probabily of observing a trajectory of states
+Since the environment is modeled as a Markov decision process,
+we can write the probability of observing a trajectory of states
 and actions as:
 
 \begin{equation}
 \underbrace{p_\theta(\bm{s}_1, \bm{a}_1, \dots, \bm{s}_T, \bm{a}_T)}_{p_\theta(\tau)} = p(\bm{s}_1) \prod^{T}_{t=1} 
 \underbrace{\pi_{\theta} (\bm{a}_t | \bm{s}_t) p (\bm{s}_{t+1} | \bm{s}_t, \bm{a}_t)}_{\text{Markov chain on} (\bm{s}, \bm{a})}
 \end{equation}
-A bit more explicitely, we can a transition probaility as:
+A bit more explicitly, we can a transition probability as:
 \begin{equation}
 p((\bm{s}_{t+1}, \bm{a}_{t+1}) | (\bm{s}_t, \bm{a}_t)) = 
 p((\bm{s}_{t+1}| (\bm{s}_t, \bm{a}_t)) \pi_\theta (\bm{a}_{t+1} | \bm{s}_{t+1})
@@ -289,7 +264,7 @@ The discount factor also play a role in modelling
 because often times it makes sense to value immediate rewards
 more.
 It is important to note that we are maximizing the \textit{expected} sum of
-rewards. This it a the goal a smooth and differentiable function of the parameters,
+rewards. This makes the goal a smooth and differentiable function of the parameters,
 which means we can employ gradient descent to find the optimal parameters.
 This leads us to the first class of reinforcement learning algorithms:
 policy gradient algorithms.
@@ -365,6 +340,7 @@ Since the goal of this text is just to introduce the necessary concepts
 and algorithms, the derivation(s) will be ommited.
 We encourage the interested reader to consult the literature \cite{suttonrlbook}
 and CITE LEVINE'S BERKLEY LECTURES to find them.
+
 Here we will just note that it is crucial that the final expression
 can be estimated by sampling the agent's experience 
 as the other quantities are not available.
@@ -401,8 +377,7 @@ the REINFORCE algorithm, also known as ``vanilla policy gradient'':
 This algorithm does not work well in practice.
 The main reason for that is that the variance of returns
 is very high. 
-However, there are a number of modification
-which dramatically improve its performance.
+However, there are a number of modifications which dramatically improve its performance.
 Since the goal of this text is not to outline every reinforcement learning algorithm,
 we will introduce only the modifications which outline
 general trade-offs and principles in reinforcement learning algorithm design.
@@ -411,7 +386,7 @@ general trade-offs and principles in reinforcement learning algorithm design.
 The policy gradient in the REINFORCE algorithm lacks some important properties.
 One of them is that it should, ideally, make bad actions less likely
 and good actions more likely. 
-However, if all rewards are positive, then all action's probabilites will be increased,
+However, if all rewards are positive, then all actions' probabilities will be increased,
 only by different amounts.
 This can be changed if a \textbf{baseline} $ b  $is added to actions:
 \begin{align}
@@ -420,10 +395,10 @@ This can be changed if a \textbf{baseline} $ b  $is added to actions:
 		\nabla_\theta \log p_\theta (\tau) [ r(\tau) - b] \\
 		b &= \frac{1}{N} \sum_{i=1}^{N} r(\tau)
 \end{align}
-This addition doesn't change the gradient in expectation, i.e. it does not
+This addition does not change the gradient in expectation, i.e. it does not
 introduce bias,
 but it does change its variance.
-While an optimal bias can be calculated, it is rarely used in practise due
+Although an optimal bias can be calculated, it is rarely used in practice due
 to its computational cost.
 Using baselines is one of the key ideas in actor-critic algorithms
 so they will be discussed further there.
@@ -445,7 +420,7 @@ In mathematical notation:
 		\nabla_\theta J(\theta) = \underbrace{E_{\tau \sim p_\theta(\tau)}}_{\text{this is the trouble!}} [\nabla_\theta p_\theta(\tau)r(\tau)]
 \end{equation}
 If the policy is a neural network, which requires small gradient steps,
-the cost of generating a big number of samples for every update
+the cost of generating a large number of samples for every update
 could make the algorithm entirely infeasible.
 This of course depends on the cost of generating samples,
 which is entirely problem dependent ---
@@ -465,7 +440,7 @@ which is the name given to the following mathematical identity:
 which is exact in expectation.
 To use importance sampling to create an off-policy policy gradient algorithm,
 certain approximations need to be made. Again, the details of the derivation
-are ommited and what follows is just the final result.
+are omitted and what follows is just the final result.
 \begin{equation}
 		\nabla_{\theta'} J(\theta') \approx
 		\frac{1}{N} \sum_{i=1}^{N} \sum_{t=1}^{T}
@@ -481,13 +456,12 @@ This means that the expression works only if $ \pi_{ \theta' }  $
 is not too different from $ \pi_{ \theta }  $.
 
 \paragraph{Advanced policy gradient}
-The basic algorithm we have outline is essentially just a basic
-gradient descent method. 
+The basic algorithm we have outlined is essentially just a basic gradient descent method. 
 From convex optimization, we know that it can be made much better if second order derivatives
 or their approximations are used.
 For example, conjugate gradient descent can be used.
 Further, there are various ways in which this optimization problem can be better conditioned.
-Such improvements led algorithms such as PPO and TRPO,
+Such improvements led to algorithms such as PPO and TRPO,
 which will not be discussed here.
 
 \subsection{Actor-critic algorithms}
@@ -650,9 +624,8 @@ reduced to the argmax operation.
 
 \subsubsection{Dynamic programming}
 Dynamic programming refers to a collection of algorithms that can be used
-to compute optimal policies given a perfect model of the environment as
-an MDP.
-They are of limited utility in reinforcement learing due to the perfect model requirement 
+to compute optimal policies given a perfect model of the environment as an MDP.
+They are of limited utility in reinforcement learning due to the perfect model requirement 
 and their great computational expense, but are important theoretically ---
 they provide an essential foundation for understanding the other methods.
 Usually a finite MDP is assumed. DP can be applied to continous problems as well,
@@ -667,97 +640,62 @@ TODO:
 				approximation (introduce the bellman operator as well)
 \end{enumerate}
 
-\section{Deep Learning }
-
-TODO:
-\begin{enumerate}
-		\item Introduce to deep learning and advances in computer vision
-	\end{enumerate}
-
-
-
-\subsection{Auto Encoders : Preliminary location}
-
-
-Reinforcement learning requires learning from large  high-dimensional image data-set.For example, In Atari games the environment is composed of images with 210 * 160 pixels and 128 color palette.Each image is made up of hundreds of pixels, so each data point has hundreds of dimensions.The manifold hypothesis states that real-world high-dimensional data actually consists of low-dimensional data that is embedded in the high-dimensional space. This is the motivation behind dimensionality reduction techniques, which try to take high-dimensional data and project it onto a lower-dimensional surface.
-
-Autoencoders are a special kind of neural network used to perform dimensionality reduction. They act as an identity function, such that an auto encoder learns to output whatever is the input.They are  composed of two networks, an encoder e and a decoder d.
-
-The encoder learns a non-linear transformation  that projects the data from the original high-dimensional input space X to a lower-dimensional latent space Z.This is called latent  vector  $z=e(x) $ .A latent vector is a low-dimensional representation of a data point that contains information about x.This is commonly known  as latent space representation,it contains all the important information needed to represent raw data points.Auto encoders manipulates the "closeness" of data in the latent space.
-
-A decoder learns a non-linear transformation d:Z→X that projects the latent vectors back into the original high-dimensional input space X. This transformation takes the latent vector and reconstruct the original input data : 
-
-\begin{equation}
-     z = e(x)  	\rightarrow  \hat{x}=d(z)=d(e(x))
-\end{equation}
-
-The autoencoder is trained to minimize the difference between the input x and the reconstruction $\hat{x}$ using a kind of reconstruction loss.\\ 
-
-In traditional auto encoders the latent vector should be easily decoded back to the original image as a result the latent space z can become disjoint and non-continuous. Variational autoencoders try to solve this problem.
-
-In variational autoencoders, inputs are mapped to a probability distribution over latent vectors, and a latent vector is then sampled from that distribution. As a result the decoder becomes more robust at decoding latent vectors.
-
-Specifically, instead of mapping the input $x$ to a latent vector $z=e(x)$, 
-we map it instead to a mean vector $\mu(x)$ 
-and a vector of standard deviations $\sigma(x)$. 
-These parametrize a diagonal Gaussian distribution $\cal{N}(\mu, \sigma)$, 
-from which we then sample a latent vector $z \sim \cal{N}(\mu, \sigma)$.
-
-
-This is generally accomplished by replacing the last layer of a traditional autoencoder with two layers, each of which output $\mu(x)$
-and $\sigma(x)$. An exponential activation is often added to $\sigma(x)$ to ensure the result is positive.
-
-However, this does not completely solve the problem. 
-There may still be gaps in the latent space because the outputted means may 
-be significantly different and the standard deviations may be small. 
-To reduce that, an auxiliary loss is added that penalizes 
-the distribution $p(z|x)$ for being too far from the standard normal distribution 
-$\cal{N}(0,1)$. This penalty term is the 
-Kullback-Leibler(KL) divergence between $p(z|x)$ and $\cal{N}(0,1)$, 
-which is given by\(\mathbb{KL}\left( \mathcal{N}(\mu, \sigma) \parallel \mathcal{N}(0, 1) \right) = \sum_{x \in X} \left( \sigma^2 + \mu^2 - \log \sigma - \frac{1}{2} \right)\).This expression applies to two univariate Gaussian distributions by summing KL divergence for each dimension we are able to  extend it to our diagonal Gaussian distributions.
-
-This loss is useful for two reasons. First, we cannot train the encoder network by gradient descent without it, since gradients cannot flow through sampling (which is a non-differentiable operation). Second, by penalizing the KL divergence in this manner, we can encourage the latent vectors to occupy a more centralized and uniform location. In essence, we force the encoder to find latent vectors that approximately follow a standard Gaussian distribution that the decoder can then effectively decode.
-
-TODO:
-\begin{enumerate}
-		\item Discuss the latent rep embedding diff with traditional AE and Varational AE with marko and chechk the recostrauction loss for both
-		
-		\item Include argument on the Architecture  of our final AE used for RL
-	\end{enumerate}
-
-
 \section{Deep Reinforcement Learning and DQN}
 
-(paraphrase)After deep learning  has shown remarkable results in learning from raw pixel data in computer vision it's application has been adopted to solve many classical learning problems.The goal of Deep Reinforcement Learning is to connect reinforcement learning algorithm to deep neural network which operates directly on RGB images and efficiently process training data by using stochastic gradient updates[2].\\
+%TODO:
+%\begin{enumerate}
+%		\item Introduce to deep learning and advances in computer vision
+%	\end{enumerate}
 
-The use of label data and the assumption the distribution of data to be identical and independent through out training process in deep learning makes it complex to use it directly into reinforcement learning algorithms which must be able to learn from sparse ,noisy and delayed reward and highly correlated data.To address this issues and successfully apply deep learning to reinforcement learning [2] used experience replay mechanism[15] which randomly samples previous transitions, and thereby smooths the training distribution over many past behaviors.Convolutional neural network was used to  learn successful control policies from raw video data in complex reinforcement learning environment.The network is trained with a variant of Q-learning algorithm,with stochastic gradient descent to update the weights.
+The success of a deep neural network in computer vision has introduced a new
+paradigm in learning from raw pixels.   The goal of Deep Reinforcement Learning
+is to connect the reinforcement learning algorithm to a deep neural network
+that operates directly on RGB images and efficiently processes training data
+using stochastic gradient updates \cite{mnih2013atari}. 
 
-This architecture was based on Tesauro’s TD-Gammon architecture [17]
-which updates the parameters of the network that estimates the value function 
-directly from on-policy samples of experience. 
-Similar to this approach the online network  in DQN utilize a 
-technique known as experience replay [18] where the 
-agent’s experiences at each time-step, 
-$\mathcal e_t = (s_t,a_t,r_t,s_t+1)$ is stored in a data set 
-$\mathcal D = e1 , ..., e_N $ pooled over many 
-episodes into a replay memory.
-By drawing random samples from this pool of stored experiences  the Q-learning is updated.
-After performing experience replay, the agent selects and executes an 
-action according to an $\epsilon$-greedy policy.
+
+The use of label data and the assumption that the distribution of data is
+identical and independent throughout the deep learning training process makes
+it complex to use it directly in reinforcement learning algorithms, which must
+be able to learn from sparse,noisy,delayed reward and highly correlated data.
+To address these issues and successfully apply deep learning to reinforcement
+learning \cite{mnih2013atari} used the experience replay mechanism
+\cite{mnih2015humanlevel} which randomly samples previous transitions and
+thereby smooths the distribution of training over many past behaviors. A
+convolutional neural network was used to learn successful control policies from
+raw video data in a complex reinforcement learning environment. The network is
+trained with a variant of Q-learning algorithm,with stochastic gradient descent
+to update weights.\\
+
+This architecture was based on the Tesauro TD-Gammon architecture [17] that
+updates the parameters of the network that estimate the value function directly
+from the sampled experience of the policy. Similarly to this approach, the
+online network in DQN uses a technique known as experience replay [18] where
+the  agent’s experiences at each time-step, $\mathcal e_t =
+(s_t,a_t,r_t,s_t+1)$ is stored in a data set $\mathcal D = e1 , ..., e_N $
+pooled over many  episodes in a replay memory. By drawing random samples from
+this pool of stored experiences, the Q-learning is updated.After performing the
+experience replay, the agent selects and executes an action according to a
+$\epsilon$-greedy policy.
 The use of experience replay and target networks enables 
 relatively stable learning of Q values, 
-and led to super human performance on several Atari games.
+and led to super-human performance on several Atari games.
 
-The advantage of using Deep Q-learning over Q-learning  
+The advantage of using deep Q-learning over Q-learning  
 includes allowing  to have greater sample efficiency,
-reduced variance by randomising the sample bias and avoiding being 
-stuck in local minimum.Drawback  
-DQNs are it only handle discrete,low-dimensional action space.
+reduced variance by randomizing the sample bias, and avoiding being 
+stuck in local minimum. 
+The drawbacks of deep Q-learning is that it only handle discrete, 
+low-dimensional action spaces.
 
 
 \subsection{Extension of DQN }
 
-Several Studies were performed to increase the performance of DQNs(Paraphrase).
+Although the initial architecture of deep Q learning introduced by
+\cite{mnih2013atari} paves the way for the use of deep neural network in
+reinforcement learning, it comes with its own drawbacks;this leads to more
+studies and an improved DQN architecture.In this section, we will discuss these
+extensions of DQN architectures.
 
 \subsubsection{Double Deep Q-networks: DDQN}
 
@@ -801,14 +739,96 @@ The one limitation of $\mathcal{\epsilon}$-greedy policy  is many actions must b
 
 
 In the Rainbow architecture \cite{raibow} 
-several architecture changes included the one stated above where applied to DQN .Distributional loss  
-was replaced with a multi-step variant. The target distribution was constructed  by contracting the value distribution
+several architecture changes included the one stated above where applied to DQN.
+Distributional loss was replaced by a multi-step variant. The target
+distribution was constructed  by contracting the value distribution
 in St+n according to the cumulative discount, 
 and shifting it by the truncated n-step discounted return. 
 multi-step distributional loss with double Q-learning by using the greedy action in St+n 
 selected according to the online network as the bootstrap action $a \cdot t+n,$ and evaluating such action using the target network.
 
 \textbf{TODO ADD EQUATION:target distribution}
+
+
+
+\subsection{Deep autoencoders}
+
+
+Reinforcement learning requires learning from large  high-dimensional image
+data-set.For example, In Atari games the environment is composed of images with
+210 * 160 pixels and 128 color palette. Each image is made up of hundreds of
+pixels, so each data point has hundreds of dimensions. The manifold hypothesis
+states that real-world high-dimensional data actually consists of
+low-dimensional data that is embedded in the high-dimensional space. This is
+the motivation behind dimensionality reduction techniques, which try to take
+high-dimensional data and project it onto a lower-dimensional surface.
+
+Autoencoders are a special kind of neural network used to perform
+dimensionality reduction. They act as an identity function, such that an auto
+encoder learns to output whatever is the input.They are  composed of two
+networks, an encoder e and a decoder d.  
+
+The encoder learns a non-linear
+transformation that projects the data from the original high-dimensional input
+space X to a lower-dimensional latent space Z. 
+This is called latent  vector $z=e(x) $. 
+A latent vector is a low-dimensional representation of a data point
+that contains information about x.
+This is commonly known  as latent space representation,
+it contains all the important information needed to represent
+raw data points.Auto encoders manipulates the ``closeness'' of data in the latent
+space.  
+
+A decoder learns a non-linear transformation d:Z→X that projects the
+latent vectors back into the original high-dimensional input space X. This
+transformation takes the latent vector and reconstruct the original input data
+: 
+\begin{equation}
+     z = e(x)  	\rightarrow  \hat{x}=d(z)=d(e(x))
+\end{equation}
+
+The autoencoder is trained to minimize the difference between the input x and
+the reconstruction $\hat{x}$ using a kind of reconstruction loss.\\ 
+
+In traditional autoencoders, the latent vector should be easily decoded back to
+the original image as a result the latent space z can become disjoint and
+non-continuous. Variational autoencoders try to solve this problem.
+
+In variational autoencoders, inputs are mapped to a probability distribution
+over latent vectors, and a latent vector is then sampled from that
+distribution. As a result the decoder becomes more robust at decoding latent
+vectors.
+
+Specifically, instead of mapping the input $x$ to a latent vector $z=e(x)$, 
+we  instead map it to a mean vector $\mu(x)$ 
+and a vector of standard deviations $\sigma(x)$. 
+These parametrize a diagonal Gaussian distribution $\cal{N}(\mu, \sigma)$, 
+from which we then sample a latent vector $z \sim \cal{N}(\mu, \sigma)$.
+
+
+This is generally accomplished by replacing the last layer of a traditional
+autoencoder with two layers, each of which output $\mu(x)$ and $\sigma(x)$. An
+exponential activation is often added to $\sigma(x)$ to ensure the result is
+positive.
+
+However, this does not completely solve the problem. 
+There may still be gaps in the latent space because the outputted means may 
+be significantly different and the standard deviations may be small. 
+To reduce that, an auxiliary loss is added that penalizes 
+the distribution $p(z|x)$ for being too far from the standard normal distribution 
+$\cal{N}(0,1)$. This penalty term is the 
+Kullback-Leibler(KL) divergence between $p(z|x)$ and $\cal{N}(0,1)$, 
+which is given by\(\mathbb{KL}\left( \mathcal{N}(\mu, \sigma) \parallel \mathcal{N}(0, 1) \right) = \sum_{x \in X} \left( \sigma^2 + \mu^2 - \log \sigma - \frac{1}{2} \right)\).This expression applies to two univariate Gaussian distributions by summing KL divergence for each dimension we are able to  extend it to our diagonal Gaussian distributions.
+
+This loss is useful for two reasons. First, we cannot train the encoder network by gradient descent without it, since gradients cannot flow through sampling (which is a non-differentiable operation). Second, by penalizing the KL divergence in this manner, we can encourage the latent vectors to occupy a more centralized and uniform location. In essence, we force the encoder to find latent vectors that approximately follow a standard Gaussian distribution that the decoder can then effectively decode.
+
+%TODO:
+%\begin{enumerate}
+%		\item Discuss the latent rep embedding diff with traditional AE and Varational AE with marko and chechk the recostrauction loss for both
+%		
+%		\item Include argument on the Architecture  of our final AE used for RL
+%	\end{enumerate}
+
 
 \section{Problems with RL}
 ex. drl that matters paper

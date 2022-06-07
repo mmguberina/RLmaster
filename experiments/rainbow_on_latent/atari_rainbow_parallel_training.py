@@ -26,7 +26,7 @@ def get_args():
     parser.add_argument('--latent-space-type', type=str, default='single-frame-predictor')
     parser.add_argument('--pass-q-grads-to-encoder', type=bool, default=True)
     parser.add_argument('--alternating-training-frequency', type=int, default=1000)
-    parser.add_argument('--features-dim', type=int, default=3136)
+    parser.add_argument('--features-dim', type=int, default=50)
     parser.add_argument('--seed', type=int, default=0)
     parser.add_argument("--scale-obs", type=int, default=0)
     parser.add_argument('--eps-test', type=float, default=0.005)
@@ -34,7 +34,8 @@ def get_args():
     parser.add_argument('--eps-train-final', type=float, default=0.05)
     parser.add_argument('--buffer-size', type=int, default=100000)
 #    parser.add_argument('--buffer-size', type=int, default=100)
-    parser.add_argument('--lr', type=float, default=0.000625)
+#    parser.add_argument('--lr', type=float, default=0.000625)
+    parser.add_argument('--lr', type=float, default=0.0001)
     parser.add_argument('--gamma', type=float, default=0.99)
     parser.add_argument('--num-atoms', type=int, default=51)
     parser.add_argument('--v-min', type=float, default=-10.)
@@ -48,8 +49,8 @@ def get_args():
     parser.add_argument("--beta-final", type=float, default=1.)
     parser.add_argument("--beta-anneal-step", type=int, default=5000000)
     parser.add_argument("--no-weight-norm", action="store_true", default=False)
-    #parser.add_argument('--n-step', type=int, default=3)
-    parser.add_argument('--n-step', type=int, default=20)
+    parser.add_argument('--n-step', type=int, default=3)
+    #parser.add_argument('--n-step', type=int, default=20)
     parser.add_argument('--target-update-freq', type=int, default=500)
     parser.add_argument('--epoch', type=int, default=50)
 #    parser.add_argument('--epoch', type=int, default=5)
@@ -57,18 +58,18 @@ def get_args():
 #    parser.add_argument('--step-per-epoch', type=int, default=100)
     # TODO why 8?
     #parser.add_argument('--step-per-collect', type=int, default=12)
-    parser.add_argument('--step-per-collect', type=int, default=10)
+    parser.add_argument('--step-per-collect', type=int, default=8)
     # TODO having a different update frequency for the autoencoder 
     # and the policy is probably a smart thing to do
-    parser.add_argument('--update-per-step', type=float, default=0.1)
-    #parser.add_argument('--update-per-step', type=float, default=1)
+    #parser.add_argument('--update-per-step', type=float, default=0.1)
+    parser.add_argument('--update-per-step', type=float, default=1)
     parser.add_argument('--batch-size', type=int, default=64)
     parser.add_argument('--training-num', type=int, default=10)
     #parser.add_argument('--training-num', type=int, default=6)
     #parser.add_argument('--test-num', type=int, default=8)
-    parser.add_argument('--test-num', type=int, default=1)
+    parser.add_argument('--test-num', type=int, default=10)
     parser.add_argument('--logdir', type=str, default='log')
-    parser.add_argument('--log-name', type=str, default='raibow_ae_parallel_good_arch_fs_4_passing_q_grads')
+    parser.add_argument('--log-name', type=str, default='raibow_rae_parallel_fs_4_passing_q_grads_2')
     parser.add_argument('--render', type=float, default=0.)
     parser.add_argument(
         '--device', type=str, default='cuda' if torch.cuda.is_available() else 'cpu'
@@ -150,14 +151,14 @@ if __name__ == "__main__":
         observation_shape = list(args.state_shape)
         observation_shape[0] = 1 
         observation_shape = tuple(observation_shape)
-        #encoder = RAE_ENC(args.device, observation_shape, args.features_dim).to(args.device)
-        #decoder = RAE_DEC(args.device, observation_shape, args.features_dim).to(args.device)
-        encoder = CNNEncoderNew(observation_shape=observation_shape, 
-                features_dim=args.features_dim, device=args.device).to(args.device)
-        decoder = CNNDecoderNew(observation_shape=observation_shape, 
-                n_flatten=encoder.n_flatten, features_dim=args.features_dim).to(args.device)
-        print("encoder.n_flatten")
-        print(encoder.n_flatten)
+        encoder = RAE_ENC(args.device, observation_shape, args.features_dim).to(args.device)
+        decoder = RAE_DEC(args.device, observation_shape, args.features_dim).to(args.device)
+        #encoder = CNNEncoderNew(observation_shape=observation_shape, 
+        #        features_dim=args.features_dim, device=args.device).to(args.device)
+        #decoder = CNNDecoderNew(observation_shape=observation_shape, 
+        #        n_flatten=encoder.n_flatten, features_dim=args.features_dim).to(args.device)
+        #print("encoder.n_flatten")
+        #print(encoder.n_flatten)
         rl_input_dim = args.features_dim * args.frames_stack
     optim_encoder = torch.optim.Adam(encoder.parameters(), lr=args.lr)
     optim_decoder = torch.optim.Adam(decoder.parameters(), lr=args.lr, weight_decay=10**-7)
