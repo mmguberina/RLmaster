@@ -298,8 +298,8 @@ class RAE_predictive_DEC(nn.Module):
 
     def forward(self, h, a):
         # frames_stack is the same as action repeat
-        act_stacked = torch.cat((torch.tensor(a, device=self.device, dtype=torch.float),) * self.frames_stack, device=self.device)
-        h = torch.cat((h, act_stacked.view(-1,1)), dim=1, device=self.device)
+        act_stacked = torch.cat((torch.tensor(a, device=self.device, dtype=torch.float),) * self.frames_stack)
+        h = torch.cat((h, act_stacked.view(-1,1)), dim=1)
         h = torch.relu(self.fc(h))
         h = h.view(-1, self.num_filters, self.out_dim, self.out_dim)
         for i in range(self.num_layers - 1):
