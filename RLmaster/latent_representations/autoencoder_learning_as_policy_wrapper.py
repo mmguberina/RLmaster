@@ -53,6 +53,7 @@ class AutoencoderLatentSpacePolicy(BasePolicy):
         alternating_training_frequency: int = 1000,
         lr_scale: float = 0.001,
         data_augmentation: bool = True,
+        forward_prediction_in_latent: bool = True,
         **kwargs: Any,
     ) -> None:
         super().__init__(**kwargs)
@@ -74,6 +75,7 @@ class AutoencoderLatentSpacePolicy(BasePolicy):
         random_shift = nn.Sequential(nn.ReplicationPad2d(4), 
                 kornia.augmentation.RandomCrop((84, 84)))
         self.augmentation = random_shift
+        self.forward_prediction_in_latent = forward_prediction_in_latent
 
     def train(self, mode: bool = True) -> "AutoencoderLatentSpacePolicy":
         """Set the module in training mode."""
@@ -112,20 +114,20 @@ class AutoencoderLatentSpacePolicy(BasePolicy):
         # update the self.data batch not with obs=obs, but with obs=obs_orig or whatever
         # but to avoid needing to change policy code it is:
         # here shape the observations to fit the chosen latent space type
-        if self.latent_space_type == 'single-frame-predictor':
-            # encode each one separately
-            obs = batch[input].reshape((-1, 1, 84, 84))
-            # and then restack
-            #batch.embedded_obs = to_numpy(self.encoder(obs).view(-1, self.frames_stack, 
-            # we stack by combining into a single vector
-            # because now the first row is linear
-            # TODO make it work with cnn layers too
-            batch.embedded_obs = to_numpy(self.encoder(obs).view(-1, 
-                self.frames_stack * self.encoder.features_dim))
-        else:
-        # TODO: write out the other cases (ex. forward prediction)
-            obs = batch[input]
-            batch.embedded_obs = to_numpy(self.encoder(obs))
+        #if self.latent_space_type == 'single-frame-predictor':
+        # encode each one separately
+        obs = batch[input].reshape((-1, 1, 84, 84))
+        # and then restack
+        #batch.embedded_obs = to_numpy(self.encoder(obs).view(-1, self.frames_stack, 
+        # we stack by combining into a single vector
+        # because now the first row is linear
+        # TODO make it work with cnn layers too
+        batch.embedded_obs = to_numpy(self.encoder(obs).view(-1, 
+            self.frames_stack * self.encoder.features_dim))
+        #else:
+        ## TODO: write out the other cases (ex. forward prediction)
+        #    obs = batch[input]
+        #    batch.embedded_obs = to_numpy(self.encoder(obs))
         #batch.obs = to_numpy(embedded_obs)
         #print(batch.orig_obs.shape)
         return self.rl_policy.forward(batch, state, input="embedded_obs", **kwargs)
@@ -261,23 +263,7 @@ class AutoencoderLatentSpacePolicy(BasePolicy):
 
         if self.pass_policy_grad_to_encoder == False:
             with torch.no_grad():
-                if self.latent_space_type == 'single-frame-predictor':
-                    # encode each one separately
-                    obs = batch.obs.reshape((-1, 1, 84, 84))
-                    obs_next = batch.obs_next.reshape((-1, 1, 84, 84))
-                    # and then restack
-                    #batch.embedded_obs = to_numpy(self.encoder(obs).view(-1, self.frames_stack, 
-                    #    self.encoder.n_flatten))
-                    # NOTE this is the one you want for conv layer first
-                    #batch.obs = to_numpy(self.encoder(obs).view(-1, self.frames_stack, 
-                    # and this is the one where you stack beforehand for the liner layer first
-                    batch.obs = to_numpy(self.encoder(obs).view(-1, 
-                        self.frames_stack * self.encoder.features_dim))
-                    # added for rainbow
-                    batch.obs_next = to_numpy(self.encoder(obs_next).view(-1, 
-                        self.frames_stack * self.encoder.features_dim))
-        else:
-            if self.latent_space_type == 'single-frame-predictor':
+#                if self.latent_space_type == 'single-frame-predictor':
                 # encode each one separately
                 obs = batch.obs.reshape((-1, 1, 84, 84))
                 obs_next = batch.obs_next.reshape((-1, 1, 84, 84))
@@ -289,9 +275,24 @@ class AutoencoderLatentSpacePolicy(BasePolicy):
                 # and this is the one where you stack beforehand for the liner layer first
                 batch.obs = to_numpy(self.encoder(obs).view(-1, 
                     self.frames_stack * self.encoder.features_dim))
+                # added for rainbow
                 batch.obs_next = to_numpy(self.encoder(obs_next).view(-1, 
                     self.frames_stack * self.encoder.features_dim))
-
+        else:
+            #if self.latent_space_type == 'single-frame-predictor':
+            # encode each one separately
+            obs = batch.obs.reshape((-1, 1, 84, 84))
+            obs_next = batch.obs_next.reshape((-1, 1, 84, 84))
+            # and then restack
+            #batch.embedded_obs = to_numpy(self.encoder(obs).view(-1, self.frames_stack, 
+            #    self.encoder.n_flatten))
+            # NOTE this is the one you want for conv layer first
+            #batch.obs = to_numpy(self.encoder(obs).view(-1, self.frames_stack, 
+            # and this is the one where you stack beforehand for the liner layer first
+            batch.obs = to_numpy(self.encoder(obs).view(-1, 
+                self.frames_stack * self.encoder.features_dim))
+            batch.obs_next = to_numpy(self.encoder(obs_next).view(-1, 
+                self.frames_stack * self.encoder.features_dim))
 
 #            else:
 #            # TODO: write out the other cases (ex. forward prediction)
@@ -308,7 +309,12 @@ class AutoencoderLatentSpacePolicy(BasePolicy):
         res = self.rl_policy.learn(batch, **kwargs)
 
         encoded_obs = self.encoder(obs)
-        decoded_obs = self.decoder(encoded_obs)
+        if self.latent_space_type == 'single-frame-predictor':
+            decoded_obs = self.decoder(encoded_obs)
+        if self.latent_space_type == 'forward-frame-predictor':
+            #print(encoded_obs.shape)
+            #print(batch.act.shape)
+            decoded_obs = self.decoder(encoded_obs, batch.act)
 
         # batch.obs is of shape (batch_size, frames_stack, 84, 84)
         # decoded_obs is of shape (batch_size, 1, 84, 84) and we want it to learn, say, the last frame only
@@ -316,9 +322,9 @@ class AutoencoderLatentSpacePolicy(BasePolicy):
         # tried it in shell, this worked 
         #reconstruction_loss = self.reconstruction_criterion(decoded_obs, batch.obs[:, -1, :, :].view(-1, 1, 84, 84))
 
-        if self.latent_space_type == 'single-frame-predictor':
+        #if self.latent_space_type == 'single-frame-predictor':
             #reconstruction_loss = self.reconstruction_criterion(decoded_obs, obs[:, -1, :, :].view(-1, 1, 84, 84))
-            reconstruction_loss = self.reconstruction_criterion(decoded_obs, obs / 255)
+        reconstruction_loss = self.reconstruction_criterion(decoded_obs, obs / 255)
 #        if self.latent_space_type == 'forward-frame-predictor':
 #            batch.obs_next = torch.tensor(batch.obs_next, device=self.device)
 #            print(batch.obs_next.shape)
@@ -326,10 +332,10 @@ class AutoencoderLatentSpacePolicy(BasePolicy):
 #            reconstruction_loss = self.reconstruction_criterion(decoded_obs, batch.obs_next[:, -1, :, :].view(-1, 1, 84, 84) / 255)
         # L2 penalty on latent representation:
         # this is wrong for single-frame-predictor
-        if self.latent_space_type == 'forward-frame-predictor':
-            latent_loss = (0.5 * encoded_obs.pow(2).sum(1)).mean()
-        if self.latent_space_type == 'single-frame-predictor':
-            latent_loss = (0.5 * encoded_obs.pow(2).sum(1)).mean()
+        #if self.latent_space_type == 'forward-frame-predictor':
+        #    latent_loss = (0.5 * encoded_obs.pow(2).sum(1)).mean()
+        #if self.latent_space_type == 'single-frame-predictor':
+        latent_loss = (0.5 * encoded_obs.pow(2).sum(1)).mean()
         # throwing a sample loss in there to see what happens
         loss = reconstruction_loss + latent_loss * 10**-6
 
@@ -340,9 +346,7 @@ class AutoencoderLatentSpacePolicy(BasePolicy):
         self.optim_decoder.step()
         res.update(
             {
-                # this appears to be causing some wild cuda error
                 "loss/autoencoder": loss.item(),
-#                "loss/autoencoder": loss,
             }
         )
         return res

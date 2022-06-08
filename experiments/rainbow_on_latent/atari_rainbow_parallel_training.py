@@ -26,6 +26,8 @@ def get_args():
     parser.add_argument('--latent-space-type', type=str, default='single-frame-predictor')
     parser.add_argument('--pass-q-grads-to-encoder', type=bool, default=True)
     parser.add_argument('--data-augmentation', type=bool, default=True)
+    # TODO implement this lel
+    parser.add_argument('--forward-prediction-in-latent', type=bool, default=True)
     parser.add_argument('--alternating-training-frequency', type=int, default=1000)
     parser.add_argument('--features-dim', type=int, default=50)
     parser.add_argument('--seed', type=int, default=0)
@@ -212,7 +214,8 @@ if __name__ == "__main__":
         args.device,
         args.pass_q_grads_to_encoder,
         args.alternating_training_frequency,
-        args.data_augmentation
+        args.data_augmentation,
+        args.forward_prediction_in_latent
     )
     # TODO write this out
     if args.resume_path:

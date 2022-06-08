@@ -277,7 +277,7 @@ class RAE_DEC(nn.Module):
         obs = self.deconv_layers[-1](h)
         return obs
 
-
+# TODO finish this maybe
 class RAE_predictive_DEC(nn.Module):
     def __init__(self, device, observation_shape, features_dim, frames_stack, num_layers=4, num_filters=32):
         super().__init__()
@@ -289,8 +289,7 @@ class RAE_predictive_DEC(nn.Module):
         self.out_dim = 35
 
         # the + frames_stack -1  is for actions
-        self.fc = nn.Linear(features_dim * frames_stack + frames_stack - 1, 
-                num_filters * self.out_dim * self.out_dim)
+        self.fc = nn.Linear(features_dim + 1, num_filters * self.out_dim * self.out_dim)
         self.deconv_layers = nn.ModuleList()
         for i in range(self.num_layers - 1):
             self.deconv_layers.append(nn.ConvTranspose2d(num_filters, num_filters, 3, stride=1))
@@ -298,10 +297,60 @@ class RAE_predictive_DEC(nn.Module):
              nn.ConvTranspose2d(num_filters, observation_shape[0], 3, stride=2, output_padding=1))
 
     def forward(self, h, a):
-        h = torch.concat(h, a)
+        # frames_stack is the same as action repeat
+        act_stacked = torch.cat((torch.tensor(a),) * self.frames_stack)
+        h = torch.cat((h, act_stacked.view(-1,1)), dim=1)
         h = torch.relu(self.fc(h))
         h = h.view(-1, self.num_filters, self.out_dim, self.out_dim)
         for i in range(self.num_layers - 1):
             h = torch.relu(self.deconv_layers[i](h))
         obs = self.deconv_layers[-1](h)
         return obs
+
+
+
+class PredictorInLatent(nn.Module):
+    def __init__(self, device, features_dim, frames_stack):
+        super().__init__()
+        self.device = device
+        self.features_dim = features_dim
+        self.frames_stack = frames_stack
+
+        # what are these sizes tho?
+        self.net = nn.Sequential(
+            nn.Linear(args.frames_stack * self.features_dim + 1, 512), nn.ReLU(inplace=True),
+            nn.Linear(512, 256), nn.ReLU(inplace=True),
+            nn.Linear(256, args.frames_stack * self.features_dim)
+            )
+# maybe you want to normalize the latent space first
+# then you can have a meaningful activation at the end
+# but whatever for now
+    def forward(self, obs_latent, act):
+        obs_latent_and_act = torch.cat((obs_latent, torch.tensor(act).view(-1,1)), dim=1)
+        obs_latent_next = self.net(obs_latent_and_act)
+        return obs_latent_next
+
+# TODO finish this
+class InversePredictorInLatent(nn.Module):
+    def __init__(self, device, features_dim, frames_stack, batch_size):
+        super().__init__()
+        self.device = device
+        self.features_dim = features_dim
+        self.frames_stack = frames_stack
+
+# give full stacks, it's the same action in between them
+        self.net = nn.Sequential(
+            nn.Linear(2 * args.frames_stack * self.features_dim, 512), nn.ReLU(inplace=True),
+            nn.Linear(512, 256), nn.ReLU(inplace=True),
+            nn.Linear(256, batch_size)
+            )
+# maybe you want to normalize the latent space first
+# then you can have a meaningful activation at the end
+# but whatever for now
+    def forward(self, obs_latent, obs_latent_next):
+        # TODO check this concat
+        consequtives_obses = torch.cat((obs_latent, obs_latent_next), dim=1)
+        obs_latent_next = self.net(obs_latent_and_act)
+        return obs_latent_next
+
+

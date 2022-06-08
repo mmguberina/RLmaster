@@ -15,7 +15,7 @@ from tianshou.env import ShmemVectorEnv
 #from RLmaster.policy.autoencoder_only import AutoencoderOnly
 from RLmaster.policy.random import RandomPolicy
 from RLmaster.latent_representations.autoencoder_learning_as_policy_wrapper import AutoencoderLatentSpacePolicy
-from RLmaster.latent_representations.autoencoder_nn import RAE_ENC, RAE_DEC, CNNEncoderNew, CNNDecoderNew
+from RLmaster.latent_representations.autoencoder_nn import RAE_ENC, RAE_DEC, CNNEncoderNew, CNNDecoderNew, RAE_predictive_DEC
 from RLmaster.util.collector_on_latent import CollectorOnLatent
 from tianshou.trainer import offpolicy_trainer
 from tianshou.utils import TensorboardLogger
@@ -30,11 +30,14 @@ def get_args():
     parser = argparse.ArgumentParser()
 #    parser.add_argument('--task', type=str, default='PongNoFrameskip-v4')
     parser.add_argument('--task', type=str, default='BreakoutNoFrameskip-v4')
-#    parser.add_argument('--latent-space-type', type=str, default='forward-frame-predictor')
-    parser.add_argument('--latent-space-type', type=str, default='single-frame-predictor')
+    parser.add_argument('--latent-space-type', type=str, default='forward-frame-predictor')
+#    parser.add_argument('--latent-space-type', type=str, default='single-frame-predictor')
 #    parser.add_argument('--latent-space-type', type=str, default='inverse-dynamics-model')
     parser.add_argument('--pass-q-grads-to-encoder', type=bool, default=False)
-    parser.add_argument('--data-aug', type=bool, default=True)
+#    parser.add_argument('--data-augmentation', type=bool, default=True)
+    parser.add_argument('--data-augmentation', type=bool, default=False)
+    # NOTE the arg below is not used atm
+    parser.add_argument('--forward-prediction-in-latent', type=bool, default=True)
     parser.add_argument('--alternating-training-frequency', type=int, default=1000)
     parser.add_argument('--features_dim', type=int, default=50)
     parser.add_argument('--seed', type=int, default=0)
@@ -63,7 +66,7 @@ def get_args():
 #    parser.add_argument('--test-num', type=int, default=8)
     parser.add_argument('--test-num', type=int, default=1)
     parser.add_argument('--logdir', type=str, default='log')
-    parser.add_argument('--log-name', type=str, default='rae_single-frame-trained_as_policy_1')
+    parser.add_argument('--log-name', type=str, default='rae_forward-frame-trained_as_policy_1')
 #    parser.add_argument('--log-name', type=str, default='inverse_dynamics_model_1')
     parser.add_argument('--render', type=float, default=0.)
     parser.add_argument(
@@ -133,18 +136,22 @@ if __name__ == '__main__':
     rl_policy = RandomPolicy(args.action_shape)
     observation_shape = args.state_shape
 
-    if args.latent_space_type == 'single-frame-predictor':
+    #if args.latent_space_type == 'single-frame-predictor':
         # in this case, we don't pass the stacked frames.
         # we unstack them, compress them, the stack the compressed ones and
         # pass that to the policy
-        observation_shape = list(args.state_shape)
-        observation_shape[0] = 1 
-        observation_shape = tuple(observation_shape)
+    observation_shape = list(args.state_shape)
+    observation_shape[0] = 1 
+    observation_shape = tuple(observation_shape)
     encoder = RAE_ENC(args.device, observation_shape, 
             args.features_dim).to(args.device)
     print(encoder)
-    decoder = RAE_DEC(args.device, observation_shape, 
-            args.features_dim).to(args.device)
+    if args.latent_space_type == "single-frame-predictor":
+        decoder = RAE_DEC(args.device, observation_shape, 
+                args.features_dim).to(args.device)
+    if args.latent_space_type == "forward-frame-predictor":
+        decoder = RAE_predictive_DEC(args.device, observation_shape, 
+                args.features_dim, args.frames_stack).to(args.device)
     print(decoder)
 #    encoder = CNNEncoderNew(observation_shape=args.state_shape, features_dim=args.features_dim, device=args.device).to(args.device)
 #    decoder = CNNDecoderNew(observation_shape=args.state_shape, n_flatten=encoder.n_flatten, features_dim=args.features_dim).to(args.device)
