@@ -326,7 +326,7 @@ class AutoencoderLatentSpacePolicy(BasePolicy):
             #reconstruction_loss = self.reconstruction_criterion(decoded_obs, obs[:, -1, :, :].view(-1, 1, 84, 84))
         if self.latent_space_type == 'single-frame-predictor':
             reconstruction_loss = self.reconstruction_criterion(decoded_obs, obs / 255)
-        if self.latent_space_type == 'single-frame-predictor':
+        if self.latent_space_type == 'forward-frame-predictor':
             reconstruction_loss = self.reconstruction_criterion(decoded_obs, obs_next / 255)
 #        if self.latent_space_type == 'forward-frame-predictor':
 #            batch.obs_next = torch.tensor(batch.obs_next, device=self.device)
