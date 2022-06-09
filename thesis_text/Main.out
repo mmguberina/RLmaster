@@ -64,16 +64,18 @@
 \BOOKMARK [2][-]{subsection.3.3.4}{Rainbow stuff}{section.3.3}% 64
 \BOOKMARK [1][-]{section.3.4}{Formulating our hypothesis}{chapter.3}% 65
 \BOOKMARK [0][-]{chapter.4}{Methods}{}% 66
-\BOOKMARK [1][-]{section.4.1}{Problems to be tackled}{chapter.4}% 67
-\BOOKMARK [1][-]{section.4.2}{Hypotheses}{chapter.4}% 68
-\BOOKMARK [2][-]{subsection.4.2.1}{Enviroment and Preprocessing}{section.4.2}% 69
-\BOOKMARK [2][-]{subsection.4.2.2}{Deep Auto-encoder and Model Architecture}{section.4.2}% 70
-\BOOKMARK [2][-]{subsection.4.2.3}{Training the RL Agent}{section.4.2}% 71
-\BOOKMARK [0][-]{chapter.5}{Results}{}% 72
-\BOOKMARK [1][-]{subsection.5.0.1}{Two Step Training}{chapter.5}% 73
-\BOOKMARK [2][-]{subsection.5.0.2}{Parallel Training}{subsection.5.0.1}% 74
-\BOOKMARK [0][-]{chapter.6}{Conclusion}{}% 75
-\BOOKMARK [1][-]{section.6.1}{Discussion}{chapter.6}% 76
-\BOOKMARK [1][-]{section.6.2}{Conclusion}{chapter.6}% 77
-\BOOKMARK [0][-]{section.6.2}{Bibliography}{}% 78
-\BOOKMARK [0][-]{appendix.A}{Appendix 1}{}% 79
+\BOOKMARK [1][-]{section.4.1}{Our approach}{chapter.4}% 67
+\BOOKMARK [1][-]{section.4.2}{Environment and Preprocessing}{chapter.4}% 68
+\BOOKMARK [1][-]{section.4.3}{Implementation}{chapter.4}% 69
+\BOOKMARK [2][-]{subsection.4.3.1}{Tianshou}{section.4.3}% 70
+\BOOKMARK [2][-]{subsection.4.3.2}{Trainer}{section.4.3}% 71
+\BOOKMARK [2][-]{subsection.4.3.3}{Implementing state representation learning in Tianshou}{section.4.3}% 72
+\BOOKMARK [1][-]{section.4.4}{Hyperparameters}{chapter.4}% 73
+\BOOKMARK [0][-]{chapter.5}{Results}{}% 74
+\BOOKMARK [1][-]{subsection.5.0.1}{Two Step Training}{chapter.5}% 75
+\BOOKMARK [2][-]{subsection.5.0.2}{Parallel Training}{subsection.5.0.1}% 76
+\BOOKMARK [0][-]{chapter.6}{Conclusion}{}% 77
+\BOOKMARK [1][-]{section.6.1}{Discussion}{chapter.6}% 78
+\BOOKMARK [1][-]{section.6.2}{Conclusion}{chapter.6}% 79
+\BOOKMARK [0][-]{section.6.2}{Bibliography}{}% 80
+\BOOKMARK [0][-]{appendix.A}{Appendix 1}{}% 81

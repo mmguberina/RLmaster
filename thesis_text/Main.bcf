@@ -2389,6 +2389,17 @@
     <bcf:citekey order="37">auto-encoderforEfficientEmbeddedReinforcementLearning</bcf:citekey>
     <bcf:citekey order="38">firstaeinrl</bcf:citekey>
     <bcf:citekey order="39">sac</bcf:citekey>
+    <bcf:citekey order="40">sac+ae</bcf:citekey>
+    <bcf:citekey order="41">rainbow</bcf:citekey>
+    <bcf:citekey order="42">icm</bcf:citekey>
+    <bcf:citekey order="43">rakelly2021mutual</bcf:citekey>
+    <bcf:citekey order="44">sac+ae</bcf:citekey>
+    <bcf:citekey order="45">ghosh2019variational</bcf:citekey>
+    <bcf:citekey order="46">drqv1</bcf:citekey>
+    <bcf:citekey order="46">drqv2</bcf:citekey>
+    <bcf:citekey order="47">bellemare2013arcade</bcf:citekey>
+    <bcf:citekey order="48">exploratorysrl</bcf:citekey>
+    <bcf:citekey order="49">weng2021tianshou</bcf:citekey>
   </bcf:section>
   <!-- SORTING TEMPLATES -->
   <bcf:sortingtemplate name="ynt">

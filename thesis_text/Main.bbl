@@ -19,6 +19,41 @@
 
 \refsection{0}
   \datalist[entry]{ynt/global//global/global}
+    \entry{lange2010deep}{inproceedings}{}
+      \name{author}{2}{}{%
+        {{hash=eb0c3521aaad8bb21bb052214ae15910}{%
+           family={Lange},
+           familyi={L\bibinitperiod},
+           given={Sascha},
+           giveni={S\bibinitperiod}}}%
+        {{hash=9449802bcb467309c0ebced658096818}{%
+           family={Riedmiller},
+           familyi={R\bibinitperiod},
+           given={Martin},
+           giveni={M\bibinitperiod}}}%
+      }
+      \list{organization}{1}{%
+        {IEEE}%
+      }
+      \strng{namehash}{beb538c344f0aac7b09eccbd08bc9dea}
+      \strng{fullhash}{beb538c344f0aac7b09eccbd08bc9dea}
+      \strng{bibnamehash}{beb538c344f0aac7b09eccbd08bc9dea}
+      \strng{authorbibnamehash}{beb538c344f0aac7b09eccbd08bc9dea}
+      \strng{authornamehash}{beb538c344f0aac7b09eccbd08bc9dea}
+      \strng{authorfullhash}{beb538c344f0aac7b09eccbd08bc9dea}
+      \field{extraname}{1}
+      \field{labelalpha}{LR10}
+      \field{sortinit}{2}
+      \field{sortinithash}{ed39bb39cf854d5250e95b1c1f94f4ed}
+      \field{extraalpha}{1}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{booktitle}{The 2010 international joint conference on neural networks (IJCNN)}
+      \field{title}{Deep auto-encoder neural networks in reinforcement learning}
+      \field{year}{2010}
+      \field{pages}{1\bibrangedash 8}
+      \range{pages}{8}
+    \endentry
     \entry{firstaeinrl}{inproceedings}{}
       \name{author}{2}{}{%
         {{hash=eb0c3521aaad8bb21bb052214ae15910}{%
@@ -41,9 +76,11 @@
       \strng{authorbibnamehash}{beb538c344f0aac7b09eccbd08bc9dea}
       \strng{authornamehash}{beb538c344f0aac7b09eccbd08bc9dea}
       \strng{authorfullhash}{beb538c344f0aac7b09eccbd08bc9dea}
+      \field{extraname}{2}
       \field{labelalpha}{LR10}
       \field{sortinit}{2}
       \field{sortinithash}{ed39bb39cf854d5250e95b1c1f94f4ed}
+      \field{extraalpha}{2}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{booktitle}{The 2010 international joint conference on neural networks (IJCNN)}
@@ -51,6 +88,47 @@
       \field{year}{2010}
       \field{pages}{1\bibrangedash 8}
       \range{pages}{8}
+    \endentry
+    \entry{bellemare2013arcade}{article}{}
+      \name{author}{4}{}{%
+        {{hash=eae3aa0ab9cb8b33a1ade80739e79e57}{%
+           family={Bellemare},
+           familyi={B\bibinitperiod},
+           given={Marc\bibnamedelima G},
+           giveni={M\bibinitperiod\bibinitdelim G\bibinitperiod}}}%
+        {{hash=07c80c48e7c42d8390ac0ad0513cbed3}{%
+           family={Naddaf},
+           familyi={N\bibinitperiod},
+           given={Yavar},
+           giveni={Y\bibinitperiod}}}%
+        {{hash=1cbd91f7404b2298b46bb46c47c08251}{%
+           family={Veness},
+           familyi={V\bibinitperiod},
+           given={Joel},
+           giveni={J\bibinitperiod}}}%
+        {{hash=3318cb7968ff83b0f4b5a04d8f9ec318}{%
+           family={Bowling},
+           familyi={B\bibinitperiod},
+           given={Michael},
+           giveni={M\bibinitperiod}}}%
+      }
+      \strng{namehash}{6053df28940389b0a23ac429c3b0634d}
+      \strng{fullhash}{49395aa0bfa961c14ab74a906578e3ee}
+      \strng{bibnamehash}{6053df28940389b0a23ac429c3b0634d}
+      \strng{authorbibnamehash}{6053df28940389b0a23ac429c3b0634d}
+      \strng{authornamehash}{6053df28940389b0a23ac429c3b0634d}
+      \strng{authorfullhash}{49395aa0bfa961c14ab74a906578e3ee}
+      \field{labelalpha}{Bel+13}
+      \field{sortinit}{2}
+      \field{sortinithash}{ed39bb39cf854d5250e95b1c1f94f4ed}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Journal of Artificial Intelligence Research}
+      \field{title}{The arcade learning environment: An evaluation platform for general agents}
+      \field{volume}{47}
+      \field{year}{2013}
+      \field{pages}{253\bibrangedash 279}
+      \range{pages}{27}
     \endentry
     \entry{mnih2013atari}{article}{}
       \name{author}{7}{}{%
@@ -514,6 +592,50 @@
       \field{title}{Rainbow: Combining improvements in deep reinforcement learning}
       \field{year}{2018}
     \endentry
+    \entry{srloverview}{article}{}
+      \name{author}{4}{}{%
+        {{hash=5df208e714096b2c067956b5334953cd}{%
+           family={Lesort},
+           familyi={L\bibinitperiod},
+           given={Timothée},
+           giveni={T\bibinitperiod}}}%
+        {{hash=38783cabedc22133ae868e9439e87e3c}{%
+           family={Dı́az-Rodrı́guez},
+           familyi={D\bibinithyphendelim R\bibinitperiod},
+           given={Natalia},
+           giveni={N\bibinitperiod}}}%
+        {{hash=82d83a6d9f8018dcbddd27f67c19a219}{%
+           family={Goudou},
+           familyi={G\bibinitperiod},
+           given={Jean-Franois},
+           giveni={J\bibinithyphendelim F\bibinitperiod}}}%
+        {{hash=86d3a84fdaeef92ef05a26619046b52c}{%
+           family={Filliat},
+           familyi={F\bibinitperiod},
+           given={David},
+           giveni={D\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {Elsevier}%
+      }
+      \strng{namehash}{b81e90cf535da7a8069eacad6241a3eb}
+      \strng{fullhash}{21e13cdc60c223680126eaa7ff9b4c34}
+      \strng{bibnamehash}{b81e90cf535da7a8069eacad6241a3eb}
+      \strng{authorbibnamehash}{b81e90cf535da7a8069eacad6241a3eb}
+      \strng{authornamehash}{b81e90cf535da7a8069eacad6241a3eb}
+      \strng{authorfullhash}{21e13cdc60c223680126eaa7ff9b4c34}
+      \field{labelalpha}{Les+18}
+      \field{sortinit}{2}
+      \field{sortinithash}{ed39bb39cf854d5250e95b1c1f94f4ed}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Neural Networks}
+      \field{title}{State representation learning for control: An overview}
+      \field{volume}{108}
+      \field{year}{2018}
+      \field{pages}{379\bibrangedash 392}
+      \range{pages}{14}
+    \endentry
     \entry{suttonrlbook}{book}{}
       \name{author}{2}{}{%
         {{hash=eb920e5277d3d5fd0903f3cd41e11871}{%
@@ -543,6 +665,98 @@
       \field{labeltitlesource}{title}
       \field{title}{Reinforcement learning: An introduction}
       \field{year}{2018}
+    \endentry
+    \entry{anand2019unsupervised}{article}{}
+      \name{author}{6}{}{%
+        {{hash=e9c04884349329f54db6669b03ab4d4a}{%
+           family={Anand},
+           familyi={A\bibinitperiod},
+           given={Ankesh},
+           giveni={A\bibinitperiod}}}%
+        {{hash=1b0ed0dc8b4d1d9b1cc49dfbc39c5f59}{%
+           family={Racah},
+           familyi={R\bibinitperiod},
+           given={Evan},
+           giveni={E\bibinitperiod}}}%
+        {{hash=9ca00ffd7cc35f7cfb8f698aa9239c76}{%
+           family={Ozair},
+           familyi={O\bibinitperiod},
+           given={Sherjil},
+           giveni={S\bibinitperiod}}}%
+        {{hash=40a8e4774982146adc2688546f54efb2}{%
+           family={Bengio},
+           familyi={B\bibinitperiod},
+           given={Yoshua},
+           giveni={Y\bibinitperiod}}}%
+        {{hash=90f75a481318c6e2f4d938116479e00f}{%
+           family={Côté},
+           familyi={C\bibinitperiod},
+           given={Marc-Alexandre},
+           giveni={M\bibinithyphendelim A\bibinitperiod}}}%
+        {{hash=68d18c6f3387bc203910c98ed4e1303c}{%
+           family={Hjelm},
+           familyi={H\bibinitperiod},
+           given={R\bibnamedelima Devon},
+           giveni={R\bibinitperiod\bibinitdelim D\bibinitperiod}}}%
+      }
+      \strng{namehash}{da61d343c6d4020417a3813bff4af512}
+      \strng{fullhash}{ab88a75f8dce4c7257c00aae6d8318da}
+      \strng{bibnamehash}{da61d343c6d4020417a3813bff4af512}
+      \strng{authorbibnamehash}{da61d343c6d4020417a3813bff4af512}
+      \strng{authornamehash}{da61d343c6d4020417a3813bff4af512}
+      \strng{authorfullhash}{ab88a75f8dce4c7257c00aae6d8318da}
+      \field{labelalpha}{Ana+19}
+      \field{sortinit}{2}
+      \field{sortinithash}{ed39bb39cf854d5250e95b1c1f94f4ed}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Advances in Neural Information Processing Systems}
+      \field{title}{Unsupervised state representation learning in atari}
+      \field{volume}{32}
+      \field{year}{2019}
+    \endentry
+    \entry{ghosh2019variational}{article}{}
+      \name{author}{5}{}{%
+        {{hash=5a537aa2f9e8f2686a173dc795122062}{%
+           family={Ghosh},
+           familyi={G\bibinitperiod},
+           given={Partha},
+           giveni={P\bibinitperiod}}}%
+        {{hash=ea53115fe83889642a19ccb418b2b249}{%
+           family={Sajjadi},
+           familyi={S\bibinitperiod},
+           given={Mehdi\bibnamedelima SM},
+           giveni={M\bibinitperiod\bibinitdelim S\bibinitperiod}}}%
+        {{hash=b7a65ac5093b490ca4aba4d8fedf8a1c}{%
+           family={Vergari},
+           familyi={V\bibinitperiod},
+           given={Antonio},
+           giveni={A\bibinitperiod}}}%
+        {{hash=56244ef4c627aaedf25cccd283fe9e65}{%
+           family={Black},
+           familyi={B\bibinitperiod},
+           given={Michael},
+           giveni={M\bibinitperiod}}}%
+        {{hash=ca31cc11ec9370460148c3a9c48fce45}{%
+           family={Schölkopf},
+           familyi={S\bibinitperiod},
+           given={Bernhard},
+           giveni={B\bibinitperiod}}}%
+      }
+      \strng{namehash}{384ff411df1300dbbbfda96bb52742e1}
+      \strng{fullhash}{4285aed43abfb80ce244c05bcedfabe3}
+      \strng{bibnamehash}{384ff411df1300dbbbfda96bb52742e1}
+      \strng{authorbibnamehash}{384ff411df1300dbbbfda96bb52742e1}
+      \strng{authornamehash}{384ff411df1300dbbbfda96bb52742e1}
+      \strng{authorfullhash}{4285aed43abfb80ce244c05bcedfabe3}
+      \field{labelalpha}{Gho+19}
+      \field{sortinit}{2}
+      \field{sortinithash}{ed39bb39cf854d5250e95b1c1f94f4ed}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{arXiv preprint arXiv:1903.12436}
+      \field{title}{From variational to deterministic autoencoders}
+      \field{year}{2019}
     \endentry
     \entry{sac+ae}{article}{}
       \name{author}{6}{}{%
@@ -650,6 +864,79 @@
       \field{year}{2020}
       \field{pages}{507\bibrangedash 517}
       \range{pages}{11}
+    \endentry
+    \entry{grill2020bootstrap}{article}{}
+      \true{moreauthor}
+      \true{morelabelname}
+      \name{author}{10}{}{%
+        {{hash=152351efb2aa1ec8470b935d63d68a21}{%
+           family={Grill},
+           familyi={G\bibinitperiod},
+           given={Jean-Bastien},
+           giveni={J\bibinithyphendelim B\bibinitperiod}}}%
+        {{hash=c3af936a4e6dd4b0086458a45dfac6da}{%
+           family={Strub},
+           familyi={S\bibinitperiod},
+           given={Florian},
+           giveni={F\bibinitperiod}}}%
+        {{hash=ba254bce2809834e8b51cd526e20c1c2}{%
+           family={Altché},
+           familyi={A\bibinitperiod},
+           given={Florent},
+           giveni={F\bibinitperiod}}}%
+        {{hash=53e127de75e9241aa5b25e378a90fea1}{%
+           family={Tallec},
+           familyi={T\bibinitperiod},
+           given={Corentin},
+           giveni={C\bibinitperiod}}}%
+        {{hash=535cce7dcfc009a18b779fe06581d894}{%
+           family={Richemond},
+           familyi={R\bibinitperiod},
+           given={Pierre},
+           giveni={P\bibinitperiod}}}%
+        {{hash=eee8c4b85d5c4e1f4bc70218d34ba69d}{%
+           family={Buchatskaya},
+           familyi={B\bibinitperiod},
+           given={Elena},
+           giveni={E\bibinitperiod}}}%
+        {{hash=96b67cea31d7dd5c10af974faba91947}{%
+           family={Doersch},
+           familyi={D\bibinitperiod},
+           given={Carl},
+           giveni={C\bibinitperiod}}}%
+        {{hash=3752f6dab6066eff3f549887876510e9}{%
+           family={Avila\bibnamedelima Pires},
+           familyi={A\bibinitperiod\bibinitdelim P\bibinitperiod},
+           given={Bernardo},
+           giveni={B\bibinitperiod}}}%
+        {{hash=61146a717964e54e6c941d9307faea3e}{%
+           family={Guo},
+           familyi={G\bibinitperiod},
+           given={Zhaohan},
+           giveni={Z\bibinitperiod}}}%
+        {{hash=678347975ebf37e33e0b2c5abcb66bcd}{%
+           family={Gheshlaghi\bibnamedelima Azar},
+           familyi={G\bibinitperiod\bibinitdelim A\bibinitperiod},
+           given={Mohammad},
+           giveni={M\bibinitperiod}}}%
+      }
+      \strng{namehash}{37900d0162e64eae8ddfb8300b650795}
+      \strng{fullhash}{201b6bc511aa1dc5fa38fc652bb09932}
+      \strng{bibnamehash}{37900d0162e64eae8ddfb8300b650795}
+      \strng{authorbibnamehash}{37900d0162e64eae8ddfb8300b650795}
+      \strng{authornamehash}{37900d0162e64eae8ddfb8300b650795}
+      \strng{authorfullhash}{201b6bc511aa1dc5fa38fc652bb09932}
+      \field{labelalpha}{Gri+20}
+      \field{sortinit}{2}
+      \field{sortinithash}{ed39bb39cf854d5250e95b1c1f94f4ed}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Advances in Neural Information Processing Systems}
+      \field{title}{Bootstrap your own latent-a new approach to self-supervised learning}
+      \field{volume}{33}
+      \field{year}{2020}
+      \field{pages}{21271\bibrangedash 21284}
+      \range{pages}{14}
     \endentry
     \entry{drqv1}{article}{}
       \name{author}{3}{}{%
@@ -773,58 +1060,275 @@
       \field{pages}{19884\bibrangedash 19895}
       \range{pages}{12}
     \endentry
-    \entry{laser}{inproceedings}{}
-      \name{author}{6}{}{%
-        {{hash=c924448369e4049193582589341c8dd4}{%
-           family={Allshire},
-           familyi={A\bibinitperiod},
-           given={Arthur},
-           giveni={A\bibinitperiod}}}%
-        {{hash=8ba9391ad4a79bef1f4a96128c9aa6af}{%
-           family={Martı́n-Martı́n},
-           familyi={M\bibinithyphendelim M\bibinitperiod},
-           given={Roberto},
-           giveni={R\bibinitperiod}}}%
-        {{hash=3d570aba67c871ea4e99bffcff94d24e}{%
-           family={Lin},
-           familyi={L\bibinitperiod},
-           given={Charles},
-           giveni={C\bibinitperiod}}}%
-        {{hash=98752306b90449ac0a31770c7b1e22d3}{%
-           family={Manuel},
+    \entry{mazoure2020deep}{article}{}
+      \name{author}{5}{}{%
+        {{hash=43dcff7ffdf15b9a267a9eb9cea73b52}{%
+           family={Mazoure},
            familyi={M\bibinitperiod},
-           given={Shawn},
-           giveni={S\bibinitperiod}}}%
-        {{hash=e29c20003a517abaaac28852301c03c2}{%
-           family={Savarese},
-           familyi={S\bibinitperiod},
-           given={Silvio},
-           giveni={S\bibinitperiod}}}%
-        {{hash=59c1c674e509e0626fc95b1d4873c3a1}{%
-           family={Garg},
-           familyi={G\bibinitperiod},
-           given={Animesh},
-           giveni={A\bibinitperiod}}}%
+           given={Bogdan},
+           giveni={B\bibinitperiod}}}%
+        {{hash=059291b0b704a94d23cbca34a4440563}{%
+           family={Tachet\bibnamedelimb des\bibnamedelima Combes},
+           familyi={T\bibinitperiod\bibinitdelim d\bibinitperiod\bibinitdelim C\bibinitperiod},
+           given={Remi},
+           giveni={R\bibinitperiod}}}%
+        {{hash=92a74c6acfb4bf0ea8203ba394f58d30}{%
+           family={Doan},
+           familyi={D\bibinitperiod},
+           given={Thang\bibnamedelima Long},
+           giveni={T\bibinitperiod\bibinitdelim L\bibinitperiod}}}%
+        {{hash=799d66480d783672ee2f29b7fb418229}{%
+           family={Bachman},
+           familyi={B\bibinitperiod},
+           given={Philip},
+           giveni={P\bibinitperiod}}}%
+        {{hash=68d18c6f3387bc203910c98ed4e1303c}{%
+           family={Hjelm},
+           familyi={H\bibinitperiod},
+           given={R\bibnamedelima Devon},
+           giveni={R\bibinitperiod\bibinitdelim D\bibinitperiod}}}%
       }
-      \list{organization}{1}{%
-        {IEEE}%
-      }
-      \strng{namehash}{db594bd1cf1809ebb9daadb1c8028c9d}
-      \strng{fullhash}{fa5439fc17f03cfb8967d8c5501b5acf}
-      \strng{bibnamehash}{db594bd1cf1809ebb9daadb1c8028c9d}
-      \strng{authorbibnamehash}{db594bd1cf1809ebb9daadb1c8028c9d}
-      \strng{authornamehash}{db594bd1cf1809ebb9daadb1c8028c9d}
-      \strng{authorfullhash}{fa5439fc17f03cfb8967d8c5501b5acf}
-      \field{labelalpha}{All+21}
+      \strng{namehash}{8121aa0330e98ed325ddc79cf075c2e2}
+      \strng{fullhash}{a3790d97d8affa4b8259b8af7dd01fab}
+      \strng{bibnamehash}{8121aa0330e98ed325ddc79cf075c2e2}
+      \strng{authorbibnamehash}{8121aa0330e98ed325ddc79cf075c2e2}
+      \strng{authornamehash}{8121aa0330e98ed325ddc79cf075c2e2}
+      \strng{authorfullhash}{a3790d97d8affa4b8259b8af7dd01fab}
+      \field{labelalpha}{Maz+20}
       \field{sortinit}{2}
       \field{sortinithash}{ed39bb39cf854d5250e95b1c1f94f4ed}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
-      \field{booktitle}{2021 IEEE International Conference on Robotics and Automation (ICRA)}
-      \field{title}{Laser: Learning a latent action space for efficient reinforcement learning}
+      \field{journaltitle}{Advances in Neural Information Processing Systems}
+      \field{title}{Deep reinforcement and infomax learning}
+      \field{volume}{33}
+      \field{year}{2020}
+      \field{pages}{3686\bibrangedash 3698}
+      \range{pages}{13}
+    \endentry
+    \entry{schrittwieser2020mastering}{article}{}
+      \true{moreauthor}
+      \true{morelabelname}
+      \name{author}{10}{}{%
+        {{hash=8fad8df927bc0014c0bd6a9feb7aa71d}{%
+           family={Schrittwieser},
+           familyi={S\bibinitperiod},
+           given={Julian},
+           giveni={J\bibinitperiod}}}%
+        {{hash=af540e84ef1ecdaa70b1f7c90f59fd7d}{%
+           family={Antonoglou},
+           familyi={A\bibinitperiod},
+           given={Ioannis},
+           giveni={I\bibinitperiod}}}%
+        {{hash=80c63e95a9e243591a33a7e3156f1d78}{%
+           family={Hubert},
+           familyi={H\bibinitperiod},
+           given={Thomas},
+           giveni={T\bibinitperiod}}}%
+        {{hash=9d16b7284df92c9adaee86c37ab992df}{%
+           family={Simonyan},
+           familyi={S\bibinitperiod},
+           given={Karen},
+           giveni={K\bibinitperiod}}}%
+        {{hash=50d24de916599d306c5cb1a77156e4b9}{%
+           family={Sifre},
+           familyi={S\bibinitperiod},
+           given={Laurent},
+           giveni={L\bibinitperiod}}}%
+        {{hash=80f59bf87c57eee7dab96e04c0a83c30}{%
+           family={Schmitt},
+           familyi={S\bibinitperiod},
+           given={Simon},
+           giveni={S\bibinitperiod}}}%
+        {{hash=4131bd14e5ca890278ecd351e356dc34}{%
+           family={Guez},
+           familyi={G\bibinitperiod},
+           given={Arthur},
+           giveni={A\bibinitperiod}}}%
+        {{hash=67c36471603b6de0347c489b0f8b05b0}{%
+           family={Lockhart},
+           familyi={L\bibinitperiod},
+           given={Edward},
+           giveni={E\bibinitperiod}}}%
+        {{hash=b160026950ebb1e2286dfb40c15482f5}{%
+           family={Hassabis},
+           familyi={H\bibinitperiod},
+           given={Demis},
+           giveni={D\bibinitperiod}}}%
+        {{hash=368b9b2de627b852658c433b062d4e1e}{%
+           family={Graepel},
+           familyi={G\bibinitperiod},
+           given={Thore},
+           giveni={T\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {Nature Publishing Group}%
+      }
+      \strng{namehash}{ba8dd9d821587916ffa0d5d85ba62066}
+      \strng{fullhash}{95a6b720cef49b51eec661762303462e}
+      \strng{bibnamehash}{ba8dd9d821587916ffa0d5d85ba62066}
+      \strng{authorbibnamehash}{ba8dd9d821587916ffa0d5d85ba62066}
+      \strng{authornamehash}{ba8dd9d821587916ffa0d5d85ba62066}
+      \strng{authorfullhash}{95a6b720cef49b51eec661762303462e}
+      \field{labelalpha}{Sch+20}
+      \field{sortinit}{2}
+      \field{sortinithash}{ed39bb39cf854d5250e95b1c1f94f4ed}
+      \field{extraalpha}{1}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Nature}
+      \field{number}{7839}
+      \field{title}{Mastering atari, go, chess and shogi by planning with a learned model}
+      \field{volume}{588}
+      \field{year}{2020}
+      \field{pages}{604\bibrangedash 609}
+      \range{pages}{6}
+    \endentry
+    \entry{schwarzer2020data}{article}{}
+      \name{author}{6}{}{%
+        {{hash=5e724d9aa88c5bd77b7e95a500cd9ec3}{%
+           family={Schwarzer},
+           familyi={S\bibinitperiod},
+           given={Max},
+           giveni={M\bibinitperiod}}}%
+        {{hash=e9c04884349329f54db6669b03ab4d4a}{%
+           family={Anand},
+           familyi={A\bibinitperiod},
+           given={Ankesh},
+           giveni={A\bibinitperiod}}}%
+        {{hash=bb9d1ac8dcc19d49d5d79ec9bf11464a}{%
+           family={Goel},
+           familyi={G\bibinitperiod},
+           given={Rishab},
+           giveni={R\bibinitperiod}}}%
+        {{hash=68d18c6f3387bc203910c98ed4e1303c}{%
+           family={Hjelm},
+           familyi={H\bibinitperiod},
+           given={R\bibnamedelima Devon},
+           giveni={R\bibinitperiod\bibinitdelim D\bibinitperiod}}}%
+        {{hash=ccec1ccd2e1aa86960eb2e872c6b7020}{%
+           family={Courville},
+           familyi={C\bibinitperiod},
+           given={Aaron},
+           giveni={A\bibinitperiod}}}%
+        {{hash=799d66480d783672ee2f29b7fb418229}{%
+           family={Bachman},
+           familyi={B\bibinitperiod},
+           given={Philip},
+           giveni={P\bibinitperiod}}}%
+      }
+      \strng{namehash}{1c32db7b54e96fe956ac41dbc76038d8}
+      \strng{fullhash}{50236f5c9d7cf94f939da49ade6852df}
+      \strng{bibnamehash}{1c32db7b54e96fe956ac41dbc76038d8}
+      \strng{authorbibnamehash}{1c32db7b54e96fe956ac41dbc76038d8}
+      \strng{authornamehash}{1c32db7b54e96fe956ac41dbc76038d8}
+      \strng{authorfullhash}{50236f5c9d7cf94f939da49ade6852df}
+      \field{labelalpha}{Sch+20}
+      \field{sortinit}{2}
+      \field{sortinithash}{ed39bb39cf854d5250e95b1c1f94f4ed}
+      \field{extraalpha}{2}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{arXiv preprint arXiv:2007.05929}
+      \field{title}{Data-efficient reinforcement learning with self-predictive representations}
+      \field{year}{2020}
+    \endentry
+    \entry{rakelly2021mutual}{article}{}
+      \name{author}{4}{}{%
+        {{hash=b37c9da3cc27e0f195bd8dc771c63665}{%
+           family={Rakelly},
+           familyi={R\bibinitperiod},
+           given={Kate},
+           giveni={K\bibinitperiod}}}%
+        {{hash=d0792eb04b685020eafedbc871aeb84f}{%
+           family={Gupta},
+           familyi={G\bibinitperiod},
+           given={Abhishek},
+           giveni={A\bibinitperiod}}}%
+        {{hash=fe94bcf8e44312f47a6f7fe742c47405}{%
+           family={Florensa},
+           familyi={F\bibinitperiod},
+           given={Carlos},
+           giveni={C\bibinitperiod}}}%
+        {{hash=c9545da54b33744da25943cdf66eadac}{%
+           family={Levine},
+           familyi={L\bibinitperiod},
+           given={Sergey},
+           giveni={S\bibinitperiod}}}%
+      }
+      \strng{namehash}{7d23a0d23555a5601eb8ed51182ca507}
+      \strng{fullhash}{6116e62f170dd3e6d12bc81f5ef08beb}
+      \strng{bibnamehash}{7d23a0d23555a5601eb8ed51182ca507}
+      \strng{authorbibnamehash}{7d23a0d23555a5601eb8ed51182ca507}
+      \strng{authornamehash}{7d23a0d23555a5601eb8ed51182ca507}
+      \strng{authorfullhash}{6116e62f170dd3e6d12bc81f5ef08beb}
+      \field{labelalpha}{Rak+21}
+      \field{sortinit}{2}
+      \field{sortinithash}{ed39bb39cf854d5250e95b1c1f94f4ed}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Advances in Neural Information Processing Systems}
+      \field{title}{Which Mutual-Information Representation Learning Objectives are Sufficient for Control?}
+      \field{volume}{34}
       \field{year}{2021}
-      \field{pages}{6650\bibrangedash 6656}
-      \range{pages}{7}
+    \endentry
+    \entry{weng2021tianshou}{article}{}
+      \name{author}{8}{}{%
+        {{hash=1d0662e5050b9cf02a15642557cd6293}{%
+           family={Weng},
+           familyi={W\bibinitperiod},
+           given={Jiayi},
+           giveni={J\bibinitperiod}}}%
+        {{hash=1a13d98eeaf8f5e0135335728ed75741}{%
+           family={Chen},
+           familyi={C\bibinitperiod},
+           given={Huayu},
+           giveni={H\bibinitperiod}}}%
+        {{hash=59609ac026709f4884de40a336b9e150}{%
+           family={Yan},
+           familyi={Y\bibinitperiod},
+           given={Dong},
+           giveni={D\bibinitperiod}}}%
+        {{hash=5dae3f9f7a101463aa9a17cdcea628a2}{%
+           family={You},
+           familyi={Y\bibinitperiod},
+           given={Kaichao},
+           giveni={K\bibinitperiod}}}%
+        {{hash=32e4e5e7c7acd832c1ebcb2454e7c716}{%
+           family={Duburcq},
+           familyi={D\bibinitperiod},
+           given={Alexis},
+           giveni={A\bibinitperiod}}}%
+        {{hash=0ef9c5185015b852a38b8db26de0e7f0}{%
+           family={Zhang},
+           familyi={Z\bibinitperiod},
+           given={Minghao},
+           giveni={M\bibinitperiod}}}%
+        {{hash=3768537b732a0e6eeac046def7c74b4c}{%
+           family={Su},
+           familyi={S\bibinitperiod},
+           given={Hang},
+           giveni={H\bibinitperiod}}}%
+        {{hash=7a47a154652ccc647a0e6adf1570095a}{%
+           family={Zhu},
+           familyi={Z\bibinitperiod},
+           given={Jun},
+           giveni={J\bibinitperiod}}}%
+      }
+      \strng{namehash}{c645e86784b912941351d8cfcbe832fe}
+      \strng{fullhash}{4b827d5808bf8acf46eb0014cd2db676}
+      \strng{bibnamehash}{c645e86784b912941351d8cfcbe832fe}
+      \strng{authorbibnamehash}{c645e86784b912941351d8cfcbe832fe}
+      \strng{authornamehash}{c645e86784b912941351d8cfcbe832fe}
+      \strng{authorfullhash}{4b827d5808bf8acf46eb0014cd2db676}
+      \field{labelalpha}{Wen+21}
+      \field{sortinit}{2}
+      \field{sortinithash}{ed39bb39cf854d5250e95b1c1f94f4ed}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{arXiv preprint arXiv:2107.14171}
+      \field{title}{Tianshou: A Highly Modularized Deep Reinforcement Learning Library}
+      \field{year}{2021}
     \endentry
     \entry{drqv2}{article}{}
       \name{author}{4}{}{%
@@ -865,10 +1369,150 @@
       \field{title}{Mastering visual continuous control: Improved data-augmented reinforcement learning}
       \field{year}{2021}
     \endentry
+    \entry{ye2021mastering}{article}{}
+      \name{author}{5}{}{%
+        {{hash=119346c0749953c9169a3e08144eb042}{%
+           family={Ye},
+           familyi={Y\bibinitperiod},
+           given={Weirui},
+           giveni={W\bibinitperiod}}}%
+        {{hash=f441c03dee89a6c9491367e808d1bdc2}{%
+           family={Liu},
+           familyi={L\bibinitperiod},
+           given={Shaohuai},
+           giveni={S\bibinitperiod}}}%
+        {{hash=9b11af4841b4b3e436a27b0f140f45e3}{%
+           family={Kurutach},
+           familyi={K\bibinitperiod},
+           given={Thanard},
+           giveni={T\bibinitperiod}}}%
+        {{hash=e28d4ee199593959d8c29980a64f1974}{%
+           family={Abbeel},
+           familyi={A\bibinitperiod},
+           given={Pieter},
+           giveni={P\bibinitperiod}}}%
+        {{hash=9c1ecb1f7c47cf02e9e994296746328c}{%
+           family={Gao},
+           familyi={G\bibinitperiod},
+           given={Yang},
+           giveni={Y\bibinitperiod}}}%
+      }
+      \strng{namehash}{bceae5bd124d719847dd2c8c56b20904}
+      \strng{fullhash}{3c47a809330452b7725bd5bb7935c771}
+      \strng{bibnamehash}{bceae5bd124d719847dd2c8c56b20904}
+      \strng{authorbibnamehash}{bceae5bd124d719847dd2c8c56b20904}
+      \strng{authornamehash}{bceae5bd124d719847dd2c8c56b20904}
+      \strng{authorfullhash}{3c47a809330452b7725bd5bb7935c771}
+      \field{labelalpha}{Ye+21}
+      \field{sortinit}{2}
+      \field{sortinithash}{ed39bb39cf854d5250e95b1c1f94f4ed}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Advances in Neural Information Processing Systems}
+      \field{title}{Mastering atari games with limited data}
+      \field{volume}{34}
+      \field{year}{2021}
+    \endentry
+    \entry{merckling2022exploratory}{article}{}
+      \name{author}{4}{}{%
+        {{hash=fa0154c97f6bd2cad3a5bc2953f6cbb5}{%
+           family={Merckling},
+           familyi={M\bibinitperiod},
+           given={Astrid},
+           giveni={A\bibinitperiod}}}%
+        {{hash=ef73dbe0666eead66b7a8346e5ce0460}{%
+           family={Perrin-Gilbert},
+           familyi={P\bibinithyphendelim G\bibinitperiod},
+           given={Nicolas},
+           giveni={N\bibinitperiod}}}%
+        {{hash=16fc7aa73b913d0e91915b40d418608a}{%
+           family={Coninx},
+           familyi={C\bibinitperiod},
+           given={Alex},
+           giveni={A\bibinitperiod}}}%
+        {{hash=8542510baf2c653fa6317e0911fedc62}{%
+           family={Doncieux},
+           familyi={D\bibinitperiod},
+           given={Stéphane},
+           giveni={S\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {Frontiers Media SA}%
+      }
+      \strng{namehash}{3691ce1a8fab81970713dd616c693a7a}
+      \strng{fullhash}{c63cec5e80e9029844941fcb2a9a18d7}
+      \strng{bibnamehash}{3691ce1a8fab81970713dd616c693a7a}
+      \strng{authorbibnamehash}{3691ce1a8fab81970713dd616c693a7a}
+      \strng{authornamehash}{3691ce1a8fab81970713dd616c693a7a}
+      \strng{authorfullhash}{c63cec5e80e9029844941fcb2a9a18d7}
+      \field{extraname}{1}
+      \field{labelalpha}{Mer+22}
+      \field{sortinit}{2}
+      \field{sortinithash}{ed39bb39cf854d5250e95b1c1f94f4ed}
+      \field{extraalpha}{1}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Frontiers in Robotics and AI}
+      \field{title}{Exploratory State Representation Learning}
+      \field{volume}{9}
+      \field{year}{2022}
+    \endentry
+    \entry{exploratorysrl}{article}{}
+      \name{author}{4}{}{%
+        {{hash=fa0154c97f6bd2cad3a5bc2953f6cbb5}{%
+           family={Merckling},
+           familyi={M\bibinitperiod},
+           given={Astrid},
+           giveni={A\bibinitperiod}}}%
+        {{hash=ef73dbe0666eead66b7a8346e5ce0460}{%
+           family={Perrin-Gilbert},
+           familyi={P\bibinithyphendelim G\bibinitperiod},
+           given={Nicolas},
+           giveni={N\bibinitperiod}}}%
+        {{hash=16fc7aa73b913d0e91915b40d418608a}{%
+           family={Coninx},
+           familyi={C\bibinitperiod},
+           given={Alex},
+           giveni={A\bibinitperiod}}}%
+        {{hash=8542510baf2c653fa6317e0911fedc62}{%
+           family={Doncieux},
+           familyi={D\bibinitperiod},
+           given={Stéphane},
+           giveni={S\bibinitperiod}}}%
+      }
+      \strng{namehash}{3691ce1a8fab81970713dd616c693a7a}
+      \strng{fullhash}{c63cec5e80e9029844941fcb2a9a18d7}
+      \strng{bibnamehash}{3691ce1a8fab81970713dd616c693a7a}
+      \strng{authorbibnamehash}{3691ce1a8fab81970713dd616c693a7a}
+      \strng{authornamehash}{3691ce1a8fab81970713dd616c693a7a}
+      \strng{authorfullhash}{c63cec5e80e9029844941fcb2a9a18d7}
+      \field{extraname}{2}
+      \field{labelalpha}{Mer+22}
+      \field{sortinit}{2}
+      \field{sortinithash}{ed39bb39cf854d5250e95b1c1f94f4ed}
+      \field{extraalpha}{2}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{issn}{2296-9144}
+      \field{journaltitle}{Frontiers in Robotics and AI}
+      \field{title}{Exploratory State Representation Learning}
+      \field{volume}{9}
+      \field{year}{2022}
+      \verb{doi}
+      \verb 10.3389/frobt.2022.762051
+      \endverb
+      \verb{urlraw}
+      \verb https://www.frontiersin.org/article/10.3389/frobt.2022.762051
+      \endverb
+      \verb{url}
+      \verb https://www.frontiersin.org/article/10.3389/frobt.2022.762051
+      \endverb
+    \endentry
   \enddatalist
   \missing{auto-encoderforEfficientEmbeddedReinforcementLearning}
   \missing{investigationontheDeepLearningFramework}
   \missing{raibow}
+  \missing{slac}
 \endrefsection
 \endinput
 

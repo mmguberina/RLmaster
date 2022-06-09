@@ -226,14 +226,17 @@ Here we offer our hypothesis:
 		We further hypothesize that the best feature extraction will be obtained if both
 		state representation learning algorithm and the reinforcement learning algorithm 
 		continuously update the feature extractor throughout the entire training process.
+		\label{parallel-training-hypothesis}
 \item We hypothesize that state representation learning algorithms whose learned features better match the underlying
 		Markov decision process will yield better results.
 		This for example means that representations learned on future prediction tasks will
 		perform better than those which are not incentivized to learn dynamics.
+		\label{good-features-hypothesis}
 \item Finally, we hypothesize that strong regularization of the state representation learning
 		algorithms will yield better results. We believe that proper regularization will
 		yield broader features which the reinforcement learning algorithm will 
 		more easily integrate with.
+		\label{regularization-hypothesis}
 \end{enumerate}
 
 

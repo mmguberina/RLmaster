@@ -1,55 +1,121 @@
 \chapter{Methods}
-\section{Problems to be tackled}
+\section{Our approach}
 As stated previously, the goal is to learn effective state representations
 while training the policy.
-We indentify the following obstacles obstructing this goal:
+We opt for a deterministic generative model to learn state representations with,
+specifically a deterministic autoencoder trained with image reconstruction loss.
+This is done because performance of a generative model is easier to analyse than discriminative ones.
+The reinforcement learning algorithm shares its encoder with the encoder 
+for state representation learning (they are the same network, with different heads attached).
+Our main inspiration for this foundational approach comes from \cite{sac+ae}.
+However, since we elect to work in discrete action environments, we choose \cite{rainbow}
+as the underlying reinforcement learning algorithm.
+Since we are not trying to achieve state-of-the-art results, we could have elected
+another algorithm, but this allowed us to more easily compare our results
+to those applicable in \ref{ch-related-work}, and also to have faster training times
+which made experimentation easier.
+We introduce changes informed by \ref{ch-related-work} in order to test our hypothesis.
+Specific papers will be referenced when appropriate.
+In particular this equates to the following:
+
 \begin{enumerate}
-		\item to learn effective state representations which make the whole
-		process more efficient, the learning algorithm needs to be incentivesed
-		to embedded information relevant to the agent
-		while discarding irrelevant information
-\item as new state representations are learned, the old representations need
-		to change as little as possible so as not to compromize what
-		the policy has learned
+		\item We test hypothesis \ref{parallel-training-hypothesis} with four different training modes.
+		\begin{enumerate}
+				\item Only the reinforcement learning algorithm is trained. This serves as 
+						the control case.
+				\item The autoencoder is pretrained, fixed in place, and reinforcement learning
+						algorithm is trained on top of the unsupervised learning features
+						without the ability to updated the encoder. 
+						This roughly tells us the quality of features (state representations) 
+						obtained through unsupervised learning alone.
+				\item Same as before, but now we update the encoder with reinforcement learning loss.
+						This serves as the control case for the following mode.
+				\item We jointly train the encoder both with unsupervised learning and with
+						reinforcement learning loss. The encoder continues to be updated
+						even after the unsupervised learning loss diminishes.
+		\end{enumerate}
+\item We test hypothesis \ref{good-features-hypothesis} with the following additional losses.
+		\begin{enumerate}
+				\item Instead of doing unsupervised learning to reconstruct the given observations,
+						we also pass it action and predict the following observations.
+						Since we can not pass the actions before they have been selected by the policy network,
+						they are passed in the decoder (the generative part of the autoencoder).
+						This thus constitutes forward prediction in pixel space.
+				\item Instead of performing forward prediction in pixel space, we now do it in latent space.
+						The autoencoder is trained with reconstructive loss as before, but we introduce
+						an additional network which predicts the latent observation. Thus this loss is calculated
+						separately and it updates the encoder along the other two losses.
+						This serves as a potentially superior version of the previous task as predictions
+						in latent space should be easier to learn that predictions in pixel space.
+				\item Finally, we add inverse dynamics loss on top of the reconstruction, forward predictive 
+						and reinforcement learning loss. As shown in \cite{icm}, this should encourage
+						the state representation to focus the parts of the observation related to the agent
+						and thus further condition state representations. As argued
+						in \cite{rakelly2021mutual}, this loss alone can not be represent the MDP so it is not 
+						considered in isolation.
+		\end{enumerate}
+\item We test hypothesis \ref{regularization-hypothesis} with the following regularization techniques.
+		\begin{enumerate}
+				\item Following the analysis carrier out in \cite{sac+ae}, we begin by using
+						regularization techniques introduced in \cite{ghosh2019variational}.
+					Since we found that joint training of state representations and reinforcement learning
+					does not work without at least L2 latent space loss, we use it all joint training tests.
+			\item Informed by regularization effects of denoising autoencoders, and by great success achieved
+					with the random shift augmentation in \cite{drqv1, drqv2} and other recent work,
+					we too use random shift augmentation on observations in unsupervised learning updates.
+					This serves as our test.
+		\end{enumerate}
 \end{enumerate}
 
 
-\section{Hypotheses}
-We posit the following hypotheses about features which make state representation 
-effective:
-\begin{enumerate}
-		\item representations which encode the dynamic information
-such as velocities will perform better than those which do not
-\item representations which are learned solely on observations 
-		and not both observations and the agent's actions
-		will yield worse results
-\item learning procedures which try to model only the information
-		relevant to the agent will perform even better
-\item sharing information between the policy and the state representations
-		will be benefitial
-\end{enumerate}
+%We indentify the following obstacles obstructing this goal:
+%\begin{enumerate}
+%		\item to learn effective state representations which make the whole
+%		process more efficient, the learning algorithm needs to be incentivesed
+%		to embedded information relevant to the agent
+%		while discarding irrelevant information
+%\item as new state representations are learned, the old representations need
+%		to change as little as possible so as not to compromize what
+%		the policy has learned
+%\end{enumerate}
 
-To test whether the learning state representations helps we compare the results
-against training the policy directly on observations.
-To test the whether parallel training of the policy and the state representations
-hinders the learning process, we compare the results against the alternative training procedure
-of first learning the state representations,
-fixing them and then training the policy on these representations, i.e. the two-step training procedure.
-Finally, to test our hypotheses about the properties of state representations which yield
-higher effectiveness, we compare results of differently designed and trained state representations.
-In particular, we use an autoencoder which only reconstructs the observations given to it
-as the baseline case.
-To test whether embedding dynamic information helps, we train the same autoencoder to
-be a forward predictor. Its inputs are a number of consequtive observations and it's output 
-is the subsequent observation.
-We do this with and without also adding the agents actions as the input.
-To test whether making dynamic information more explicit helps,
-in another version we also pass the differences of each two consequtive frames.
-To test whether incentivising the state representation model to only focus on the
-dynamic information relevant to the agent helps, we train an inverse dynamics model and
-use the embeddings it generates as state representations.
-Finally, to test whether use nonlinear function approximators
-to representant policies are causing problems, we also train a tabular policy.
+
+%\section{Hypotheses}
+%We posit the following hypotheses about features which make state representation 
+%effective:
+%\begin{enumerate}
+%		\item representations which encode the dynamic information
+%such as velocities will perform better than those which do not
+%\item representations which are learned solely on observations 
+%		and not both observations and the agent's actions
+%		will yield worse results
+%\item learning procedures which try to model only the information
+%		relevant to the agent will perform even better
+%\item sharing information between the policy and the state representations
+%		will be benefitial
+%\end{enumerate}
+%
+%To test whether the learning state representations helps we compare the results
+%against training the policy directly on observations.
+%To test the whether parallel training of the policy and the state representations
+%hinders the learning process, we compare the results against the alternative training procedure
+%of first learning the state representations,
+%fixing them and then training the policy on these representations, i.e. the two-step training procedure.
+%Finally, to test our hypotheses about the properties of state representations which yield
+%higher effectiveness, we compare results of differently designed and trained state representations.
+%In particular, we use an autoencoder which only reconstructs the observations given to it
+%as the baseline case.
+%To test whether embedding dynamic information helps, we train the same autoencoder to
+%be a forward predictor. Its inputs are a number of consequtive observations and it's output 
+%is the subsequent observation.
+%We do this with and without also adding the agents actions as the input.
+%To test whether making dynamic information more explicit helps,
+%in another version we also pass the differences of each two consequtive frames.
+%To test whether incentivising the state representation model to only focus on the
+%dynamic information relevant to the agent helps, we train an inverse dynamics model and
+%use the embeddings it generates as state representations.
+%Finally, to test whether use nonlinear function approximators
+%to representant policies are causing problems, we also train a tabular policy.
 
 
 %In this section, we will explain the architecture of our auto-encoder and reinforcement learning algorithm. 
@@ -59,10 +125,10 @@ to representant policies are causing problems, we also train a tabular policy.
 %3.0.2. and the training of the RL agent in Section  3.0.3.
 
 
-\subsection{Enviroment and Preprocessing}
+\section{Environment and Preprocessing}
 
 We perform a comprehensive evaluation of our 
-proposed method on the Arcade Learning Environment (Bellemare et al., 2013), 
+proposed method on the Arcade Learning Environment \cite{bellemare2013arcade}, 
 which is composed of 57 Atari games. 
 The challenge is to deploy a single algorithm and architecture, 
 with a fixed set of hyper-parameters, 
@@ -75,13 +141,111 @@ Working with raw Atari frames,
 which are 210 x 160 pixel pictures with a 
 128 color palette, is computationally expensive, therefore we do a 
 basic preprocessing step to reduce the input dimensionality. 
-The raw frames are preprocessed by down sampling to a 110 x 84 
+The raw frames are down sampled to a 84 x 84 
 picture and transforming their RGB representation to gray-scale.
-Cropping an 84 x 84 rectangle of the image that nearly 
-captures the playing area yields the final input representation to encoder part of the auto encoder.
+This is standard practice in the field and it makes the training faster
+without fundamentally simplifying the problem.
+
+We constrict ourselves to games in which there is no partial observability and where
+the reward is relatively dense. 
+This is because we are not focusing on exploration which is necessary to solve some of the games.
+Methods known to use which formulate intrinsic rewards are compatible with our approach
+and can be in fact integrated with it like in \cite{exploratorysrl}.
+%Cropping an 84 x 84 rectangle of the image that nearly 
+%captures the playing area yields the final input representation to encoder part of the auto encoder.
+
+\section{Implementation}
+\subsection{Tianshou}
+We implement our approach as a modular extension in \cite{weng2021tianshou}.
+The purpose of this choice is to make our work easily accessible and extendable.
+Tianshou is an actively updated reinforcement learning library and offers the highest number reinforcement 
+learning algorithms on the market.
+It is based on Python and PyTorch.
+It is well documented, provides tests and type hints.
+It offers gym wrappers for the most popular reinforcement learning benchmarks, including
+Atari.
+It supports vectorization for all environments. 
+
+The guiding principle of Tianshou is to abstract the reinforcement learning problem
+as much as possible because good abstractions are the basis of modularity.
+This is done by splitting reinforcement learning algorithms into the following modules:
+\begin{itemize}
+		\item \fbox{\texttt{Batch}}
+		\item \fbox{\texttt{ReplayBuffer}}
+		\item \fbox{\texttt{Policy}}
+		\item \fbox{\texttt{Collector}}
+		\item \fbox{\texttt{Trainer}}
+\end{itemize}
+
+These modules interact in the way depicted in \ref{tianshou-concepts}.
+
+\begin{figure}[htpb]
+		\centering
+		\includegraphics[width=0.8\textwidth]{"./figure/concepts_arch2.png"}
+		\label{tianshou-concepts}
+		\caption{Tianshou concepts}
+\end{figure}
 
 
-\subsection{Deep Auto-encoder and Model Architecture}
+\fbox{\texttt{Batch}} is designed to store and manipulate ``hierarchical named tensors''.
+Hierarchical named tensors are a set of tensors whose name forms a hierarchy.
+In essence, they are nested dictionaries.
+
+There are 7 reserved keys in \fbox{\texttt{Batch}}:
+\begin{enumerate}
+		\item \fbox{\texttt{obs}} --- observation at step $ t  $
+		\item \fbox{\texttt{act}} --- action at step $ t  $
+		\item \fbox{\texttt{rew}} --- reward at step $ t  $
+		\item \fbox{\texttt{done}} --- done flag at step $ t  $
+		\item \fbox{\texttt{obs\_next}} --- observation at step $ t+1  $
+		\item \fbox{\texttt{info}} --- info at step $ t  $
+		\item \fbox{\texttt{policy}} --- data computed by policy at step $ t  $
+\end{enumerate}
+
+\fbox{\texttt{ReplayBuffer}} stores experience data.
+It's purpose is to manage \fbox{\texttt{Batch}}.
+All data is stored in a circular queue.
+
+
+There are different classes of policies, but all policies must inherit from \fbox{\texttt{BasePolicy}}.
+Typical function are the following ones:
+\begin{enumerate}
+		\item \fbox{\texttt{\_\_init\_\_()}}
+		\item \fbox{\texttt{forward()}} --- compute action with given observation
+		\item \fbox{\texttt{process\_fn()}} --- pre-process data from the replay buffer
+		\item \fbox{\texttt{learn()}} --- update policy with a given batch of data
+		\item \fbox{\texttt{post\_process\_fn()}} --- pre-process data from the replay buffer
+		\item \fbox{\texttt{update()}} --- this one does it all: samples from buffer,
+				pre-processes data (ex. computing the n-step return),
+				learn from data and post-proces sthe data (ex. update the prioritized replay buffer)
+\end{enumerate}
+
+
+\fbox{\texttt{Collector}}'s task is to interact with the environment
+and store the observed transitions in \fbox{\texttt{ReplayBuffer}}.
+\subsection{Trainer}'s task is to balance environment interactions by calling on \fbox{\texttt{Collector}}
+and updating the agent by calling on \fbox{\texttt{Policy}}.
+
+
+\subsection{Implementing state representation learning in Tianshou}
+Surprisingly, Tianshou lacks state representation learning algorithms
+which is why believe it could benefit from our work.
+We implemented state representation learning as a \fbox{\texttt{Policy}}
+which takes a reinforcement learning \fbox{\texttt{Policy}} as an argument.
+This makes our implementation truly modular and we had to change less than 5 lines 
+DQN implementation for it to work. We believe that this was due to a minor design
+error in n-step return implementation, rather than our lack of foresight.
+Apart from this we used Tianshou's design to our advantage.
+By having the state representation learning wrapped around reinforcement learning,
+we manipulate the batches sent to the reinforcement learning algorithm
+and thus keep it fully encapsulated.
+Data augmentation is implemented passing appropriate 
+preprocessing functions to the \fbox{\texttt{Trainer}}.
+The user only needs to ensure matching network dimensions to utilize 
+state representation learning algorithms and pass the appropriate flag
+to use the one we implemented.
+
+\section{Hyperparameters}
 
 The first step in the process is to collect data to train the auto-encoder. 
 we run a data collection module to generate the 100000 frame 
@@ -99,27 +263,27 @@ and the shift in the latent space representation and its impact on
 the RL agent learning performance.We show this in more detail in the following sections.]
 
 
-\subsection{Training the RL Agent} 
-
-In this paper we integrate auto encoder with integrated agent 
-called Rainbow[12],the selection of this architecture  was 
-based it's ability to out perform all the previous architecture.
-our main focus was to experiment with the latent space representation 
-of the environment.To address this we set up two experiment architectures one two step training and parallel training.\\
-
-\textbf{Two step Training}: First,
-we train the auto encoder with the prepossessed data and the 
-weights of the encoder are saved in file for training the agent.
-In this set up the auto encoder is not updated such that we have a static representation of the environment.
-
-second,we train the integrated agent with the results from the auto encoder.\\
-
-\textbf{Parallel Training}:
-In this set up the agent is trained using the dynamic 
-state representation from the encoder as we train both the auto 
-encoder and the integrated agent in parallel.
-This introduces stochasticity of the environment to the training  and 
-in real life control system we believe that this will set a new paradigm on the use RL.
+%\subsection{Training the RL Agent} 
+%
+%In this paper we integrate auto encoder with integrated agent 
+%called Rainbow[12],the selection of this architecture  was 
+%based it's ability to out perform all the previous architecture.
+%our main focus was to experiment with the latent space representation 
+%of the environment.To address this we set up two experiment architectures one two step training and parallel training.\\
+%
+%\textbf{Two step Training}: First,
+%we train the auto encoder with the prepossessed data and the 
+%weights of the encoder are saved in file for training the agent.
+%In this set up the auto encoder is not updated such that we have a static representation of the environment.
+%
+%second,we train the integrated agent with the results from the auto encoder.\\
+%
+%\textbf{Parallel Training}:
+%In this set up the agent is trained using the dynamic 
+%state representation from the encoder as we train both the auto 
+%encoder and the integrated agent in parallel.
+%This introduces stochasticity of the environment to the training  and 
+%in real life control system we believe that this will set a new paradigm on the use RL.
 
 
 
