@@ -1,6 +1,8 @@
 % CREATED BY DAVID FRISK, 2016
 \chapter{Introduction}
-
+\label{ch-introduction}
+\section{What is reinforcement learning?}
+\label{sec-what-is-rl}
 In computer science, reinforcement learning is the formalization of trial-and-error learning.
 While this is not the only legitimate interpretation of the concept, it is the most straightforward one:
 ``trial'' implies existence of an agent which observes its environment and interacts with it 
@@ -27,26 +29,26 @@ is to maximize the sum of rewards over time.
 The formalization of the entire process will be carried out later in the text,
 while here only the most important concepts will be outlined.
 
-One of these is the trade-off between ``exploration''
-and ``exploitation.''
-To learn just by trial and error implies learning from experience.
-This means that the agent can not know 
-how a certain strategy fares unless it collects experiences 
-which come by following said strategy.
-Thus in order to find a good strategy,
-usually referred to as a ``policy'',
-the agent needs to produce various different strategies and observe their results
-until it find a promising one.
-The process of finding different strategies and experimenting with new random
-behavior is called exploration.
-Likewise, the process of repeating a good strategy is called exploitation.
-Due to the curse of dimensionality, 
-\footnote{The curse of dimensionality refers to the exponential rise of 
-possible configurations of the problem with the number of dimensions.}
-in complex multi-dimensional domains it is impossible to test but a miniscule proportion 
-of all possible strategies.
-Because of this, the problem of effective exploration and the trade-off between
-it and exploitation is a fundamental problem in reinforcement learning.
+%One of these is the trade-off between ``exploration''
+%and ``exploitation.''
+%To learn just by trial and error implies learning from experience.
+%This means that the agent can not know 
+%how a certain strategy fares unless it collects experiences 
+%which come by following said strategy.
+%Thus in order to find a good strategy,
+%usually referred to as a ``policy'',
+%the agent needs to produce various different strategies and observe their results
+%until it find a promising one.
+%The process of finding different strategies and experimenting with new random
+%behavior is called exploration.
+%Likewise, the process of repeating a good strategy is called exploitation.
+%Due to the curse of dimensionality, 
+%\footnote{The curse of dimensionality refers to the exponential rise of 
+%possible configurations of the problem with the number of dimensions.}
+%in complex multi-dimensional domains it is impossible to test but a miniscule proportion 
+%of all possible strategies.
+%Because of this, the problem of effective exploration and the trade-off between
+%it and exploitation is a fundamental problem in reinforcement learning.
 
  
 
@@ -60,7 +62,8 @@ provides a basis for a large class of reinforcement learning algorithms.
 Reinforcement learning is also considered to be one of the pillars of modern data-driven machine learning.
 
 
-In the context of machine learning, reinforcement learning can be view as a combination of supervised and unsupervised learning:
+In the context of machine learning, reinforcement learning can be view as a combination 
+of supervised and unsupervised learning:
 the ``trial'' portion of the trial-and-error learning can be interpreted as unsupervised or as self-supervised learning
 because in it the agent collects its own dataset without any explicit labels to guide its way.
 This process is referred to as ``exploration''.
@@ -71,7 +74,8 @@ and machine learning which are necessary to formalize the reinforcement learning
 and to develop algorithms to achieve it.
 It will not concern itself with other disciplines.
 
-
+\section{Why is reinforcement learning interesting?}
+\label{sec-why-is-rl-interesting}
 Interest in reinforcement learning has grown tremendously over the past decade.
 It has been fueled by successes of deep machine learning in fields such as computer vision.
 The subsequent utilization of neural networks in reinforcement learning,
@@ -83,11 +87,11 @@ and thus for reinforcement learning algorithms which utilize them,
 most of these results are achieved in computer-simulated environments.
 \footnote{Simulated environments run as fast as the computers they run on,
 		which enables generating thousands of trials in seconds.}
-These recent success were kick-started by Deep Q-Networks (DQN) algorithm which,
-by utilizing convolutional neural network, crucially enabled the agents to successfully learn from raw pixels.
+These recent success were kick-started by Deep Q-Network (DQN) algorithm \cite{mnih2013atari} which crucially,
+by utilizing convolutional neural network, enabled the agents to successfully learn from raw pixels.
 Learning from pixels is incredibly important for many practical applications,
 such as those in robotics
-where it is usually impossible to get full access to the state of the environment.
+where it is often impossible to get full access to the state of the environment.
 The state then needs to be inferred from observations such as those from cameras.
 \footnote{Here the state refers to the underlying physical parameters of the environment:
 the positions and velocities of objects, the friction coefficients and so on.
@@ -106,7 +110,8 @@ bridge that gap.
 To explain the approach investigated in this thesis,
 a bit more context is needed.
 
-
+\section{Efforts in making reinforcement learning more efficient}
+\label{efforts-in-making-rl-efficient}
 An important classification of reinforcement learning algorithm is the one between
 model-based and model-free algorithms.
 As the name suggests, model-free algorithms do not form an explicit model of the environment.
@@ -123,7 +128,8 @@ to operate, they are more widely applicable and usually achieve better performan
 But the fact that they can not leverage environment dynamics to create plans implies
 a harder learning problem: they need to implicitly learn those dynamics
 while only being provided the reward signal. 
-This makes them much less sample-efficient.
+This makes them much less sample-efficient.\\
+
 By contrast, model-based algorithms are of course more sample-efficient.
 Furthermore, the plan generated from the learned model can be utilized to interpret the
 agent's actions which in turn leads to many further benefits such as
@@ -145,8 +151,10 @@ Furthermore, what it learned at this stage may become obsolete as the model chan
 How bad this problem is depends on the specifics of the setting,
 and there are many ways to ameliorate it,
 but in most cases the necessary trade-offs result in a lower final performance.
-%All this will be further discussed in a later chapter.
+All this will be further discussed in a later chapter.
 
+\section{Goal of the thesis}
+\label{sec-thesis-goal}
 Given the previous discussion, the goal of the thesis may be presented:
 the idea is to combine the sample-efficiency of model-based approaches
 with the flexibility of model-free methods.
@@ -187,36 +195,89 @@ Furthermore, since the goal is not to learn the dynamics of the environment,
 but simply to find an equivalent, but lower-dimensional representation of it,
 we expect that this approach won't suffer from the problems faced
 by model-based approaches.
-Of course, we are not the first to suggest such an approach,
-but we haven't found a systematic analysis of it across an array of
-model-free algorithms.
+Of course, we are not the first to suggest such an approach.
+An overview of the field is provided in \ref{ch-related-work}.
 
-In total, our contributions are the following ones:
+\subsection{Hypothesis}
+\label{subsec-hypothesis}
+As already stated, we believe that leveraging unsupervised learning techniques
+to learn state representations will make reinforcement learning from images
+more sample-efficient.
+Testing whether this is in fact true is one of our tasks.
+As will be shown in \ref{sec-general-latent-space-learning}, there are many different unsupervised learning
+techniques which can be adapted to the goal of state representation learning.
+Furthermore, there are many different ways in which state representation learning can be integrated
+in the reinforcement learning process.
+In this thesis, our goal is not to arrive at a new state-of-the-art algorithm,
+but to investigate which properties of both the state representation learning and its integration
+with reinforcement learning yield better results.
+We will not test all of the existing approaches, but rather identify their common properties,
+form hypothesis based on those properties and perform tests on a simple implementation.
+Here we offer our hypothesis:
 \begin{enumerate}
-	\item A systematic analysis of utilizing autoencoders for learning lower-dimensional
-	representations for greater sample-efficiency in combination with different
-	reinforcement learning algorithms.
-	\item Ideally, finding algorithms which achieve the same or better performance with the autoencoder
-	as without it, but doing so more efficiently.
-	\item Defining a clear direction for further research based on the previous two contributions.
+		\item State representations found by general unsupervised learning techniques 
+		will not equate to true states, although they will be closer to them than
+		raw image-based observations. Reinforcement learning algorithms are able
+		to implicitly learn true states, but because they do so indirectly and by using
+		the weak reward signal, they do so very slowly.
+		Thus we hypothesize that allowing the reinforcement learning algorithm to continue updating
+		feature extraction provided the state representation learning algorithm will perform better
+		than feature extraction learned solely through state representation learning.
+		We further hypothesize that the best feature extraction will be obtained if both
+		state representation learning algorithm and the reinforcement learning algorithm 
+		continuously update the feature extractor throughout the entire training process.
+\item We hypothesize that state representation learning algorithms whose learned features better match the underlying
+		Markov decision process will yield better results.
+		This for example means that representations learned on future prediction tasks will
+		perform better than those which are not incentivized to learn dynamics.
+\item Finally, we hypothesize that strong regularization of the state representation learning
+		algorithms will yield better results. We believe that proper regularization will
+		yield broader features which the reinforcement learning algorithm will 
+		more easily integrate with.
 \end{enumerate}
 
-\subsection{Outline}
 
 
-This report will first describe the background theory of reinforcement learning in Chapter 2,
-which covers the basic problem setting with the underlined algorithms that 
-are currently used to address reinforcement learning.
-In previous publications, 
-this information is scattered through different sources, 
-the goal of this chapter is to give our readers one-place guide for reinforcement learning.
-We then describe related work in Chapter 3,
-which covers several existing solutions to solve reinforcement learning by 
-leveraging model-based and model-free algorithms. 
-This forms the basis for our inspiration and the underlined methodology 
-presented in Chapter 4 of this thesis. 
-The results of new methods applied in reinforcement learning are presented in 
-Chapter 5 followed by conclusions and future work in Chapter 6.
+
+\subsection{Contributions}
+\label{subsec-contributions}
+As already mentioned, our main goal is not to produce a state-of-the-art algorithm,
+but rather to find general properties which state representation learning algorithms 
+should have and how they should best be integrated with reinforcement learning algorithms.
+In this thesis we provide the following contributions:
+\begin{enumerate}
+	\item A systematic overview of recent works which leverage state representation learning
+		to make model-free reinforcement learning more sample-efficient.
+	\item Extensive testing of our hypothesis which illuminate the problem and pave the wave 
+			for further algorithm development.
+	\item Implementation of our method in a high-quality reinforcement learning library.
+			Despite the fact that our method is not the best available one, its generality
+			and its implementation makes it easily accessible to practitioners and 
+			helps researchers who wish to build on top of it.
+\end{enumerate}
+
+\section{Outline}
+The rest of this text is organized as follows.
+We begin by describing the basics of reinforcement learning in \ref{sec-rl-intro}.
+Here the problem setting and basic concepts are covered.
+Then main classes of 
+reinforcement learning are introduced in \ref{sec-rl-alg-classes}.
+Having the basics established, in \ref we introduce the reinforcement learning algorithm 
+we use in our implementation
+and discuss common reinforcement learning problems in \ref{sec-rl-problems}.
+Following the reinforcement learning discussion, we
+turn our attention to unsupervised learning on images in \ref{sec-unsupervised-learning-on-images}
+and introduce state representation learning in \ref{sec-srl-intro}.
+%In previous publications, 
+%this information is scattered through different sources, 
+%the goal of this chapter is to give our readers one-place guide for reinforcement learning.
+Following the background,
+discuss related work in \ref{ch-related-work}.
+Here we cover several existing approaches to bolstering the sample-efficiency of model-free reinforcement learning with
+state representation learning. 
+Having covered the field, in \ref{sec-hypothesis-reasoning} we identify key factors which lead to state representations which 
+can be leveraged by reinforcement learning algorithms.
+In other words, we then form the basis for our hypothesis.
 
 
 

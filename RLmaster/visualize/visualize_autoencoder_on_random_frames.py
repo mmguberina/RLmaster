@@ -5,7 +5,7 @@ from PIL import Image
 import imagehash
 from RLmaster.util.atari_wrapper import make_atari_env, AutoencoderEnv
 #from RLmaster.latent_representations.autoencoder_nn import CNNEncoder, CNNDecoder
-from RLmaster.latent_representations.autoencoder_nn import CNNEncoderNew, CNNDecoderNew, RAE_ENC, RAE_DEC
+from RLmaster.latent_representations.autoencoder_nn import CNNEncoderNew, CNNDecoderNew, RAE_ENC, RAE_DEC, RAE_predictive_DEC
 from RLmaster.util.save_load_hyperparameters import load_hyperparameters
 from collections import deque
 
@@ -30,7 +30,8 @@ features_dim = 50
 #log_path = "../../log/dqn_ae_parallel_good_arch_fs_4_passing_q_grads/"
 #log_path = "../../log/ae_single-frame-trained_as_policy_3136_4/"
 #log_path = "../../log/rae_single-frame-trained_as_policy_1/"
-log_path = "../../log/raibow_ae_parallel_good_arch_fs_4_passing_q_grads_6/"
+#log_path = "../../log/raibow_ae_parallel_good_arch_fs_4_passing_q_grads_6/"
+log_path = "../../log/rae_forward-frame-trained_as_policy_1/"
 #log_path = "../../experiments/latent_only/log/PongNoFrameskip-v4/ae_single-frame-trained_as_policy_3136/"
 #log_path_enc_dc = "../../experiments/latent_only/log/PongNoFrameskip-v4/"
 args = load_hyperparameters(log_path)
@@ -46,7 +47,7 @@ if args.latent_space_type == "single-frame-predictor":
 
 if args.latent_space_type == "forward-frame-predictor":
     observation_shape = list(args.state_shape)
-    observation_shape[0] = 2 
+    observation_shape[0] = 1 
     observation_shape = tuple(observation_shape)
 #print(observation_shape)
 #encoder = CNNEncoder(observation_shape=observation_shape, features_dim=features_dim)
@@ -54,16 +55,20 @@ if args.latent_space_type == "forward-frame-predictor":
 #encoder.load_state_dict(torch.load("../../experiments/latent_only/encoder_features_dim_{}.pt".format(features_dim), map_location=torch.device('cpu')))
 #decoder.load_state_dict(torch.load("../../experiments/latent_only/decoder_features_dim_{}.pt".format(features_dim), map_location=torch.device('cpu')))
 
-encoder_name = "checkpoint_encoder_epoch_6.pth"
-decoder_name = "checkpoint_decoder_epoch_8.pth"
+encoder_name = "checkpoint_encoder_epoch_5.pth"
+decoder_name = "checkpoint_decoder_epoch_5.pth"
 #encoder_name = "encoder.pth"
 #decoder_name = "decoder.pth"
 #encoder_name = "encoder_features_dim_3136.pt"
 #decoder_name = "decoder_features_dim_3136.pt"
 #encoder = CNNEncoderNew(observation_shape=observation_shape, features_dim=features_dim, device='cpu')
-encoder = RAE_ENC("cpu", observation_shape, features_dim)
+encoder = RAE_ENC("cpu", observation_shape, args.features_dim)
 #decoder = CNNDecoderNew(observation_shape=observation_shape, n_flatten=encoder.n_flatten, features_dim=features_dim)
-decoder = RAE_DEC("cpu", observation_shape, features_dim)
+if args.latent_space_type == 'single-frame-predictor':
+    decoder = RAE_DEC("cpu", observation_shape, args.features_dim)
+if args.latent_space_type == 'forward-frame-predictor':
+    # i'll be giving it a single one rn
+    decoder = RAE_predictive_DEC("cpu", observation_shape, args.features_dim, 1)
 #print(torch.load(log_path + encoder_name, map_location=torch.device('cpu')))
 encoder.load_state_dict(torch.load(log_path + encoder_name, map_location=torch.device('cpu'))['encoder'])
 decoder.load_state_dict(torch.load(log_path + decoder_name, map_location=torch.device('cpu'))['decoder'])
@@ -95,7 +100,8 @@ env.reset()
 #exit()
 for i in range(5000):
     sleep(0.02)
-    obs, reward, done, info = env.step(np.array([env.action_space.sample()]))
+    act = np.array([env.action_space.sample()])
+    obs, reward, done, info = env.step(act)
     #obs = torch.tensor(obs)
     #obs = torch.tensor(obs)[:,:-2,:,:].view(1, args.frames_stack, 84, 84)
     obs = torch.tensor(obs)[:,-1,:,:].view(1,1, 84, 84)
@@ -104,7 +110,11 @@ for i in range(5000):
     #obs = np.ceil(obs * 255).astype(np.uint8).reshape((84,84))
     with torch.no_grad():
         #obs = decoder(encoder(obs.reshape((1,1,84,84))))
-        obs = decoder(encoder(obs))
+        if args.latent_space_type == 'single-frame-predictor':
+            obs = decoder(encoder(obs))
+        if args.latent_space_type == 'forward-frame-predictor':
+#            print(encoder(obs).shape)
+            obs = decoder(encoder(obs), act)
     obs = obs.reshape((84,84)).numpy()
     if done:
         env.reset()

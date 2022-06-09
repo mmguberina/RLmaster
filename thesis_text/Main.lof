@@ -5,19 +5,19 @@
 \defcounter {refsection}{0}\relax 
 \addvspace {10\p@ }
 \defcounter {refsection}{0}\relax 
-\contentsline {figure}{\numberline {2.1}{\ignorespaces Conceptual schematic of reinforcement learning.\relax }}{5}{figure.caption.6}%
+\contentsline {figure}{\numberline {2.1}{\ignorespaces Conceptual schematic of reinforcement learning.\relax }}{7}{figure.caption.6}%
 \defcounter {refsection}{0}\relax 
-\contentsline {figure}{\numberline {2.2}{\ignorespaces Schematic of a Markov chain.\relax }}{6}{figure.caption.8}%
+\contentsline {figure}{\numberline {2.2}{\ignorespaces Schematic of a Markov chain.\relax }}{8}{figure.caption.7}%
 \defcounter {refsection}{0}\relax 
-\contentsline {figure}{\numberline {2.3}{\ignorespaces Schematic of a Markov decision process.\relax }}{7}{figure.caption.9}%
+\contentsline {figure}{\numberline {2.3}{\ignorespaces Schematic of a Markov decision process.\relax }}{9}{figure.caption.8}%
 \defcounter {refsection}{0}\relax 
-\contentsline {figure}{\numberline {2.4}{\ignorespaces Schematic of a partially observable Markov decision process.\relax }}{7}{figure.caption.10}%
+\contentsline {figure}{\numberline {2.4}{\ignorespaces Schematic of a partially observable Markov decision process.\relax }}{9}{figure.caption.9}%
 \defcounter {refsection}{0}\relax 
-\contentsline {figure}{\numberline {2.5}{\ignorespaces Auto-encoder: learned by reconstructing the observation (one-to-one). The observation is the input and the computed state is the vector at the auto-encoder's bottleneck layer, i.e. is the output of the encoder part of the auto-encoder network. The loss is calculated between the true observation and the reconstructing observation (which is obtained by passing the observation though both the encoder and the decoder).\relax }}{20}{figure.caption.12}%
+\contentsline {figure}{\numberline {2.5}{\ignorespaces Auto-encoder: learned by reconstructing the observation (one-to-one). The observation is the input and the computed state is the vector at the auto-encoder's bottleneck layer, i.e. is the output of the encoder part of the auto-encoder network. The loss is calculated between the true observation and the reconstructing observation (which is obtained by passing the observation though both the encoder and the decoder).\relax }}{27}{figure.caption.11}%
 \defcounter {refsection}{0}\relax 
-\contentsline {figure}{\numberline {2.6}{\ignorespaces Forward model: predicting the future state from the state-action pair. The loss is computer from comparing the predicted state against the true next state (the states being the learned states). This can also be done directly by predicting the next observation and comparing against it. \relax }}{21}{figure.caption.13}%
+\contentsline {figure}{\numberline {2.6}{\ignorespaces Forward model: predicting the future state from the state-action pair. The loss is computer from comparing the predicted state against the true next state (the states being the learned states). This can also be done directly by predicting the next observation and comparing against it. \relax }}{28}{figure.caption.12}%
 \defcounter {refsection}{0}\relax 
-\contentsline {figure}{\numberline {2.7}{\ignorespaces Inverse model: predicting the action between two concequtive states. The loss is computer from comparing the predicted action between two consequtive states against the true action that was taken by the agent between those two states. (the states being the learned states). \relax }}{22}{figure.caption.14}%
+\contentsline {figure}{\numberline {2.7}{\ignorespaces Inverse model: predicting the action between two consecutive states. The loss is computer from comparing the predicted action between two consecutive states against the true action that was taken by the agent between those two states. (the states being the learned states). \relax }}{28}{figure.caption.13}%
 \defcounter {refsection}{0}\relax 
 \addvspace {10\p@ }
 \defcounter {refsection}{0}\relax 

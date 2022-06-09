@@ -1,65 +1,79 @@
 \BOOKMARK [0][-]{chapter*.3}{List of Figures}{}% 1
 \BOOKMARK [0][-]{chapter*.4}{List of Tables}{}% 2
 \BOOKMARK [0][-]{chapter.1}{Introduction}{}% 3
-\BOOKMARK [0][-]{chapter.2}{Background}{}% 4
-\BOOKMARK [1][-]{section.2.1}{Introduction to reinforcement learning}{chapter.2}% 5
-\BOOKMARK [2][-]{subsection.2.1.1}{Problem setting}{section.2.1}% 6
-\BOOKMARK [2][-]{subsection.2.1.2}{Bandit problems}{section.2.1}% 7
-\BOOKMARK [2][-]{subsection.2.1.3}{Markov Decision Processes}{section.2.1}% 8
-\BOOKMARK [2][-]{subsection.2.1.4}{Key concepts in reinforcement learning}{section.2.1}% 9
-\BOOKMARK [3][-]{subsubsection.2.1.4.1}{Policy}{subsection.2.1.4}% 10
-\BOOKMARK [3][-]{subsubsection.2.1.4.2}{Goal of reinforcement learning}{subsection.2.1.4}% 11
-\BOOKMARK [3][-]{subsubsection.2.1.4.3}{Value functions}{subsection.2.1.4}% 12
-\BOOKMARK [1][-]{section.2.2}{Classes of reinforcement learning algorithms}{chapter.2}% 13
-\BOOKMARK [2][-]{subsection.2.2.1}{Policy gradients}{section.2.2}% 14
-\BOOKMARK [3][-]{subsubsection.2.2.1.1}{Baselines}{subsection.2.2.1}% 15
-\BOOKMARK [3][-]{subsubsection.2.2.1.2}{Off-policy gradients}{subsection.2.2.1}% 16
-\BOOKMARK [4][-]{paragraph.2.2.1.2.1}{Advanced policy gradient}{subsubsection.2.2.1.2}% 17
-\BOOKMARK [2][-]{subsection.2.2.2}{Actor-critic algorithms}{section.2.2}% 18
-\BOOKMARK [2][-]{subsection.2.2.3}{Value function methods}{section.2.2}% 19
-\BOOKMARK [3][-]{subsubsection.2.2.3.1}{Dynamic programming}{subsection.2.2.3}% 20
-\BOOKMARK [1][-]{section.2.3}{Deep Learning }{chapter.2}% 21
-\BOOKMARK [2][-]{subsection.2.3.1}{Auto Encoders : Preliminary location}{section.2.3}% 22
-\BOOKMARK [1][-]{section.2.4}{Deep Reinforcement Learning and DQN}{chapter.2}% 23
-\BOOKMARK [2][-]{subsection.2.4.1}{Extension of DQN }{section.2.4}% 24
-\BOOKMARK [3][-]{subsubsection.2.4.1.1}{Double Deep Q-networks: DDQN}{subsection.2.4.1}% 25
-\BOOKMARK [3][-]{subsubsection.2.4.1.2}{Prioritized replay}{subsection.2.4.1}% 26
-\BOOKMARK [3][-]{subsubsection.2.4.1.3}{Dueling Network}{subsection.2.4.1}% 27
-\BOOKMARK [3][-]{subsubsection.2.4.1.4}{Multi-step learning}{subsection.2.4.1}% 28
-\BOOKMARK [3][-]{subsubsection.2.4.1.5}{Noisy Nets}{subsection.2.4.1}% 29
-\BOOKMARK [3][-]{subsubsection.2.4.1.6}{Integrated Agent:Rainbow}{subsection.2.4.1}% 30
-\BOOKMARK [1][-]{section.2.5}{Problems with RL}{chapter.2}% 31
-\BOOKMARK [1][-]{section.2.6}{general computer vision stuff}{chapter.2}% 32
-\BOOKMARK [1][-]{section.2.7}{General latent space learning}{chapter.2}% 33
-\BOOKMARK [2][-]{subsection.2.7.1}{Auto-encoder}{section.2.7}% 34
-\BOOKMARK [2][-]{subsection.2.7.2}{Forward model}{section.2.7}% 35
-\BOOKMARK [2][-]{subsection.2.7.3}{Inverse model}{section.2.7}% 36
-\BOOKMARK [2][-]{subsection.2.7.4}{Using prior knowledge to constrain the state space}{section.2.7}% 37
-\BOOKMARK [2][-]{subsection.2.7.5}{Using hybring objectives}{section.2.7}% 38
-\BOOKMARK [2][-]{subsection.2.7.6}{Common neural network architectures}{section.2.7}% 39
-\BOOKMARK [3][-]{subsubsection.2.7.6.1}{AE}{subsection.2.7.6}% 40
-\BOOKMARK [3][-]{subsubsection.2.7.6.2}{DAE}{subsection.2.7.6}% 41
-\BOOKMARK [3][-]{subsubsection.2.7.6.3}{VAE}{subsection.2.7.6}% 42
-\BOOKMARK [3][-]{subsubsection.2.7.6.4}{Siamese networks}{subsection.2.7.6}% 43
-\BOOKMARK [1][-]{section.2.8}{Model-based reinforcement learning}{chapter.2}% 44
-\BOOKMARK [0][-]{chapter.3}{Related Work}{}% 45
-\BOOKMARK [1][-]{section.3.1}{Work on top of which we build}{chapter.3}% 46
-\BOOKMARK [1][-]{section.3.2}{Current state-of-the-art on Atari, Agent 57}{chapter.3}% 47
-\BOOKMARK [1][-]{section.3.3}{Current state-of-the-art on Atari}{chapter.3}% 48
-\BOOKMARK [1][-]{section.3.4}{Work whose techniques we share}{chapter.3}% 49
-\BOOKMARK [1][-]{section.3.5}{Work achieving same goals as us, but differently}{chapter.3}% 50
-\BOOKMARK [1][-]{section.3.6}{Strongly related to our work}{chapter.3}% 51
-\BOOKMARK [0][-]{chapter.4}{Methods}{}% 52
-\BOOKMARK [1][-]{section.4.1}{Problems to be tackled}{chapter.4}% 53
-\BOOKMARK [1][-]{section.4.2}{Hypotheses}{chapter.4}% 54
-\BOOKMARK [2][-]{subsection.4.2.1}{Enviroment and Preprocessing}{section.4.2}% 55
-\BOOKMARK [2][-]{subsection.4.2.2}{Deep Auto-encoder and Model Architecture}{section.4.2}% 56
-\BOOKMARK [2][-]{subsection.4.2.3}{Training the RL Agent}{section.4.2}% 57
-\BOOKMARK [0][-]{chapter.5}{Results}{}% 58
-\BOOKMARK [1][-]{subsection.5.0.1}{Two Step Training}{chapter.5}% 59
-\BOOKMARK [2][-]{subsection.5.0.2}{Parallel Training}{subsection.5.0.1}% 60
-\BOOKMARK [0][-]{chapter.6}{Conclusion}{}% 61
-\BOOKMARK [1][-]{section.6.1}{Discussion}{chapter.6}% 62
-\BOOKMARK [1][-]{section.6.2}{Conclusion}{chapter.6}% 63
-\BOOKMARK [0][-]{section.6.2}{Bibliography}{}% 64
-\BOOKMARK [0][-]{appendix.A}{Appendix 1}{}% 65
+\BOOKMARK [1][-]{section.1.1}{What is reinforcement learning?}{chapter.1}% 4
+\BOOKMARK [1][-]{section.1.2}{Why is reinforcement learning interesting?}{chapter.1}% 5
+\BOOKMARK [1][-]{section.1.3}{Efforts in making reinforcement learning more efficient}{chapter.1}% 6
+\BOOKMARK [1][-]{section.1.4}{Goal of the thesis}{chapter.1}% 7
+\BOOKMARK [2][-]{subsection.1.4.1}{Hypothesis}{section.1.4}% 8
+\BOOKMARK [2][-]{subsection.1.4.2}{Contributions}{section.1.4}% 9
+\BOOKMARK [1][-]{section.1.5}{Outline}{chapter.1}% 10
+\BOOKMARK [0][-]{chapter.2}{Background}{}% 11
+\BOOKMARK [1][-]{section.2.1}{Introduction to reinforcement learning}{chapter.2}% 12
+\BOOKMARK [2][-]{subsection.2.1.1}{Problem setting}{section.2.1}% 13
+\BOOKMARK [2][-]{subsection.2.1.2}{Bandit problems}{section.2.1}% 14
+\BOOKMARK [2][-]{subsection.2.1.3}{Markov Decision Processes}{section.2.1}% 15
+\BOOKMARK [2][-]{subsection.2.1.4}{Key concepts in reinforcement learning}{section.2.1}% 16
+\BOOKMARK [3][-]{subsubsection.2.1.4.1}{Policy}{subsection.2.1.4}% 17
+\BOOKMARK [3][-]{subsubsection.2.1.4.2}{Goal of reinforcement learning}{subsection.2.1.4}% 18
+\BOOKMARK [3][-]{subsubsection.2.1.4.3}{Value functions}{subsection.2.1.4}% 19
+\BOOKMARK [1][-]{section.2.2}{Classes of reinforcement learning algorithms}{chapter.2}% 20
+\BOOKMARK [2][-]{subsection.2.2.1}{Policy gradients}{section.2.2}% 21
+\BOOKMARK [3][-]{subsubsection.2.2.1.1}{Baselines}{subsection.2.2.1}% 22
+\BOOKMARK [3][-]{subsubsection.2.2.1.2}{Off-policy gradients}{subsection.2.2.1}% 23
+\BOOKMARK [3][-]{subsubsection.2.2.1.3}{Advanced policy gradients}{subsection.2.2.1}% 24
+\BOOKMARK [2][-]{subsection.2.2.2}{Actor-critic algorithms}{section.2.2}% 25
+\BOOKMARK [2][-]{subsection.2.2.3}{Value function methods}{section.2.2}% 26
+\BOOKMARK [3][-]{subsubsection.2.2.3.1}{Dynamic programming}{subsection.2.2.3}% 27
+\BOOKMARK [1][-]{section.2.3}{Deep Reinforcement Learning and DQN}{chapter.2}% 28
+\BOOKMARK [2][-]{subsection.2.3.1}{Extension of DQN }{section.2.3}% 29
+\BOOKMARK [3][-]{subsubsection.2.3.1.1}{Double Deep Q-networks: DDQN}{subsection.2.3.1}% 30
+\BOOKMARK [3][-]{subsubsection.2.3.1.2}{Prioritized replay}{subsection.2.3.1}% 31
+\BOOKMARK [3][-]{subsubsection.2.3.1.3}{Dueling Network}{subsection.2.3.1}% 32
+\BOOKMARK [3][-]{subsubsection.2.3.1.4}{Multi-step learning}{subsection.2.3.1}% 33
+\BOOKMARK [3][-]{subsubsection.2.3.1.5}{Noisy Nets}{subsection.2.3.1}% 34
+\BOOKMARK [3][-]{subsubsection.2.3.1.6}{Integrated Agent:Rainbow}{subsection.2.3.1}% 35
+\BOOKMARK [2][-]{subsection.2.3.2}{Deep autoencoders}{section.2.3}% 36
+\BOOKMARK [1][-]{section.2.4}{Problems with RL}{chapter.2}% 37
+\BOOKMARK [1][-]{section.2.5}{Unsupervised learning on images}{chapter.2}% 38
+\BOOKMARK [1][-]{section.2.6}{Introduction to state learning learning}{chapter.2}% 39
+\BOOKMARK [2][-]{subsection.2.6.1}{Representation models in general}{section.2.6}% 40
+\BOOKMARK [2][-]{subsection.2.6.2}{Generative models}{section.2.6}% 41
+\BOOKMARK [3][-]{subsubsection.2.6.2.1}{Probabilistic models}{subsection.2.6.2}% 42
+\BOOKMARK [3][-]{subsubsection.2.6.2.2}{Directed graphical models}{subsection.2.6.2}% 43
+\BOOKMARK [3][-]{subsubsection.2.6.2.3}{Directly learning a parametric map from input to representation}{subsection.2.6.2}% 44
+\BOOKMARK [2][-]{subsection.2.6.3}{Discriminative models}{section.2.6}% 45
+\BOOKMARK [2][-]{subsection.2.6.4}{Common representation learning approaches}{section.2.6}% 46
+\BOOKMARK [3][-]{subsubsection.2.6.4.1}{Deterministic autoencoders}{subsection.2.6.4}% 47
+\BOOKMARK [3][-]{subsubsection.2.6.4.2}{Variational autoencoders}{subsection.2.6.4}% 48
+\BOOKMARK [3][-]{subsubsection.2.6.4.3}{Deterministic autoencoder regularization}{subsection.2.6.4}% 49
+\BOOKMARK [2][-]{subsection.2.6.5}{Representation models for control}{section.2.6}% 50
+\BOOKMARK [2][-]{subsection.2.6.6}{Autoencoder}{section.2.6}% 51
+\BOOKMARK [2][-]{subsection.2.6.7}{Forward model}{section.2.6}% 52
+\BOOKMARK [2][-]{subsection.2.6.8}{Inverse model}{section.2.6}% 53
+\BOOKMARK [2][-]{subsection.2.6.9}{Using prior knowledge to constrain the state space}{section.2.6}% 54
+\BOOKMARK [2][-]{subsection.2.6.10}{Using hybring objectives}{section.2.6}% 55
+\BOOKMARK [1][-]{section.2.7}{Model-based reinforcement learning}{chapter.2}% 56
+\BOOKMARK [0][-]{chapter.3}{Related Work}{}% 57
+\BOOKMARK [1][-]{section.3.1}{Reinforcement learning on Atari}{chapter.3}% 58
+\BOOKMARK [1][-]{section.3.2}{Efforts in increasing efficiency in Atari}{chapter.3}% 59
+\BOOKMARK [1][-]{section.3.3}{State representation learning for efficient model-free learning}{chapter.3}% 60
+\BOOKMARK [2][-]{subsection.3.3.1}{Deterministic generative models}{section.3.3}% 61
+\BOOKMARK [2][-]{subsection.3.3.2}{Stochastic generative models}{section.3.3}% 62
+\BOOKMARK [2][-]{subsection.3.3.3}{Discriminative models}{section.3.3}% 63
+\BOOKMARK [2][-]{subsection.3.3.4}{Rainbow stuff}{section.3.3}% 64
+\BOOKMARK [1][-]{section.3.4}{Formulating our hypothesis}{chapter.3}% 65
+\BOOKMARK [0][-]{chapter.4}{Methods}{}% 66
+\BOOKMARK [1][-]{section.4.1}{Problems to be tackled}{chapter.4}% 67
+\BOOKMARK [1][-]{section.4.2}{Hypotheses}{chapter.4}% 68
+\BOOKMARK [2][-]{subsection.4.2.1}{Enviroment and Preprocessing}{section.4.2}% 69
+\BOOKMARK [2][-]{subsection.4.2.2}{Deep Auto-encoder and Model Architecture}{section.4.2}% 70
+\BOOKMARK [2][-]{subsection.4.2.3}{Training the RL Agent}{section.4.2}% 71
+\BOOKMARK [0][-]{chapter.5}{Results}{}% 72
+\BOOKMARK [1][-]{subsection.5.0.1}{Two Step Training}{chapter.5}% 73
+\BOOKMARK [2][-]{subsection.5.0.2}{Parallel Training}{subsection.5.0.1}% 74
+\BOOKMARK [0][-]{chapter.6}{Conclusion}{}% 75
+\BOOKMARK [1][-]{section.6.1}{Discussion}{chapter.6}% 76
+\BOOKMARK [1][-]{section.6.2}{Conclusion}{chapter.6}% 77
+\BOOKMARK [0][-]{section.6.2}{Bibliography}{}% 78
+\BOOKMARK [0][-]{appendix.A}{Appendix 1}{}% 79

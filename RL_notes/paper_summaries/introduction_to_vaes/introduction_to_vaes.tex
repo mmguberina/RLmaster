@@ -46,7 +46,7 @@ data sets: the recognition model uses one set of parameters to model
 the relation between input and latent variables and as such is called
 ``amortized inference''.
 This is reasonably fast because by construction the recognition model
-can be done using a single forwardpass from input to latent variables.
+can be done using a single forward pass from input to latent variables.
 The price paid for this is that sampling induces sampling nois in the gradients
 required for learning.
 The key VAE contribution is that this variance can be counteracted by
@@ -80,7 +80,7 @@ but are better density models in terms of likelihood creation.
 Probabilistic models are a formalization of knowledge and skill.
 The degree and nature of uncertainty is specified in terms
 of (conditional) probability distributions.
-Let $ \bm{x}_{}  $ be the vector represeting the set of all observed
+Let $ \bm{x}_{}  $ be the vector representing the set of all observed
 variables whose joint distribution we would like to model.
 We assume $ \bm{x}_{}  $ is a random sample of an unknown distribution
 $ p^{ * } (\bm{x}_{})  $.
