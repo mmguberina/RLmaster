@@ -41,46 +41,9 @@
       \strng{authorbibnamehash}{beb538c344f0aac7b09eccbd08bc9dea}
       \strng{authornamehash}{beb538c344f0aac7b09eccbd08bc9dea}
       \strng{authorfullhash}{beb538c344f0aac7b09eccbd08bc9dea}
-      \field{extraname}{1}
       \field{labelalpha}{LR10}
       \field{sortinit}{2}
       \field{sortinithash}{ed39bb39cf854d5250e95b1c1f94f4ed}
-      \field{extraalpha}{1}
-      \field{labelnamesource}{author}
-      \field{labeltitlesource}{title}
-      \field{booktitle}{The 2010 international joint conference on neural networks (IJCNN)}
-      \field{title}{Deep auto-encoder neural networks in reinforcement learning}
-      \field{year}{2010}
-      \field{pages}{1\bibrangedash 8}
-      \range{pages}{8}
-    \endentry
-    \entry{firstaeinrl}{inproceedings}{}
-      \name{author}{2}{}{%
-        {{hash=eb0c3521aaad8bb21bb052214ae15910}{%
-           family={Lange},
-           familyi={L\bibinitperiod},
-           given={Sascha},
-           giveni={S\bibinitperiod}}}%
-        {{hash=9449802bcb467309c0ebced658096818}{%
-           family={Riedmiller},
-           familyi={R\bibinitperiod},
-           given={Martin},
-           giveni={M\bibinitperiod}}}%
-      }
-      \list{organization}{1}{%
-        {IEEE}%
-      }
-      \strng{namehash}{beb538c344f0aac7b09eccbd08bc9dea}
-      \strng{fullhash}{beb538c344f0aac7b09eccbd08bc9dea}
-      \strng{bibnamehash}{beb538c344f0aac7b09eccbd08bc9dea}
-      \strng{authorbibnamehash}{beb538c344f0aac7b09eccbd08bc9dea}
-      \strng{authornamehash}{beb538c344f0aac7b09eccbd08bc9dea}
-      \strng{authorfullhash}{beb538c344f0aac7b09eccbd08bc9dea}
-      \field{extraname}{2}
-      \field{labelalpha}{LR10}
-      \field{sortinit}{2}
-      \field{sortinithash}{ed39bb39cf854d5250e95b1c1f94f4ed}
-      \field{extraalpha}{2}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{booktitle}{The 2010 international joint conference on neural networks (IJCNN)}
@@ -453,76 +416,6 @@
       \field{year}{2017}
       \field{pages}{2778\bibrangedash 2787}
       \range{pages}{10}
-    \endentry
-    \entry{sac}{article}{}
-      \true{moreauthor}
-      \true{morelabelname}
-      \name{author}{10}{}{%
-        {{hash=45b14f55dd7ae28cb6cb2e23e4a168b9}{%
-           family={Haarnoja},
-           familyi={H\bibinitperiod},
-           given={Tuomas},
-           giveni={T\bibinitperiod}}}%
-        {{hash=519033a7338e5ef684c77d4d04748a4a}{%
-           family={Zhou},
-           familyi={Z\bibinitperiod},
-           given={Aurick},
-           giveni={A\bibinitperiod}}}%
-        {{hash=2bf28b92c31c717feee2c15487657b25}{%
-           family={Hartikainen},
-           familyi={H\bibinitperiod},
-           given={Kristian},
-           giveni={K\bibinitperiod}}}%
-        {{hash=641a3f5d5ce834c4b56fb672c5df0207}{%
-           family={Tucker},
-           familyi={T\bibinitperiod},
-           given={George},
-           giveni={G\bibinitperiod}}}%
-        {{hash=d235634814ed266793a4de24b71955e6}{%
-           family={Ha},
-           familyi={H\bibinitperiod},
-           given={Sehoon},
-           giveni={S\bibinitperiod}}}%
-        {{hash=aaa7cb90b2e1cc2079b5e8a087a903c9}{%
-           family={Tan},
-           familyi={T\bibinitperiod},
-           given={Jie},
-           giveni={J\bibinitperiod}}}%
-        {{hash=bbba0ccb50436105a4134d24509b62d7}{%
-           family={Kumar},
-           familyi={K\bibinitperiod},
-           given={Vikash},
-           giveni={V\bibinitperiod}}}%
-        {{hash=fde29d8aa12ec2aa9ab89c495df350fb}{%
-           family={Zhu},
-           familyi={Z\bibinitperiod},
-           given={Henry},
-           giveni={H\bibinitperiod}}}%
-        {{hash=d0792eb04b685020eafedbc871aeb84f}{%
-           family={Gupta},
-           familyi={G\bibinitperiod},
-           given={Abhishek},
-           giveni={A\bibinitperiod}}}%
-        {{hash=e28d4ee199593959d8c29980a64f1974}{%
-           family={Abbeel},
-           familyi={A\bibinitperiod},
-           given={Pieter},
-           giveni={P\bibinitperiod}}}%
-      }
-      \strng{namehash}{b8c131de85c5000ff50df59a4d062227}
-      \strng{fullhash}{a222afeea14cab3c4cb8037fca8ff7bf}
-      \strng{bibnamehash}{b8c131de85c5000ff50df59a4d062227}
-      \strng{authorbibnamehash}{b8c131de85c5000ff50df59a4d062227}
-      \strng{authornamehash}{b8c131de85c5000ff50df59a4d062227}
-      \strng{authorfullhash}{a222afeea14cab3c4cb8037fca8ff7bf}
-      \field{labelalpha}{Haa+18}
-      \field{sortinit}{2}
-      \field{sortinithash}{ed39bb39cf854d5250e95b1c1f94f4ed}
-      \field{labelnamesource}{author}
-      \field{labeltitlesource}{title}
-      \field{journaltitle}{arXiv preprint arXiv:1812.05905}
-      \field{title}{Soft actor-critic algorithms and applications}
-      \field{year}{2018}
     \endentry
     \entry{rainbow}{inproceedings}{}
       \name{author}{10}{}{%
@@ -1060,6 +953,47 @@
       \field{pages}{19884\bibrangedash 19895}
       \range{pages}{12}
     \endentry
+    \entry{slac}{article}{}
+      \name{author}{4}{}{%
+        {{hash=c098d10dd7158ad08ba8c0b8db7fdb6c}{%
+           family={Lee},
+           familyi={L\bibinitperiod},
+           given={Alex\bibnamedelima X},
+           giveni={A\bibinitperiod\bibinitdelim X\bibinitperiod}}}%
+        {{hash=a79831f08485415baab01ec054a46dbb}{%
+           family={Nagabandi},
+           familyi={N\bibinitperiod},
+           given={Anusha},
+           giveni={A\bibinitperiod}}}%
+        {{hash=e28d4ee199593959d8c29980a64f1974}{%
+           family={Abbeel},
+           familyi={A\bibinitperiod},
+           given={Pieter},
+           giveni={P\bibinitperiod}}}%
+        {{hash=c9545da54b33744da25943cdf66eadac}{%
+           family={Levine},
+           familyi={L\bibinitperiod},
+           given={Sergey},
+           giveni={S\bibinitperiod}}}%
+      }
+      \strng{namehash}{37f7f0823e1b6e0ae978cb00fea7d24d}
+      \strng{fullhash}{0a8cf459b339dbb3cb5d45042a52fbb1}
+      \strng{bibnamehash}{37f7f0823e1b6e0ae978cb00fea7d24d}
+      \strng{authorbibnamehash}{37f7f0823e1b6e0ae978cb00fea7d24d}
+      \strng{authornamehash}{37f7f0823e1b6e0ae978cb00fea7d24d}
+      \strng{authorfullhash}{0a8cf459b339dbb3cb5d45042a52fbb1}
+      \field{labelalpha}{Lee+20}
+      \field{sortinit}{2}
+      \field{sortinithash}{ed39bb39cf854d5250e95b1c1f94f4ed}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Advances in Neural Information Processing Systems}
+      \field{title}{Stochastic latent actor-critic: Deep reinforcement learning with a latent variable model}
+      \field{volume}{33}
+      \field{year}{2020}
+      \field{pages}{741\bibrangedash 752}
+      \range{pages}{12}
+    \endentry
     \entry{mazoure2020deep}{article}{}
       \name{author}{5}{}{%
         {{hash=43dcff7ffdf15b9a267a9eb9cea73b52}{%
@@ -1271,6 +1205,49 @@
       \field{title}{Which Mutual-Information Representation Learning Objectives are Sufficient for Control?}
       \field{volume}{34}
       \field{year}{2021}
+    \endentry
+    \entry{stooke2021decoupling}{inproceedings}{}
+      \name{author}{4}{}{%
+        {{hash=aad83400c6061a7a8f6c422951af64cf}{%
+           family={Stooke},
+           familyi={S\bibinitperiod},
+           given={Adam},
+           giveni={A\bibinitperiod}}}%
+        {{hash=a74a7d6a839e48de367e41b7ec29d456}{%
+           family={Lee},
+           familyi={L\bibinitperiod},
+           given={Kimin},
+           giveni={K\bibinitperiod}}}%
+        {{hash=e28d4ee199593959d8c29980a64f1974}{%
+           family={Abbeel},
+           familyi={A\bibinitperiod},
+           given={Pieter},
+           giveni={P\bibinitperiod}}}%
+        {{hash=af9729d0e8bc4f4722f164d7b1035749}{%
+           family={Laskin},
+           familyi={L\bibinitperiod},
+           given={Michael},
+           giveni={M\bibinitperiod}}}%
+      }
+      \list{organization}{1}{%
+        {PMLR}%
+      }
+      \strng{namehash}{fbac76e310e02d624c8d56c124d9d4c2}
+      \strng{fullhash}{e20378a503e98fb765982b8a29806d88}
+      \strng{bibnamehash}{fbac76e310e02d624c8d56c124d9d4c2}
+      \strng{authorbibnamehash}{fbac76e310e02d624c8d56c124d9d4c2}
+      \strng{authornamehash}{fbac76e310e02d624c8d56c124d9d4c2}
+      \strng{authorfullhash}{e20378a503e98fb765982b8a29806d88}
+      \field{labelalpha}{Sto+21}
+      \field{sortinit}{2}
+      \field{sortinithash}{ed39bb39cf854d5250e95b1c1f94f4ed}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{booktitle}{International Conference on Machine Learning}
+      \field{title}{Decoupling representation learning from reinforcement learning}
+      \field{year}{2021}
+      \field{pages}{9870\bibrangedash 9879}
+      \range{pages}{10}
     \endentry
     \entry{weng2021tianshou}{article}{}
       \name{author}{8}{}{%
@@ -1509,10 +1486,7 @@
       \endverb
     \endentry
   \enddatalist
-  \missing{auto-encoderforEfficientEmbeddedReinforcementLearning}
-  \missing{investigationontheDeepLearningFramework}
   \missing{raibow}
-  \missing{slac}
 \endrefsection
 \endinput
 

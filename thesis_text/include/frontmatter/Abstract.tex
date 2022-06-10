@@ -10,11 +10,30 @@ Chalmers University of Technology and University of Gothenburg\setlength{\parski
 \setlength{\parskip}{0pt plus 1.0pt}
 \section*{Abstract}
 %Abstract text about your project in  Computer Science and Engineering.
-Will be written last.
+Reinforcement learning struggles to solve control tasks on directly on images.
+Performance on identical tasks with access to the underlying states is much better.
+One avenue to bridge the gap between the two is to leverage unsupervised learning
+as a means of learning state representations from images, thereby resulting
+in a better conditioned reinforcement learning problem.
+Through investigation of related work, characteristics of successful 
+integration of unsupervised learning and reinforcement learning are identified.
+We hypothesize that joint training of state representations and policies
+result in highest sample-efficiency if adequate regularization is provided.
+We further hypothesize that representations which correlate more strongly
+with the underlying Markov decision process result in additional sample-efficiency.
+These hypotheses are tested through a simple deterministic generative 
+representation learning model trained with image reconstruction loss
+and additional forward and inverse auxiliary losses.
+While our algorithm does not reach state-of-the-art performance,
+its modular implementation integrated in the reinforcement learning library Tianshou
+enables easy use to reinforcement learning practitioners,
+and thus also accelerates further research.
+In our tests we limited ourselves to Atari environments
+and primarily used Rainbow as the underlying reinforcement learning algorithm.
 
 % KEYWORDS (MAXIMUM 10 WORDS)
 \vfill
-Keywords: reinforcement learning, state representation learning, efficient model-free methods,
+Keywords: sample-efficient reinforcement learning, state representation learning, unsupervised learning
 autoencoder
 
 

@@ -143,7 +143,7 @@ As discussed in \ref{sub-repr-models-general}, stochastic models can be used to 
 predictions which can be used to plan and thus be used in model-based reinforcement learning.
 However, this does not mean that they can not be used to bolster model-free learning.
 As discussed in \ref{subsec-mdps}, the formal setting for reinforcement learning is 
-the Markov decision process --- a stochastic setting.
+the Markov decision process which is stochastic.
 Of course, the degree of stochasticity depends on the problem at hand,
 but given even in a fully deterministic setting stochastic models
 can be used to deal with epistemic uncertainty.
@@ -190,44 +190,44 @@ akin to how stochastic generative models are integrated in the MDP in \cite{slac
 %				\cite{firstaeinrl}
 %\end{enumerate}
 
-\subsection{Rainbow stuff}
-TODO: move this to background
-As stated in section 2.4.1.6 Integrated agent  
-was built by integrating the previous extensions of DQN in to one agent.
-Prioritized replay and multi-step learning were the two most crucial components.
-compared to the previous benchmarks rainbow was able to improve both  
-data efficiency and final performance.
-Although it potentially improved the performance of the original
-DQN algorithm; it also inherits the disadvantage of DQN, such as excessive
-memory usage, learning instability, and can only be applied to a discrete
-action space\cite{investigationontheDeepLearningFramework}.
-
-%TODOs: \cite{sac}
- 
-The use of deep Auto-Encoder Neural Networks in Reinforcement Learning is till
-in its early stage. The application of auto-encoders in dimensionality reduction
-has played a major role in reducing training time and data efficiency
-\cite{auto-encoderforEfficientEmbeddedReinforcementLearning}.
-Introducing auto encoders in batch RL resulted in learning from 
-raw pixels with out previously augmenting the data manually or 
-prepossessing \cite{firstaeinrl}; this closes the  
-existing gap between the  between the high dimensionality of 
-visual observations and the low dimensionality of state spaces.
-Deep
-convolutional encoders can learn good representations,they require large
-amounts of training data which makes  there application  in control systems
-limited.
-In the latest work \cite{sac} a successful RL variant called SAC + AE was
-introduced. Prior to this agent, two-step training was proposed by (Lange \&
-Riedmiller, 2010; Munk et al., 2016; Higgins et al., 2017b; Zhang et al.,
-2018a; Nair et al., 2018; Dwibedi et al., 2018) due to suboptimal policies the
-performance of these agents was poor.SAC + AE was designed using parrallel
-training using an off-policy algorithm and add an auxiliary task with an
-unsupervised objective low samole effieciency of most of the previously stated
-arcitectures presented under Section 2.3.1 was implemented. In addition to
-successfully combining autoencoders with model-free RL in the off-policy
-setting ;it was proved that SAC+AE bit the current model-based agents  with
-noisy observations  
+%\subsection{Rainbow stuff}
+%TODO: move this to background
+%As stated in section 2.4.1.6 Integrated agent  
+%was built by integrating the previous extensions of DQN in to one agent.
+%Prioritized replay and multi-step learning were the two most crucial components.
+%compared to the previous benchmarks rainbow was able to improve both  
+%data efficiency and final performance.
+%Although it potentially improved the performance of the original
+%DQN algorithm; it also inherits the disadvantage of DQN, such as excessive
+%memory usage, learning instability, and can only be applied to a discrete
+%action space\cite{investigationontheDeepLearningFramework}.
+%
+%%TODOs: \cite{sac}
+% 
+%The use of deep Auto-Encoder Neural Networks in Reinforcement Learning is till
+%in its early stage. The application of auto-encoders in dimensionality reduction
+%has played a major role in reducing training time and data efficiency
+%\cite{auto-encoderforEfficientEmbeddedReinforcementLearning}.
+%Introducing auto encoders in batch RL resulted in learning from 
+%raw pixels with out previously augmenting the data manually or 
+%prepossessing \cite{firstaeinrl}; this closes the  
+%existing gap between the  between the high dimensionality of 
+%visual observations and the low dimensionality of state spaces.
+%Deep
+%convolutional encoders can learn good representations,they require large
+%amounts of training data which makes  there application  in control systems
+%limited.
+%In the latest work \cite{sac} a successful RL variant called SAC + AE was
+%introduced. Prior to this agent, two-step training was proposed by (Lange \&
+%Riedmiller, 2010; Munk et al., 2016; Higgins et al., 2017b; Zhang et al.,
+%2018a; Nair et al., 2018; Dwibedi et al., 2018) due to suboptimal policies the
+%performance of these agents was poor.SAC + AE was designed using parrallel
+%training using an off-policy algorithm and add an auxiliary task with an
+%unsupervised objective low samole effieciency of most of the previously stated
+%arcitectures presented under Section 2.3.1 was implemented. In addition to
+%successfully combining autoencoders with model-free RL in the off-policy
+%setting ;it was proved that SAC+AE bit the current model-based agents  with
+%noisy observations  
 
 
 %\section{Current state-of-the-art on Atari, Agent 57}
@@ -298,5 +298,3 @@ noisy observations
 %\end{enumerate}
 %
 
-\section{Formulating our hypothesis}
-they're obvious and stated already, TODO this later.

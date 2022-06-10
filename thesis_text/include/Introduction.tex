@@ -204,7 +204,7 @@ As already stated, we believe that leveraging unsupervised learning techniques
 to learn state representations will make reinforcement learning from images
 more sample-efficient.
 Testing whether this is in fact true is one of our tasks.
-As will be shown in \ref{sec-general-latent-space-learning}, there are many different unsupervised learning
+As will be shown in \ref{sec-srl-for-control}, there are many different unsupervised learning
 techniques which can be adapted to the goal of state representation learning.
 Furthermore, there are many different ways in which state representation learning can be integrated
 in the reinforcement learning process.
@@ -245,7 +245,7 @@ Here we offer our hypothesis:
 \subsection{Contributions}
 \label{subsec-contributions}
 As already mentioned, our main goal is not to produce a state-of-the-art algorithm,
-but rather to find general properties which state representation learning algorithms 
+but rather to find and investigate general properties which state representation learning algorithms 
 should have and how they should best be integrated with reinforcement learning algorithms.
 In this thesis we provide the following contributions:
 \begin{enumerate}
@@ -261,16 +261,17 @@ In this thesis we provide the following contributions:
 
 \section{Outline}
 The rest of this text is organized as follows.
-We begin by describing the basics of reinforcement learning in \ref{sec-rl-intro}.
+We begin by describing the basics of reinforcement learning in \ref{ch-rl-background}.
 Here the problem setting and basic concepts are covered.
-Then main classes of 
+The main classes of 
 reinforcement learning are introduced in \ref{sec-rl-alg-classes}.
-Having the basics established, in \ref we introduce the reinforcement learning algorithm 
+Having the basics of reinforcement learning established, 
+in \ref{sec-drl} we introduce the reinforcement learning algorithm 
 we use in our implementation
 and discuss common reinforcement learning problems in \ref{sec-rl-problems}.
 Following the reinforcement learning discussion, we
-turn our attention to unsupervised learning on images in \ref{sec-unsupervised-learning-on-images}
-and introduce state representation learning in \ref{sec-srl-intro}.
+turn our attention to unsupervised representation learning on images in \ref{sec-repr-models-general}
+and discuss common state representation learning approaches for control problems in \ref{sec-srl-for-control}.
 %In previous publications, 
 %this information is scattered through different sources, 
 %the goal of this chapter is to give our readers one-place guide for reinforcement learning.

@@ -1,9 +1,9 @@
 % CREATED BY DAVID FRISK, 2016
-\chapter{Background}
-\label{ch-background}
-\section{Introduction to reinforcement learning}
-\label{sec-rl-intro}
-\subsection{Problem setting}
+\chapter{Reinforcement learning}
+\label{ch-rl-background}
+%\section{Introduction to reinforcement learning}
+%\label{sec-rl-intro}
+\section{Problem setting}
 \label{subsec-problem-setting}
 In the usual engineering approach to problems,
 prior scientific knowledge is used to first describe the problem
@@ -199,9 +199,9 @@ in sketches and written out in the equations (most often using just the Markov d
 %The former state-action value function (Q function for short)can be computes recursively with dynamic programming: 
 
 
-\subsection{Key concepts in reinforcement learning}
+\section{Key concepts in reinforcement learning}
 \label{subsec-key-rl-concepts}
-\subsubsection{Policy}
+\subsection{Policy}
 With the problem space being formally defined,
 we may introduce definitions which will allow the construction
 of a reinforcement learning algorithm.
@@ -276,7 +276,7 @@ policy gradient algorithms.
 They will be introduced with the other classes of algorithm in the next subsection,
 while here additional concepts required by other classes of algorithms will be introduced here.
 
-\subsubsection{Value functions}
+\subsection{Value functions}
 Value functions are functions which map states or state-action pairs
 to the expected returns obtained under a fixed policy.
 They are a concept from dynamic programming. In fact,
@@ -645,7 +645,7 @@ Q-Learning for Atari, or AlphaGo, Rainbow were rooted in these foundations. As
 stated in section 2.2.3 value function ,is a measure of the expected reward you
 can receive from any given state  given an MDP and a policy describing which
 actions an agent takes in each state. Value iteration is a computational
-algorithm that provides a means of finding the optimal policy,$\mathcal \pi*$ .
+algorithm that provides a means of finding the optimal policy $ \pi^{ * }$ .
 The algorithm works by iteratively determining the value of being in each
 state,  assuming that the agent takes the best possible action in that state
 under the current estimate of the value function.Fitted value iteration
@@ -664,7 +664,7 @@ Bellman equation  was rewritten as operator.
 %				approximation (introduce the bellman operator as well)
 %\end{enumerate}
 
-\section{Deep Reinforcement Learning and DQN}
+\section{Deep Q-networks and their extensions}
 \label{sec-drl}
 
 %TODO:
@@ -714,7 +714,7 @@ The drawbacks of deep Q-learning is that it only handle discrete,
 low-dimensional action spaces.
 
 
-\subsection{Extension of DQN }
+%\section{Extension of DQN }
 
 Although the initial architecture of deep Q learning introduced by
 \cite{mnih2013atari} paves the way for the use of deep neural network in
@@ -722,15 +722,15 @@ reinforcement learning, it comes with its own drawbacks;this leads to more
 studies and an improved DQN architecture.In this section, we will discuss these
 extensions of DQN architectures.
 
-\subsubsection{Double Deep Q-networks: DDQN}
+\subsection{Double Deep Q-networks: DDQN}
 
 DQN suffer from overestimation bias due to due to the maximization step in optimisation function in Q-learning.Q-learning can overestimate actions that have been tried often and the estimations can be higher than any realistic optimistic estimate .Double Q-learning [19], addresses this overestimation by decoupling, in the maximization performed for the bootstrap target, the selection of the action from its evaluation.Double Q-learning stores two Q-functions,The average of the two Q values for each action and then performed $\mathcal{\epsilon}$-greedy exploration with the resulting average Q values.It was successfully combined with DQN to reduce  overestimations.\textbf{ TODOS: DDQN  target equation}
 
-\subsubsection{Prioritized replay}
+\subsection{Prioritized replay}
 
 The main use of replay buffer is to sample transitions with maximum probability.Both DQN and DDQN samples experiences uniformly.Prioritized replay [20] samples transitions using the maximum priority ,providing a bias towards recent transitions and stochastic transitions  even when there is little left to learn about them.
 
-\subsubsection{Dueling Network}
+\subsection{Dueling Network}
 
 Dueling Network was designed for  value based learning,this architecture separates the representation of sate-value and state-dependent action advantages without supervision[6].its consists of two streams that represents the value and advantage functions,while sharing a common convolutional feature learning module.This network has a single Q-learning network with two streams that replace DQN architecture[3]. 
 
@@ -740,7 +740,7 @@ Dueling Network was designed for  value based learning,this architecture separat
 
 %\textbf{if needed TODO ADD EQUATION:factorization of action values}
 
-\subsubsection{Multi-step learning}
+\subsection{Multi-step learning}
 
 Previously stated extension of DQN have indicated that the use deep learning has enhanced the learning capability of Q-learning.The performance of  Q-learning is still limited by greedy action selection after accumulating a single reward.An alternative approach was multi-step targets:
  
@@ -756,11 +756,11 @@ the alternative loss[16],
 \end{equation}
   
 
-\subsubsection{Noisy Nets}
+\subsection{Noisy Nets}
 
 The one limitation of $\mathcal{\epsilon}$-greedy policy  is many actions must be executed to collect the first reward.Noisy Nets proposed a noisy linear layer that combines  a deterministic and noisy stream.Depending on the learning rate the network ignores to learn the noisy stream.
 
-\subsubsection{Integrated Agent:Rainbow}
+\subsection{Integrated Agent:Rainbow}
 
 
 In the Rainbow architecture \cite{raibow} 
@@ -901,17 +901,18 @@ it to choose actions based on reduced errors. Another approach is curriculum
 learning, where the agent is presented with various tasks in ascending order of
 complexity. This imitates the learning order of humans. 
 
-\section{Unsupervised learning on images}
-\ref{sec-unsupervised-learning-on-images}
-TBD - citing papers rl papers cite.
-Point here is pretraining is good and stuff like contrastive loss is introduced.
+%\section{Unsupervised learning on images}
+%\ref{sec-unsupervised-learning-on-images}
+%TBD - citing papers rl papers cite.
+%Point here is pretraining is good and stuff like contrastive loss is introduced.
 
 %Classifiers can't directly help RL, but things like object detectors might.
 %Also learned models.
 %But then we don't have end-to-end learning (it's important to explain why).
 
-\section{Introduction to state learning learning}
-\label{sec-srl-intro}
+\chapter{State representation learning}
+\label{ch-srl-background}
+%\section{Introduction to state learning learning}
 %TODO: throw in citations (ex. pilco, embed2control etc)
 
 %BIG TODO:\\
@@ -1021,8 +1022,8 @@ ideally have the following properties:
 We now discuss different types of models and learning strategies which 
 can be used to learn state representations.
 
-\subsection{Representation models in general}
-\label{sub-repr-models-general}
+\section{Representation models in general}
+\label{sec-repr-models-general}
 In general, representation learning refers to the process of learning 
 a parametric mapping from raw input data domain
 to a feature vector or tensor, in the hope of capturing and extracting more abstract and useful concepts
@@ -1313,7 +1314,8 @@ There's also the \textbf{gradient penalty} and
 %Networks that share parameters.
 
 
-\subsection{Representation models for control}
+\section{Representation models for control}
+\label{sec-srl-for-control}
 With representation in learning introduced in general,
 we can now introduce four different strategies for learning latent space models for control:
 the autoencoder, the forward model, the inverse model and the model

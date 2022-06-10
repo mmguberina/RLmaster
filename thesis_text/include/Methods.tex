@@ -1,4 +1,105 @@
 \chapter{Methods}
+\section{Formulating our hypotheses}
+\label{sec-hypothesis-reasoning}
+Early attempts to integrate unsupervised state representation learning with reinforcement learning
+did not yield the expected results.
+One of the reasons for this was due to the fact that joint training of both algorithms 
+did not work due to the instability caused by different training objectives.
+Before discussing how to solve this issue, we first need to elaborate why joint training
+is beneficial.
+In most recent work, convolutional neural networks are used to extract features from images.
+This includes reinforcement learning on images: convolutional layers precede linear layers.
+The convolutional layers, with possible addition of some of the linear layers,
+constitute the ``feature extraction'' portion of the policy networks
+which learn from images.
+In all of the related work which utilizes state representation learning and is discussed above
+unsupervised learning is used train the feature extractor portion of the reinforcement learning network.
+Because unsupervised learning tasks are not trained to extract states in a supervised manner (because the states
+are inaccessible),
+the features they learn will not exactly correspond to true states nor will they be able to
+exactly learn the state transition dynamics.
+This of course does not mean that approximate state representation can not be sufficiently accurate however.
+For example, in \cite{stooke2021decoupling} the feature extractor trained with augmented temporal
+contrast (a novel unsupervised learning task introduce in the work)
+was, on some problems, able to learn features which resulted in sample-efficiency
+close to training on true states.
+
+On the other hand, by training the policy network to maximize reward, the feature extraction 
+portion of the network will implicitly learn to extract features which are good enough
+to choose reward-maximizing actions.
+Thus, logically speaking, the feature extractor trained with just the reinforcement learning signal
+has to able to extract stateful information for the images, otherwise the agent would not perform well.
+However, because the reward signal is sparse and contains only indirect information about state,
+the feature extractor, which contains most of the policy network parameters in simple problems,
+learns slowly.
+
+This leads us to our first hypothesis \ref{parallel-training-hypothesis}.
+Assuming that the learned representations correspond to the images well,
+thus also meaning that they do not destroy stateful information,
+then they could be interpreted as partial extractions of states from images.
+Reinforcement learning feature extraction should then learn more efficiently on top of those representations
+due to fact that the search space has been constricted.
+We illustrate this assumption in \ref{fig-rl-srl-features-space}.
+Given the fact that neural networks have to be overparametrized in order to learn
+using stochastic gradient descent and their generalization capabilities,
+the feature extractors for the unsupervised learning and reinforcement learning tasks
+can be the same network.
+Furthermore, owing to learning properties of stochastic gradient descent,
+networks need to be updated with samples taken from all available information.
+In other words, they ``forget'' information they have learned unless it continues 
+to be provided in subsequent gradient updates.
+For this reason we suspect that continuing with unsupervised learning updates
+even after the unsupervised learning loss initially diminishes
+will be necessary to ensure the constriction described above.
+Following this results in joint training of state representation learning
+and reinforcement learning, which is why we hypothesize that it will yield higher
+sample-efficiency than other training approaches.
+
+
+
+
+\begin{figure}[htpb]
+\begin{center}
+
+\def\setA{(1.0,0) circle (2)}%
+\def\setB{(2.7,0) circle (1.5)}%
+% define the bounding box
+\def\boundb{(-5,3) rectangle (9,-3)}%
+\begin{tikzpicture}
+    \draw \boundb;
+    % intersection
+    \begin{scope}
+    \clip \setA;
+    \fill[black!20] \setB;
+    \end{scope}
+    \begin{scope}[even odd rule]% first circle without the second
+    \clip \setB \boundb;
+    \fill[red!20] \setA;
+    \end{scope}
+    \begin{scope}[even odd rule]% first circle without the second
+    \clip \setA \boundb;
+    \fill[blue!20] \setB;
+    \end{scope}
+    \draw \setA;
+    \draw \setB;
+    \node at (-1,0) [left, text width=3.5cm] {unsupervised learning (partially stateful) features};
+    \node at (5,0) [right, text width=3.5cm] {reinforcement learning (stateful) features};
+	\node at (11,3) [below left, text width=7cm] {\underline{latent representation space}};
+\end{tikzpicture}
+\end{center}
+\caption{Schematic of the feature extractor neural network parameter space. Since unsupervised learning
+		converges much faster, it constricts the search space for the features extracted through reinforcement learning.
+		This constriction is enforced joint training
+of both unsupervised state representation and reinforcement learning.}
+\label{fig-rl-srl-features-space}
+\end{figure}
+
+Because the objectives are different and because unsupervised learning is much faster,
+we hypothesize that regularization is necessary \ref{regularization-hypothesis}.
+Additionally, we hypothesize that representations which better represent true states
+and state transition dynamics, i.e. the underlying Markov decision process
+will better condition the reinforcement learning feature extraction task \ref{good-features-hypothesis}.
+
 \section{Our approach}
 As stated previously, the goal is to learn effective state representations
 while training the policy.
