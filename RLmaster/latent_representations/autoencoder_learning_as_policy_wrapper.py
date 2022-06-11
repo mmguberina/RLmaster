@@ -47,6 +47,7 @@ class AutoencoderLatentSpacePolicy(BasePolicy):
         batch_size: int,
         frames_stack: int,
         device: str = "cpu",
+        use_reconstruction_loss: bool = True,
         pass_policy_grad_to_encoder: bool = False,
         alternating_training_frequency: int = 1000,
         lr_scale: float = 0.001,
@@ -55,6 +56,8 @@ class AutoencoderLatentSpacePolicy(BasePolicy):
         super().__init__(**kwargs)
         self.rl_policy = rl_policy
         self.latent_space_type = latent_space_type
+        # here only for testing
+        self.use_reconstruction_loss = use_reconstruction_loss
         self.pass_policy_grad_to_encoder = pass_policy_grad_to_encoder
         self.alternating_training_frequency = alternating_training_frequency
         self.encoder = encoder
@@ -293,6 +296,11 @@ class AutoencoderLatentSpacePolicy(BasePolicy):
         #res = self.rl_policy.learn(batch, input="embedded_obs", **kwargs)
         # this will also pass q-grads through the encoder if encoder params are given to q_optim
         res = self.rl_policy.learn(batch, **kwargs)
+
+        # just for testing:
+        # don't update with reconstruction loss if not we don't pass that
+        if not self.reconstruction_loss:
+            return res
 
         encoded_obs = self.encoder(obs)
         decoded_obs = self.decoder(encoded_obs)
