@@ -8,7 +8,7 @@ from tianshou.data import Batch, ReplayBuffer, to_numpy, to_torch, to_torch_as
 from tianshou.policy import BasePolicy
 from tianshou.policy.base import _gae_return, _nstep_return
 from RLmaster.latent_representations.autoencoder_nn import CNNEncoderNew, CNNDecoderNew
-from RLmaster.policy.dqn_fixed import DQNPolicy
+from RLmaster.policy.dqn_fixed import DQNPolicyFixed
 
 class AutoencoderLatentSpacePolicy(BasePolicy):
     """
@@ -25,7 +25,6 @@ class AutoencoderLatentSpacePolicy(BasePolicy):
     enables switching between different reinforcement learning algorithms
     as simple as passing a different parameter (as it should be, given that
     it should act as an independent wrapper).
-
 
     :param BasePolicy policy: a base policy to add AutoencoderLatentSpace to.
     :param CNNEncoderNew encoder: the encoder part of the autoencoder.
@@ -212,7 +211,7 @@ class AutoencoderLatentSpacePolicy(BasePolicy):
         # no, it shouldn't be
         # but we went to disgusting hacking so here we are man
         # do the below depending on underlying policy
-        if isinstance(self.rl_policy, DQNPolicy):
+        if isinstance(self.rl_policy, DQNPolicyFixed):
             batch = self.compute_nstep_return(
                 batch, buffer, indices, self.rl_policy._target_q, self.rl_policy._gamma, 
                 self.rl_policy._n_step, self.rl_policy._rew_norm
@@ -248,8 +247,7 @@ class AutoencoderLatentSpacePolicy(BasePolicy):
             batch.obs_next = torch.tensor(batch.obs_next, device=self.device, dtype=torch.float)
 
         # we zero grad this here in because maybe we want both grads
-        self.optim_encoder.zero_grad()
-        self.optim_decoder.zero_grad()
+        self.rl_policy.zero_this_grad()
         # TODO use this to implement forward prediction
         #obs_next = torch.tensor(batch.obs_next, device=self.device)
 
@@ -312,9 +310,10 @@ class AutoencoderLatentSpacePolicy(BasePolicy):
         # just for testing:
         # don't update with reconstruction loss if not we don't pass that
         if not self.use_reconstruction_loss:
-            print("ues")
             return res
 
+        self.optim_encoder.zero_grad()
+        self.optim_decoder.zero_grad()
         encoded_obs = self.encoder(obs)
         decoded_obs = self.decoder(encoded_obs)
 

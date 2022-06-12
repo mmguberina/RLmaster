@@ -1,4 +1,3 @@
-
 import argparse
 import os
 import pprint
@@ -13,7 +12,8 @@ from RLmaster.util.save_load_hyperparameters import save_hyperparameters
 from tianshou.data import Collector, VectorReplayBuffer, PrioritizedVectorReplayBuffer
 from tianshou.env import ShmemVectorEnv
 from RLmaster.policy.dqn_fixed import DQNPolicy
-from tianshou.policy import RainbowPolicy
+#from tianshou.policy import RainbowPolicy
+from RLmaster.policy.dqn_fixed import RainbowPolicyFixed
 from RLmaster.latent_representations.autoencoder_learning_as_policy_wrapper import AutoencoderLatentSpacePolicy
 from RLmaster.latent_representations.autoencoder_nn import RAE_ENC, RAE_DEC, CNNEncoderNew, CNNDecoderNew
 from RLmaster.util.collector_on_latent import CollectorOnLatent
@@ -181,7 +181,7 @@ if __name__ == "__main__":
         optim_q = torch.optim.Adam([{'params': rainbow_net.parameters()}, 
                 {'params': encoder.parameters()}], lr=args.lr)
 
-    rl_policy = RainbowPolicy(
+    rl_policy = RainbowPolicyFixed(
         rainbow_net,
         optim_q,
         args.gamma,
