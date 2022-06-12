@@ -24,7 +24,7 @@ def get_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('--task', type=str, default='PongNoFrameskip-v4')
     parser.add_argument('--latent-space-type', type=str, default='single-frame-predictor')
-    parser.add_argument('--use-reconstruction-loss', type=bool, default=True)
+    parser.add_argument('--use-reconstruction-loss', type=int, default=True)
     parser.add_argument('--pass-q-grads-to-encoder', type=bool, default=True)
     parser.add_argument('--data-augmentation', type=bool, default=True)
     parser.add_argument('--alternating-training-frequency', type=int, default=1000)

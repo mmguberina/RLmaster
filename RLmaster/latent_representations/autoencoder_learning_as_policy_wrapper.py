@@ -115,12 +115,14 @@ class AutoencoderLatentSpacePolicy(BasePolicy):
             # we stack by combining into a single vector
             # because now the first row is linear
             # TODO make it work with cnn layers too
-            batch.embedded_obs = to_numpy(self.encoder(obs).view(-1, 
-                self.frames_stack * self.encoder.features_dim))
+            #batch.embedded_obs = to_numpy(self.encoder(obs).view(-1, 
+            batch.embedded_obs = self.encoder(obs).view(-1, 
+                self.frames_stack * self.encoder.features_dim)
         else:
         # TODO: write out the other cases (ex. forward prediction)
             obs = batch[input]
-            batch.embedded_obs = to_numpy(self.encoder(obs))
+            #batch.embedded_obs = to_numpy(self.encoder(obs))
+            batch.embedded_obs = self.encoder(obs)
         #batch.obs = to_numpy(embedded_obs)
         #print(batch.orig_obs.shape)
         return self.rl_policy.forward(batch, state, input="embedded_obs", **kwargs)
@@ -182,9 +184,11 @@ class AutoencoderLatentSpacePolicy(BasePolicy):
         with torch.no_grad():
             batch_for_computing_returns.obs_next = batch_for_computing_returns.obs_next.reshape(
                     (-1, 1, 84, 84))
-            batch_for_computing_returns.obs_next = to_numpy(
-                    self.encoder(batch_for_computing_returns.obs_next).view(-1, 
-                self.frames_stack * self.encoder.features_dim))
+            #batch_for_computing_returns.obs_next = to_numpy(
+            #        self.encoder(batch_for_computing_returns.obs_next).view(-1, 
+            #    self.frames_stack * self.encoder.features_dim))
+            batch_for_computing_returns.obs_next = self.encoder(batch_for_computing_returns.obs_next).view(-1, 
+                self.frames_stack * self.encoder.features_dim)
             target_q_torch = target_q_fn(batch_for_computing_returns)  # (bsz, ?)
         target_q = to_numpy(target_q_torch.reshape(bsz, -1))
         target_q = target_q * BasePolicy.value_mask(buffer, terminal).reshape(-1, 1)
@@ -261,11 +265,15 @@ class AutoencoderLatentSpacePolicy(BasePolicy):
                     # NOTE this is the one you want for conv layer first
                     #batch.obs = to_numpy(self.encoder(obs).view(-1, self.frames_stack, 
                     # and this is the one where you stack beforehand for the liner layer first
-                    batch.obs = to_numpy(self.encoder(obs).view(-1, 
-                        self.frames_stack * self.encoder.features_dim))
+                    #batch.obs = to_numpy(self.encoder(obs).view(-1, 
+                    #    self.frames_stack * self.encoder.features_dim))
+                    batch.obs = self.encoder(obs).view(-1, 
+                        self.frames_stack * self.encoder.features_dim)
                     # added for rainbow
-                    batch.obs_next = to_numpy(self.encoder(obs_next).view(-1, 
-                        self.frames_stack * self.encoder.features_dim))
+                    #batch.obs_next = to_numpy(self.encoder(obs_next).view(-1, 
+                    #    self.frames_stack * self.encoder.features_dim))
+                    batch.obs_next = self.encoder(obs_next).view(-1, 
+                        self.frames_stack * self.encoder.features_dim)
         else:
             if self.latent_space_type == 'single-frame-predictor':
                 # encode each one separately
@@ -277,10 +285,14 @@ class AutoencoderLatentSpacePolicy(BasePolicy):
                 # NOTE this is the one you want for conv layer first
                 #batch.obs = to_numpy(self.encoder(obs).view(-1, self.frames_stack, 
                 # and this is the one where you stack beforehand for the liner layer first
-                batch.obs = to_numpy(self.encoder(obs).view(-1, 
-                    self.frames_stack * self.encoder.features_dim))
-                batch.obs_next = to_numpy(self.encoder(obs_next).view(-1, 
-                    self.frames_stack * self.encoder.features_dim))
+                #batch.obs = to_numpy(self.encoder(obs).view(-1, 
+                #    self.frames_stack * self.encoder.features_dim))
+                batch.obs = self.encoder(obs).view(-1, 
+                    self.frames_stack * self.encoder.features_dim)
+                #batch.obs_next = to_numpy(self.encoder(obs_next).view(-1, 
+                #    self.frames_stack * self.encoder.features_dim))
+                batch.obs_next = self.encoder(obs_next).view(-1, 
+                    self.frames_stack * self.encoder.features_dim)
 
 
 #            else:
@@ -299,7 +311,8 @@ class AutoencoderLatentSpacePolicy(BasePolicy):
 
         # just for testing:
         # don't update with reconstruction loss if not we don't pass that
-        if not self.reconstruction_loss:
+        if not self.use_reconstruction_loss:
+            print("ues")
             return res
 
         encoded_obs = self.encoder(obs)
