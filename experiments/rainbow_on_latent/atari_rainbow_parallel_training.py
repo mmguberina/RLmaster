@@ -155,21 +155,23 @@ if __name__ == "__main__":
         observation_shape = list(args.state_shape)
         observation_shape[0] = 1 
         observation_shape = tuple(observation_shape)
-        encoder = RAE_ENC(args.device, observation_shape, args.features_dim).to(args.device)
-        decoder = RAE_DEC(args.device, observation_shape, args.features_dim).to(args.device)
-        #encoder = CNNEncoderNew(observation_shape=observation_shape, 
-        #        features_dim=args.features_dim, device=args.device).to(args.device)
-        #decoder = CNNDecoderNew(observation_shape=observation_shape, 
-        #        n_flatten=encoder.n_flatten, features_dim=args.features_dim).to(args.device)
+        if args.features_dim == 50:
+            encoder = RAE_ENC(args.device, observation_shape, args.features_dim).to(args.device)
+            decoder = RAE_DEC(args.device, observation_shape, args.features_dim).to(args.device)
+        if args.features_dim == 3136:
+            encoder = CNNEncoderNew(observation_shape=observation_shape, 
+                    features_dim=args.features_dim, device=args.device).to(args.device)
+            decoder = CNNDecoderNew(observation_shape=observation_shape, 
+                    n_flatten=encoder.n_flatten, features_dim=args.features_dim).to(args.device)
         #print("encoder.n_flatten")
         #print(encoder.n_flatten)
         rl_input_dim = args.features_dim * args.frames_stack
-    if args.use_pretrained:
-        encoder_name = "checkpoint_encoder_epoch_2.pth"
-        decoder_name = "checkpoint_decoder_epoch_2.pth"
-        log_path = "./log/PongNoFrameskip-v4/raibow_rae_all_fast/"
-        encoder.load_state_dict(torch.load(log_path + encoder_name)['encoder'])
-        decoder.load_state_dict(torch.load(log_path + decoder_name)['decoder'])
+        if args.use_pretrained:
+            encoder_name = "checkpoint_encoder_epoch_2.pth"
+            decoder_name = "checkpoint_decoder_epoch_2.pth"
+            log_path = "./log/PongNoFrameskip-v4/raibow_rae_all_fast/"
+            encoder.load_state_dict(torch.load(log_path + encoder_name)['encoder'])
+            decoder.load_state_dict(torch.load(log_path + decoder_name)['decoder'])
 
     optim_encoder = torch.optim.Adam(encoder.parameters(), lr=args.lr)
     optim_decoder = torch.optim.Adam(decoder.parameters(), lr=args.lr, weight_decay=10**-7)
