@@ -1,4 +1,3 @@
-
 import argparse
 import os
 import pprint
@@ -13,7 +12,8 @@ from RLmaster.util.save_load_hyperparameters import save_hyperparameters
 from tianshou.data import Collector, VectorReplayBuffer, PrioritizedVectorReplayBuffer
 from tianshou.env import ShmemVectorEnv
 from RLmaster.policy.dqn_fixed import DQNPolicy
-from tianshou.policy import RainbowPolicy
+#from tianshou.policy import RainbowPolicy
+from RLmaster.policy.dqn_fixed import RainbowPolicyFixed
 from RLmaster.latent_representations.autoencoder_learning_as_policy_wrapper import AutoencoderLatentSpacePolicy
 from RLmaster.latent_representations.autoencoder_nn import RAE_ENC, RAE_DEC, CNNEncoderNew, CNNDecoderNew
 from RLmaster.util.collector_on_latent import CollectorOnLatent
@@ -73,7 +73,7 @@ def get_args():
     parser.add_argument('--test-num', type=int, default=10)
     parser.add_argument('--logdir', type=str, default='log')
     #parser.add_argument('--log-name', type=str, default='raibow_rae_parallel_fs_4_passing_q_grads_2')
-    parser.add_argument('--log-name', type=str, default='raibow_rae_pretrained_1')
+    parser.add_argument('--log-name', type=str, default='raibow_rae_correct_grad')
     parser.add_argument('--render', type=float, default=0.)
     parser.add_argument(
         '--device', type=str, default='cuda' if torch.cuda.is_available() else 'cpu'
@@ -190,7 +190,7 @@ if __name__ == "__main__":
         optim_q = torch.optim.Adam([{'params': rainbow_net.parameters()}, 
                 {'params': encoder.parameters()}], lr=args.lr)
 
-    rl_policy = RainbowPolicy(
+    rl_policy = RainbowPolicyFixed(
         rainbow_net,
         optim_q,
         args.gamma,
