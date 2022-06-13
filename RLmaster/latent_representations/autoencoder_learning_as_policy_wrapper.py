@@ -312,7 +312,7 @@ class AutoencoderLatentSpacePolicy(BasePolicy):
         # just for testing:
         # don't update with reconstruction loss if not we don't pass that
         if not self.use_reconstruction_loss:
-            print("ues")
+#            print("ues")
             return res
 
         encoded_obs = self.encoder(obs)

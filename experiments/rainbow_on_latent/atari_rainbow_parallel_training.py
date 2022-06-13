@@ -25,6 +25,7 @@ def get_args():
     parser.add_argument('--task', type=str, default='PongNoFrameskip-v4')
     parser.add_argument('--latent-space-type', type=str, default='single-frame-predictor')
     parser.add_argument('--use-reconstruction-loss', type=int, default=True)
+    parser.add_argument('--use-pretrained', type=int, default=False)
     parser.add_argument('--pass-q-grads-to-encoder', type=bool, default=True)
     parser.add_argument('--data-augmentation', type=bool, default=True)
     parser.add_argument('--alternating-training-frequency', type=int, default=1000)
@@ -71,7 +72,8 @@ def get_args():
     #parser.add_argument('--test-num', type=int, default=8)
     parser.add_argument('--test-num', type=int, default=10)
     parser.add_argument('--logdir', type=str, default='log')
-    parser.add_argument('--log-name', type=str, default='raibow_rae_parallel_fs_4_passing_q_grads_2')
+    #parser.add_argument('--log-name', type=str, default='raibow_rae_parallel_fs_4_passing_q_grads_2')
+    parser.add_argument('--log-name', type=str, default='raibow_rae_pretrained_1')
     parser.add_argument('--render', type=float, default=0.)
     parser.add_argument(
         '--device', type=str, default='cuda' if torch.cuda.is_available() else 'cpu'
@@ -162,6 +164,13 @@ if __name__ == "__main__":
         #print("encoder.n_flatten")
         #print(encoder.n_flatten)
         rl_input_dim = args.features_dim * args.frames_stack
+    if args.use_pretrained:
+        encoder_name = "checkpoint_encoder_epoch_2.pth"
+        decoder_name = "checkpoint_decoder_epoch_2.pth"
+        log_path = "./log/PongNoFrameskip-v4/raibow_rae_all_fast/"
+        encoder.load_state_dict(torch.load(log_path + encoder_name)['encoder'])
+        decoder.load_state_dict(torch.load(log_path + decoder_name)['decoder'])
+
     optim_encoder = torch.optim.Adam(encoder.parameters(), lr=args.lr)
     optim_decoder = torch.optim.Adam(decoder.parameters(), lr=args.lr, weight_decay=10**-7)
     reconstruction_criterion = torch.nn.MSELoss()
