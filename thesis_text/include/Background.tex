@@ -133,7 +133,7 @@ It's schematic can be seen in \ref{fig:mdp}.
 \end{tikzpicture}
 \end{center}
 \caption{Schematic of a Markov decision process.}
-\label{fig:markov-chain}
+\label{fig:mdp}
 \end{figure}
 
 The Markov decision process is thus defined by the tuple
@@ -231,6 +231,7 @@ is given in \ref{fig:policy-in-mdp}.
 		\draw [arrow] (s2) -- node [above, midway, sloped] {$\pi_{ \theta } (\bm{a}_{t}| \bm{s}_{t} )  $} (a2);
 \end{tikzpicture}
 \end{center}
+\label{fig:policy-in-mdp}
 \end{figure}
 
 The policy is a stochastic function. The intensity of stochasticity determines the trade-off
@@ -345,7 +346,7 @@ objective:
 Since the goal of this text is just to introduce the necessary concepts
 and algorithms, the derivation(s) will be ommited.
 We encourage the interested reader to consult the literature \cite{suttonrlbook}
-and CITE LEVINE'S BERKLEY LECTURES to find them.
+and \cite{berkleylectures} to find them.
 
 Here we will just note that it is crucial that the final expression
 can be estimated by sampling the agent's experience 
@@ -724,7 +725,8 @@ extensions of DQN architectures.
 
 \subsection{Double Deep Q-networks: DDQN}
 
-DQN suffer from overestimation bias due to due to the maximization step in optimisation function in Q-learning.Q-learning can overestimate actions that have been tried often and the estimations can be higher than any realistic optimistic estimate .Double Q-learning [19], addresses this overestimation by decoupling, in the maximization performed for the bootstrap target, the selection of the action from its evaluation.Double Q-learning stores two Q-functions,The average of the two Q values for each action and then performed $\mathcal{\epsilon}$-greedy exploration with the resulting average Q values.It was successfully combined with DQN to reduce  overestimations.\textbf{ TODOS: DDQN  target equation}
+DQN suffer from overestimation bias due to due to the maximization step in optimisation function in Q-learning.Q-learning can overestimate actions that have been tried often and the estimations can be higher than any realistic optimistic estimate .Double Q-learning [19], addresses this overestimation by decoupling, in the maximization performed for the bootstrap target, the selection of the action from its evaluation.Double Q-learning stores two Q-functions,The average of the two Q values for each action and then performed $\mathcal{\epsilon}$-greedy exploration with the resulting average Q values.It was successfully combined with DQN to reduce  overestimations.
+%\textbf{ TODOS: DDQN  target equation}
 
 \subsection{Prioritized replay}
 
@@ -763,7 +765,7 @@ The one limitation of $\mathcal{\epsilon}$-greedy policy  is many actions must b
 \subsection{Integrated Agent:Rainbow}
 
 
-In the Rainbow architecture \cite{raibow} 
+In the Rainbow architecture \cite{rainbow} 
 several architecture changes included the one stated above where applied to DQN.
 Distributional loss was replaced by a multi-step variant. The target
 distribution was constructed  by contracting the value distribution
@@ -1090,6 +1092,7 @@ as predictions are not used.
 
 \subsection{Generative models}
 \subsubsection{Probabilistic models}
+\label{subsub-probabilistic-models}
 From the probabilistic modeling perspective, feature learning
 can be interpreted as an attempt to recover a parsimonious set of latent random
 variables that describe a distribution over the observed data.
@@ -1174,7 +1177,7 @@ The sum is over one positive and $ K  $ negative pairs in the same minibatch.
 \subsection{Common representation learning approaches}
 \subsubsection{Deterministic autoencoders}
 Deterministic autoencoders are generative models.
-TODO: move text about them here.
+%TODO: move text about them here.
 \begin{equation}
 		h^{ (t) } = f_{ \theta } (x^{ (t) })
 \end{equation}
@@ -1194,7 +1197,7 @@ just reversed).
 
 
 \subsubsection{Variational autoencoders}
-TODO: delete half of this or add the other half
+%TODO: delete half of this or add the other half
 Variational autoencoders marry graphical models and deep learning.
 The generative model is a Bayesian network of form
 $ p (\bm{x}_{}| \bm{z}_{})p (\bm{z}_{})  $,
@@ -1276,7 +1279,7 @@ and spatial coherence of when learning.
 The same result can be accomplished by other data augmentation techniques
 like random cropping.
 
-TODO: reword so that the spice flows.
+%TODO: reword so that the spice flows.
 
 Learning VAEs from data poses unanswered theoretical questions and considerable practical challenges.
 This work proposes a generative model that is simpler, deterministic, easier to train,
@@ -1475,15 +1478,26 @@ This is called the slowness principle.
 
 \subsection{Using hybring objectives}
 The approaches outlined thus far can be combined into hybrid
-approaches.
-TODO: throw a reference or two from the overview paper you're going over,
-for example embed2control.
+approaches, for example \cite{watter2015embed}.
+%TODO: throw a reference or two from the overview paper you're going over,
+%for example embed2control.
 
 
 \section{Model-based reinforcement learning}
-TODO
-Introduce just the idea for the sole purpose of
-showing why we aren't doing model-based reinforcement learning,
-but instead opting for model-free with state representation learning.
+Like the name suggest, in model-based reinforcement learning a ``world model''
+is learned.
+While there exists a whole spectrum of methods between pure
+model-free and model-based ones, the key distinguishing feature
+of model-based methods is that the learned model is used to \textit{plan} actions.
+In this case, the task of reinforcement learning in the narrow sense
+is to learn the values of different states.
+This then enables calculation of trajectories toward states with high rewards.
+In model-free methods, only the following action is selected at on iteration of the process
+because only the transition reward is learned and states these transitions
+lead to are unknown (not explicitly modelled).
+%TODO
+%Introduce just the idea for the sole purpose of
+%showing why we aren't doing model-based reinforcement learning,
+%but instead opting for model-free with state representation learning.
 
 

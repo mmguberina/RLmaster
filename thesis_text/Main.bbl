@@ -283,6 +283,45 @@
       \endverb
       \keyw{deep learning toread}
     \endentry
+    \entry{watter2015embed}{article}{}
+      \name{author}{4}{}{%
+        {{hash=f6ae4590a62da457dc9991d37e10fd44}{%
+           family={Watter},
+           familyi={W\bibinitperiod},
+           given={Manuel},
+           giveni={M\bibinitperiod}}}%
+        {{hash=2b4570b1dfe4c0b15751abe6e8cbf4ae}{%
+           family={Springenberg},
+           familyi={S\bibinitperiod},
+           given={Jost},
+           giveni={J\bibinitperiod}}}%
+        {{hash=5bdc2ab98e7e2c288da2b2ed331a1034}{%
+           family={Boedecker},
+           familyi={B\bibinitperiod},
+           given={Joschka},
+           giveni={J\bibinitperiod}}}%
+        {{hash=9449802bcb467309c0ebced658096818}{%
+           family={Riedmiller},
+           familyi={R\bibinitperiod},
+           given={Martin},
+           giveni={M\bibinitperiod}}}%
+      }
+      \strng{namehash}{e1f19ce3135e58b10360c104c1318fc5}
+      \strng{fullhash}{7e8a8a8fa493fb6dd20e25510dbc7017}
+      \strng{bibnamehash}{e1f19ce3135e58b10360c104c1318fc5}
+      \strng{authorbibnamehash}{e1f19ce3135e58b10360c104c1318fc5}
+      \strng{authornamehash}{e1f19ce3135e58b10360c104c1318fc5}
+      \strng{authorfullhash}{7e8a8a8fa493fb6dd20e25510dbc7017}
+      \field{labelalpha}{Wat+15}
+      \field{sortinit}{2}
+      \field{sortinithash}{ed39bb39cf854d5250e95b1c1f94f4ed}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Advances in neural information processing systems}
+      \field{title}{Embed to control: A locally linear latent dynamics model for control from raw images}
+      \field{volume}{28}
+      \field{year}{2015}
+    \endentry
     \entry{rlwauxloss}{article}{}
       \name{author}{7}{}{%
         {{hash=7dc1446dea7ff50b2b02fb83780cc9c6}{%
@@ -1167,6 +1206,38 @@
       \field{title}{Data-efficient reinforcement learning with self-predictive representations}
       \field{year}{2020}
     \endentry
+    \entry{berkleylectures}{misc}{}
+      \name{author}{1}{}{%
+        {{hash=c9545da54b33744da25943cdf66eadac}{%
+           family={Levine},
+           familyi={L\bibinitperiod},
+           given={Sergey},
+           giveni={S\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {UC Berkeley}%
+      }
+      \strng{namehash}{c9545da54b33744da25943cdf66eadac}
+      \strng{fullhash}{c9545da54b33744da25943cdf66eadac}
+      \strng{bibnamehash}{c9545da54b33744da25943cdf66eadac}
+      \strng{authorbibnamehash}{c9545da54b33744da25943cdf66eadac}
+      \strng{authornamehash}{c9545da54b33744da25943cdf66eadac}
+      \strng{authorfullhash}{c9545da54b33744da25943cdf66eadac}
+      \field{labelalpha}{Lev21}
+      \field{sortinit}{2}
+      \field{sortinithash}{ed39bb39cf854d5250e95b1c1f94f4ed}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{month}{Fall}
+      \field{title}{Deep Reinforcement Learning course (CS 285) lectures}
+      \field{year}{2021}
+      \verb{urlraw}
+      \verb https://www.youtube.com/playlist?list=PL_iWQOsE6TfXxKgI1GgyV1B_Xa0DxE5eH
+      \endverb
+      \verb{url}
+      \verb https://www.youtube.com/playlist?list=PL_iWQOsE6TfXxKgI1GgyV1B_Xa0DxE5eH
+      \endverb
+    \endentry
     \entry{rakelly2021mutual}{article}{}
       \name{author}{4}{}{%
         {{hash=b37c9da3cc27e0f195bd8dc771c63665}{%
@@ -1486,7 +1557,6 @@
       \endverb
     \endentry
   \enddatalist
-  \missing{raibow}
 \endrefsection
 \endinput
 
