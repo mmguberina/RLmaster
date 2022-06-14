@@ -173,11 +173,13 @@ if __name__ == "__main__":
             encoder.load_state_dict(torch.load(log_path + encoder_name)['encoder'])
             decoder.load_state_dict(torch.load(log_path + decoder_name)['decoder'])
 
-    optim_encoder = torch.optim.Adam(encoder.parameters(), lr=args.lr)
-    optim_decoder = torch.optim.Adam(decoder.parameters(), lr=args.lr, weight_decay=10**-7)
+    #optim_encoder = torch.optim.Adam(encoder.parameters(), lr=args.lr)
+    # NOTE trying a thing out now
+    optim_encoder = None
+    #optim_decoder = torch.optim.Adam(decoder.parameters(), lr=args.lr, weight_decay=10**-7)
+    optim_decoder = None
     reconstruction_criterion = torch.nn.MSELoss()
 
-    # TODO FINISH FIX
     rainbow_net = RainbowNoConvLayers(args.action_shape, 
                                  args.num_atoms,
                                  args.noisy_std,
@@ -191,6 +193,10 @@ if __name__ == "__main__":
     else:
         optim_q = torch.optim.Adam([{'params': rainbow_net.parameters()}, 
                 {'params': encoder.parameters()}], lr=args.lr)
+    optim_q = None
+
+    optim_all = torch.optim.Adam([{'params': rainbow_net.parameters()}, 
+        {'params': encoder.parameters()}, {'params': decoder.parameters()}], lr=args.lr)
 
     rl_policy = RainbowPolicyFixed(
         rainbow_net,
@@ -216,6 +222,7 @@ if __name__ == "__main__":
         args.latent_space_type,
         encoder,
         decoder,
+        optim_all,
         optim_encoder,
         optim_decoder,
         reconstruction_criterion,

@@ -166,7 +166,7 @@ class DQNPolicyFixed(BasePolicy):
     def learn(self, batch: Batch, **kwargs: Any) -> Dict[str, float]:
         if self._target and self._iter % self._freq == 0:
             self.sync_weight()
-        self.optim.zero_grad()
+        #self.optim.zero_grad()
         weight = batch.pop("weight", 1.0)
         #q = self(batch).logits
         q = self(batch).logits
@@ -175,8 +175,8 @@ class DQNPolicyFixed(BasePolicy):
         td_error = returns - q
         loss = (td_error.pow(2) * weight).mean()
         batch.weight = td_error  # prio-buffer
-        loss.backward()
-        self.optim.step()
+        loss.backward(retain_graph=True)
+        #self.optim.step()
         self._iter += 1
         return {"loss": loss.item()}
 
@@ -292,7 +292,7 @@ class C51PolicyFixed(DQNPolicy):
         # ref: https://github.com/Kaixhin/Rainbow/blob/master/agent.py L94-100
         batch.weight = cross_entropy.detach()  # prio-buffer
         loss.backward()
-        self.optim.step()
+        #self.optim.step()
         self._iter += 1
         return {"loss": loss.item()}
 

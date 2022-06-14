@@ -40,6 +40,7 @@ class AutoencoderLatentSpacePolicy(BasePolicy):
         latent_space_type: str,
         encoder: CNNEncoderNew,
         decoder: CNNDecoderNew,
+        optim_all: torch.optim.Optimizer,
         optim_encoder: torch.optim.Optimizer,
         optim_decoder: torch.optim.Optimizer,
         reconstruction_criterion,
@@ -61,6 +62,7 @@ class AutoencoderLatentSpacePolicy(BasePolicy):
         self.alternating_training_frequency = alternating_training_frequency
         self.encoder = encoder
         self.decoder = decoder
+        self.optim_all = optim_all
         self.optim_encoder = optim_encoder
         self.optim_decoder = optim_decoder
         self.reconstruction_criterion = reconstruction_criterion
@@ -247,9 +249,10 @@ class AutoencoderLatentSpacePolicy(BasePolicy):
             batch.obs_next = torch.tensor(batch.obs_next, device=self.device, dtype=torch.float)
 
         # we zero grad this here in because maybe we want both grads
-        self.rl_policy.zero_this_grad()
+        #self.rl_policy.zero_this_grad()
         # TODO use this to implement forward prediction
         #obs_next = torch.tensor(batch.obs_next, device=self.device)
+        self.optim_all.zero_grad()
 
         if self.pass_policy_grad_to_encoder == False:
             with torch.no_grad():
@@ -312,10 +315,11 @@ class AutoencoderLatentSpacePolicy(BasePolicy):
         if not self.use_reconstruction_loss:
             return res
 
-        self.optim_encoder.zero_grad()
-        self.optim_decoder.zero_grad()
-        encoded_obs = self.encoder(obs)
-        decoded_obs = self.decoder(encoded_obs)
+        #self.optim_encoder.zero_grad()
+        #self.optim_decoder.zero_grad()
+        #encoded_obs = self.encoder(obs)
+        #decoded_obs = self.decoder(encoded_obs)
+        decoded_obs = self.decoder(batch.obs.view(-1, self.encoder.features_dim))
 
         # batch.obs is of shape (batch_size, frames_stack, 84, 84)
         # decoded_obs is of shape (batch_size, 1, 84, 84) and we want it to learn, say, the last frame only
@@ -334,17 +338,20 @@ class AutoencoderLatentSpacePolicy(BasePolicy):
         # L2 penalty on latent representation:
         # this is wrong for single-frame-predictor
         if self.latent_space_type == 'forward-frame-predictor':
-            latent_loss = (0.5 * encoded_obs.pow(2).sum(1)).mean()
+            #latent_loss = (0.5 * encoded_obs.pow(2).sum(1)).mean()
+            latent_loss = (0.5 * batch.obs.view(-1, self.encoder.features_dim).pow(2).sum(1)).mean()
         if self.latent_space_type == 'single-frame-predictor':
-            latent_loss = (0.5 * encoded_obs.pow(2).sum(1)).mean()
+            #latent_loss = (0.5 * encoded_obs.pow(2).sum(1)).mean()
+            latent_loss = (0.5 * batch.obs.view(-1, self.encoder.features_dim).pow(2).sum(1)).mean()
         # throwing a sample loss in there to see what happens
         loss = reconstruction_loss + latent_loss * 10**-6
 
 
         #reconstruction_loss.backward()
         loss.backward()
-        self.optim_encoder.step()
-        self.optim_decoder.step()
+        #self.optim_encoder.step()
+        #self.optim_decoder.step()
+        self.optim_all.step()
         res.update(
             {
                 # this appears to be causing some wild cuda error
