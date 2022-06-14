@@ -26,7 +26,7 @@ The state of the environment to which the highest reward is ascribed
 is then the goal.
 A more general description of the goal of reinforcement learning
 is to maximize the sum of rewards over time.
-The formalization of the entire process will be carried out later in the text,
+The formalization of the entire process will be carried out later in \ref{ch-rl-background},
 while here only the most important concepts will be outlined.
 
 %One of these is the trade-off between ``exploration''
@@ -87,31 +87,67 @@ and thus for reinforcement learning algorithms which utilize them,
 most of these results are achieved in computer-simulated environments.
 \footnote{Simulated environments run as fast as the computers they run on,
 		which enables generating thousands of trials in seconds.}
-These recent success were kick-started by Deep Q-Network (DQN) algorithm \cite{mnih2013atari} which crucially,
+
+While there is case to be made that reinforcement learning is a step toward
+artificial general intelligence, there are also more immediate applications.
+Due to generality of reinforcement learning and to advances in computer hardware,
+reinforcement learning offers a promising avenue toward solving decision and
+control problems which have not been solved through other, more direct methods.
+One of these is the problem of robotic grasping.
+Humans and other animals have an intuitive understanding of physics which they
+leverage for object manipulation.
+On the other hand, to program a robot to do the same, exact
+physics equations need to be provided so that the robot's actions may be calculated.
+Owing to the complexity of contact dynamics and the inability to precisely
+measure the points of contact, this is often impossible to do.
+By learning through trial and error and by leveraging the strong interpolation
+capabilities of neural networks, such an ``intuition'' may be learned.
+Furthermore, traditional optimization methods require rich objective functions
+at every iteration step, while reinforcement learning can handle ``sparse'' rewards ---
+objective functions which equate to 0 at nearly all points of the domain.
+
+\section{Why learn from pixels?}
+Recent success in reinforcement learning were kick-started by Deep Q-Network (DQN) 
+algorithm \cite{mnih2013atari} which crucially,
 by utilizing convolutional neural network, enabled the agents to successfully learn from raw pixels.
 Learning from pixels is incredibly important for many practical applications,
 such as those in robotics
 where it is often impossible to get full access to the state of the environment.
 The state then needs to be inferred from observations such as those from cameras.
-\footnote{Here the state refers to the underlying physical parameters of the environment:
+Here the state refers to the underlying physical parameters of the environment:
 the positions and velocities of objects, the friction coefficients and so on.
 Observations from sensors such as cameras do not explicitly provide such information.
 However, since humans and animals are able to utilize such observations to achieve their
 goals, we know that they implicitly hold enough information about the true state
-of the world for successful goal completion.}
-Due to incredible results achieved in simulated environments,
-reinforcement learning holds the promise of solving
-many incredibly important engineering problems, for example robotic manipulation
-and grasping.
-Having that said, there exists a large gap between simple simulated environments and
-the real world,
-and many improvements to the current state-of-the-art algorithms are required to
-bridge that gap.
-To explain the approach investigated in this thesis,
-a bit more context is needed.
+of the world for successful goal completion.
+%Due to incredible results achieved in simulated environments,
+%reinforcement learning holds the promise of solving
+%many incredibly important engineering problems, for example robotic manipulation
+%and grasping.
+%Having that said, there exists a large gap between simple simulated environments and
+%the real world,
+%and many improvements to the current state-of-the-art algorithms are required to
+%bridge that gap.
+%To explain the approach investigated in this thesis,
+%a bit more context is needed.
 
-\section{Efforts in making reinforcement learning more efficient}
+The problem is that pixel-based observations are much higher-dimensional than
+the actual states.
+This makes the learning problem dramatically more difficult, both because
+of its higher dimensionality, but also because it adds the state inference problem
+on top of control problem.
+In a lot of cases a problem which reinforcement learning algorithms are able 
+to solve with direct state access is unsolvable with only pixel-based observations. 
+In the cases where it is possible, the training time is much longer because much
+more samples are required.
+This is problematic because reinforcement learning is rather inefficient as it is.
+The high number of required samples in particular prohibits its use
+outside of simulated environments, while learning on agents in the real world
+is the ultimate goal in most practical applications.
+
+\section{Efforts to make reinforcement learning more efficient}
 \label{efforts-in-making-rl-efficient}
+\subsection{Utilizing a world model}
 An important classification of reinforcement learning algorithm is the one between
 model-based and model-free algorithms.
 As the name suggests, model-free algorithms do not form an explicit model of the environment.
@@ -120,7 +156,7 @@ reward without other concerns such as predicting the states resulting from those
 In other words, they only predict the reward of actions in given states.
 Model-based algorithms on the other hand learn an explicit model of the environment
 and use it to plan their actions.
-They thus learn the dynamics of the environment and use that knowledge to choose actions
+Thus, they learn the dynamics of the environment and use that knowledge to choose actions
 which lead the agent to states with high reward.
 Both classes have their benefits and their drawbacks.
 Since model-free algorithms do not require any knowledge of environment dynamics
@@ -130,12 +166,13 @@ a harder learning problem: they need to implicitly learn those dynamics
 while only being provided the reward signal. 
 This makes them much less sample-efficient.\\
 
-By contrast, model-based algorithms are of course more sample-efficient.
-Furthermore, the plan generated from the learned model can be utilized to interpret the
-agent's actions which in turn leads to many further benefits such as
-the ability to guarantee outcomes in safety-critical operations.
-Unfortunately, the twin learning objective of learning the best action-choosing policy 
-to maximize the reward over time, and the learning of the model results
+%By contrast, model-based algorithms are of course more sample-efficient.
+%Furthermore, the plan generated from the learned model can be utilized to interpret the
+%agent's actions which in turn leads to many further benefits such as
+%the ability to guarantee outcomes in safety-critical operations.
+Unfortunately, the model-based twin learning objective of 
+learning the best action-choosing policy 
+to maximize the reward over time, and the learning of the model, results
 in fundamental training instabilities which usually results in worse final performance.
 % this explanation is not sufficiently good
 In simple terms, the reason behind this is the following one:
@@ -152,6 +189,12 @@ How bad this problem is depends on the specifics of the setting,
 and there are many ways to ameliorate it,
 but in most cases the necessary trade-offs result in a lower final performance.
 All this will be further discussed in a later chapter.
+
+
+\subsection{Utilizing state representations}
+An alternative to using model-based methods is to just deal with the problem
+of extracting states from images.
+
 
 \section{Goal of the thesis}
 \label{sec-thesis-goal}
