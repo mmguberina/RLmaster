@@ -25,7 +25,7 @@
 \defcounter {refsection}{0}\relax 
 \contentsline {subsection}{\numberline {1.5.2}Contributions}{5}{subsection.1.5.2}%
 \defcounter {refsection}{0}\relax 
-\contentsline {section}{\numberline {1.6}Outline}{6}{section.1.6}%
+\contentsline {section}{\numberline {1.6}Outline}{5}{section.1.6}%
 \defcounter {refsection}{0}\relax 
 \contentsline {chapter}{\numberline {2}Reinforcement learning}{7}{chapter.2}%
 \defcounter {refsection}{0}\relax 
@@ -39,9 +39,9 @@
 \defcounter {refsection}{0}\relax 
 \contentsline {subsection}{\numberline {2.2.1}Policy}{9}{subsection.2.2.1}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subsubsection}{\numberline {2.2.1.1}Goal of reinforcement learning}{10}{subsubsection.2.2.1.1}%
+\contentsline {subsection}{\numberline {2.2.2}Goal of reinforcement learning}{10}{subsection.2.2.2}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{\numberline {2.2.2}Value functions}{10}{subsection.2.2.2}%
+\contentsline {subsection}{\numberline {2.2.3}Value functions}{10}{subsection.2.2.3}%
 \defcounter {refsection}{0}\relax 
 \contentsline {section}{\numberline {2.3}Classes of reinforcement learning algorithms}{11}{section.2.3}%
 \defcounter {refsection}{0}\relax 
@@ -49,106 +49,106 @@
 \defcounter {refsection}{0}\relax 
 \contentsline {subsubsection}{\numberline {2.3.1.1}Baselines}{12}{subsubsection.2.3.1.1}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subsubsection}{\numberline {2.3.1.2}Off-policy gradients}{12}{subsubsection.2.3.1.2}%
+\contentsline {subsubsection}{\numberline {2.3.1.2}Off-policy gradients}{13}{subsubsection.2.3.1.2}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subsubsection}{\numberline {2.3.1.3}Advanced policy gradients}{13}{subsubsection.2.3.1.3}%
+\contentsline {subsubsection}{\numberline {2.3.1.3}Advanced policy gradients}{14}{subsubsection.2.3.1.3}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{\numberline {2.3.2}Actor-critic algorithms}{13}{subsection.2.3.2}%
+\contentsline {subsection}{\numberline {2.3.2}Actor-critic algorithms}{14}{subsection.2.3.2}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{\numberline {2.3.3}Value function methods}{15}{subsection.2.3.3}%
+\contentsline {subsection}{\numberline {2.3.3}Value function methods}{16}{subsection.2.3.3}%
 \defcounter {refsection}{0}\relax 
 \contentsline {subsubsection}{\numberline {2.3.3.1}Dynamic programming}{16}{subsubsection.2.3.3.1}%
 \defcounter {refsection}{0}\relax 
-\contentsline {section}{\numberline {2.4}Deep Q-networks and their extensions}{16}{section.2.4}%
+\contentsline {section}{\numberline {2.4}Deep Q-networks and their extensions}{17}{section.2.4}%
 \defcounter {refsection}{0}\relax 
 \contentsline {subsection}{\numberline {2.4.1}Double Deep Q-networks: DDQN}{17}{subsection.2.4.1}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{\numberline {2.4.2}Prioritized replay}{17}{subsection.2.4.2}%
+\contentsline {subsection}{\numberline {2.4.2}Prioritized replay}{18}{subsection.2.4.2}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{\numberline {2.4.3}Dueling Network}{17}{subsection.2.4.3}%
+\contentsline {subsection}{\numberline {2.4.3}Dueling Network}{18}{subsection.2.4.3}%
 \defcounter {refsection}{0}\relax 
 \contentsline {subsection}{\numberline {2.4.4}Multi-step learning}{18}{subsection.2.4.4}%
 \defcounter {refsection}{0}\relax 
 \contentsline {subsection}{\numberline {2.4.5}Noisy Nets}{18}{subsection.2.4.5}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{\numberline {2.4.6}Integrated Agent:Rainbow}{18}{subsection.2.4.6}%
+\contentsline {subsection}{\numberline {2.4.6}Integrated Agent:Rainbow}{19}{subsection.2.4.6}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{\numberline {2.4.7}Deep autoencoders}{18}{subsection.2.4.7}%
+\contentsline {subsection}{\numberline {2.4.7}Deep autoencoders}{19}{subsection.2.4.7}%
 \defcounter {refsection}{0}\relax 
-\contentsline {section}{\numberline {2.5}Problems with RL}{19}{section.2.5}%
+\contentsline {section}{\numberline {2.5}Problems with RL}{20}{section.2.5}%
 \defcounter {refsection}{0}\relax 
-\contentsline {chapter}{\numberline {3}State representation learning}{21}{chapter.3}%
+\contentsline {chapter}{\numberline {3}State representation learning}{23}{chapter.3}%
 \defcounter {refsection}{0}\relax 
-\contentsline {section}{\numberline {3.1}Representation models in general}{22}{section.3.1}%
+\contentsline {section}{\numberline {3.1}Representation models in general}{24}{section.3.1}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{\numberline {3.1.1}Generative models}{23}{subsection.3.1.1}%
+\contentsline {subsection}{\numberline {3.1.1}Generative models}{25}{subsection.3.1.1}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subsubsection}{\numberline {3.1.1.1}Probabilistic models}{23}{subsubsection.3.1.1.1}%
+\contentsline {subsubsection}{\numberline {3.1.1.1}Probabilistic models}{25}{subsubsection.3.1.1.1}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subsubsection}{\numberline {3.1.1.2}Directed graphical models}{23}{subsubsection.3.1.1.2}%
+\contentsline {subsubsection}{\numberline {3.1.1.2}Directed graphical models}{25}{subsubsection.3.1.1.2}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subsubsection}{\numberline {3.1.1.3}Directly learning a parametric map from input to representation}{24}{subsubsection.3.1.1.3}%
+\contentsline {subsubsection}{\numberline {3.1.1.3}Directly learning a parametric map from input to representation}{26}{subsubsection.3.1.1.3}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{\numberline {3.1.2}Discriminative models}{24}{subsection.3.1.2}%
+\contentsline {subsection}{\numberline {3.1.2}Discriminative models}{26}{subsection.3.1.2}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{\numberline {3.1.3}Common representation learning approaches}{25}{subsection.3.1.3}%
+\contentsline {subsection}{\numberline {3.1.3}Common representation learning approaches}{27}{subsection.3.1.3}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subsubsection}{\numberline {3.1.3.1}Deterministic autoencoders}{25}{subsubsection.3.1.3.1}%
+\contentsline {subsubsection}{\numberline {3.1.3.1}Deterministic autoencoders}{27}{subsubsection.3.1.3.1}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subsubsection}{\numberline {3.1.3.2}Variational autoencoders}{25}{subsubsection.3.1.3.2}%
+\contentsline {subsubsection}{\numberline {3.1.3.2}Variational autoencoders}{27}{subsubsection.3.1.3.2}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subsubsection}{\numberline {3.1.3.3}Deterministic autoencoder regularization}{26}{subsubsection.3.1.3.3}%
+\contentsline {subsubsection}{\numberline {3.1.3.3}Deterministic autoencoder regularization}{28}{subsubsection.3.1.3.3}%
 \defcounter {refsection}{0}\relax 
-\contentsline {section}{\numberline {3.2}Representation models for control}{27}{section.3.2}%
+\contentsline {section}{\numberline {3.2}Representation models for control}{29}{section.3.2}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{\numberline {3.2.1}Autoencoder}{27}{subsection.3.2.1}%
+\contentsline {subsection}{\numberline {3.2.1}Autoencoder}{29}{subsection.3.2.1}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{\numberline {3.2.2}Forward model}{27}{subsection.3.2.2}%
+\contentsline {subsection}{\numberline {3.2.2}Forward model}{29}{subsection.3.2.2}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{\numberline {3.2.3}Inverse model}{28}{subsection.3.2.3}%
+\contentsline {subsection}{\numberline {3.2.3}Inverse model}{30}{subsection.3.2.3}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{\numberline {3.2.4}Using prior knowledge to constrain the state space}{29}{subsection.3.2.4}%
+\contentsline {subsection}{\numberline {3.2.4}Using prior knowledge to constrain the state space}{31}{subsection.3.2.4}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{\numberline {3.2.5}Using hybring objectives}{29}{subsection.3.2.5}%
+\contentsline {subsection}{\numberline {3.2.5}Using hybring objectives}{31}{subsection.3.2.5}%
 \defcounter {refsection}{0}\relax 
-\contentsline {section}{\numberline {3.3}Model-based reinforcement learning}{29}{section.3.3}%
+\contentsline {section}{\numberline {3.3}Model-based reinforcement learning}{31}{section.3.3}%
 \defcounter {refsection}{0}\relax 
-\contentsline {chapter}{\numberline {4}Related Work}{31}{chapter.4}%
+\contentsline {chapter}{\numberline {4}Related Work}{33}{chapter.4}%
 \defcounter {refsection}{0}\relax 
-\contentsline {section}{\numberline {4.1}Reinforcement learning on Atari}{31}{section.4.1}%
+\contentsline {section}{\numberline {4.1}Reinforcement learning on Atari}{33}{section.4.1}%
 \defcounter {refsection}{0}\relax 
-\contentsline {section}{\numberline {4.2}Efforts in increasing efficiency in Atari}{32}{section.4.2}%
+\contentsline {section}{\numberline {4.2}Efforts in increasing efficiency in Atari}{34}{section.4.2}%
 \defcounter {refsection}{0}\relax 
-\contentsline {section}{\numberline {4.3}State representation learning for efficient model-free learning}{32}{section.4.3}%
+\contentsline {section}{\numberline {4.3}State representation learning for efficient model-free learning}{34}{section.4.3}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{\numberline {4.3.1}Deterministic generative models}{33}{subsection.4.3.1}%
+\contentsline {subsection}{\numberline {4.3.1}Deterministic generative models}{35}{subsection.4.3.1}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{\numberline {4.3.2}Stochastic generative models}{33}{subsection.4.3.2}%
+\contentsline {subsection}{\numberline {4.3.2}Stochastic generative models}{35}{subsection.4.3.2}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{\numberline {4.3.3}Discriminative models}{34}{subsection.4.3.3}%
+\contentsline {subsection}{\numberline {4.3.3}Discriminative models}{36}{subsection.4.3.3}%
 \defcounter {refsection}{0}\relax 
-\contentsline {chapter}{\numberline {5}Methods}{35}{chapter.5}%
+\contentsline {chapter}{\numberline {5}Methods}{37}{chapter.5}%
 \defcounter {refsection}{0}\relax 
-\contentsline {section}{\numberline {5.1}Formulating our hypotheses}{35}{section.5.1}%
+\contentsline {section}{\numberline {5.1}Formulating our hypotheses}{37}{section.5.1}%
 \defcounter {refsection}{0}\relax 
-\contentsline {section}{\numberline {5.2}Our approach}{36}{section.5.2}%
+\contentsline {section}{\numberline {5.2}Our approach}{38}{section.5.2}%
 \defcounter {refsection}{0}\relax 
-\contentsline {section}{\numberline {5.3}Environment and Preprocessing}{38}{section.5.3}%
+\contentsline {section}{\numberline {5.3}Environment and Preprocessing}{40}{section.5.3}%
 \defcounter {refsection}{0}\relax 
-\contentsline {section}{\numberline {5.4}Implementation}{38}{section.5.4}%
+\contentsline {section}{\numberline {5.4}Implementation}{40}{section.5.4}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{\numberline {5.4.1}Tianshou}{38}{subsection.5.4.1}%
+\contentsline {subsection}{\numberline {5.4.1}Tianshou}{40}{subsection.5.4.1}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{\numberline {5.4.2}Trainer}{39}{subsection.5.4.2}%
+\contentsline {subsection}{\numberline {5.4.2}Trainer}{41}{subsection.5.4.2}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{\numberline {5.4.3}Implementing state representation learning in Tianshou}{40}{subsection.5.4.3}%
+\contentsline {subsection}{\numberline {5.4.3}Implementing state representation learning in Tianshou}{42}{subsection.5.4.3}%
 \defcounter {refsection}{0}\relax 
-\contentsline {section}{\numberline {5.5}Hyperparameters}{40}{section.5.5}%
+\contentsline {section}{\numberline {5.5}Hyperparameters}{42}{section.5.5}%
 \defcounter {refsection}{0}\relax 
-\contentsline {chapter}{\numberline {6}Results}{41}{chapter.6}%
+\contentsline {chapter}{\numberline {6}Results}{43}{chapter.6}%
 \defcounter {refsection}{0}\relax 
-\contentsline {chapter}{\numberline {7}Conclusion}{43}{chapter.7}%
+\contentsline {chapter}{\numberline {7}Conclusion}{45}{chapter.7}%
 \defcounter {refsection}{0}\relax 
-\contentsline {chapter}{Bibliography}{45}{chapter.7}%
+\contentsline {chapter}{Bibliography}{47}{chapter.7}%
 \defcounter {refsection}{0}\relax 
 \contentsline {chapter}{\numberline {A}Appendix 1}{I}{appendix.A}%

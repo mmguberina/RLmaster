@@ -2351,7 +2351,8 @@
   </bcf:bibdata>
   <bcf:section number="0">
     <bcf:citekey order="1">mnih2013atari</bcf:citekey>
-    <bcf:citekey order="2">suttonrlbook</bcf:citekey>
+    <bcf:citekey order="2">bellemare13arcade</bcf:citekey>
+    <bcf:citekey order="3">suttonrlbook</bcf:citekey>
     <bcf:citekey order="3">berkleylectures</bcf:citekey>
     <bcf:citekey order="4">mnih2013atari</bcf:citekey>
     <bcf:citekey order="5">mnih2013atari</bcf:citekey>

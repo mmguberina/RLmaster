@@ -20,7 +20,7 @@ In those cases, an entirely different approach becomes the only viable one:
 designing a system which can produce and refine its own solution,
 or in other words, designing a system which, in a way, learn the
 solution by itself.
-This is the idea behind the learning-based approach: automating the 
+This is the idea behind the learning-based approaches: automating the 
 process of learning.
 Crucially, now the world and how it operates
 is unknown and has to be discovered.  
@@ -43,14 +43,14 @@ in its \textbf{environment}. It then \textbf{observes} the resulting state
 of the environment and is also given a \textbf{reward}
 which is a function mapping every state of the environment to a number.
 
-To introduce reinforcement learning more formally,
-we first describe the simplest possible problem 
-to which reinforcement learning is the best solution.
+To help introduce reinforcement learning formally,
+first the simplest possible problem 
+to which reinforcement learning is the best solution is described.
 
 \subsection{Bandit problems}
-Reinforcement learning  uses training information that evaluates 
-the actions taken rather than instruct by giving correct actions.
-Consider this learning problem.
+%Reinforcement learning  uses training information that evaluates 
+%the actions taken rather than instruct by giving correct actions.
+Consider the following problem.
 The agent is faced with $k$ different gambling slot machines.
 Each of them give random rewards under an unknown distribution.
 At each turn, the agents has to select one of the machines and pull its lever.
@@ -60,29 +60,46 @@ The goal is to maximize the expected total reward over some number of turns.
 %This is original form of k-armed bandit problem.
 %Depending on the action selected $k$-armed bandit problem formalizes the value function to get the expected or average reward.
 If the agent knew the distribution of rewards of each of the slot machines, 
-it would simply choose the one with the highest expected reward in number of turns 
-it has been given.
+it would simply choose the one with the highest expected reward.
+%in number of turns it has been given.
 %It is assumed the agent do not know the action value with certainty although the estimate of 
 %the action value is known by the agent and we expected it to be close to actual value of the action.
-At any time step the agent will be able to select at least one action whose estimated value is greatest.
-When the agent selects on of this actions it is exploiting the current knowledge of the
-values of the actions.
-If the agents keep exploiting the goal of maximizing reward over period of time will be trivial.
-If instead the agent selects one of the non greedy action this will enables it to improve the average expected reward over time.
- 
-When addressing the canonical problem of sequential decision making under uncertainty,
-the exploitation-exploration trade-off is highlighted.More specifically,
-as depicted in Fig.1, an agent interacts with an unknown environment in a sequential manner to obtain rewards.
-The ultimate goal is to maximize the rewards.
-For one thing, the agent takes advantage of existing knowledge of the environment.
-For another, the agent investigates an unfamiliar environment.
+However, the agent does not have access to that information
+and hence it can not effectively \textbf{exploit} the environment to obtain the highest rewards.
+Instead, it is forced to \textbf{explore} the environment in order to learn the probability distribution of the reward.
+In this problem, this amounts to pulling different levers and recording the received payoffs.
+%At any time step the agent will be able to select at least one action whose estimated value is greatest.
+%When the agent selects on of this actions it is exploiting the current knowledge of the
+%values of the actions.
+%If the agents keep exploiting the goal of maximizing reward over period of time will be trivial.
+%If instead the agent selects one of the non greedy action this will enables it to improve the average expected reward over time.
+
+The key issue is thus to balance exploitation and exploration.
+It is compounded by the fact that the agent is given only a finite amount of time,
+or a finite number of lever pulls in this case.
+While one could leverage Bayesian statistics to construct an optimal solution to this 
+simplest formulation of the bandit problem, this quickly becomes intractable as the complexity of
+the problem is increased.
+Namely, the described problem is stationary, in the sense that past actions do not influence 
+the state of the world: the slot machines do not change as different levers are pulled.
+Said another way, the $ k  $-bandit problem has a single \textbf{state}.
+This is of course not the case in most problems of interest.
+%To describe a changing environment in a stochastic setting, Markov chains are used.
+To model the agent's effect on the environment, additional structure needs to be introduced.
+This is done in the following sections.
+%When addressing the canonical problem of sequential decision making under uncertainty,
+%the exploitation-exploration trade-off is highlighted.More specifically,
+%as depicted in Fig.1, an agent interacts with an unknown environment in a sequential manner to obtain rewards.
+%The ultimate goal is to maximize the rewards.
+%For one thing, the agent takes advantage of existing knowledge of the environment.
+%For another, the agent investigates an unfamiliar environment.
 
  
 \subsection{Markov Decision Processes}
 \label{subsec-mdps}
 %\cite{gehring2017convolutional}
-The environment of $ k  $-bandit problem is static --- 
-the actions do not change the \textbf{state} of the environment.
+%The environment of $ k  $-bandit problem is static --- 
+%the actions do not change the \textbf{state} of the environment.
 To model environments in which states change, Markov chains are used.
 They capture the stochastic nature of state transitions, while Markov property 
 allows for easier mathematical analysis.
@@ -102,7 +119,7 @@ The schematic of a Markov chain is shown in \ref{fig:markov-chain}.
 \label{fig:markov-chain}
 \end{figure}
 
-Formally, a Markov chain $ \mathcal{M}  $is defined by its state space
+Formally, a Markov chain $ \mathcal{M}  $ is defined by its state space
 $ \mathcal{S}  $ with discrete or continuous state $ \bm{s} \in \mathcal{S}  $
 and the transition operator $ \mathcal{T}  $.
 The notation $ \bm{s}_{ t }  $ denotes the state at time $ t  $ and it is a vector of real numbers.
@@ -114,9 +131,11 @@ Then $\overrightarrow{\mu}_t$ is a vector of probabilities and
 $\overrightarrow{\mu}_{t+1} = \mathcal{T} \overrightarrow{\mu}_t$.
 Importantly, $ \mathcal{T}  $ is linear.
 
-To model the agent's actions, we simply augment the Markov chain by adding
-actions as priors to state transition probabilities and defining the reward function, 
-thereby constructing a Markov decision process.
+To model the agent's actions, 
+actions are added as priors to state transition probabilities
+in the Markov chain. 
+With this and the definition of the reward function,
+a Markov decision process is constructed.
 It's schematic can be seen in \ref{fig:mdp}.
 \begin{figure}[htpb]
 \begin{center}
@@ -203,11 +222,11 @@ in sketches and written out in the equations (most often using just the Markov d
 \label{subsec-key-rl-concepts}
 \subsection{Policy}
 With the problem space being formally defined,
-we may introduce definitions which will allow the construction
-of a reinforcement learning algorithm.
+definitions which will allow the construction
+of a reinforcement learning algorithm may be introduced.
 The reinforcement learning problem can be defined in finite or infinite time horizons.
 Different environments usually naturally fall in either category.
-For the agent to learn, it needs to be able to try out different actions from the same, 
+In order for the agent to learn, it needs to be able to try out different actions from the same, 
 or at least similar states.
 This is usually achieved by having the agent return to a set of starting states.
 The period between two such returns is called \textbf{an episode}.
@@ -231,24 +250,25 @@ is given in \ref{fig:policy-in-mdp}.
 		\draw [arrow] (s2) -- node [above, midway, sloped] {$\pi_{ \theta } (\bm{a}_{t}| \bm{s}_{t} )  $} (a2);
 \end{tikzpicture}
 \end{center}
+\caption{Schematic of a Markov decision process with a policy $ \pi  $.}
 \label{fig:policy-in-mdp}
 \end{figure}
 
 The policy is a stochastic function. The intensity of stochasticity determines the trade-off
 between exploration and exploitation.
 To emphasize that the policy depends on some parameters $ \theta  $,
-we usually write $ \pi_{ \theta } $.
+the notation $ \pi_{ \theta } $ is used.
 
-\subsubsection{Goal of reinforcement learning}
+\subsection{Goal of reinforcement learning}
 For simpler notation, the finite horizon form
 is assumed for the following definitions.
 Since the environment is modeled as a Markov decision process,
-we can write the probability of observing a trajectory of states
-and actions as:
+the probability of observing a trajectory of states
+and actions can be written as:
 
 \begin{equation}
 \underbrace{p_\theta(\bm{s}_1, \bm{a}_1, \dots, \bm{s}_T, \bm{a}_T)}_{p_\theta(\tau)} = p(\bm{s}_1) \prod^{T}_{t=1} 
-\underbrace{\pi_{\theta} (\bm{a}_t | \bm{s}_t) p (\bm{s}_{t+1} | \bm{s}_t, \bm{a}_t)}_{\text{Markov chain on} (\bm{s}, \bm{a})}
+\underbrace{\pi_{\theta} (\bm{a}_t | \bm{s}_t) p (\bm{s}_{t+1} | \bm{s}_t, \bm{a}_t)}_{\text{Markov chain on } (\bm{s}, \bm{a})}
 \end{equation}
 A bit more explicitly, we can a transition probability as:
 \begin{equation}
@@ -256,26 +276,27 @@ p((\bm{s}_{t+1}, \bm{a}_{t+1}) | (\bm{s}_t, \bm{a}_t)) =
 p((\bm{s}_{t+1}| (\bm{s}_t, \bm{a}_t)) \pi_\theta (\bm{a}_{t+1} | \bm{s}_{t+1})
 \end{equation}
 
-With this, we may now formally define the goal of reinforcement learning.
+With this, a formal definition of the goal of reinforcement learning can be given.
 It is to find policy parameters $ \theta^{ \star }  $ such that:
 \begin{align}
-		\theta^\star &= \argmax_{\theta} E_{\tau \sim p_\theta(\tau)} \left[ \sum_{t}^{} r(\bm{s}_t, \bm{a}_t) \right] \\
-	 &= \argmax_{\theta} \sum_{t}^{T} E_{(\bm{s}_t, \bm{a}_t) \sim p_\theta(\bm{s}_t, \bm{a}_t)} \left[  r(\bm{s}_t, \bm{a}_t) \right]
+		\theta^\star &= \argmax_{\theta} \mathbb{E}_{\tau \sim p_\theta(\tau)} \left[ \sum_{t}^{} r(\bm{s}_t, \bm{a}_t) \right] \\
+	 &= \argmax_{\theta} \sum_{t}^{T} \mathbb{E}_{(\bm{s}_t, \bm{a}_t) \sim p_\theta(\bm{s}_t, \bm{a}_t)} \left[  r(\bm{s}_t, \bm{a}_t) \right]
 \end{align}
 
 To ensure that the expected sum of rewards, also know as the \textbf{return},
 is finite in the infinite horizon case, a
 \textbf{discount factor} $ 0 < \gamma < 1  $ is introduced in the sum.
-The discount factor also play a role in modelling 
-because often times it makes sense to value immediate rewards
+The discount factor also plays a role in modelling 
+because usually it makes sense to value immediate rewards
 more.
-It is important to note that we are maximizing the \textit{expected} sum of
-rewards. This makes the goal a smooth and differentiable function of the parameters,
-which means we can employ gradient descent to find the optimal parameters.
+It is important to note that the \textit{expected} sum of
+rewards is maximized . This makes the goal a smooth and differentiable function of the parameters,
+which means gradient descent can be employed to find the optimal parameters.
 This leads us to the first class of reinforcement learning algorithms:
 policy gradient algorithms.
-They will be introduced with the other classes of algorithm in the next subsection,
-while here additional concepts required by other classes of algorithms will be introduced here.
+They will be introduced with the other classes of algorithm in \ref{sub-policy-gradient},
+while additional concepts required by other classes of algorithms will be introduced 
+in the following subsection.
 
 \subsection{Value functions}
 Value functions are functions which map states or state-action pairs
@@ -288,26 +309,26 @@ The \textbf{Q-function} maps state-action pairs to the estimated sum of returns
 under policy $ \pi_{ \theta } $:
 \begin{equation}
 		\label{eq:q-function}
-		Q^\pi (\bm{s}_t, \bm{a}_t) = \sum_{t'=t}^{T} E_{\pi_\theta}
+		Q^\pi (\bm{s}_t, \bm{a}_t) = \sum_{t'=t}^{T} \mathbb{E}_{\pi_\theta}
 		\left[ r(\bm{s}_{t'}, \bm{a}_{t'} )| \bm{s}_t, \bm{a}_t \right] 
 \end{equation}
-thus denoting the total reward from taking $\bm{a}_t$ in $\bm{s}_t$.
-\textbf{Value functions} map states to to the estimated sum of returns
+thus denoting the expectred total reward from taking $\bm{a}_t$ in $\bm{s}_t$.
+\textbf{Value functions} map states to to the expected sum of rewards
 under policy $ \pi_{ \theta } $:
 \begin{equation}
 		\label{eq:value-function}
-		V^\pi (\bm{s}_t) = \sum_{t'=t}^{T} E_{\pi_\theta}
+		V^\pi (\bm{s}_t) = \sum_{t'=t}^{T} \mathbb{E}_{\pi_\theta}
 		\left[ r(\bm{s}_{t'}, \bm{a}_{t'} | \bm{s}_t) \right] 
 \end{equation}
 
 The connection between the two is the following:
 \begin{equation}
-		V^\pi (\bm{s}_t) = E_{\bm{a}_t \sim \pi(\bm{s}_t, \bm{a}_t)}
+		V^\pi (\bm{s}_t) = \mathbb{E}_{\bm{a}_t \sim \pi(\bm{s}_t, \bm{a}_t)}
 		\left[ Q^\pi(\bm{s}_t, \bm{a}_t) \right] 
 \end{equation}
-And we can also write the RL objective as:
+With these definitions, the reinforcement learning objective may also be written as:
 \begin{equation}
-		E_{\bm{s}_1 \sim p(\bm{s}_1)}
+		\mathbb{E}_{\bm{s}_1 \sim p(\bm{s}_1)}
 		\left[ V^\pi (\bm{s}_1) \right] 
 \end{equation}
 
@@ -315,25 +336,29 @@ And we can also write the RL objective as:
 \section{Classes of reinforcement learning algorithms}
 \label{sec-rl-alg-classes}
 \subsection{Policy gradients}
+\label{sub-policy-gradient}
 Policy gradients are derived by directly solving for
-the reinforcement learning objective with gradient descent
-with respect to the policy parameters.
+the reinforcement learning objective using gradient descent,
+where the derivative is taken with respect to the policy parameters.
 To do so, the reinforcement learning objective needs to be evaluated.
-We begin by introducing a notational shorthand:
+To make this a bit easier to follow, we introduce a notational shorthand:
 
 \begin{equation}
-		\theta^\star = \argmax_\theta \underbrace{E_{\tau \sim p_\theta (\tau)} \left [ \sum_t r(\bm{s}_t, \bm{a}_t) \right ]}_{J(\theta)}
+		\theta^\star = \argmax_\theta \underbrace{\mathbb{E}_{\tau \sim p_\theta (\tau)} \left [ \sum_t r(\bm{s}_t, \bm{a}_t) \right ]}_{J(\theta)}
 \end{equation}
 
-We estimate $J(\theta)$ by making rollouts from the policy (below $i$ is the sample index and $i,t$ is the $t^{th}$ timestep
-in the $i^{th}$ sample):
+$J(\theta)$ is estimated by making rollouts from the policy.
+Simply put, the agent collects experience under the current policy,
+and the average return is used as the estimate.
+In the equation below $i$ is the sample index. $i,t$ denotes the $t^{\text{th}}$ timestep
+in the $i^{\text{th}}$ sample:
 \begin{equation}
-		J(\theta) = E_{\tau \sim p_\theta(\tau)} \left [ \sum_t r(\bm{s}_t, \bm{a}_t) \right ] \approx 
+		J(\theta) = \mathbb{E}_{\tau \sim p_\theta(\tau)} \left [ \sum_t r(\bm{s}_t, \bm{a}_t) \right ] \approx 
 		\frac{1}{N} \sum_i \sum_t r(\bm{s}_{i,t}, \bm{a}_{i,t})
 \end{equation}
 Simplifying the notation further, we get:
 \begin{equation}
-		J(\theta) = E_{\tau \sim p_\theta(\tau)} \underbrace{[r(\tau)]}_{\sum^{T}_{t=1} r(\bm{s}_t, \bm{a}_t)} = 
+		J(\theta) = \mathbb{E}_{\tau \sim p_\theta(\tau)} \underbrace{[r(\tau)]}_{\sum^{T}_{t=1} r(\bm{s}_t, \bm{a}_t)} = 
 		\int_{{}}^{} {p_\theta(\tau)r(\tau)} \: d{\tau} {}
 \end{equation}
 The goal now is to compute the derivative of the estimated reinforcement learning
@@ -345,8 +370,8 @@ objective:
 
 Since the goal of this text is just to introduce the necessary concepts
 and algorithms, the derivation(s) will be ommited.
-We encourage the interested reader to consult the literature \cite{suttonrlbook}
-and \cite{berkleylectures} to find them.
+We encourage the interested reader to consult the literature \cite{suttonrlbook, berkleylectures} 
+to find more information.
 
 Here we will just note that it is crucial that the final expression
 can be estimated by sampling the agent's experience 
@@ -355,18 +380,19 @@ The resulting expression for the policy gradient \label{eq:derivative-of-estimat
 
 \begin{equation}
 		\label{eq:policy-gradient}
-		\nabla_\theta J(\theta) = E_{\tau \sim p_\theta(\tau)} 
+		\nabla_\theta J(\theta) = \mathbb{E}_{\tau \sim p_\theta(\tau)} 
 		\left [ \left ( \sum_{t=1}^{T} \nabla_\theta \log \pi_\theta (\bm{a}_t | \bm{s}_t ) \right )
 		\left ( \sum_{t=1}^{T} r(\bm{s}_t, \bm{a}_t) \right ) \right ]
 \end{equation}
-To evaluate the policy gradient we can sample:
+It can be evaluated through sampling:
 \begin{equation}
 		\label{eq:estimated-policy-gradient}
 		\nabla_\theta J(\theta) \approx \frac{1}{N}  \sum_{i=1}^{N} 
 		\left ( \sum_{t=1}^{T} \nabla_\theta \log \pi_\theta (\bm{a}_{i,t} | \bm{s}_{i,t} ) \right )
 		\left ( \sum_{t=1}^{T} r(\bm{s}_{i,t}, \bm{a}_{i,t}) \right )
 \end{equation}
-With the gradient we can do a step of gradient ascent and use it to form
+The estimated gradient can be used to perform gradient ascent. 
+This is the backbone of 
 the REINFORCE algorithm, also known as ``vanilla policy gradient'':
 
 \fbox{
@@ -374,10 +400,11 @@ the REINFORCE algorithm, also known as ``vanilla policy gradient'':
 				\underline{REINFORCE algorithm:}
 \begin{enumerate}
 		\item sample $\{\tau^i\}$ from $\pi_\theta(\bm{a}_t | \bm{s}_t)$ by running the policy
-		\item $\nabla_\theta J(\theta) \approx   \sum_{i}^{} 
+		\item use the samples to estimate the gradient of the objective: \newline $\nabla_\theta J(\theta) \approx   \sum_{i}^{} 
 		\left ( \sum_{t}^{T} \nabla_\theta \log \pi_\theta (\bm{a}_{i,t} | \bm{s}_{i,t} ) \right )
 		\left ( \sum_{t}^{} r(\bm{s}_{i,t}, \bm{a}_{i,t}) \right )$
-\item $\theta \leftarrow \theta + \alpha \nabla_\theta J(\theta) $
+\item update the policy function by performing a step of gradient ascent: \newline 
+		$\theta \leftarrow \theta + \alpha \nabla_\theta J(\theta) $
 \end{enumerate}
 }}
 
@@ -395,7 +422,7 @@ One of them is that it should, ideally, make bad actions less likely
 and good actions more likely. 
 However, if all rewards are positive, then all actions' probabilities will be increased,
 only by different amounts.
-This can be changed if a \textbf{baseline} $ b  $is added to actions:
+This can be changed if a \textbf{baseline } $ b  $ is added to actions:
 \begin{align}
 		\nabla_\theta J(\theta) &\approx 
 		\frac{1}{N} \sum_{i=1}^{N}
@@ -408,7 +435,7 @@ but it does change its variance.
 Although an optimal bias can be calculated, it is rarely used in practice due
 to its computational cost.
 Using baselines is one of the key ideas in actor-critic algorithms
-so they will be discussed further there.
+so they will be discussed further in \ref{sub-ac-algs}.
 
 \subsubsection{Off-policy gradients}
 An important property of the REINFORCE algorithm is that it
@@ -420,11 +447,10 @@ of the policy.
 In other words, because the policy changes with each gradient step,
 old samples are effectively collected under a different policy.
 This means that they can not be used to calculate the expected gradient 
-of the return with respect to the current policy --- it would not
-produce those trajectories.
-In mathematical notation:
+of the return with respect to the current policy as it would not
+produce those rollouts:
 \begin{equation}
-		\nabla_\theta J(\theta) = \underbrace{E_{\tau \sim p_\theta(\tau)}}_{\text{this is the trouble!}} [\nabla_\theta p_\theta(\tau)r(\tau)]
+		\nabla_\theta J(\theta) = \underbrace{\mathbb{E}_{\tau \sim p_\theta(\tau)}}_{\text{this is the trouble!}} [\nabla_\theta p_\theta(\tau)r(\tau)]
 \end{equation}
 If the policy is a neural network, which requires small gradient steps,
 the cost of generating a large number of samples for every update
@@ -457,10 +483,14 @@ are omitted and what follows is just the final result.
 \end{equation}
 To get this equation, the factor 
 $ \frac{\pi_{\theta'}(\bm{s}_{i,t})}{\pi_{\theta}(\bm{s}_{i,t})}  $
-had to be simple ignored in the expression because it is impossible 
+had to be ignored in the expression because it is impossible 
 to calculate the state marginal probabilities.
 This means that the expression works only if $ \pi_{ \theta' }  $
 is not too different from $ \pi_{ \theta }  $.
+The justification for this can be found in the previously referenced literature.
+What is important in the context of the thesis is that we will be interested only in
+off-policy methods as they are inherently more sample-efficient and 
+out goal is to increase the sample-efficiency of reinforcement learning.
 
 \subsubsection{Advanced policy gradients}
 The basic algorithm we have outlined is essentially just a basic gradient descent method. 
@@ -472,9 +502,10 @@ Such improvements led to algorithms such as PPO and TRPO,
 which will not be discussed here.
 
 \subsection{Actor-critic algorithms}
+\label{sub-ac-algs}
 Actor-critic methods can be seen as making a different trade-off between 
 variance and bias in policy gradient estimation.
-We begin with the following observation:
+Consider with the following observation:
 \footnote{In this equation, the summation of rewards is done from time $t   $
 		to $ T  $ because actions and states prior to that time do
 		not affect the return from that time onward.
@@ -485,24 +516,24 @@ This leveraging of causality reduces the variance of the estimate.}
 		\underbrace{\left ( \sum_{t'=t}^{T} r (\bm{s}_{i,t}, \bm{a}_{i,t}) \right )}_{\hat{Q}_{i,t}
 		\text{: ``reward to go''}}
 \end{equation}
-Simply put, in the policy gradient method a single-run Monte-Carlo (MC) is used
+Simply put, in the policy gradient method a single-run Monte-Carlo (MC) estimate is used
 to estimate the return.
 This causes high variance, while incurring no bias.
 Another option is to try to estimate the full expectation
-$ \hat{Q}_{i,t} \approx  \sum_{t'=t}^{T} E_{\pi_\theta} \left[ r(\bm{s}_{t'}, \bm{a}_{t'}) |\bm{s}_{t}, \bm{a}_{t}  \right]     $.
+$ \hat{Q}_{i,t} \approx  \sum_{t'=t}^{T} \mathbb{E}_{\pi_\theta} \left[ r(\bm{s}_{t'}, \bm{a}_{t'}) |\bm{s}_{t}, \bm{a}_{t}  \right]     $.
 Since the estimate won't be perfect, it will introduce bias.
 Of course, using multiple runs from the same state-action pair would 
 reduce variance, but this is sometimes impossible to procure
 and is certainly more costly.
-However, if our estimator of ``reward to go'' can generalize between states,
-we will be able to get good estimates regardless.
+However, if the ``reward to go'' estimator can generalize between states,
+it will be able to produce good estimates regardless.
 
 Like the policy, the return estimator will have to be learned.
 In this approach, the policy is also called the \textbf{actor} 
 and the return estimator is called the \textbf{critic}.
-We proceed by discussing how the critic can be constructed.
-If we had the correct Q-function (i.e. not the estimate, but the actual values),
-we could improve the policy gradient estimate by using it
+%We proceed by discussing how the critic can be constructed.
+If the correct Q-function was available (i.e. not the estimate, but the actual values),
+the policy gradient estimate could be improved by using it
 both to estimate the return and as a baseline:
 \begin{align}
 		\nabla_\theta J(\theta) &\approx \frac{1}{N} \sum_{i=1}^{N} \sum_{t=1}^{T} \nabla_\theta \log \pi_\theta (\bm{a}_{i,t}| \bm{s}_{i,t})
@@ -510,26 +541,26 @@ both to estimate the return and as a baseline:
 		b_t &= \frac{1}{N} \sum_{i}^{} Q(\bm{s}_{i,t}, \bm{a}_{i,t})
 \end{align}
 However, having a baseline that depends on actions leads to bias.
-Thus we employ a baseline dependent on the state:
+Thus a state-dependent baseline is employed: 
 \begin{equation}
 		V(\bm{s}_t) = E_{\bm{a}_t \sim \pi_\theta (\bm{s}_{t}, \bm{a}_{t})} [Q(\bm{s}_{t}, \bm{a}_{t})]
 \end{equation}
-Since the value function \ref{eq:value-function} tells us the expected return of the average action,
-we can calculate how much better a certain action is by substracting
+Since the value function \ref{eq:value-function} gives the expected return of the average action,
+it is possible to calculate how much better a certain action is by substracting
 its Q-value \ref{eq:q-function} for the value function.
 The result is called the \textbf{advantage function}:
 \begin{equation}
 A^\pi (\bm{s}_{t}, \bm{a}_{t}) = Q^\pi (\bm{s}_{t}, \bm{a}_{t}) - V^\pi (\bm{s}_t)
 \end{equation}
-Thus we can fit either the Q-function, the value function or the advantage function.
+Thus, either the Q-function, the value function or the advantage function can be learned.
 Of these, it is best to learn the value function because there are less 
 states than state-action pairs.
-We then calculate the advantage function in the following way:
+The advantage function is then calculated in the following way:
 \begin{align}
 		A^\pi (\bm{s}_{t}, \bm{a}_{t})  &\approx r(\bm{s}_{t}, \bm{a}_{t}) + V^\pi (\bm{s}_{t+1})  - V^\pi(\bm{s}_t)
 \end{align}
 
-The value function can be estimated through samples
+The value function can be estimated through samples:
 \begin{align}
 		V^\pi (\bm{s}_t) &\approx \sum_{t'=t}^{T} r(\bm{s}_{t'}, \bm{a}_{t'})
 \end{align}
@@ -537,18 +568,18 @@ After collecting many such samples
 \begin{equation}
 		\left\{ \left( \bm{s}_{i,t}, \underbrace{\sum_{t'=t}^{T} r(\bm{s}_{i,t}, \bm{a}_{i,t})}_{y_{i,t}} \right)  \right\} 
 \end{equation}
-we can fit the value function through supervised regresion with the loss being:
+the value function can be fitted through supervised regression with the following loss:
 \begin{equation}
 		\mathcal{L}(\phi) = \frac{1}{2} \sum_{i}^{} ||\hat{V}^\pi_\phi (\bm{s}_i) - y_i||^2
 \end{equation}
-However, this process can be sped up with bootstraped estimates:
+This process can be sped up with bootstrapped estimates:
 \begin{equation}
 		y_{i,t} = \sum_{t'=t}^{T} E_{\pi_\theta} \left[ r(\bm{s}_{t'}, \bm{a}_{t'})|\bm{s}_{i,t}\right] + V^\pi(\bm{s}_{i,t+1})  
 		\approx r(\bm{s}_{i,t}, \bm{a}_{i,t}) + \hat{V}^\pi_\phi(\bm{s}_{i,t+1}) 
 \end{equation}
 This will further reduce variance, but again increase bias.
 
-Fortunatelly, we can tune the trade-off between bias and variance.
+Fortunately, the trade-off between bias and variance can be tuned.
 In the Monte Carlo estimate, the entire trajectory was used
 to estimate the return. In the bootstrap estimate,
 only a single step in the future was used along with the estimate.
@@ -575,12 +606,16 @@ of naiive implementations results in the following algorithm:
 \parbox{\textwidth}{
 \underline{Actor-critic algorithm template}
 \begin{enumerate}
-		\item take action $\bm{a} \sim \pi_\theta(\bm{a}|\bm{s})$, get $(\bm{s}, \bm{a},\bm{s'},r)$, store in $\mathcal{R}$ (replay buffer)
+		\item take action $\bm{a} \sim \pi_\theta(\bm{a}|\bm{s})$, observe transition
+				$(\bm{s}, \bm{a},\bm{s'},r)$ and store it in the replay buffer $\mathcal{R}$ 
 		\item sample a batch $\left\{  (\bm{s}_i, \bm{a}_i,\bm{s'}_i,r_i) \right\} $ from buffer $\mathcal{R}$
-		\item update $\hat{Q}^\pi_\theta$ using target $y_i = r_i + \gamma \hat{Q}^\pi_\theta(\bm{s}_i', \bm{a}_i') \forall \bm{s}_i, \bm{a}_i$
-		\item $\nabla_\theta J(\theta) \approx  \frac{1}{N} \sum_{i}^{}  \nabla_{\theta} \log \pi_\theta(\bm{a}^\pi_i|\bm{s}_i)\hat{Q}^\pi(\bm{s}_{i}, \bm{a}^\pi_{i})$,
+		\item update the Q-value estimator $\hat{Q}^\pi_\theta$ by using the target: \newline
+				$y_i = r_i + \gamma \hat{Q}^\pi_\theta(\bm{s}_i', \bm{a}_i') \forall \bm{s}_i, \bm{a}_i$
+		\item compute the policy gradient estimate with: \newline
+				$\nabla_\theta J(\theta) \approx  \frac{1}{N} \sum_{i}^{}  \nabla_{\theta} \log \pi_\theta(\bm{a}^\pi_i|\bm{s}_i)\hat{Q}^\pi(\bm{s}_{i}, \bm{a}^\pi_{i})$,
 				where $\bm{a}_i^\pi \sim \pi_\theta(\bm{a} | \bm{s}_i)$
-		\item $\theta \leftarrow \theta  + \alpha \nabla_\theta J(\theta)$
+		\item update the policy function by performing a gradient step: \newline
+				$\theta \leftarrow \theta  + \alpha \nabla_\theta J(\theta)$
 \end{enumerate}
 }}
 
@@ -615,8 +650,8 @@ Value function methods use only the critic from actor-critic algorithms.
 Suppose that the advantage function $ A^{ \pi } (\bm{s}_{t}, \bm{a}_{t} )  $ is known.
 It tells us how much better the action $ \bm{a}_{t}  $ is than the average action
 according to the policy $ \pi  $.
-Thus, if we knew the advantage function, we could construct a deterministic 
-\textbf{greedy policy}:
+Thus, if provided with the advantage function, a deterministic 
+\textbf{greedy policy} could be construct:
 \begin{equation}
 		\pi_{ \text{greedy} }(\bm{s}_{t}| \bm{a}_{t}) = \left\{ 
 \begin{matrix}
@@ -626,17 +661,18 @@ Thus, if we knew the advantage function, we could construct a deterministic
 		\right.
 \end{equation}
 which would yield the highest expected return.
-In other words, if we knew the advantage function, the policy would be
+In other words, if the advantage function is known, the policy would be
 reduced to the argmax operation.
+This approach has roots in dynamic programming.
 
 \subsubsection{Dynamic programming}
 Dynamic programming refers to a collection of algorithms that can be used
-to compute optimal policies given a perfect model of the environment as an MDP.
+to compute optimal policies given a perfect model of the environment.
 They are of limited utility in reinforcement learning due to the perfect model requirement 
-and their great computational expense, but are important theoretically ---
+and their great computational expense, but are important theoretically:
 they provide an essential foundation for understanding the other methods.
-Usually a finite MDP is assumed. DP can be applied to continous problems as well,
-but exact solution exist only in special cases.
+Usually a finite Markov decision process is assumed. Dynamic programming can be applied to continuous 
+problems as well, but exact solution exist only in special cases.
 
 Value iteration and Q-learning make up two fundamental algorithms of
 Reinforcement Learning.Q learning is an Off policy algorithm, which means it

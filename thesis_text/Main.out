@@ -17,8 +17,8 @@
 \BOOKMARK [2][-]{subsection.2.1.2}{Markov Decision Processes}{section.2.1}% 17
 \BOOKMARK [1][-]{section.2.2}{Key concepts in reinforcement learning}{chapter.2}% 18
 \BOOKMARK [2][-]{subsection.2.2.1}{Policy}{section.2.2}% 19
-\BOOKMARK [3][-]{subsubsection.2.2.1.1}{Goal of reinforcement learning}{subsection.2.2.1}% 20
-\BOOKMARK [2][-]{subsection.2.2.2}{Value functions}{section.2.2}% 21
+\BOOKMARK [2][-]{subsection.2.2.2}{Goal of reinforcement learning}{section.2.2}% 20
+\BOOKMARK [2][-]{subsection.2.2.3}{Value functions}{section.2.2}% 21
 \BOOKMARK [1][-]{section.2.3}{Classes of reinforcement learning algorithms}{chapter.2}% 22
 \BOOKMARK [2][-]{subsection.2.3.1}{Policy gradients}{section.2.3}% 23
 \BOOKMARK [3][-]{subsubsection.2.3.1.1}{Baselines}{subsection.2.3.1}% 24

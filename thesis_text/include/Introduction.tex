@@ -161,7 +161,7 @@ which lead the agent to states with high reward.
 Both classes have their benefits and their drawbacks.
 Since model-free algorithms do not require any knowledge of environment dynamics
 to operate, they are more widely applicable and usually achieve better performance.
-But the fact that they can not leverage environment dynamics to create plans implies
+But the fact that they can not leverage environment dynamics to create plans results in  
 a harder learning problem: they need to implicitly learn those dynamics
 while only being provided the reward signal. 
 This makes them much less sample-efficient.\\
@@ -188,47 +188,56 @@ Furthermore, what it learned at this stage may become obsolete as the model chan
 How bad this problem is depends on the specifics of the setting,
 and there are many ways to ameliorate it,
 but in most cases the necessary trade-offs result in a lower final performance.
-All this will be further discussed in a later chapter.
+%All this will be further discussed in a later chapter.
 
 
 \subsection{Utilizing state representations}
 In the case of image-based observations, 
-an alternative to using model-based methods is to deal only with the problem
+an alternative to using model-based methods is to additionally deal only with the problem
 of extracting states from images.
 This can be done by using auxiliary unsupervised representation learning goals.
-Unsupervised representation learning is discussed in \ref{ch-srl-background}.
+%Unsupervised representation learning is discussed in \ref{ch-srl-background}.
 More concretely, the idea is
 to utilize learning signals other than the reward signal
 to make the model-free learning more sample-efficient.
 In particular, this amounts to learning a latent representation of the environment,
 i.e. finding a lower-dimensional embedding of the observations,
-and learn a policy in this space.
+and learning a policy in this space.
 
-The potential benefits of the proposed approach are two-fold:
+The benefits of this approach are two-fold:
  \begin{itemize}
-    \item First, we know that, in general, lower-dimensional optimization 
+    \item It is know that, in general, lower-dimensional optimization 
 			problems are easier to solve than higher-dimensional ones.
-    \item Second, it is known that when algorithms learn with direct state access, 
+    \item Empirical findings show that when reinforcement algorithms have direct state access, 
 			they learn much faster and often achieve better final results.
 \end{itemize}
-The main reason behind this is that images are much 
-higher-dimensional than underlying states.
+%The main reason behind this is that images are much 
+%higher-dimensional than underlying states.
 %and this is self-evident in the case of Atari games. 
 Since inferring states from observations is not directly related to the reward,
 unsupervised learning techniques should aid in 
 feature extraction and thus make learning more sample-efficient.
+This is the approach investigated in this thesis.
+Since the goal is not to learn the dynamics of the environment,
+but simply to find an equivalent, but lower-dimensional representation of it,
+it is this approach should not suffer from the problems faced
+by model-based approaches.
 
 
 \section{Goal of the thesis}
 \label{sec-thesis-goal}
 Given the previous discussion, the goal of the thesis may be presented:
-the idea is to combine the sample-efficiency of model-based approaches
-with the flexibility of model-free methods.
+the idea is to investigate how unsupervised learning techniques can be combined
+with model-free algorithms in order to increase their sample-efficiency.
+%The goal is to
+%combine the sample-efficiency of model-based approaches
+%with the flexibility of model-free methods.
 To make this a concrete and manageable goal,
-we constrain ourselves to the problem of learning from images in particular.
+we constrain ourselves to the problem of learning from images and to problems
+with discrete action spaces in particular.
 To be able to compare our results to those of other researchers,
 we will test our algorithms on the standard benchmark tasks in the field,
-namely Atari57 games.
+namely Atari-57 games \cite{bellemare13arcade}.
 %firstly, we know that in general lower-dimensional optimization problems
 %are easier to solve than higher-dimensional ones.
 %Secondly, it is known that when algorithms learn with direct state access,
@@ -237,11 +246,7 @@ namely Atari57 games.
 %than underlying states, and this is self-evident in the case of Atari games.
 %Since inferring states from observations is not directly related to the reward,
 %we expect that using unsupervised learning techniques will aid in feature extraction
-and thus make learning more sample-efficient.
-Furthermore, since the goal is not to learn the dynamics of the environment,
-but simply to find an equivalent, but lower-dimensional representation of it,
-we expect that this approach won't suffer from the problems faced
-by model-based approaches.
+%and thus make learning more sample-efficient.
 Of course, we are not the first to suggest such an approach.
 An overview of the field is provided in \ref{ch-related-work}.
 
