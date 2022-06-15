@@ -51,26 +51,4 @@
 \BOOKMARK [2][-]{subsection.3.2.1}{Autoencoder}{section.3.2}% 51
 \BOOKMARK [2][-]{subsection.3.2.2}{Forward model}{section.3.2}% 52
 \BOOKMARK [2][-]{subsection.3.2.3}{Inverse model}{section.3.2}% 53
-\BOOKMARK [2][-]{subsection.3.2.4}{Using prior knowledge to constrain the state space}{section.3.2}% 54
-\BOOKMARK [2][-]{subsection.3.2.5}{Using hybring objectives}{section.3.2}% 55
-\BOOKMARK [1][-]{section.3.3}{Model-based reinforcement learning}{chapter.3}% 56
-\BOOKMARK [0][-]{chapter.4}{Related Work}{}% 57
-\BOOKMARK [1][-]{section.4.1}{Reinforcement learning on Atari}{chapter.4}% 58
-\BOOKMARK [1][-]{section.4.2}{Efforts in increasing efficiency in Atari}{chapter.4}% 59
-\BOOKMARK [1][-]{section.4.3}{State representation learning for efficient model-free learning}{chapter.4}% 60
-\BOOKMARK [2][-]{subsection.4.3.1}{Deterministic generative models}{section.4.3}% 61
-\BOOKMARK [2][-]{subsection.4.3.2}{Stochastic generative models}{section.4.3}% 62
-\BOOKMARK [2][-]{subsection.4.3.3}{Discriminative models}{section.4.3}% 63
-\BOOKMARK [0][-]{chapter.5}{Methods}{}% 64
-\BOOKMARK [1][-]{section.5.1}{Formulating our hypotheses}{chapter.5}% 65
-\BOOKMARK [1][-]{section.5.2}{Our approach}{chapter.5}% 66
-\BOOKMARK [1][-]{section.5.3}{Environment and Preprocessing}{chapter.5}% 67
-\BOOKMARK [1][-]{section.5.4}{Implementation}{chapter.5}% 68
-\BOOKMARK [2][-]{subsection.5.4.1}{Tianshou}{section.5.4}% 69
-\BOOKMARK [2][-]{subsection.5.4.2}{Trainer}{section.5.4}% 70
-\BOOKMARK [2][-]{subsection.5.4.3}{Implementing state representation learning in Tianshou}{section.5.4}% 71
-\BOOKMARK [1][-]{section.5.5}{Hyperparameters}{chapter.5}% 72
-\BOOKMARK [0][-]{chapter.6}{Results}{}% 73
-\BOOKMARK [0][-]{chapter.7}{Conclusion}{}% 74
-\BOOKMARK [0][-]{chapter.7}{Bibliography}{}% 75
-\BOOKMARK [0][-]{appendix.A}{Appendix 1}{}% 76
+\BOOKMARK [2][-]{subsection.3.2.4}{Using prior knowledge to constrain the state space}{section.3

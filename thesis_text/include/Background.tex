@@ -969,7 +969,7 @@ complexity. This imitates the learning order of humans.
 %what those are.
 %===============================================
 
-As discussed in the introduction, learning control from images is 
+As discussed in \ref{sec-why-pixels}, learning control from images is 
 very desirable. Images, and observations in general, only implicitly 
 provide information about the underlying state. 
 Finding a good policy from observations, especially images,
@@ -983,19 +983,9 @@ Often a problem which a reinforcement learning algorithm can solve
 with direct state access, can not achieve any progress when
 provided only image observations.
 
-It is clear from the previous section that
-amazing results were achieved in the field of computer vision.
-However, to leverage these results for the purposes of reinforcement
-learning, the methods in question need to be applied for state estimation.
-This is a drastically different problem than for example image classification.
-The key difference is that now dynamics need to be inferred.
-While neural network architectures like the convolutional neural network
-are able to achieve great successes in timeless problems, 
-neural architectures like LSTMs aimed at learning from sequential data
-comparatively perform much worse.
-Results in problems such as video prediction or action classification leave much to be desired.
 
-Having that said, the learning signal generated from for example
+
+The learning signal generated from for example
 image reconstruction loss is substantially stronger than the reward signal,
 especially in settings with sparse rewards where it is 
 not present most of the time.
