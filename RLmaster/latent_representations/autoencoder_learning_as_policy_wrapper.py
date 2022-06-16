@@ -1,8 +1,10 @@
 import numpy as np
 import torch
+import torch.nn as nn
 import torch.nn.functional as F
 from copy import deepcopy
 from typing import Any, Callable, Dict, Optional, Tuple, Union
+import kornia.augmentation 
 
 from tianshou.data import Batch, ReplayBuffer, to_numpy, to_torch, to_torch_as
 from tianshou.policy import BasePolicy
@@ -50,6 +52,7 @@ class AutoencoderLatentSpacePolicy(BasePolicy):
         pass_policy_grad_to_encoder: bool = False,
         alternating_training_frequency: int = 1000,
         lr_scale: float = 0.001,
+        data_augmentation: bool = True,
         **kwargs: Any,
     ) -> None:
         super().__init__(**kwargs)
@@ -68,6 +71,11 @@ class AutoencoderLatentSpacePolicy(BasePolicy):
         self.batch_size = batch_size
         self.frames_stack = frames_stack
         self.lr_scale = lr_scale
+        # you could have an additional randomcrop (80,80) before replicationpad
+        self.data_augmentation = data_augmentation
+        random_shift = nn.Sequential(nn.ReplicationPad2d(4), 
+                kornia.augmentation.RandomCrop((84, 84)))
+        self.augmentation = random_shift
 
     def train(self, mode: bool = True) -> "AutoencoderLatentSpacePolicy":
         """Set the module in training mode."""
@@ -207,6 +215,11 @@ class AutoencoderLatentSpacePolicy(BasePolicy):
 
         Used in :meth:`update`. Check out :ref:`process_fn` for more information.
         """
+        # TODO make this work for future prediction too (maybe you want the same aug)
+        # NOTE: maybe u need to swith to torch first
+        if self.data_augmentation:
+            batch.obs = self.augmentation(torch.tensor(batch.obs, dtype=torch.float))
+            batch.obs_next = self.augmentation(torch.tensor(batch.obs_next, dtype=torch.float))
         # this ripped from dqn method
         # no, it shouldn't be
         # but we went to disgusting hacking so here we are man
