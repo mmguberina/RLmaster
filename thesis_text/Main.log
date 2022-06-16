@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.21 (TeX Live 2020) (preloaded format=pdflatex 2020.9.19)  16 JUN 2022 17:08
+This is pdfTeX, Version 3.14159265-2.6-1.40.21 (TeX Live 2020) (preloaded format=pdflatex 2020.9.19)  16 JUN 2022 23:21
 entering extended mode
  \write18 enabled.
  %&-line parsing enabled.
@@ -1553,7 +1553,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 30--31
 
  []
 
-<figure/auxiliary/frontpage_gu_eng_vec_m2.pdf, id=335, 597.23125pt x 845.15756p
+<figure/auxiliary/frontpage_gu_eng_vec_m2.pdf, id=343, 597.23125pt x 845.15756p
 t>
 File: figure/auxiliary/frontpage_gu_eng_vec_m2.pdf Graphic file (type pdf)
 <use figure/auxiliary/frontpage_gu_eng_vec_m2.pdf>
@@ -1567,7 +1567,7 @@ input line 44.
 x.map} <./figure/auxiliary/frontpage_gu_eng_vec_m2.pdf>] [2
 
 ]
-<figure/auxiliary/ChGULogoHog.pdf, id=354, 142.26349pt x 199.1691pt>
+<figure/auxiliary/ChGULogoHog.pdf, id=362, 142.26349pt x 199.1691pt>
 File: figure/auxiliary/ChGULogoHog.pdf Graphic file (type pdf)
 <use figure/auxiliary/ChGULogoHog.pdf>
 Package pdftex.def Info: figure/auxiliary/ChGULogoHog.pdf  used on input line 6
@@ -1776,7 +1776,7 @@ See the caption package documentation for explanation.
 LaTeX Warning: Reference `tianshou-concepts' on page 40 undefined on input line
  281.
 
-<./figure/concepts_arch2.png, id=952, 743.77875pt x 343.2825pt>
+<./figure/concepts_arch2.png, id=963, 743.77875pt x 343.2825pt>
 File: ./figure/concepts_arch2.png Graphic file (type png)
 <use ./figure/concepts_arch2.png>
 Package pdftex.def Info: ./figure/concepts_arch2.png  used on input line 285.
@@ -1846,7 +1846,7 @@ Package atveryend Info: Empty hook `AfterLastShipout' on input line 89.
 Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 89.
 Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 89.
 Package rerunfilecheck Info: File `Main.out' has not changed.
-(rerunfilecheck)             Checksum: C1F5135FC3F8745AD68ECF49D0C21BAC;5620.
+(rerunfilecheck)             Checksum: 843F0127179CB4878AE4A31F68FFC49B;5776.
 
 
 LaTeX Warning: There were undefined references.
@@ -1859,10 +1859,10 @@ Package logreq Info: Writing requests to 'Main.run.xml'.
 
  ) 
 Here is how much of TeX's memory you used:
- 34555 strings out of 480876
- 674528 string characters out of 5907582
- 1411238 words of memory out of 5000000
- 49161 multiletter control sequences out of 15000+600000
+ 34560 strings out of 480876
+ 674591 string characters out of 5907582
+ 1411273 words of memory out of 5000000
+ 49164 multiletter control sequences out of 15000+600000
  649119 words of font info for 107 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  71i,14n,85p,1245b,2160s stack positions out of 5000i,500n,10000p,200000b,80000s
@@ -1898,10 +1898,10 @@ onts/type1/public/lm/lmtt12.pfb></mnt/bigp/texlive/texcopy/texlive/2020/texmf-d
 ist/fonts/type1/public/amsfonts/symbols/msbm10.pfb></mnt/bigp/texlive/texcopy/t
 exlive/2020/texmf-dist/fonts/type1/urw/helvetic/uhvb8a.pfb></mnt/bigp/texlive/t
 excopy/texlive/2020/texmf-dist/fonts/type1/urw/helvetic/uhvr8a.pfb>
-Output written on Main.pdf (67 pages, 1403627 bytes).
+Output written on Main.pdf (67 pages, 1405270 bytes).
 PDF statistics:
- 1194 PDF objects out of 1200 (max. 8388607)
- 1056 compressed objects within 11 object streams
- 306 named destinations out of 1000 (max. 500000)
- 732 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 1206 PDF objects out of 1440 (max. 8388607)
+ 1068 compressed objects within 11 object streams
+ 308 named destinations out of 1000 (max. 500000)
+ 748 words of extra memory for PDF output out of 10000 (max. 10000000)
 

@@ -71,6 +71,8 @@
 \BOOKMARK [2][-]{subsection.5.4.3}{Implementing state representation learning in Tianshou}{section.5.4}% 71
 \BOOKMARK [1][-]{section.5.5}{Hyperparameters}{chapter.5}% 72
 \BOOKMARK [0][-]{chapter.6}{Results}{}% 73
-\BOOKMARK [0][-]{chapter.7}{Conclusion}{}% 74
-\BOOKMARK [0][-]{chapter.7}{Bibliography}{}% 75
-\BOOKMARK [0][-]{appendix.A}{Appendix 1}{}% 76
+\BOOKMARK [1][-]{section.6.1}{Testing different training styles on Pong}{chapter.6}% 74
+\BOOKMARK [1][-]{section.6.2}{Multi-game comparison}{chapter.6}% 75
+\BOOKMARK [0][-]{chapter.7}{Conclusion}{}% 76
+\BOOKMARK [0][-]{chapter.7}{Bibliography}{}% 77
+\BOOKMARK [0][-]{appendix.A}{Appendix 1}{}% 78

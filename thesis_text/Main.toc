@@ -147,6 +147,10 @@
 \defcounter {refsection}{0}\relax 
 \contentsline {chapter}{\numberline {6}Results}{43}{chapter.6}%
 \defcounter {refsection}{0}\relax 
+\contentsline {section}{\numberline {6.1}Testing different training styles on Pong}{43}{section.6.1}%
+\defcounter {refsection}{0}\relax 
+\contentsline {section}{\numberline {6.2}Multi-game comparison}{43}{section.6.2}%
+\defcounter {refsection}{0}\relax 
 \contentsline {chapter}{\numberline {7}Conclusion}{45}{chapter.7}%
 \defcounter {refsection}{0}\relax 
 \contentsline {chapter}{Bibliography}{47}{chapter.7}%
