@@ -981,89 +981,54 @@ in much less sample-efficient training and at worst results
 in complete failure.
 Often a problem which a reinforcement learning algorithm can solve
 with direct state access, can not achieve any progress when
-provided only image observations.
+provided only image observations. \\
 
+Extracting lower-dimensional information from data in order to extract
+meaningful information from it is an established problem in machine learning broadly,
+and is referred to as \textbf{representation learning} in that context.
+Clearly, learning to extract stateful information from image observations
+can be viewed as a subset of representation learning
+and in this context it is referred to as \textbf{state representation learning}.
+One important aspect of representation learning is that the representations
+can be abstract and only implicitly represent the data in question.
+Such representations can be learned in an unsupervised manner:
+the goal is to learn latent representations which have useful features,
+and as such they can be directly optimized with regards to these features
+and not to conform to some explicit semantic form.
+The purpose of this chapter is to briefly discuss representation learning
+in general terms, and then to investigate how it can be applied
+to the problem of learning state representations from images for control problems. 
+Importantly, the problem of learning a model 
+which can be used to achieve control through planning will not be discussed,
+although there are similarities between the two.\\
 
-
-The learning signal generated from for example
+The fundamental reason why this is a promising proposition is
+the fact that the learning signal generated from for example
 image reconstruction loss is substantially stronger than the reward signal,
 especially in settings with sparse rewards where it is 
 not present most of the time.
-Thus it stands to reason that somehow leveraging the learning
-signal from some computer vision method should aid the reinforcement learning 
-process. 
-One way to do this is to explicitly use such methods to learn 
-a function which maps from observations to states
-and then use reinforcement learning methods these learned state
-representations.
-This approach is explored in this section, mainly with the help
-of the 
-\cite{srloverview}
-overview paper.
-In this section  state representation learning for control in general is discussed.
-%as this will allow for a broader contextualization of our own work.
-Importantly, this does not concern learning a model 
-which can be used to achieve control through planning,
-although there are similarities between these approaches.
+This thus means that the state representation will be learned quickly
+compared to policy learning. Hence they can be leveraged to
+aid the sample-efficiency in of reinforcement learning, 
+despite their training starting at the same time as that of the policy.
 
-In general, representation learning algorithm are designed to learn
-abstract features that characterize data.
-In the simplest forms they include methods such as k nearest neighbors.
-In state representation learning (SRL) the learned features
-are of low dimension, evolve through time and are depended
-on actions of an agent.
-The last point is particularly important because in reinforcement learning,
-features that do not influence the agent and that can not be influenced
-by the agent are not relevant for the problem of optimally controlling the agent.
-Also, simply reducing the dimensionality of the input to a reinforcement learning
-agent results in a computationally easier learning problem,
-which can make a difference between the solution being feasible or infeasible.
-Ideally, state  representation learning should be done in an without explicit supervision
-as it can then be done in tandem with the likewise unsupervised reinforcement learning.
-
-While we assume that state-transitions have the Markov property,
-partial observability denies the possibility of having a one-to-one
-correspondence between each observation and state ---
-an object whose position is required may be occluded by another.
-Thus prior observations have affect the mapping to the current state.
-Images in particular also do not encode kinematic or dynamic information:
-to get that crucial information a sequence of images is required.
-Hence we define the SRL task as learning
-a representation $ \tilde{\bm{s}}_{t} \in \tilde{\cal{S}}  $ of dimension $ K  $
-with characteristics similar to those of true states $ \bm{s}_{t} \in \mathcal{S} $.
-In particular, the representation is a mapping of the history of 
-observation to the current state: $ \tilde{\bm{s}}_{t} = \phi(\bm{o}_{1:t}  $.
-Actions $ \bm{a}_{1:t}  $ and rewards $ r_{ 1:t }  $ can also be added
-to the parameters of $ \phi  $.
-This can help in extracting only the information relevant for the agent and its task.
-Often the representation is learned by using the reconstruction loss;
-$ \hat{\bm{o}_{t}}  $ denotes the reconstruction of $ \bm{o}_{t}  $.
-
-In the context of reinforcement learning, state representations should
-ideally have the following properties:
-\begin{itemize}
-		\item have the Markov property 
-		\item be able to represent the current state well enough for policy improvement
-		\item be able to generalize to unseen states with similar features
-		\item be low dimensional
-\end{itemize}
-We now discuss different types of models and learning strategies which 
-can be used to learn state representations.
-
-\section{Representation models in general}
+\section{Representation learning in general}
 \label{sec-repr-models-general}
+%In general, representation learning algorithms are designed to learn
+%abstract features that characterize data.
 In general, representation learning refers to the process of learning 
 a parametric mapping from raw input data domain
 to a feature vector or tensor, in the hope of capturing and extracting more abstract and useful concepts
 that can improve performance of downstream tasks.
-Often this includes dimensionality reduction.
-The goal of representation learning is for this mapping to meaningfully generalize well
-on new data.
-Before introducing types of representation models,
-we first need to define the characteristics a good representation of data needs
-to have in general. 
-These principles and trade-offs between their relative priorities guide the model design.
-The following list summarizes different desirable characteristics:
+%In the simplest forms it includes methods such as $ k  $ nearest neighbors.
+%Usually, this includes dimensionality reduction.
+This mapping should also meaningfully generalize well on new data.
+%Before introducing types of representation models,
+%we first need to define the characteristics a good representation of data needs
+%to have in general. 
+%These principles and trade-offs between their relative priorities guide the model design.
+The following list, introduced in \cite{bengio2013representation},
+summarizes different desirable characteristics of learned representations:
 \begin{enumerate}
 		\item \textit{smoothness}: $ f  $ s.t. $ x \approx y  $ implies
 				$ f(x) \approx f (y)  $
@@ -1080,7 +1045,7 @@ The following list summarizes different desirable characteristics:
 				are associated with separate manifolds.
 		\item \textit{temporal and spatial coherence}:
 				consecutive or spatially nearby observations
-				thend to be associated with the same value of relevant categorical
+				tend to be associated with the same value of relevant categorical
 				concepts or result in small surface move on the surface of the manifold
 		\item \textit{sparsity}: could mean often many features are 0. could also be
 				that the features are insensitive to small changes in $ x  $
@@ -1105,9 +1070,9 @@ $ p(\bm{v}_{}| \bm{x}_{})  $
 which are then used to make downstream decision
 from those variables $ p (y|\bm{v}_{})  $.
 
-The benefit of discriminative models are that you don't have to go through
-an expensive process of learning $ p (\bm{x}_{})  $.
-That's also harder to evaluate.
+The benefit of discriminative models is that 
+the expensive process of learning $ p (\bm{x}_{})  $ is avoided.
+That however makes them harder to evaluate.
 This is especially evident if you just want a lower dimensional distribution.
 In the context of reinforcement learning, the model-based approach 
 benefits from generative models as they can be used to generate predictions
@@ -1175,7 +1140,8 @@ To avoid model maximizing agreement through low-level visual cues, views
 from the same image are generated through a series of strong image augmentation methods.
 Let $ \mathcal{T}  $ be a set of image transformation operations where
 $ t, t' \sim \mathcal{T}  $ are two different transformations sampled independently from $ \mathcal{T}  $.
-There transformations include ex. cropping, resizing, blurring, color distortion or perspective distortion.
+There transformations include for example cropping, resizing, blurring, 
+color distortion or perspective distortion and their combinations.
 A $ (\bm{x}_{q}, \bm{x}_{k})  $ pair of query and key views is positive when these 2 views
 are created with different transformations on the same image,
 i.e. $ \bm{x}_{q} = t (\bm{x}_{})  $ and $ \bm{x}_{k} = t' (\bm{x}_{})  $,
@@ -1345,6 +1311,59 @@ There's also the \textbf{gradient penalty} and
 
 \section{Representation models for control}
 \label{sec-srl-for-control}
+In state representation learning the learned features
+are of low dimension, evolve through time and are depended
+on actions of an agent.
+The last point is particularly important because in reinforcement learning,
+features that do not influence the agent and that can not be influenced
+by the agent are not relevant for the problem of optimally controlling the agent.
+Also, simply reducing the dimensionality of the input to a reinforcement learning
+agent results in a computationally easier learning problem,
+which can make a difference between the solution being feasible or infeasible.
+Ideally, state  representation learning should be done in an without explicit supervision
+as it can then be done in tandem with the likewise unsupervised reinforcement learning.
+
+While we assume that state-transitions have the Markov property,
+partial observability denies the possibility of having a one-to-one
+correspondence between each observation and state ---
+an object whose position is required may be occluded by another.
+Thus prior observations have affect the mapping to the current state.
+Images in particular also do not encode kinematic or dynamic information:
+to get that crucial information a sequence of images is required.
+Hence we define the SRL task as learning
+a representation $ \tilde{\bm{s}}_{t} \in \tilde{\cal{S}}  $ of dimension $ K  $
+with characteristics similar to those of true states $ \bm{s}_{t} \in \mathcal{S} $.
+In particular, the representation is a mapping of the history of 
+observation to the current state: $ \tilde{\bm{s}}_{t} = \phi(\bm{o}_{1:t}  $.
+Actions $ \bm{a}_{1:t}  $ and rewards $ r_{ 1:t }  $ can also be added
+to the parameters of $ \phi  $.
+This can help in extracting only the information relevant for the agent and its task.
+Often the representation is learned by using the reconstruction loss;
+$ \hat{\bm{o}_{t}}  $ denotes the reconstruction of $ \bm{o}_{t}  $.
+
+In the context of reinforcement learning, state representations should
+ideally have the following properties:
+\begin{itemize}
+		\item have the Markov property 
+		\item be able to represent the current state well enough for policy improvement
+		\item be able to generalize to unseen states with similar features
+		\item be low dimensional
+\end{itemize}
+We now discuss different types of models and learning strategies which 
+can be used to learn state representations.
+
+One way to do this is to explicitly use such methods to learn 
+a function which maps from observations to states
+and then use reinforcement learning methods these learned state
+representations.
+This approach is explored in this section, mainly with the help
+of the 
+\cite{srloverview}
+overview paper.
+In this section  state representation learning for control in general is discussed.
+as this will allow for a broader contextualization of our own work.
+
+
 With representation in learning introduced in general,
 we can now introduce four different strategies for learning latent space models for control:
 the autoencoder, the forward model, the inverse model and the model
