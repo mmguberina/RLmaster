@@ -23,7 +23,7 @@ from tianshou.utils import TensorboardLogger
 def get_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('--task', type=str, default='PongNoFrameskip-v4')
-    parser.add_argument('--latent-space-type', type=str, default='single-frame-predictor')
+    parser.add_argument('--latent-space-type', type=str, default='compressed-frame-predictor')
     parser.add_argument('--use-reconstruction-loss', type=int, default=True)
     parser.add_argument('--use-pretrained', type=int, default=False)
     parser.add_argument('--pass-q-grads-to-encoder', type=bool, default=True)
@@ -155,6 +155,19 @@ if __name__ == "__main__":
         observation_shape = list(args.state_shape)
         observation_shape[0] = 1 
         observation_shape = tuple(observation_shape)
+        if args.features_dim == 50:
+            encoder = RAE_ENC(args.device, observation_shape, args.features_dim).to(args.device)
+            decoder = RAE_DEC(args.device, observation_shape, args.features_dim).to(args.device)
+        if args.features_dim == 3136:
+            encoder = CNNEncoderNew(observation_shape=observation_shape, 
+                    features_dim=args.features_dim, device=args.device).to(args.device)
+            decoder = CNNDecoderNew(observation_shape=observation_shape, 
+                    n_flatten=encoder.n_flatten, features_dim=args.features_dim).to(args.device)
+
+    if args.latent_space_type == 'compressed-frame-predictor':
+        # in this case, we don't pass the stacked frames.
+        # we unstack them, compress them, the stack the compressed ones and
+        # pass that to the policy
         if args.features_dim == 50:
             encoder = RAE_ENC(args.device, observation_shape, args.features_dim).to(args.device)
             decoder = RAE_DEC(args.device, observation_shape, args.features_dim).to(args.device)
