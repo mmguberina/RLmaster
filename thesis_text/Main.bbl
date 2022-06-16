@@ -52,50 +52,6 @@
       \field{pages}{1\bibrangedash 8}
       \range{pages}{8}
     \endentry
-    \entry{bellemare13arcade}{article}{}
-      \name{author}{4}{}{%
-        {{hash=357779faacfff3951a82fce7aec7da34}{%
-           family={{Bellemare}},
-           familyi={B\bibinitperiod},
-           given={M.\bibnamedelimi G.},
-           giveni={M\bibinitperiod\bibinitdelim G\bibinitperiod}}}%
-        {{hash=79a8a55c0fd041156c8ca94ce7b39368}{%
-           family={{Naddaf}},
-           familyi={N\bibinitperiod},
-           given={Y.},
-           giveni={Y\bibinitperiod}}}%
-        {{hash=8bfb6f00fabf9bffafb4c85099c96cd4}{%
-           family={{Veness}},
-           familyi={V\bibinitperiod},
-           given={J.},
-           giveni={J\bibinitperiod}}}%
-        {{hash=0749e4da8597d3a7850e0be10f835f5c}{%
-           family={{Bowling}},
-           familyi={B\bibinitperiod},
-           given={M.},
-           giveni={M\bibinitperiod}}}%
-      }
-      \strng{namehash}{ad6c614f1694afe40e201e5ac807e1ee}
-      \strng{fullhash}{d4dd77c7b69f176ef7b1f2799218c986}
-      \strng{bibnamehash}{ad6c614f1694afe40e201e5ac807e1ee}
-      \strng{authorbibnamehash}{ad6c614f1694afe40e201e5ac807e1ee}
-      \strng{authornamehash}{ad6c614f1694afe40e201e5ac807e1ee}
-      \strng{authorfullhash}{d4dd77c7b69f176ef7b1f2799218c986}
-      \field{extraname}{1}
-      \field{labelalpha}{Bel+13}
-      \field{sortinit}{2}
-      \field{sortinithash}{ed39bb39cf854d5250e95b1c1f94f4ed}
-      \field{extraalpha}{1}
-      \field{labelnamesource}{author}
-      \field{labeltitlesource}{title}
-      \field{journaltitle}{Journal of Artificial Intelligence Research}
-      \field{month}{6}
-      \field{title}{The Arcade Learning Environment: An Evaluation Platform for General Agents}
-      \field{volume}{47}
-      \field{year}{2013}
-      \field{pages}{253\bibrangedash 279}
-      \range{pages}{27}
-    \endentry
     \entry{bellemare2013arcade}{article}{}
       \name{author}{4}{}{%
         {{hash=eae3aa0ab9cb8b33a1ade80739e79e57}{%
@@ -125,11 +81,9 @@
       \strng{authorbibnamehash}{6053df28940389b0a23ac429c3b0634d}
       \strng{authornamehash}{6053df28940389b0a23ac429c3b0634d}
       \strng{authorfullhash}{49395aa0bfa961c14ab74a906578e3ee}
-      \field{extraname}{2}
       \field{labelalpha}{Bel+13}
       \field{sortinit}{2}
       \field{sortinithash}{ed39bb39cf854d5250e95b1c1f94f4ed}
-      \field{extraalpha}{2}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{journaltitle}{Journal of Artificial Intelligence Research}
@@ -138,6 +92,46 @@
       \field{year}{2013}
       \field{pages}{253\bibrangedash 279}
       \range{pages}{27}
+    \endentry
+    \entry{bengio2013representation}{article}{}
+      \name{author}{3}{}{%
+        {{hash=40a8e4774982146adc2688546f54efb2}{%
+           family={Bengio},
+           familyi={B\bibinitperiod},
+           given={Yoshua},
+           giveni={Y\bibinitperiod}}}%
+        {{hash=ccec1ccd2e1aa86960eb2e872c6b7020}{%
+           family={Courville},
+           familyi={C\bibinitperiod},
+           given={Aaron},
+           giveni={A\bibinitperiod}}}%
+        {{hash=da21e966c02c3cfd33d74369c7435c1a}{%
+           family={Vincent},
+           familyi={V\bibinitperiod},
+           given={Pascal},
+           giveni={P\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {IEEE}%
+      }
+      \strng{namehash}{54af866264cacba174612c82da34a2d7}
+      \strng{fullhash}{54af866264cacba174612c82da34a2d7}
+      \strng{bibnamehash}{54af866264cacba174612c82da34a2d7}
+      \strng{authorbibnamehash}{54af866264cacba174612c82da34a2d7}
+      \strng{authornamehash}{54af866264cacba174612c82da34a2d7}
+      \strng{authorfullhash}{54af866264cacba174612c82da34a2d7}
+      \field{labelalpha}{BCV13}
+      \field{sortinit}{2}
+      \field{sortinithash}{ed39bb39cf854d5250e95b1c1f94f4ed}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{IEEE transactions on pattern analysis and machine intelligence}
+      \field{number}{8}
+      \field{title}{Representation learning: A review and new perspectives}
+      \field{volume}{35}
+      \field{year}{2013}
+      \field{pages}{1798\bibrangedash 1828}
+      \range{pages}{31}
     \endentry
     \entry{mnih2013atari}{article}{}
       \name{author}{7}{}{%
@@ -1603,6 +1597,7 @@
       \endverb
     \endentry
   \enddatalist
+  \missing{bellemare13arcade}
 \endrefsection
 \endinput
 

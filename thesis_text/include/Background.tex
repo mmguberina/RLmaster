@@ -1005,7 +1005,7 @@ although there are similarities between the two.\\
 The fundamental reason why this is a promising proposition is
 the fact that the learning signal generated from for example
 image reconstruction loss is substantially stronger than the reward signal,
-especially in settings with sparse rewards where it is 
+especially in settings with sparse rewards where the reward signal is 
 not present most of the time.
 This thus means that the state representation will be learned quickly
 compared to policy learning. Hence they can be leveraged to
@@ -1028,45 +1028,58 @@ This mapping should also meaningfully generalize well on new data.
 %to have in general. 
 %These principles and trade-offs between their relative priorities guide the model design.
 The following list, introduced in \cite{bengio2013representation},
-summarizes different desirable characteristics of learned representations:
+summarizes different assumptions that can be made on the data to be represented.
+These priors thus translate themselves as
+desirable characteristics of learned representations.
 \begin{enumerate}
-		\item \textit{smoothness}: $ f  $ s.t. $ x \approx y  $ implies
-				$ f(x) \approx f (y)  $
-		\item \textit{multiple explanatory factors} a.k.a. disentangling 
-				features
-		\item \textit{semi-supervised learning}: for input $ Z  $ and target $ Y  $,
-				learning $ P (X)  $ helps learning $ P (Y|X)  $ because
-				features of $ X  $ help explain $ Y  $
-		\item \textit{shared factors across tasks}: like previous point,
-				but also works for different $ Y  $s
-		\item \textit{manifolds}: probability mass concentrates
-				in regions with much smaller dimensionality than data itself
-		\item \textit{natural clustering}: different values of categorical variables
-				are associated with separate manifolds.
-		\item \textit{temporal and spatial coherence}:
+		\item \textit{Smoothness}: the learned mapping $ f  $ is such that $ x \approx y  $ generally implies
+				$ f(x) \approx f (y)  $.
+		\item \textit{Multiple explanatory factors}: generally, there are several different underlying factors
+				which are the cause of the observed data. The learned representations should be able
+				to distinguish between these different factors. In other words,
+				these causes should ideally be disentangled features in representation space.
+				The existence of different underlying causes is, by itself, an assumption made on the observed data.
+		\item \textit{A hierarchical organizations of explanatory factors}: The learned abstractions should relate
+				to each other in a hierarchical fashion. This concerns, for example, the assumption that different
+				layers of convolutional neural networks should embed progressively finer features of images.
+		\item \textit{Semi-supervised learning}: for inputs $ X  $ and target $ Y  $ to be predicted,
+				learning $ P (X)  $ should help learning $ P (Y|X)  $ because
+				features of $ X  $ should help explain $ Y  $. This implies that unsupervised pre-training
+				of networks should benefit supervised learning tasks because the features learned through unsupervised
+				learning should help explain the supervised learning task.
+		\item \textit{Shared factors across tasks}: moreover, the features learned on $ X  $ should
+				help in learning different supervised predictions $ Y'  $.
+		\item \textit{Manifolds}: if it is assumed that the probability mass concentrates
+				in regions with much smaller dimensionality than the data itself,
+				then the learned representations should have smaller dimensionality 
+				to exploit this assumption.
+		\item \textit{Natural clustering}: further, it is assumed that different values of categorical variables
+				are associated with separate manifolds. This too should be evident in the learned representations.
+		\item \textit{Temporal and spatial coherence}:
 				consecutive or spatially nearby observations
 				tend to be associated with the same value of relevant categorical
 				concepts or result in small surface move on the surface of the manifold
-		\item \textit{sparsity}: could mean often many features are 0. could also be
+		\item \textit{Sparsity}: implies either that many features are 0, or 
 				that the features are insensitive to small changes in $ x  $
-		\item \textit{simplicity of factor dependencies}: ideally factors are related
-				to each other linearly, or otherwise simply
-\end{enumerate}
+		\item \textit{Simplicity of factor dependencies}: ideally factors are related
+				to each other linearly, or otherwise in a simple fashion.
+\end{enumerate} 
+
 
 The process of extracting representations from observations,
 or inferring latent variables in a probabilistic view of a dataset,  is often called \textbf{inference}.
-There are \textbf{generative} and \textbf{discriminative} models.
+Models used for representation learning can be categorized as either \textbf{generative} or as \textbf{discriminative} models. \\
 
 Generative models learn representations by modelling the data distribution
-$ p(\bm{x}_{})  $. Such a model can generate realistic examples.
-Evaluating the conditional distribution $ p (y | \bm{x}_{})  $
-it done via Bayes rule.
+$ p(\bm{x}_{})  $. Such models can therefore generate realistic examples of the data they represent.
+They can be used for downstream tasks by
+evaluating the conditional distribution $ p (y | \bm{x}_{})  $. This is done via Bayes rule.
 
-Discriminative models model the conditional distribution $ p (y | \bm{x}_{})  $
+Discriminative models instead model the conditional distribution $ p (y | \bm{x}_{})  $
 directly.
-Discriminative modelling consists of first the inference
+Discriminative modelling consists first of inference
 that extracts latent variables
-$ p(\bm{v}_{}| \bm{x}_{})  $
+$ p(\bm{v}_{}| \bm{x}_{})  $,
 which are then used to make downstream decision
 from those variables $ p (y|\bm{v}_{})  $.
 
