@@ -29,7 +29,7 @@ def get_args():
     parser.add_argument('--pass-q-grads-to-encoder', type=bool, default=True)
     parser.add_argument('--data-augmentation', type=bool, default=True)
     parser.add_argument('--alternating-training-frequency', type=int, default=1000)
-    parser.add_argument('--features-dim', type=int, default=50)
+    parser.add_argument('--features-dim', type=int, default=3136)
     parser.add_argument('--seed', type=int, default=0)
     parser.add_argument("--scale-obs", type=int, default=0)
     parser.add_argument('--eps-test', type=float, default=0.005)
@@ -163,11 +163,13 @@ if __name__ == "__main__":
                     features_dim=args.features_dim, device=args.device).to(args.device)
             decoder = CNNDecoderNew(observation_shape=observation_shape, 
                     n_flatten=encoder.n_flatten, features_dim=args.features_dim).to(args.device)
+        rl_input_dim = args.features_dim * args.frames_stack
 
     if args.latent_space_type == 'compressed-frame-predictor':
         # in this case, we don't pass the stacked frames.
         # we unstack them, compress them, the stack the compressed ones and
         # pass that to the policy
+        observation_shape = args.state_shape
         if args.features_dim == 50:
             encoder = RAE_ENC(args.device, observation_shape, args.features_dim).to(args.device)
             decoder = RAE_DEC(args.device, observation_shape, args.features_dim).to(args.device)
@@ -178,13 +180,13 @@ if __name__ == "__main__":
                     n_flatten=encoder.n_flatten, features_dim=args.features_dim).to(args.device)
         #print("encoder.n_flatten")
         #print(encoder.n_flatten)
-        rl_input_dim = args.features_dim * args.frames_stack
-        if args.use_pretrained:
-            encoder_name = "checkpoint_encoder_epoch_2.pth"
-            decoder_name = "checkpoint_decoder_epoch_2.pth"
-            log_path = "./log/PongNoFrameskip-v4/raibow_rae_all_fast/"
-            encoder.load_state_dict(torch.load(log_path + encoder_name)['encoder'])
-            decoder.load_state_dict(torch.load(log_path + decoder_name)['decoder'])
+        rl_input_dim = args.features_dim 
+    if args.use_pretrained:
+        encoder_name = "checkpoint_encoder_epoch_2.pth"
+        decoder_name = "checkpoint_decoder_epoch_2.pth"
+        log_path = "./log/PongNoFrameskip-v4/raibow_rae_all_fast/"
+        encoder.load_state_dict(torch.load(log_path + encoder_name)['encoder'])
+        decoder.load_state_dict(torch.load(log_path + decoder_name)['decoder'])
 
     optim_encoder = torch.optim.Adam(encoder.parameters(), lr=args.lr)
     optim_decoder = torch.optim.Adam(decoder.parameters(), lr=args.lr, weight_decay=10**-7)

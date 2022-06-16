@@ -181,13 +181,18 @@ class AutoencoderLatentSpacePolicy(BasePolicy):
         #print(batch_for_computing_returns.shape)
         #print(batch_for_computing_returns)
         with torch.no_grad():
-            batch_for_computing_returns.obs_next = batch_for_computing_returns.obs_next.reshape(
-                    (-1, 1, 84, 84))
-            #batch_for_computing_returns.obs_next = to_numpy(
-            #        self.encoder(batch_for_computing_returns.obs_next).view(-1, 
-            #    self.frames_stack * self.encoder.features_dim))
-            batch_for_computing_returns.obs_next = self.encoder(batch_for_computing_returns.obs_next).view(-1, 
-                self.frames_stack * self.encoder.features_dim)
+            if self.latent_space_type == 'single-frame-predictor':
+                batch_for_computing_returns.obs_next = batch_for_computing_returns.obs_next.reshape(
+                        (-1, 1, 84, 84))
+                #batch_for_computing_returns.obs_next = to_numpy(
+                #        self.encoder(batch_for_computing_returns.obs_next).view(-1, 
+                #    self.frames_stack * self.encoder.features_dim))
+                batch_for_computing_returns.obs_next = self.encoder(batch_for_computing_returns.obs_next).view(-1, 
+                    self.frames_stack * self.encoder.features_dim)
+            else:
+                batch_for_computing_returns.obs_next = self.encoder(batch_for_computing_returns.obs_next).view(-1, 
+                    self.encoder.features_dim)
+
             target_q_torch = target_q_fn(batch_for_computing_returns)  # (bsz, ?)
         target_q = to_numpy(target_q_torch.reshape(bsz, -1))
         target_q = target_q * BasePolicy.value_mask(buffer, terminal).reshape(-1, 1)
@@ -257,53 +262,30 @@ class AutoencoderLatentSpacePolicy(BasePolicy):
                     # encode each one separately
                     obs = batch.obs.reshape((-1, 1, 84, 84))
                     obs_next = batch.obs_next.reshape((-1, 1, 84, 84))
-                    # and then restack
-                    #batch.embedded_obs = to_numpy(self.encoder(obs).view(-1, self.frames_stack, 
-                    #    self.encoder.n_flatten))
-                    # NOTE this is the one you want for conv layer first
-                    #batch.obs = to_numpy(self.encoder(obs).view(-1, self.frames_stack, 
-                    # and this is the one where you stack beforehand for the liner layer first
-                    #batch.obs = to_numpy(self.encoder(obs).view(-1, 
-                    #    self.frames_stack * self.encoder.features_dim))
                     batch.obs = self.encoder(obs).view(-1, 
                         self.frames_stack * self.encoder.features_dim)
-                    # added for rainbow
-                    #batch.obs_next = to_numpy(self.encoder(obs_next).view(-1, 
-                    #    self.frames_stack * self.encoder.features_dim))
                     batch.obs_next = self.encoder(obs_next).view(-1, 
                         self.frames_stack * self.encoder.features_dim)
+                else:
+                    obs = batch.obs
+                    obs_next = batch.obs_next
+                    batch.obs = self.encoder(obs)
+                    batch.obs_next = self.encoder(obs_next)
         else:
             if self.latent_space_type == 'single-frame-predictor':
                 # encode each one separately
                 obs = batch.obs.reshape((-1, 1, 84, 84))
                 obs_next = batch.obs_next.reshape((-1, 1, 84, 84))
-                # and then restack
-                #batch.embedded_obs = to_numpy(self.encoder(obs).view(-1, self.frames_stack, 
-                #    self.encoder.n_flatten))
-                # NOTE this is the one you want for conv layer first
-                #batch.obs = to_numpy(self.encoder(obs).view(-1, self.frames_stack, 
-                # and this is the one where you stack beforehand for the liner layer first
-                #batch.obs = to_numpy(self.encoder(obs).view(-1, 
-                #    self.frames_stack * self.encoder.features_dim))
                 batch.obs = self.encoder(obs).view(-1, 
                     self.frames_stack * self.encoder.features_dim)
-                #batch.obs_next = to_numpy(self.encoder(obs_next).view(-1, 
-                #    self.frames_stack * self.encoder.features_dim))
                 batch.obs_next = self.encoder(obs_next).view(-1, 
                     self.frames_stack * self.encoder.features_dim)
+            else:
+                obs = batch.obs
+                obs_next = batch.obs_next
+                batch.obs = self.encoder(obs)
+                batch.obs_next = self.encoder(obs_next)
 
-
-#            else:
-#            # TODO: write out the other cases (ex. forward prediction)
-#                obs = batch[input]
-#                batch.embedded_obs = to_numpy(self.encoder(obs))
-            #batch.embedded_obs = self.encoder(to_torch(batch.obs).view(32, 1, 84, 84))
-        # do policy learn on embedded
-        # TODO make this work:
-        # 0) ensure you can actually pass input key through learn (not convinced that you can)
-        # ---> a) save embedded_obs in replay buffer, use that
-        # ---> b) pass the newly embedded (like we did now (make less sense overall intuitively but that says close to nothing))
-        #res = self.rl_policy.learn(batch, input="embedded_obs", **kwargs)
         # this will also pass q-grads through the encoder if encoder params are given to q_optim
         res = self.rl_policy.learn(batch, **kwargs)
 
@@ -323,9 +305,9 @@ class AutoencoderLatentSpacePolicy(BasePolicy):
         # tried it in shell, this worked 
         #reconstruction_loss = self.reconstruction_criterion(decoded_obs, batch.obs[:, -1, :, :].view(-1, 1, 84, 84))
 
-        if self.latent_space_type == 'single-frame-predictor':
+        #if self.latent_space_type == 'single-frame-predictor':
             #reconstruction_loss = self.reconstruction_criterion(decoded_obs, obs[:, -1, :, :].view(-1, 1, 84, 84))
-            reconstruction_loss = self.reconstruction_criterion(decoded_obs, obs / 255)
+        reconstruction_loss = self.reconstruction_criterion(decoded_obs, obs / 255)
 #        if self.latent_space_type == 'forward-frame-predictor':
 #            batch.obs_next = torch.tensor(batch.obs_next, device=self.device)
 #            print(batch.obs_next.shape)
@@ -333,10 +315,10 @@ class AutoencoderLatentSpacePolicy(BasePolicy):
 #            reconstruction_loss = self.reconstruction_criterion(decoded_obs, batch.obs_next[:, -1, :, :].view(-1, 1, 84, 84) / 255)
         # L2 penalty on latent representation:
         # this is wrong for single-frame-predictor
-        if self.latent_space_type == 'forward-frame-predictor':
-            latent_loss = (0.5 * encoded_obs.pow(2).sum(1)).mean()
-        if self.latent_space_type == 'single-frame-predictor':
-            latent_loss = (0.5 * encoded_obs.pow(2).sum(1)).mean()
+        #if self.latent_space_type == 'forward-frame-predictor':
+        latent_loss = (0.5 * encoded_obs.pow(2).sum(1)).mean()
+        #if self.latent_space_type == 'single-frame-predictor':
+        #    latent_loss = (0.5 * encoded_obs.pow(2).sum(1)).mean()
         # throwing a sample loss in there to see what happens
         loss = reconstruction_loss + latent_loss * 10**-6
 
@@ -347,9 +329,7 @@ class AutoencoderLatentSpacePolicy(BasePolicy):
         self.optim_decoder.step()
         res.update(
             {
-                # this appears to be causing some wild cuda error
                 "loss/autoencoder": loss.item(),
-#                "loss/autoencoder": loss,
             }
         )
         return res

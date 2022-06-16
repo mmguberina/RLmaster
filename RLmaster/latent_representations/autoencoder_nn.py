@@ -185,7 +185,7 @@ class CNNDecoderNew(nn.Module):
                 nn.ReLU(),
                 nn.ConvTranspose2d(64, 32, kernel_size=4, stride=2, padding=0),
                 nn.ReLU(),
-                nn.ConvTranspose2d(32, 1, kernel_size=8, stride=4, padding=0),
+                nn.ConvTranspose2d(32, n_input_channels, kernel_size=8, stride=4, padding=0),
                 nn.Sigmoid(),
             )
 
@@ -198,7 +198,7 @@ class CNNDecoderNew(nn.Module):
                 nn.ReLU(),
                 nn.ConvTranspose2d(64, 64, kernel_size=8, stride=2, padding=0),
                 nn.ReLU(),
-                nn.ConvTranspose2d(64, 1, kernel_size=8, stride=4, padding=0),
+                nn.ConvTranspose2d(64, n_input_channels, kernel_size=8, stride=4, padding=0),
                 nn.Sigmoid(),
             )
 
