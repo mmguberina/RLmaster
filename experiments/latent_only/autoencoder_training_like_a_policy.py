@@ -47,7 +47,7 @@ def get_args():
     parser.add_argument('--target-update-freq', type=int, default=5)
 #    parser.add_argument('--epoch', type=int, default=100)
     parser.add_argument('--epoch', type=int, default=50)
-    parser.add_argument('--step-per-epoch', type=int, default=1000)
+    parser.add_argument('--step-per-epoch', type=int, default=5000)
     # TODO why 8?
     parser.add_argument('--step-per-collect', type=int, default=8)
     # TODO understand where exactly this is used and why

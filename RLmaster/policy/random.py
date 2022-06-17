@@ -33,6 +33,9 @@ class RandomPolicy(BasePolicy):
         act = np.random.randint(0, self.action_shape, size=batch.obs.shape[0])
         return Batch(act=act)
 
+    def zero_this_grad(self):
+        pass
+
     def learn(self, batch: Batch, **kwargs: Any) -> Dict[str, float]:
         """Since a random agent learns nothing, it returns an empty dict."""
         return {}
