@@ -30,7 +30,8 @@ def get_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('--task', type=str, default='PongNoFrameskip-v4')
 #    parser.add_argument('--latent-space-type', type=str, default='forward-frame-predictor')
-    parser.add_argument('--latent-space-type', type=str, default='single-frame-predictor')
+#    parser.add_argument('--latent-space-type', type=str, default='single-frame-predictor')
+    parser.add_argument('--latent-space-type', type=str, default='compressed-frame-predictor')
 #    parser.add_argument('--latent-space-type', type=str, default='inverse-dynamics-model')
     parser.add_argument('--pass-q-grads-to-encoder', type=bool, default=False)
     parser.add_argument('--alternating-training-frequency', type=int, default=1000)
@@ -61,7 +62,7 @@ def get_args():
 #    parser.add_argument('--test-num', type=int, default=8)
     parser.add_argument('--test-num', type=int, default=1)
     parser.add_argument('--logdir', type=str, default='log')
-    parser.add_argument('--log-name', type=str, default='ae_single-frame-trained_as_policy_3136')
+    parser.add_argument('--log-name', type=str, default='ae_compressed-frame-trained_as_policy_3136')
 #    parser.add_argument('--log-name', type=str, default='inverse_dynamics_model_1')
     parser.add_argument('--render', type=float, default=0.)
     parser.add_argument(
@@ -97,7 +98,7 @@ def get_args():
 
 if __name__ == '__main__':
 #def test_dqn(args=get_args()):
-    torch.set_num_threads(1)
+#    torch.set_num_threads(1)
     args=get_args()
     #env = make_atari_env(args)
     train_envs, test_envs = make_atari_env(
@@ -147,7 +148,7 @@ if __name__ == '__main__':
 #    decoder = CNNDecoderNew(observation_shape=args.state_shape, n_flatten=encoder.n_flatten, features_dim=args.features_dim).to(args.device)
     optim_encoder = torch.optim.Adam(encoder.parameters(), lr=args.lr)
     optim_decoder = torch.optim.Adam(decoder.parameters(), lr=args.lr)
-    reconstruction_criterion = torch.nn.BCELoss()
+    reconstruction_criterion = torch.nn.MSELoss()
     # the rl_policy is then passed into our autoencoder-wrapper policy
     # it's done this way because the compression to latent spaces
     # comes before using the rl policy.
