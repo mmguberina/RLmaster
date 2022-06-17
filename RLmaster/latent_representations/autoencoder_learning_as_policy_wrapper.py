@@ -76,7 +76,7 @@ class AutoencoderLatentSpacePolicy(BasePolicy):
         random_shift = nn.Sequential(nn.ReplicationPad2d(4), 
                 kornia.augmentation.RandomCrop((84, 84)))
         self.augmentation = random_shift
-        self.forward_prediction_in_latent = forward_prediction_in_latent
+#        self.forward_prediction_in_latent = forward_prediction_in_latent
 
     def train(self, mode: bool = True) -> "AutoencoderLatentSpacePolicy":
         """Set the module in training mode."""
