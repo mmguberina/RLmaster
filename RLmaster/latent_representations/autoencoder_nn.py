@@ -289,6 +289,9 @@ class RAE_predictive_DEC(nn.Module):
         self.out_dim = 35
 
         # the + frames_stack -1  is for actions
+        # TODO what are these???
+        #self.fc = nn.Linear(features_dim * frames_stack + frames_stack - 1, 
+        #        num_filters * self.out_dim * self.out_dim)
         self.fc = nn.Linear(features_dim + 1, num_filters * self.out_dim * self.out_dim)
         self.deconv_layers = nn.ModuleList()
         for i in range(self.num_layers - 1):
@@ -298,7 +301,9 @@ class RAE_predictive_DEC(nn.Module):
 
     def forward(self, h, a):
         # frames_stack is the same as action repeat
+        # TODO what are these???
         act_stacked = torch.cat((torch.tensor(a, device=self.device, dtype=torch.float),) * self.frames_stack)
+        #h = torch.concat(h, a)
         h = torch.cat((h, act_stacked.view(-1,1)), dim=1)
         h = torch.relu(self.fc(h))
         h = h.view(-1, self.num_filters, self.out_dim, self.out_dim)
