@@ -69,7 +69,7 @@ def get_args():
 #    parser.add_argument('--test-num', type=int, default=8)
     parser.add_argument('--test-num', type=int, default=1)
     parser.add_argument('--logdir', type=str, default='log')
-    parser.add_argument('--log-name', type=str, default='rae_forward-frame-trained_as_policy_1')
+    parser.add_argument('--log-name', type=str, default='rae_forward-frame-trained_as_policy_2')
 #    parser.add_argument('--log-name', type=str, default='inverse_dynamics_model_1')
     parser.add_argument('--render', type=float, default=0.)
     parser.add_argument(
@@ -133,7 +133,7 @@ if __name__ == '__main__':
     rl_policy = RandomPolicy(args.action_shape)
     observation_shape = args.state_shape
 
-    if args.squeeze_latent_into_single_vector:
+    if not args.squeeze_latent_into_single_vector:
         # in this case, we don't pass the stacked frames.
         # we unstack them, compress them, the stack the compressed ones and
         # pass that to the policy
@@ -145,7 +145,7 @@ if __name__ == '__main__':
     print(encoder)
     if args.latent_space_type == "forward-frame-predictor":
         decoder = RAE_predictive_DEC(args.device, observation_shape, 
-                args.features_dim, args.frames_stack).to(args.device)
+                args.features_dim, args.squeeze_latent_into_single_vector, args.frames_stack).to(args.device)
     else:
         decoder = RAE_DEC(args.device, observation_shape, 
                 args.features_dim).to(args.device)

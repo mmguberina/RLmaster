@@ -1,7 +1,14 @@
 pong_dataset
 tests
 log
+logs
 experiments/latent_only/log
+experiments/dqn_and_variations/log
+experiments/dqn_on_latent/log
+experiments/experiment_notes/log
+experiments/rainbow_on_latent/log
+experiments/sac_+_ae_replica/log
+*slurm*
 sync_with_server.sh
 RLmaster/util/Breakout-v4_dataset
 RLmaster/util/Pong-v4_dataset
