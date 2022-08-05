@@ -29,16 +29,19 @@ action are all random sampled
 def get_args():
     parser = argparse.ArgumentParser()
 #    parser.add_argument('--task', type=str, default='PongNoFrameskip-v4')
-    parser.add_argument('--task', type=str, default='BreakoutNoFrameskip-v4')
+    parser.add_argument('--task', type=str, default='SeaquestNoFrameskip-v4')
     parser.add_argument('--latent-space-type', type=str, default='forward-frame-predictor')
+    parser.add_argument('--use-reconstruction-loss', type=int, default=True)
 #    parser.add_argument('--latent-space-type', type=str, default='single-frame-predictor')
 #    parser.add_argument('--latent-space-type', type=str, default='inverse-dynamics-model')
+    parser.add_argument('--squeeze-latent-into-single-vector', type=bool, default=True)
     parser.add_argument('--pass-q-grads-to-encoder', type=bool, default=False)
-#    parser.add_argument('--data-augmentation', type=bool, default=True)
-    parser.add_argument('--data-augmentation', type=bool, default=False)
+    parser.add_argument('--data-augmentation', type=bool, default=True)
+    #parser.add_argument('--data-augmentation', type=bool, default=False)
     # NOTE the arg below is not used atm
-    parser.add_argument('--forward-prediction-in-latent', type=bool, default=True)
-    parser.add_argument('--alternating-training-frequency', type=int, default=1000)
+    #parser.add_argument('--forward-prediction-in-latent', type=bool, default=True)
+    parser.add_argument('--forward-prediction-in-latent', type=bool, default=False)
+    parser.add_argument('--alternating-training-frequency', type=int, default=1)
     parser.add_argument('--features_dim', type=int, default=50)
     parser.add_argument('--seed', type=int, default=0)
     parser.add_argument("--scale-obs", type=int, default=0)
@@ -114,18 +117,12 @@ if __name__ == '__main__':
         frame_stack=args.frames_stack,
     )
     # this gives (1,84,84) w/ pixels in 0-1 range, as it should
+    # NOTE: i think this was changed...
     args.state_shape = train_envs.observation_space.shape or train_envs.observation_space.n
     args.action_shape = train_envs.action_space.shape or train_envs.action_space.n
     # should be N_FRAMES x H x W
     print("Observations shape:", args.state_shape)
     print("Actions shape:", args.action_shape)
-    # make environments
-#    train_envs = ShmemVectorEnv(
-#        [lambda: make_atari_env(args) for _ in range(args.training_num)]
-#    )
-#    test_envs = ShmemVectorEnv(
-#        [lambda: make_atari_env_watch(args) for _ in range(args.test_num)]
-#    )
     # seed
     np.random.seed(args.seed)
     torch.manual_seed(args.seed)
@@ -136,28 +133,27 @@ if __name__ == '__main__':
     rl_policy = RandomPolicy(args.action_shape)
     observation_shape = args.state_shape
 
-    #if args.latent_space_type == 'single-frame-predictor':
+    if args.squeeze_latent_into_single_vector:
         # in this case, we don't pass the stacked frames.
         # we unstack them, compress them, the stack the compressed ones and
         # pass that to the policy
-    observation_shape = list(args.state_shape)
-    observation_shape[0] = 1 
-    observation_shape = tuple(observation_shape)
+        observation_shape = list(args.state_shape)
+        observation_shape[0] = 1 
+        observation_shape = tuple(observation_shape)
     encoder = RAE_ENC(args.device, observation_shape, 
             args.features_dim).to(args.device)
     print(encoder)
-    if args.latent_space_type == "single-frame-predictor":
-        decoder = RAE_DEC(args.device, observation_shape, 
-                args.features_dim).to(args.device)
     if args.latent_space_type == "forward-frame-predictor":
         decoder = RAE_predictive_DEC(args.device, observation_shape, 
                 args.features_dim, args.frames_stack).to(args.device)
+    else:
+        decoder = RAE_DEC(args.device, observation_shape, 
+                args.features_dim).to(args.device)
     print(decoder)
 #    encoder = CNNEncoderNew(observation_shape=args.state_shape, features_dim=args.features_dim, device=args.device).to(args.device)
 #    decoder = CNNDecoderNew(observation_shape=args.state_shape, n_flatten=encoder.n_flatten, features_dim=args.features_dim).to(args.device)
     optim_encoder = torch.optim.Adam(encoder.parameters(), lr=args.lr)
     optim_decoder = torch.optim.Adam(decoder.parameters(), lr=args.lr, weight_decay=10**-7)
-    #reconstruction_criterion = torch.nn.BCELoss()
     reconstruction_criterion = torch.nn.MSELoss()
     # the rl_policy is then passed into our autoencoder-wrapper policy
     # it's done this way because the compression to latent spaces
@@ -173,6 +169,8 @@ if __name__ == '__main__':
         args.batch_size,
         args.frames_stack,
         args.device,
+        args.squeeze_latent_into_single_vector,
+        args.use_reconstruction_loss,
         args.pass_q_grads_to_encoder,
         args.alternating_training_frequency
     )
@@ -189,8 +187,6 @@ if __name__ == '__main__':
         stack_num=args.frames_stack
     )
     # collector
-    #train_collector = CollectorOnLatent(policy, train_envs, buffer, exploration_noise=True)
-    #test_collector = CollectorOnLatent(policy, test_envs, exploration_noise=True)
     train_collector = Collector(policy, train_envs, buffer, exploration_noise=True)
     test_collector = Collector(policy, test_envs, exploration_noise=True)
     # log
@@ -240,40 +236,6 @@ if __name__ == '__main__':
         torch.save({'decoder': decoder.state_dict()}, ckpt_path_decoder)
         return "useless string for a useless return"
 
-    # watch agent's performance
-    # TODO write this or decide to delete it
-#    def watch():
-#        print("Setup test envs ...")
-#        test_envs.seed(args.seed)
-#        if args.save_buffer_name:
-#            print(f"Generate buffer with size {args.buffer_size}")
-#            buffer = VectorReplayBuffer(
-#                args.buffer_size,
-#                buffer_num=len(test_envs),
-#                ignore_obs_next=True,
-#                save_only_last_obs=True,
-#                stack_num=args.frames_stack
-#            )
-#            collector = Collector(policy, test_envs, buffer, exploration_noise=True)
-#            result = collector.collect(n_step=args.buffer_size)
-#            print(f"Save buffer into {args.save_buffer_name}")
-#            # Unfortunately, pickle will cause oom with 1M buffer size
-#            buffer.save_hdf5(args.save_buffer_name)
-#        else:
-#            print("Testing agent ...")
-#            test_collector.reset()
-#            result = test_collector.collect(
-#                n_episode=args.test_num, render=args.render
-#            )
-#        rew = result["rews"].mean()
-#        print(f'Mean reward (over {result["n/ep"]} episodes): {rew}')
-
-# TODO write the watch function
-# basically run some functions from visualize
-# or don't 'cos you'll be cloud training, whatever
-#    if args.watch:
-#        watch()
-#        exit(0)
 
 
     # test train_collector and start filling replay buffer
@@ -307,7 +269,6 @@ if __name__ == '__main__':
     )
 
     pprint.pprint(result)
-#    watch()
     
 
 

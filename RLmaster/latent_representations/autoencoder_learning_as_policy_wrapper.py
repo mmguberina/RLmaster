@@ -48,6 +48,7 @@ class AutoencoderLatentSpacePolicy(BasePolicy):
         batch_size: int,
         frames_stack: int,
         device: str = "cpu",
+        squeeze_latent_into_single_vector: bool = True,
         use_reconstruction_loss: bool = True,
         pass_policy_grad_to_encoder: bool = False,
         alternating_training_frequency: int = 1000,
@@ -60,6 +61,7 @@ class AutoencoderLatentSpacePolicy(BasePolicy):
         self.rl_policy = rl_policy
         self.latent_space_type = latent_space_type
         # here only for testing
+        self.squeeze_latent_into_single_vector = squeeze_latent_into_single_vector
         self.use_reconstruction_loss = use_reconstruction_loss
         self.pass_policy_grad_to_encoder = pass_policy_grad_to_encoder
         self.alternating_training_frequency = alternating_training_frequency
