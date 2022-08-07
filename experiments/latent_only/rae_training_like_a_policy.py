@@ -28,8 +28,8 @@ action are all random sampled
 
 def get_args():
     parser = argparse.ArgumentParser()
-#    parser.add_argument('--task', type=str, default='PongNoFrameskip-v4')
-    parser.add_argument('--task', type=str, default='SeaquestNoFrameskip-v4')
+    parser.add_argument('--task', type=str, default='PongNoFrameskip-v4')
+#    parser.add_argument('--task', type=str, default='SeaquestNoFrameskip-v4')
     parser.add_argument('--latent-space-type', type=str, default='forward-frame-predictor')
     parser.add_argument('--use-reconstruction-loss', type=int, default=True)
 #    parser.add_argument('--latent-space-type', type=str, default='single-frame-predictor')
@@ -69,7 +69,7 @@ def get_args():
 #    parser.add_argument('--test-num', type=int, default=8)
     parser.add_argument('--test-num', type=int, default=1)
     parser.add_argument('--logdir', type=str, default='log')
-    parser.add_argument('--log-name', type=str, default='rae_forward-frame-trained_as_policy_2')
+    parser.add_argument('--log-name', type=str, default='rae_forward-frame-trained_as_policy_5')
 #    parser.add_argument('--log-name', type=str, default='inverse_dynamics_model_1')
     parser.add_argument('--render', type=float, default=0.)
     parser.add_argument(
@@ -239,8 +239,8 @@ if __name__ == '__main__':
 
 
     # test train_collector and start filling replay buffer
-    train_collector.collect(n_step=args.batch_size * args.training_num)
-    #train_collector.collect(n_step=args.buffer_size)
+    #train_collector.collect(n_step=args.batch_size * args.training_num)
+    train_collector.collect(n_step=args.buffer_size)
 #    buffer.save_hdf5(os.path.join(log_path, 'buffer.h5'))
 #    print('buffer = saved to disk')
 #    exit()
