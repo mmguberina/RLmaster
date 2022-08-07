@@ -118,6 +118,6 @@ for i in range(5000):
     obs_decoded = obs_decoded[:,-1,:,:].reshape((84,84)).numpy()
     if done:
         env.reset()
-    #cv2.imshow("cat", obs_decoded)
-    cv2.imshow("cat", obs)
+    cv2.imshow("cat", obs_decoded)
+    #cv2.imshow("cat", obs)
     cv2.waitKey(1)
