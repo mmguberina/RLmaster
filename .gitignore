@@ -14,3 +14,4 @@ RLmaster/util/Breakout-v4_dataset
 RLmaster/util/Pong-v4_dataset
 *__pycache__*
 *nohup*
+*pyc
