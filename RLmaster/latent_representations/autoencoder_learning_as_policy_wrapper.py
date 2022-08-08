@@ -118,7 +118,7 @@ class AutoencoderLatentSpacePolicy(BasePolicy):
         # update the self.data batch not with obs=obs, but with obs=obs_orig or whatever
         # but to avoid needing to change policy code it is:
         # here shape the observations to fit the chosen latent space type
-        if self.latent_space_type == 'single-frame-predictor':
+        if not self.squeeze_latent_into_single_vector:
             # encode each one separately
             obs = batch[input].reshape((-1, 1, 84, 84))
             # and then restack
@@ -275,7 +275,7 @@ class AutoencoderLatentSpacePolicy(BasePolicy):
 
         if self.pass_policy_grad_to_encoder == False:
             with torch.no_grad():
-                if self.latent_space_type == 'single-frame-predictor':
+                if not self.squeeze_latent_into_single_vector:
                     # encode each one separately
                     obs = batch.obs.reshape((-1, 1, 84, 84))
                     obs_next = batch.obs_next.reshape((-1, 1, 84, 84))
@@ -289,7 +289,7 @@ class AutoencoderLatentSpacePolicy(BasePolicy):
                     batch.obs = self.encoder(obs)
                     batch.obs_next = self.encoder(obs_next)
         else:
-            if self.latent_space_type == 'single-frame-predictor':
+            if not self.squeeze_latent_into_single_vector:
                 # encode each one separately
                 obs = batch.obs.reshape((-1, 1, 84, 84))
                 obs_next = batch.obs_next.reshape((-1, 1, 84, 84))

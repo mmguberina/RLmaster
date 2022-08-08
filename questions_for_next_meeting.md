@@ -43,3 +43,5 @@ new meeting
 2. better ways of encoding temporal information instead of forward prediction?
 ---> will test those, ex. reinforcement learning with latent flow paper?
 - people adopted single-frame-compression with CNN which then goes to an LSTM
+
+----

@@ -28,11 +28,11 @@ action are all random sampled
 
 def get_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--task', type=str, default='PongNoFrameskip-v4')
-#    parser.add_argument('--task', type=str, default='SeaquestNoFrameskip-v4')
-    parser.add_argument('--latent-space-type', type=str, default='forward-frame-predictor')
+#    parser.add_argument('--task', type=str, default='PongNoFrameskip-v4')
+    parser.add_argument('--task', type=str, default='SeaquestNoFrameskip-v4')
+    #parser.add_argument('--latent-space-type', type=str, default='forward-frame-predictor')
     parser.add_argument('--use-reconstruction-loss', type=int, default=True)
-#    parser.add_argument('--latent-space-type', type=str, default='single-frame-predictor')
+    parser.add_argument('--latent-space-type', type=str, default='single-frame-predictor')
 #    parser.add_argument('--latent-space-type', type=str, default='inverse-dynamics-model')
     parser.add_argument('--squeeze-latent-into-single-vector', type=bool, default=True)
     parser.add_argument('--pass-q-grads-to-encoder', type=bool, default=False)
@@ -53,8 +53,8 @@ def get_args():
 #    parser.add_argument('--target-update-freq', type=int, default=500)
     parser.add_argument('--target-update-freq', type=int, default=5)
 #    parser.add_argument('--epoch', type=int, default=100)
-    parser.add_argument('--epoch', type=int, default=50)
-    parser.add_argument('--step-per-epoch', type=int, default=10000)
+    parser.add_argument('--epoch', type=int, default=15)
+    parser.add_argument('--step-per-epoch', type=int, default=100000)
     # TODO why 8?
     parser.add_argument('--step-per-collect', type=int, default=8)
     # TODO understand where exactly this is used and why
@@ -69,7 +69,7 @@ def get_args():
 #    parser.add_argument('--test-num', type=int, default=8)
     parser.add_argument('--test-num', type=int, default=1)
     parser.add_argument('--logdir', type=str, default='log')
-    parser.add_argument('--log-name', type=str, default='rae_forward-frame-trained_as_policy_5')
+    parser.add_argument('--log-name', type=str, default='rae_forward-frame-trained_as_policy_8')
 #    parser.add_argument('--log-name', type=str, default='inverse_dynamics_model_1')
     parser.add_argument('--render', type=float, default=0.)
     parser.add_argument(
