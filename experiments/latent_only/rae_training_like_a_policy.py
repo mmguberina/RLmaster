@@ -28,19 +28,16 @@ action are all random sampled
 
 def get_args():
     parser = argparse.ArgumentParser()
-#    parser.add_argument('--task', type=str, default='PongNoFrameskip-v4')
     parser.add_argument('--task', type=str, default='SeaquestNoFrameskip-v4')
-    #parser.add_argument('--latent-space-type', type=str, default='forward-frame-predictor')
-    parser.add_argument('--use-reconstruction-loss', type=int, default=True)
     parser.add_argument('--latent-space-type', type=str, default='single-frame-predictor')
-#    parser.add_argument('--latent-space-type', type=str, default='inverse-dynamics-model')
+    parser.add_argument('--use-reconstruction-loss', type=int, default=True)
     parser.add_argument('--squeeze-latent-into-single-vector', type=bool, default=True)
+    parser.add_argument('--use-pretrained', type=int, default=False)
     parser.add_argument('--pass-q-grads-to-encoder', type=bool, default=False)
     parser.add_argument('--data-augmentation', type=bool, default=True)
-    #parser.add_argument('--data-augmentation', type=bool, default=False)
     # NOTE the arg below is not used atm
-    #parser.add_argument('--forward-prediction-in-latent', type=bool, default=True)
     parser.add_argument('--forward-prediction-in-latent', type=bool, default=False)
+    # TODO implement
     parser.add_argument('--alternating-training-frequency', type=int, default=1)
     parser.add_argument('--features_dim', type=int, default=50)
     parser.add_argument('--seed', type=int, default=0)
@@ -75,10 +72,6 @@ def get_args():
     parser.add_argument(
         '--device', type=str, default='cuda' if torch.cuda.is_available() else 'cpu'
     )
-    # NOTE: frame stacking needs to be 1 for what we're doing now
-    # but let's keep it like a parameter here to avoid unnecessary code
-#    parser.add_argument('--frames-stack', type=int, default=2)
-#    parser.add_argument('--frames-stack', type=int, default=1)
     parser.add_argument('--frames-stack', type=int, default=4)
     parser.add_argument('--resume-path', type=str, default=None)
     parser.add_argument('--resume-id', type=str, default=None)
@@ -117,7 +110,6 @@ if __name__ == '__main__':
         frame_stack=args.frames_stack,
     )
     # this gives (1,84,84) w/ pixels in 0-1 range, as it should
-    # NOTE: i think this was changed...
     args.state_shape = train_envs.observation_space.shape or train_envs.observation_space.n
     args.action_shape = train_envs.action_space.shape or train_envs.action_space.n
     # should be N_FRAMES x H x W

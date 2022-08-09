@@ -26,12 +26,14 @@ def get_args():
     parser.add_argument('--task', type=str, default='PongNoFrameskip-v4')
     parser.add_argument('--latent-space-type', type=str, default='single-frame-predictor')
     parser.add_argument('--use-reconstruction-loss', type=int, default=True)
+    parser.add_argument('--squeeze-latent-into-single-vector', type=bool, default=True)
     parser.add_argument('--use-pretrained', type=int, default=False)
     parser.add_argument('--pass-q-grads-to-encoder', type=bool, default=True)
     parser.add_argument('--data-augmentation', type=bool, default=True)
     # TODO implement this lel
-    parser.add_argument('--forward-prediction-in-latent', type=bool, default=True)
-    parser.add_argument('--alternating-training-frequency', type=int, default=1000)
+    parser.add_argument('--forward-prediction-in-latent', type=bool, default=False)
+    # TODO implement
+    parser.add_argument('--alternating-training-frequency', type=int, default=1)
     parser.add_argument('--features-dim', type=int, default=50)
     parser.add_argument('--seed', type=int, default=0)
     parser.add_argument("--scale-obs", type=int, default=0)
@@ -39,9 +41,8 @@ def get_args():
     parser.add_argument('--eps-train', type=float, default=1.)
     parser.add_argument('--eps-train-final', type=float, default=0.05)
     parser.add_argument('--buffer-size', type=int, default=100000)
-#    parser.add_argument('--buffer-size', type=int, default=100)
-#    parser.add_argument('--lr', type=float, default=0.000625)
-    parser.add_argument('--lr', type=float, default=0.0001)
+    parser.add_argument('--lr-rl', type=float, default=0.001)
+    parser.add_argument('--lr-unsupervised', type=float, default=0.001)
     parser.add_argument('--gamma', type=float, default=0.99)
     parser.add_argument('--num-atoms', type=int, default=51)
     parser.add_argument('--v-min', type=float, default=-10.)
@@ -80,16 +81,6 @@ def get_args():
     parser.add_argument(
         '--device', type=str, default='cuda' if torch.cuda.is_available() else 'cpu'
     )
-    # NOTE: frame stacking needs to be 1 for what we're doing now
-    # but let's keep it like a parameter here to avoid unnecessary code
-    # TODO you need to separate the frames-stack which the autoencoder gets
-    # from the stacking you give to the policy
-    # because the autoencoder as it is now does not account for velocity information
-    # which means that the policy has no velocity information and that's very important 
-    # when your goal is to learn how to manipulate dynamics
-    # TODO test reshaping the tensor in a shell until it works as expected
-    # i have no mental strength to do it now
-    #parser.add_argument('--frames-stack', type=int, default=2)
     parser.add_argument('--frames-stack', type=int, default=4)
     parser.add_argument('--resume-path', type=str, default=None)
     parser.add_argument('--resume-id', type=str, default=None)
@@ -129,7 +120,7 @@ if __name__ == "__main__":
         scale=args.scale_obs,
         frame_stack=args.frames_stack,
     )
-    # this gives (1,84,84) w/ pixels in 0-1 range, as it should
+    # this gives (frames_stack,84,84) w/ pixels in 0-255 range
     #args.state_shape = env.observation_space.shape or env.observation_space.n
     #args.action_shape = env.action_space.shape or env.action_space.n
     args.state_shape = train_envs.observation_space.shape or train_envs.observation_space.n
@@ -137,52 +128,37 @@ if __name__ == "__main__":
     # should be N_FRAMES x H x W
     print("Observations shape:", args.state_shape)
     print("Actions shape:", args.action_shape)
-    # make environments
-    #train_envs = ShmemVectorEnv(
-    #    [lambda: make_atari_env(args) for _ in range(args.training_num)]
-    #)
-    #test_envs = ShmemVectorEnv(
-    #    [lambda: make_atari_env_watch(args) for _ in range(args.test_num)]
-    #)
     # seed
     np.random.seed(args.seed)
     torch.manual_seed(args.seed)
     #train_envs.seed(args.seed)
     #test_envs.seed(args.seed)
     #rainbow_net = DQNNoEncoder(args.action_shape, args.frames_stack, args.device).to(args.device)
-    if args.latent_space_type == 'single-frame-predictor':
+    if not args.squeeze_latent_into_single_vector:
         # in this case, we don't pass the stacked frames.
         # we unstack them, compress them, the stack the compressed ones and
         # pass that to the policy
         observation_shape = list(args.state_shape)
         observation_shape[0] = 1 
         observation_shape = tuple(observation_shape)
-        if args.features_dim == 50:
-            encoder = RAE_ENC(args.device, observation_shape, args.features_dim).to(args.device)
-            decoder = RAE_DEC(args.device, observation_shape, args.features_dim).to(args.device)
-        if args.features_dim == 3136:
-            encoder = CNNEncoderNew(observation_shape=observation_shape, 
-                    features_dim=args.features_dim, device=args.device).to(args.device)
-            decoder = CNNDecoderNew(observation_shape=observation_shape, 
-                    n_flatten=encoder.n_flatten, features_dim=args.features_dim).to(args.device)
         rl_input_dim = args.features_dim * args.frames_stack
-
-    if args.latent_space_type == 'compressed-frame-predictor':
-        # in this case, we don't pass the stacked frames.
-        # we unstack them, compress them, the stack the compressed ones and
-        # pass that to the policy
+    else:
+        rl_input_dim = args.features_dim 
+        # in this case, we pass the stacked frames.
         observation_shape = args.state_shape
-        if args.features_dim == 50:
-            encoder = RAE_ENC(args.device, observation_shape, args.features_dim).to(args.device)
-            decoder = RAE_DEC(args.device, observation_shape, args.features_dim).to(args.device)
-        if args.features_dim == 3136:
-            encoder = CNNEncoderNew(observation_shape=observation_shape, 
-                    features_dim=args.features_dim, device=args.device).to(args.device)
-            decoder = CNNDecoderNew(observation_shape=observation_shape, 
-                    n_flatten=encoder.n_flatten, features_dim=args.features_dim).to(args.device)
+
+    # TODO unify this somehow
+    # TODO add the 3rd network
+    if args.features_dim == 50:
+        encoder = RAE_ENC(args.device, observation_shape, args.features_dim).to(args.device)
+        decoder = RAE_DEC(args.device, observation_shape, args.features_dim).to(args.device)
+    if args.features_dim == 3136:
+        encoder = CNNEncoderNew(observation_shape=observation_shape, 
+                features_dim=args.features_dim, device=args.device).to(args.device)
+        decoder = CNNDecoderNew(observation_shape=observation_shape, 
+                n_flatten=encoder.n_flatten, features_dim=args.features_dim).to(args.device)
         #print("encoder.n_flatten")
         #print(encoder.n_flatten)
-        rl_input_dim = args.features_dim 
     if args.use_pretrained:
         encoder_name = "checkpoint_encoder_epoch_2.pth"
         decoder_name = "checkpoint_decoder_epoch_2.pth"
@@ -298,8 +274,10 @@ if __name__ == "__main__":
             return False
 
     # nature DQN setting, linear decay in the first 1M steps
+    # TODO why the fuck is there a pass here ????????????????
+    # it was uncommented. and this is all clearly very important
     def train_fn(epoch, env_step):
-        pass
+        #pass
         if env_step <= 1e6:
             eps = args.eps_train - env_step / 1e6 * \
                 (args.eps_train - args.eps_train_final)
@@ -319,8 +297,6 @@ if __name__ == "__main__":
                 logger.write("train/env_step", env_step, {"train/beta": beta})
 
     def test_fn(epoch, env_step):
-        pass
-        # NOTE none of this is a thing here because we're using a random policy,
         policy.set_eps(args.eps_test)
 
     def save_checkpoint_fn(epoch, env_step, gradient_step):
