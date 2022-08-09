@@ -23,9 +23,11 @@ from tianshou.utils import TensorboardLogger
 
 def get_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--task', type=str, default='PongNoFrameskip-v4')
+    #parser.add_argument('--task', type=str, default='PongNoFrameskip-v4')
+    parser.add_argument('--task', type=str, default='SeaquestNoFrameskip-v4')
     parser.add_argument('--latent-space-type', type=str, default='single-frame-predictor')
-    parser.add_argument('--use-reconstruction-loss', type=int, default=True)
+    #parser.add_argument('--use-reconstruction-loss', type=int, default=True)
+    parser.add_argument('--use-reconstruction-loss', type=int, default=False)
     parser.add_argument('--squeeze-latent-into-single-vector', type=bool, default=True)
     parser.add_argument('--use-pretrained', type=int, default=False)
     parser.add_argument('--pass-q-grads-to-encoder', type=bool, default=True)
@@ -76,7 +78,7 @@ def get_args():
     #parser.add_argument('--test-num', type=int, default=8)
     parser.add_argument('--test-num', type=int, default=10)
     parser.add_argument('--logdir', type=str, default='log')
-    parser.add_argument('--log-name', type=str, default='raibow_rae_parallel_fs_4_passing_q_grads_2')
+    parser.add_argument('--log-name', type=str, default='raibow_only')
     parser.add_argument('--render', type=float, default=0.)
     parser.add_argument(
         '--device', type=str, default='cuda' if torch.cuda.is_available() else 'cpu'
@@ -109,6 +111,7 @@ def get_args():
 if __name__ == "__main__": 
 #    torch.set_num_threads(1)
     args=get_args()
+    print(args.task)
     #env = make_atari_env(args)
     # we have another way now, should be faster
     #env, train_envs, test_envs = make_atari_env(
@@ -166,8 +169,8 @@ if __name__ == "__main__":
         encoder.load_state_dict(torch.load(log_path + encoder_name)['encoder'])
         decoder.load_state_dict(torch.load(log_path + decoder_name)['decoder'])
 
-    optim_encoder = torch.optim.Adam(encoder.parameters(), lr=args.lr)
-    optim_decoder = torch.optim.Adam(decoder.parameters(), lr=args.lr, weight_decay=10**-7)
+    optim_encoder = torch.optim.Adam(encoder.parameters(), lr=args.lr_unsupervised)
+    optim_decoder = torch.optim.Adam(decoder.parameters(), lr=args.lr_unsupervised, weight_decay=10**-7)
     reconstruction_criterion = torch.nn.MSELoss()
 
     # TODO FINISH FIX
@@ -180,10 +183,10 @@ if __name__ == "__main__":
                                  rl_input_dim)#.to(args.device)
 
     if args.pass_q_grads_to_encoder == False:
-        optim_q = torch.optim.Adam(rainbow_net.parameters(), lr=args.lr)
+        optim_q = torch.optim.Adam(rainbow_net.parameters(), lr=args.lr_rl)
     else:
         optim_q = torch.optim.Adam([{'params': rainbow_net.parameters()}, 
-                {'params': encoder.parameters()}], lr=args.lr)
+                {'params': encoder.parameters()}], lr=args.lr_rl)
 
     #rl_policy = RainbowPolicy(
     rl_policy = RainbowPolicyFixed(
@@ -216,6 +219,7 @@ if __name__ == "__main__":
         args.batch_size,
         args.frames_stack,
         args.device,
+        args.squeeze_latent_into_single_vector,
         args.use_reconstruction_loss,
         args.pass_q_grads_to_encoder,
         args.alternating_training_frequency,
