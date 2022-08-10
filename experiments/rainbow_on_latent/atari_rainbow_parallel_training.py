@@ -43,7 +43,7 @@ def get_args():
     parser.add_argument('--eps-train', type=float, default=1.)
     parser.add_argument('--eps-train-final', type=float, default=0.05)
     parser.add_argument('--buffer-size', type=int, default=100000)
-    parser.add_argument('--lr-rl', type=float, default=0.001)
+    parser.add_argument('--lr-rl', type=float, default=0.0000625)
     parser.add_argument('--lr-unsupervised', type=float, default=0.001)
     parser.add_argument('--gamma', type=float, default=0.99)
     parser.add_argument('--num-atoms', type=int, default=51)
@@ -67,12 +67,11 @@ def get_args():
 #    parser.add_argument('--step-per-epoch', type=int, default=100)
     # TODO why 8?
     #parser.add_argument('--step-per-collect', type=int, default=12)
-    parser.add_argument('--step-per-collect', type=int, default=8)
+    parser.add_argument('--step-per-collect', type=int, default=10)
     # TODO having a different update frequency for the autoencoder 
     # and the policy is probably a smart thing to do
-    #parser.add_argument('--update-per-step', type=float, default=0.1)
-    parser.add_argument('--update-per-step', type=float, default=1)
-    parser.add_argument('--batch-size', type=int, default=64)
+    parser.add_argument('--update-per-step', type=float, default=0.1)
+    parser.add_argument('--batch-size', type=int, default=32)
     parser.add_argument('--training-num', type=int, default=10)
     #parser.add_argument('--training-num', type=int, default=6)
     #parser.add_argument('--test-num', type=int, default=8)

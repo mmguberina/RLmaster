@@ -308,8 +308,10 @@ class AutoencoderLatentSpacePolicy(BasePolicy):
 
         # just for testing:
         # don't update with reconstruction loss if not we don't pass that
+        print("before if not self.use_reconstruction_loss")
         if not self.use_reconstruction_loss:
             return res
+        print("after if not self.use_reconstruction_loss")
 
         self.optim_encoder.zero_grad()
         self.optim_decoder.zero_grad()

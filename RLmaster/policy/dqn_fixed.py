@@ -46,6 +46,7 @@ class DQNPolicyFixed(BasePolicy):
         target_update_freq: int = 0,
         reward_normalization: bool = False,
         is_double: bool = True,
+        clip_loss_grad: bool = False,
         **kwargs: Any,
     ) -> None:
         super().__init__(**kwargs)
@@ -64,6 +65,7 @@ class DQNPolicyFixed(BasePolicy):
             self.model_old.eval()
         self._rew_norm = reward_normalization
         self._is_double = is_double
+        self._clip_loss_grad = clip_loss_grad
 
     def set_eps(self, eps: float) -> None:
         """Set the eps for epsilon-greedy exploration."""
@@ -173,7 +175,14 @@ class DQNPolicyFixed(BasePolicy):
         q = q[np.arange(len(q)), batch.act]
         returns = to_torch_as(batch.returns.flatten(), q)
         td_error = returns - q
-        loss = (td_error.pow(2) * weight).mean()
+
+        if self._clip_loss_grad:
+            y = q.reshape(-1, 1)
+            t = returns.reshape(-1, 1)
+            loss = torch.nn.functional.huber_loss(y, t, reduction="mean")
+        else:
+            loss = (td_error.pow(2) * weight).mean()
+
         batch.weight = td_error  # prio-buffer
         loss.backward()
         self.optim.step()
