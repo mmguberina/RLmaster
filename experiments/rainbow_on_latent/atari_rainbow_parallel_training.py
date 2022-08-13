@@ -5,14 +5,14 @@ import pprint
 
 import numpy as np
 import torch
-from RLmaster.network.atari_network import DQNNoEncoder, RainbowNoConvLayers
+from RLmaster.network.atari_network import DQNNoEncoder, RainbowNoConvLayers, Rainbow
 from RLmaster.util.atari_wrapper import wrap_deepmind, make_atari_env, make_atari_env_watch
 from torch.utils.tensorboard import SummaryWriter
 from RLmaster.util.save_load_hyperparameters import save_hyperparameters
 
 from tianshou.data import Collector, VectorReplayBuffer, PrioritizedVectorReplayBuffer
 from tianshou.env import ShmemVectorEnv
-from RLmaster.policy.dqn_fixed import DQNPolicy
+from RLmaster.network.atari_network import RainbowOLD
 #from tianshou.policy import RainbowPolicy
 from RLmaster.policy.dqn_fixed import RainbowPolicyFixed
 from RLmaster.latent_representations.autoencoder_learning_as_policy_wrapper import AutoencoderLatentSpacePolicy
@@ -23,19 +23,22 @@ from tianshou.utils import TensorboardLogger
 
 def get_args():
     parser = argparse.ArgumentParser()
-    #parser.add_argument('--task', type=str, default='PongNoFrameskip-v4')
-    parser.add_argument('--task', type=str, default='SeaquestNoFrameskip-v4')
-    parser.add_argument('--latent-space-type', type=str, default='single-frame-predictor')
-    #parser.add_argument('--use-reconstruction-loss', type=int, default=True)
-    parser.add_argument('--use-reconstruction-loss', type=int, default=False)
+    parser.add_argument('--task', type=str, default='PongNoFrameskip-v4')
+    #parser.add_argument('--task', type=str, default='SeaquestNoFrameskip-v4')
+    #parser.add_argument('--latent-space-type', type=str, default='single-frame-predictor')
+    parser.add_argument('--latent-space-type', type=str, default='forward-frame-predictor')
+    parser.add_argument('--use-reconstruction-loss', type=int, default=True)
+    #parser.add_argument('--use-reconstruction-loss', type=int, default=False)
     parser.add_argument('--squeeze-latent-into-single-vector', type=bool, default=True)
     parser.add_argument('--use-pretrained', type=int, default=False)
     parser.add_argument('--pass-q-grads-to-encoder', type=bool, default=True)
-    parser.add_argument('--data-augmentation', type=bool, default=True)
+    #parser.add_argument('--data-augmentation', type=bool, default=True)
+    parser.add_argument('--data-augmentation', type=bool, default=False)
     # TODO implement this lel
     parser.add_argument('--forward-prediction-in-latent', type=bool, default=False)
     # TODO implement
     parser.add_argument('--alternating-training-frequency', type=int, default=1)
+    #parser.add_argument('--features-dim', type=int, default=3136)
     parser.add_argument('--features-dim', type=int, default=50)
     parser.add_argument('--seed', type=int, default=0)
     parser.add_argument("--scale-obs", type=int, default=0)
@@ -44,7 +47,7 @@ def get_args():
     parser.add_argument('--eps-train-final', type=float, default=0.05)
     parser.add_argument('--buffer-size', type=int, default=100000)
     parser.add_argument('--lr-rl', type=float, default=0.0000625)
-    parser.add_argument('--lr-unsupervised', type=float, default=0.001)
+    parser.add_argument('--lr-unsupervised', type=float, default=0.0001)
     parser.add_argument('--gamma', type=float, default=0.99)
     parser.add_argument('--num-atoms', type=int, default=51)
     parser.add_argument('--v-min', type=float, default=-10.)
@@ -168,18 +171,32 @@ if __name__ == "__main__":
         encoder.load_state_dict(torch.load(log_path + encoder_name)['encoder'])
         decoder.load_state_dict(torch.load(log_path + decoder_name)['decoder'])
 
+    print(encoder)
+    print(decoder)
     optim_encoder = torch.optim.Adam(encoder.parameters(), lr=args.lr_unsupervised)
     optim_decoder = torch.optim.Adam(decoder.parameters(), lr=args.lr_unsupervised, weight_decay=10**-7)
     reconstruction_criterion = torch.nn.MSELoss()
 
     # TODO FINISH FIX
+    # TODO remove this later
+#    rainbow_net = Rainbow(
+#        *args.state_shape,
+#        args.action_shape,
+#        args.num_atoms,
+#        args.noisy_std,
+#        args.device,
+#        is_dueling=not args.no_dueling,
+#        is_noisy=not args.no_noisy
+#    )
+
     rainbow_net = RainbowNoConvLayers(args.action_shape, 
                                  args.num_atoms,
                                  args.noisy_std,
                                  args.device,
                                  not args.no_dueling,
-                                 args.noisy_std,
+                                 not args.no_noisy,
                                  rl_input_dim)#.to(args.device)
+    print(rainbow_net)
 
     if args.pass_q_grads_to_encoder == False:
         optim_q = torch.optim.Adam(rainbow_net.parameters(), lr=args.lr_rl)
@@ -277,8 +294,6 @@ if __name__ == "__main__":
             return False
 
     # nature DQN setting, linear decay in the first 1M steps
-    # TODO why the fuck is there a pass here ????????????????
-    # it was uncommented. and this is all clearly very important
     def train_fn(epoch, env_step):
         #pass
         if env_step <= 1e6:

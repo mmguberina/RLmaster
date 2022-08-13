@@ -168,7 +168,8 @@ class DQNPolicyFixed(BasePolicy):
     def learn(self, batch: Batch, **kwargs: Any) -> Dict[str, float]:
         if self._target and self._iter % self._freq == 0:
             self.sync_weight()
-        self.optim.zero_grad()
+        # has to be called elsewhere
+        #self.optim.zero_grad()
         weight = batch.pop("weight", 1.0)
         #q = self(batch).logits
         q = self(batch).logits
@@ -201,7 +202,11 @@ class DQNPolicyFixed(BasePolicy):
             act[rand_mask] = rand_act[rand_mask]
         return act
 
+    def zero_this_grad(self):
+        self.optim.zero_grad()
 
+
+#class C51PolicyFixed(DQNPolicyFixed):
 class C51PolicyFixed(DQNPolicy):
     """Implementation of Categorical Deep Q-Network. arXiv:1707.06887.
 
@@ -283,13 +288,11 @@ class C51PolicyFixed(DQNPolicy):
         ).clamp(0, 1) * next_dist.unsqueeze(1)
         return target_dist.sum(-1)
 
-    def zero_this_grad(self):
-        self.optim.zero_grad()
 
     def learn(self, batch: Batch, **kwargs: Any) -> Dict[str, float]:
         if self._target and self._iter % self._freq == 0:
             self.sync_weight()
-#        self.optim.zero_grad()
+        #self.optim.zero_grad()
         with torch.no_grad():
             target_dist = self._target_dist(batch)
         weight = batch.pop("weight", 1.0)
@@ -304,6 +307,9 @@ class C51PolicyFixed(DQNPolicy):
         self.optim.step()
         self._iter += 1
         return {"loss": loss.item()}
+
+    def zero_this_grad(self):
+        self.optim.zero_grad()
 
 
 class RainbowPolicyFixed(C51PolicyFixed):

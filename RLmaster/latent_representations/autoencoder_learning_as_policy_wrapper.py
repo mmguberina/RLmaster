@@ -193,7 +193,7 @@ class AutoencoderLatentSpacePolicy(BasePolicy):
         #print(batch_for_computing_returns.shape)
         #print(batch_for_computing_returns)
         with torch.no_grad():
-            if self.latent_space_type == 'single-frame-predictor':
+            if not self.squeeze_latent_into_single_vector:
                 batch_for_computing_returns.obs_next = batch_for_computing_returns.obs_next.reshape(
                         (-1, 1, 84, 84))
                 #batch_for_computing_returns.obs_next = to_numpy(
@@ -227,8 +227,8 @@ class AutoencoderLatentSpacePolicy(BasePolicy):
         # TODO make this work for future prediction too (maybe you want the same aug)
         # NOTE: maybe u need to swith to torch first
         if self.data_augmentation:
-            batch.obs = self.augmentation(torch.tensor(batch.obs, dtype=torch.float))
-            batch.obs_next = self.augmentation(torch.tensor(batch.obs_next, dtype=torch.float))
+            batch.obs = self.augmentation(torch.as_tensor(batch.obs, dtype=torch.float))
+            batch.obs_next = self.augmentation(torch.as_tensor(batch.obs_next, dtype=torch.float))
         # this ripped from dqn method
         # no, it shouldn't be
         # but we went to disgusting hacking so here we are man
@@ -258,18 +258,20 @@ class AutoencoderLatentSpacePolicy(BasePolicy):
     def learn(self, batch: Batch, **kwargs: Any) -> Dict[str, float]:
         # pass through encoder with no_grad here
 # NOTE: stupid hack for a stupid problem...
-        if self.frames_stack == 1:
-            batch.obs = to_torch(batch.obs, device=self.device).view(self.batch_size, self.frames_stack, 84, 84)
-        else:
-            # it's the right shape if frames_stack != 1
-            #batch.obs = to_torch(batch.obs, device=self.device, dtype=torch.float)
-            batch.obs = torch.tensor(batch.obs, device=self.device, dtype=torch.float)
-            # added for rainbow
-            #batch.obs_next = to_torch(batch.obs_next, device=self.device, dtype=torch.float)
-            batch.obs_next = torch.tensor(batch.obs_next, device=self.device, dtype=torch.float)
+    #    if self.frames_stack == 1:
+    #        batch.obs = to_torch(batch.obs, device=self.device).view(self.batch_size, self.frames_stack, 84, 84)
+    #    else:
+    #        # it's the right shape if frames_stack != 1
+    #        #batch.obs = to_torch(batch.obs, device=self.device, dtype=torch.float)
+    #        batch.obs = torch.tensor(batch.obs, device=self.device, dtype=torch.float)
+    #        # added for rainbow
+    #        #batch.obs_next = to_torch(batch.obs_next, device=self.device, dtype=torch.float)
+    #        batch.obs_next = torch.tensor(batch.obs_next, device=self.device, dtype=torch.float)
 
         # we zero grad this here in because maybe we want both grads
         self.rl_policy.zero_this_grad()
+        # needs to be done here
+        #self.optim_encoder.zero_grad()
         # TODO use this to implement forward prediction
         #obs_next = torch.tensor(batch.obs_next, device=self.device)
 
@@ -287,7 +289,8 @@ class AutoencoderLatentSpacePolicy(BasePolicy):
                     obs = batch.obs
                     obs_next = batch.obs_next
                     batch.obs = self.encoder(obs)
-                    batch.obs_next = self.encoder(obs_next)
+                    with torch.no_grad():
+                        batch.obs_next = self.encoder(obs_next)
         else:
             if not self.squeeze_latent_into_single_vector:
                 # encode each one separately
@@ -295,13 +298,15 @@ class AutoencoderLatentSpacePolicy(BasePolicy):
                 obs_next = batch.obs_next.reshape((-1, 1, 84, 84))
                 batch.obs = self.encoder(obs).view(-1, 
                     self.frames_stack * self.encoder.features_dim)
-                batch.obs_next = self.encoder(obs_next).view(-1, 
-                    self.frames_stack * self.encoder.features_dim)
+                with torch.no_grad():
+                    batch.obs_next = self.encoder(obs_next).view(-1, 
+                        self.frames_stack * self.encoder.features_dim)
             else:
                 obs = batch.obs
                 obs_next = batch.obs_next
                 batch.obs = self.encoder(obs)
-                batch.obs_next = self.encoder(obs_next)
+                with torch.no_grad():
+                    batch.obs_next = self.encoder(obs_next)
 
         # this will also pass q-grads through the encoder if encoder params are given to q_optim
         res = self.rl_policy.learn(batch, **kwargs)
@@ -319,20 +324,20 @@ class AutoencoderLatentSpacePolicy(BasePolicy):
         else:
             decoded_obs = self.decoder(encoded_obs)
 
-
         # batch.obs is of shape (batch_size, frames_stack, 84, 84)
         # decoded_obs is of shape (batch_size, 1, 84, 84) and we want it to learn, say, the last frame only
         # which means we have to somehow correctly slice batch.obs so that only the last frames are left
         # tried it in shell, this worked 
         #reconstruction_loss = self.reconstruction_criterion(decoded_obs, batch.obs[:, -1, :, :].view(-1, 1, 84, 84))
-
+    
         #if self.latent_space_type == 'single-frame-predictor':
             #reconstruction_loss = self.reconstruction_criterion(decoded_obs, obs[:, -1, :, :].view(-1, 1, 84, 84))
+        # TODO probably faster if you didn't copy-construct obs again, but whatever
         if self.latent_space_type == 'single-frame-predictor':
-            reconstruction_loss = self.reconstruction_criterion(decoded_obs, obs / 255)
+            reconstruction_loss = self.reconstruction_criterion(decoded_obs, torch.as_tensor(obs, dtype=torch.float32, device=self.device) / 255.)
         if self.latent_space_type == 'forward-frame-predictor':
             # TODO: delete, this is just a check
-            reconstruction_loss = self.reconstruction_criterion(decoded_obs, obs_next / 255)
+            reconstruction_loss = self.reconstruction_criterion(decoded_obs, torch.as_tensor(obs_next, dtype=torch.float32, device=self.device) / 255.)
 #        if self.latent_space_type == 'forward-frame-predictor':
 #            batch.obs_next = torch.tensor(batch.obs_next, device=self.device)
 #            print(batch.obs_next.shape)

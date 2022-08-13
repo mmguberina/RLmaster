@@ -131,11 +131,11 @@ class CNNEncoderNew(nn.Module):
         if self.features_dim == 3136:
             self.encoder = nn.Sequential(
                 nn.Conv2d(n_input_channels, 32, kernel_size=8, stride=4, padding=0),
-                nn.ReLU(),
+                nn.ReLU(inplace=True),
                 nn.Conv2d(32, 64, kernel_size=4, stride=2, padding=0),
-                nn.ReLU(),
+                nn.ReLU(inplace=True),
                 nn.Conv2d(64, 64, kernel_size=3, stride=1, padding=0),
-                nn.ReLU(),
+                nn.ReLU(inplace=True),
                 nn.Flatten(),
             )
 
@@ -163,7 +163,9 @@ class CNNEncoderNew(nn.Module):
 # TODO change this to be convert via torch.data.to_tensor
     def forward(self, observations: torch.Tensor) -> torch.Tensor:
         # the / 255 is now necessary because we switched to envpool and it does not downscale
-        observations = torch.tensor(observations, dtype=torch.float32, device=self.device) / 255
+        # TODO revert if necessary
+        #observations = torch.tensor(observations, dtype=torch.float32, device=self.device) / 255
+        observations = torch.as_tensor(observations, dtype=torch.float32, device=self.device)
 #        return self.linear(self.encoder(observations))
         return self.encoder(observations)
 
@@ -185,7 +187,7 @@ class CNNDecoderNew(nn.Module):
                 nn.ReLU(),
                 nn.ConvTranspose2d(64, 32, kernel_size=4, stride=2, padding=0),
                 nn.ReLU(),
-                nn.ConvTranspose2d(32, 1, kernel_size=8, stride=4, padding=0),
+                nn.ConvTranspose2d(32, n_input_channels, kernel_size=8, stride=4, padding=0),
                 nn.Sigmoid(),
             )
 
@@ -198,7 +200,7 @@ class CNNDecoderNew(nn.Module):
                 nn.ReLU(),
                 nn.ConvTranspose2d(64, 64, kernel_size=8, stride=2, padding=0),
                 nn.ReLU(),
-                nn.ConvTranspose2d(64, 1, kernel_size=8, stride=4, padding=0),
+                nn.ConvTranspose2d(64, n_input_channels, kernel_size=8, stride=4, padding=0),
                 nn.Sigmoid(),
             )
 
@@ -234,7 +236,8 @@ class RAE_ENC(nn.Module):
         return mu + eps * std
 
     def forward_conv(self, obs):
-        obs = torch.tensor(obs, dtype=torch.float32, device=self.device) / 255
+        #obs = torch.tensor(obs, dtype=torch.float32, device=self.device) / 255
+        obs = torch.as_tensor(obs, dtype=torch.float32, device=self.device) 
         #obs = to_torch(obs, device=self.device, dtype=torch.float) / 255.
         conv = torch.relu(self.conv_layers[0](obs))
         for i in range(1, self.num_layers):
