@@ -27,8 +27,8 @@ def get_args():
     #parser.add_argument('--task', type=str, default='SeaquestNoFrameskip-v4')
     #parser.add_argument('--latent-space-type', type=str, default='single-frame-predictor')
     parser.add_argument('--latent-space-type', type=str, default='forward-frame-predictor')
-    parser.add_argument('--use-reconstruction-loss', type=int, default=True)
-    #parser.add_argument('--use-reconstruction-loss', type=int, default=False)
+    #parser.add_argument('--use-reconstruction-loss', type=int, default=True)
+    parser.add_argument('--use-reconstruction-loss', type=int, default=False)
     parser.add_argument('--squeeze-latent-into-single-vector', type=bool, default=True)
     parser.add_argument('--use-pretrained', type=int, default=False)
     parser.add_argument('--pass-q-grads-to-encoder', type=bool, default=True)
@@ -38,8 +38,8 @@ def get_args():
     parser.add_argument('--forward-prediction-in-latent', type=bool, default=False)
     # TODO implement
     parser.add_argument('--alternating-training-frequency', type=int, default=1)
-    #parser.add_argument('--features-dim', type=int, default=3136)
-    parser.add_argument('--features-dim', type=int, default=50)
+    parser.add_argument('--features-dim', type=int, default=3136)
+    #parser.add_argument('--features-dim', type=int, default=50)
     parser.add_argument('--seed', type=int, default=0)
     parser.add_argument("--scale-obs", type=int, default=0)
     parser.add_argument('--eps-test', type=float, default=0.005)
@@ -80,7 +80,7 @@ def get_args():
     #parser.add_argument('--test-num', type=int, default=8)
     parser.add_argument('--test-num', type=int, default=10)
     parser.add_argument('--logdir', type=str, default='log')
-    parser.add_argument('--log-name', type=str, default='raibow_only')
+    parser.add_argument('--log-name', type=str, default='raibow_only_01')
     parser.add_argument('--render', type=float, default=0.)
     parser.add_argument(
         '--device', type=str, default='cuda' if torch.cuda.is_available() else 'cpu'
