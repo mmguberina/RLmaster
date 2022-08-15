@@ -33,7 +33,6 @@ class AutoencoderLatentSpacePolicy(BasePolicy):
     :param CNNDecoderNew decoder: the encoder part of the autoencoder.
     :param torch.optim.Optimizer optim_encoder: a torch.optim for optimizing the encoder.
     :param torch.optim.Optimizer optim_decoder: a torch.optim for optimizing the decoder.
-    :param float lr_scale: the scaling factor for autoencoder learning.
     """
 
     def __init__(
@@ -52,9 +51,10 @@ class AutoencoderLatentSpacePolicy(BasePolicy):
         use_reconstruction_loss: bool = True,
         pass_policy_grad_to_encoder: bool = False,
         alternating_training_frequency: int = 1000,
-        lr_scale: float = 0.001,
         data_augmentation: bool = True,
         forward_prediction_in_latent: bool = True,
+        use_q_loss: bool = True,
+        encoder_pretrained_rl = None,
         **kwargs: Any,
     ) -> None:
         super().__init__(**kwargs)
@@ -63,6 +63,7 @@ class AutoencoderLatentSpacePolicy(BasePolicy):
         # here only for testing
         self.squeeze_latent_into_single_vector = squeeze_latent_into_single_vector
         self.use_reconstruction_loss = use_reconstruction_loss
+        self.use_q_loss = use_q_loss
         self.pass_policy_grad_to_encoder = pass_policy_grad_to_encoder
         self.alternating_training_frequency = alternating_training_frequency
         self.encoder = encoder
@@ -73,13 +74,13 @@ class AutoencoderLatentSpacePolicy(BasePolicy):
         self.device = device
         self.batch_size = batch_size
         self.frames_stack = frames_stack
-        self.lr_scale = lr_scale
         # you could have an additional randomcrop (80,80) before replicationpad
         self.data_augmentation = data_augmentation
         random_shift = nn.Sequential(nn.ReplicationPad2d(4), 
                 kornia.augmentation.RandomCrop((84, 84)))
         self.augmentation = random_shift
         self.forward_prediction_in_latent = forward_prediction_in_latent
+        self.encoder_pretrained_rl = encoder_pretrained_rl
 
     def train(self, mode: bool = True) -> "AutoencoderLatentSpacePolicy":
         """Set the module in training mode."""
@@ -127,15 +128,21 @@ class AutoencoderLatentSpacePolicy(BasePolicy):
             # because now the first row is linear
             # TODO make it work with cnn layers too
             #batch.embedded_obs = to_numpy(self.encoder(obs).view(-1, 
-            batch.embedded_obs = self.encoder(obs).view(-1, 
-                self.frames_stack * self.encoder.features_dim)
+            if self.use_q_loss:
+                batch.embedded_obs = self.encoder(obs).view(-1, 
+                    self.frames_stack * self.encoder.features_dim)
+            else:
+                raise NotImplementedError
+
         else:
         # TODO: write out the other cases (ex. forward prediction)
             obs = batch[input]
             #batch.embedded_obs = to_numpy(self.encoder(obs))
-            batch.embedded_obs = self.encoder(obs)
-        #batch.obs = to_numpy(embedded_obs)
-        #print(batch.orig_obs.shape)
+            if self.use_q_loss:
+                batch.embedded_obs = self.encoder(obs)
+            else:
+                batch.embedded_obs = self.encoder_pretrained_rl(obs)
+                
         return self.rl_policy.forward(batch, state, input="embedded_obs", **kwargs)
 
     def set_eps(self, eps: float) -> None:
@@ -233,7 +240,7 @@ class AutoencoderLatentSpacePolicy(BasePolicy):
         # no, it shouldn't be
         # but we went to disgusting hacking so here we are man
         # do the below depending on underlying policy
-        if isinstance(self.rl_policy, DQNPolicyFixed):
+        if isinstance(self.rl_policy, DQNPolicyFixed) and self.use_q_loss:
             batch = self.compute_nstep_return(
                 batch, buffer, indices, self.rl_policy._target_q, self.rl_policy._gamma, 
                 self.rl_policy._n_step, self.rl_policy._rew_norm
@@ -256,65 +263,60 @@ class AutoencoderLatentSpacePolicy(BasePolicy):
         self.rl_policy.post_process_fn(batch, buffer, indices)
 
     def learn(self, batch: Batch, **kwargs: Any) -> Dict[str, float]:
-        # pass through encoder with no_grad here
-# NOTE: stupid hack for a stupid problem...
-    #    if self.frames_stack == 1:
-    #        batch.obs = to_torch(batch.obs, device=self.device).view(self.batch_size, self.frames_stack, 84, 84)
-    #    else:
-    #        # it's the right shape if frames_stack != 1
-    #        #batch.obs = to_torch(batch.obs, device=self.device, dtype=torch.float)
-    #        batch.obs = torch.tensor(batch.obs, device=self.device, dtype=torch.float)
-    #        # added for rainbow
-    #        #batch.obs_next = to_torch(batch.obs_next, device=self.device, dtype=torch.float)
-    #        batch.obs_next = torch.tensor(batch.obs_next, device=self.device, dtype=torch.float)
-
-        # we zero grad this here in because maybe we want both grads
-        self.rl_policy.zero_this_grad()
-        # needs to be done here
-        #self.optim_encoder.zero_grad()
-        # TODO use this to implement forward prediction
-        #obs_next = torch.tensor(batch.obs_next, device=self.device)
-
-        if self.pass_policy_grad_to_encoder == False:
-            with torch.no_grad():
+        if self.use_q_loss:
+            # we zero grad this here in because maybe we want both grads
+            self.rl_policy.zero_this_grad()
+            # needs to be done here
+            #self.optim_encoder.zero_grad()
+            # TODO use this to implement forward prediction
+            #obs_next = torch.tensor(batch.obs_next, device=self.device)
+    
+            # TODO pretty sure you can just specify that then the networks in question don't require
+            # grad or whatever, thereby removing this stupid if with copy-pasted code
+            if self.pass_policy_grad_to_encoder == False:
+                with torch.no_grad():
+                    if not self.squeeze_latent_into_single_vector:
+                        # encode each one separately
+                        obs = batch.obs.reshape((-1, 1, 84, 84))
+                        obs_next = batch.obs_next.reshape((-1, 1, 84, 84))
+                        batch.obs = self.encoder(obs).view(-1, 
+                            self.frames_stack * self.encoder.features_dim)
+                        batch.obs_next = self.encoder(obs_next).view(-1, 
+                            self.frames_stack * self.encoder.features_dim)
+                    else:
+                        obs = batch.obs
+                        obs_next = batch.obs_next
+                        batch.obs = self.encoder(obs)
+                        with torch.no_grad():
+                            batch.obs_next = self.encoder(obs_next)
+            else:
                 if not self.squeeze_latent_into_single_vector:
                     # encode each one separately
                     obs = batch.obs.reshape((-1, 1, 84, 84))
                     obs_next = batch.obs_next.reshape((-1, 1, 84, 84))
                     batch.obs = self.encoder(obs).view(-1, 
                         self.frames_stack * self.encoder.features_dim)
-                    batch.obs_next = self.encoder(obs_next).view(-1, 
-                        self.frames_stack * self.encoder.features_dim)
+                    with torch.no_grad():
+                        batch.obs_next = self.encoder(obs_next).view(-1, 
+                            self.frames_stack * self.encoder.features_dim)
                 else:
                     obs = batch.obs
                     obs_next = batch.obs_next
                     batch.obs = self.encoder(obs)
                     with torch.no_grad():
                         batch.obs_next = self.encoder(obs_next)
+
+            # this will also pass q-grads through the encoder if encoder params are given to q_optim
+            res = self.rl_policy.learn(batch, **kwargs)
+
+            # just for testing:
+            # don't update with reconstruction loss if not we don't pass that
+            if not self.use_reconstruction_loss:
+                return res
         else:
-            if not self.squeeze_latent_into_single_vector:
-                # encode each one separately
-                obs = batch.obs.reshape((-1, 1, 84, 84))
-                obs_next = batch.obs_next.reshape((-1, 1, 84, 84))
-                batch.obs = self.encoder(obs).view(-1, 
-                    self.frames_stack * self.encoder.features_dim)
-                with torch.no_grad():
-                    batch.obs_next = self.encoder(obs_next).view(-1, 
-                        self.frames_stack * self.encoder.features_dim)
-            else:
-                obs = batch.obs
-                obs_next = batch.obs_next
-                batch.obs = self.encoder(obs)
-                with torch.no_grad():
-                    batch.obs_next = self.encoder(obs_next)
+            obs = batch.obs
+            obs_next = batch.obs_next
 
-        # this will also pass q-grads through the encoder if encoder params are given to q_optim
-        res = self.rl_policy.learn(batch, **kwargs)
-
-        # just for testing:
-        # don't update with reconstruction loss if not we don't pass that
-        if not self.use_reconstruction_loss:
-            return res
 
         self.optim_encoder.zero_grad()
         self.optim_decoder.zero_grad()
@@ -354,9 +356,13 @@ class AutoencoderLatentSpacePolicy(BasePolicy):
         loss.backward()
         self.optim_encoder.step()
         self.optim_decoder.step()
-        res.update(
-            {
-                "loss/autoencoder": loss.item(),
-            }
-        )
+        if self.use_q_loss:
+            res.update(
+                {
+                    "loss/autoencoder": loss.item(),
+                }
+            )
+        else:
+            res = {"loss/autoencoder": loss.item()}
+
         return res
