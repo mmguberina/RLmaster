@@ -33,7 +33,8 @@ features_dim = 50
 #log_path = "../../log/raibow_ae_parallel_good_arch_fs_4_passing_q_grads_6/"
 #log_path = "../../log/rae_forward-frame-trained_as_policy_1/"
 #log_path = "../../log/latent_only/SeaquestNoFrameskip-v4/rae_forward-frame-trained_as_policy_2/"
-log_path = "../../log/latent_only/PongNoFrameskip-v4/rae_forward-frame-trained_as_policy_5/"
+#log_path = "../../log/latent_only/PongNoFrameskip-v4/rae_forward-frame-trained_as_policy_5/"
+log_path = "../../experiments/latent_only/log/SeaquestNoFrameskip-v4/rae_compressor-trained_on-pretrained-rl-01/"
 #log_path = "../../experiments/latent_only/log/PongNoFrameskip-v4/ae_single-frame-trained_as_policy_3136/"
 #log_path_enc_dc = "../../experiments/latent_only/log/PongNoFrameskip-v4/"
 args = load_hyperparameters(log_path)
@@ -53,8 +54,8 @@ if not args.squeeze_latent_into_single_vector:
 #encoder.load_state_dict(torch.load("../../experiments/latent_only/encoder_features_dim_{}.pt".format(features_dim), map_location=torch.device('cpu')))
 #decoder.load_state_dict(torch.load("../../experiments/latent_only/decoder_features_dim_{}.pt".format(features_dim), map_location=torch.device('cpu')))
 
-encoder_name = "checkpoint_encoder_epoch_50.pth"
-decoder_name = "checkpoint_decoder_epoch_50.pth"
+encoder_name = "checkpoint_encoder_epoch_14.pth"
+decoder_name = "checkpoint_decoder_epoch_14.pth"
 #encoder_name = "encoder.pth"
 #decoder_name = "decoder.pth"
 #encoder_name = "encoder_features_dim_3136.pt"
@@ -110,7 +111,7 @@ for i in range(5000):
     with torch.no_grad():
         #obs = decoder(encoder(obs.reshape((1,1,84,84))))
         if args.latent_space_type == 'single-frame-predictor':
-            obs = decoder(encoder(obs))
+            obs_decoded = decoder(encoder(obs))
         if args.latent_space_type == 'forward-frame-predictor':
 #            print(encoder(obs).shape)
             obs_decoded = decoder(encoder(obs), act)
@@ -119,5 +120,5 @@ for i in range(5000):
     if done:
         env.reset()
     cv2.imshow("cat", obs_decoded)
-    #cv2.imshow("cat", obs)
+    cv2.imshow("cat2", obs)
     cv2.waitKey(1)
