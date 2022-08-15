@@ -30,7 +30,7 @@ action are all random sampled
 
 def get_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--task', type=str, default='SeaquestNoFrameskip-v4')
+    parser.add_argument('--task', type=str, default='BreakoutNoFrameskip-v4')
     parser.add_argument('--latent-space-type', type=str, default='single-frame-predictor')
     parser.add_argument('--use-reconstruction-loss', type=int, default=True)
     parser.add_argument('--use-q-loss', type=bool, default=False)
@@ -53,13 +53,13 @@ def get_args():
     parser.add_argument('--eps-train-final', type=float, default=0.3)
     parser.add_argument('--buffer-size', type=int, default=100000)
     parser.add_argument('--lr-rl', type=float, default=0.0000625)
-    parser.add_argument('--lr-unsupervised', type=float, default=0.001)
+    parser.add_argument('--lr-unsupervised', type=float, default=0.0001)
     # TODO understand where exactly this is used and why
     # it's probably how often you update the target policy network in deep-Q
-#    parser.add_argument('--target-update-freq', type=int, default=500)
-    parser.add_argument('--target-update-freq', type=int, default=5)
+    parser.add_argument('--target-update-freq', type=int, default=500)
+    #parser.add_argument('--target-update-freq', type=int, default=5)
 #    parser.add_argument('--epoch', type=int, default=100)
-    parser.add_argument('--epoch', type=int, default=15)
+    parser.add_argument('--epoch', type=int, default=50)
     parser.add_argument('--gamma', type=float, default=0.99)
     parser.add_argument('--num-atoms', type=int, default=51)
     parser.add_argument('--v-min', type=float, default=-10.)
@@ -80,7 +80,7 @@ def get_args():
     parser.add_argument('--step-per-collect', type=int, default=8)
     # TODO understand where exactly this is used and why
     # why is this a float?
-    parser.add_argument('--update-per-step', type=float, default=0.1)
+    parser.add_argument('--update-per-step', type=float, default=0.5)
 #    parser.add_argument('--update-per-step', type=float, default=0.6)
     parser.add_argument('--batch-size', type=int, default=64)
     parser.add_argument('--training-num', type=int, default=8)
@@ -151,7 +151,7 @@ if __name__ == '__main__':
         rl_policy = RandomPolicy(args.action_shape)
 
     else:
-        pretrained_rl_log_path = "../../log/rainbow_on_latent/" + args.task + \
+        pretrained_rl_log_path = "../rainbow_on_latent/log/" + args.task + \
         "/" + args.pretrained_rl_log_name + "/"
         pretrained_rl_args = load_hyperparameters(pretrained_rl_log_path)
         encoder_pretrained_rl = CNNEncoderNew(observation_shape=observation_shape, 
