@@ -38,8 +38,8 @@ def get_args():
     parser.add_argument('--forward-prediction-in-latent', type=bool, default=False)
     # TODO implement
     parser.add_argument('--alternating-training-frequency', type=int, default=1)
-    #parser.add_argument('--features-dim', type=int, default=3136)
-    parser.add_argument('--features-dim', type=int, default=50)
+    parser.add_argument('--features-dim', type=int, default=3136)
+    #parser.add_argument('--features-dim', type=int, default=50)
     parser.add_argument('--seed', type=int, default=0)
     parser.add_argument("--scale-obs", type=int, default=0)
     parser.add_argument('--eps-test', type=float, default=0.005)
@@ -74,13 +74,14 @@ def get_args():
     # TODO having a different update frequency for the autoencoder 
     # and the policy is probably a smart thing to do
     parser.add_argument('--update-per-step', type=float, default=0.1)
+    #parser.add_argument('--update-per-step', type=float, default=1)
     parser.add_argument('--batch-size', type=int, default=32)
     parser.add_argument('--training-num', type=int, default=10)
     #parser.add_argument('--training-num', type=int, default=6)
     #parser.add_argument('--test-num', type=int, default=8)
     parser.add_argument('--test-num', type=int, default=10)
     parser.add_argument('--logdir', type=str, default='log')
-    parser.add_argument('--log-name', type=str, default='raibow_with_compressor_ae_01')
+    parser.add_argument('--log-name', type=str, default='raibow_small_enc_with_compressor_ae_001')
     parser.add_argument('--render', type=float, default=0.)
     parser.add_argument(
         '--device', type=str, default='cuda' if torch.cuda.is_available() else 'cpu'

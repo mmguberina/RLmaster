@@ -33,7 +33,6 @@ class AutoencoderLatentSpacePolicy(BasePolicy):
     :param CNNDecoderNew decoder: the encoder part of the autoencoder.
     :param torch.optim.Optimizer optim_encoder: a torch.optim for optimizing the encoder.
     :param torch.optim.Optimizer optim_decoder: a torch.optim for optimizing the decoder.
-    :param float lr_scale: the scaling factor for autoencoder learning.
     """
 
     def __init__(
@@ -52,7 +51,6 @@ class AutoencoderLatentSpacePolicy(BasePolicy):
         use_reconstruction_loss: bool = True,
         pass_policy_grad_to_encoder: bool = False,
         alternating_training_frequency: int = 1000,
-        lr_scale: float = 0.001,
         data_augmentation: bool = True,
         forward_prediction_in_latent: bool = True,
         **kwargs: Any,
@@ -73,7 +71,6 @@ class AutoencoderLatentSpacePolicy(BasePolicy):
         self.device = device
         self.batch_size = batch_size
         self.frames_stack = frames_stack
-        self.lr_scale = lr_scale
         # you could have an additional randomcrop (80,80) before replicationpad
         self.data_augmentation = data_augmentation
         random_shift = nn.Sequential(nn.ReplicationPad2d(4), 
