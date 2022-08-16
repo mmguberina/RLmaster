@@ -45,7 +45,8 @@ def get_args():
     parser.add_argument('--forward-prediction-in-latent', type=bool, default=False)
     # TODO implement
     parser.add_argument('--alternating-training-frequency', type=int, default=1)
-    parser.add_argument('--features_dim', type=int, default=50)
+    #parser.add_argument('--features_dim', type=int, default=50)
+    parser.add_argument('--features_dim', type=int, default=100)
     parser.add_argument('--seed', type=int, default=0)
     parser.add_argument("--scale-obs", type=int, default=0)
     parser.add_argument('--eps-test', type=float, default=0.005)
@@ -80,7 +81,7 @@ def get_args():
     parser.add_argument('--step-per-collect', type=int, default=8)
     # TODO understand where exactly this is used and why
     # why is this a float?
-    parser.add_argument('--update-per-step', type=float, default=0.5)
+    parser.add_argument('--update-per-step', type=float, default=0.2)
 #    parser.add_argument('--update-per-step', type=float, default=0.6)
     parser.add_argument('--batch-size', type=int, default=64)
     parser.add_argument('--training-num', type=int, default=8)
@@ -90,7 +91,7 @@ def get_args():
 #    parser.add_argument('--test-num', type=int, default=8)
     parser.add_argument('--test-num', type=int, default=1)
     parser.add_argument('--logdir', type=str, default='log')
-    parser.add_argument('--log-name', type=str, default='rae_compressor-trained_on-pretrained-rl-01')
+    parser.add_argument('--log-name', type=str, default='rae_compressor-trained_on-pretrained-rl-big-feature-dim-01')
 #    parser.add_argument('--log-name', type=str, default='inverse_dynamics_model_1')
     parser.add_argument('--render', type=float, default=0.)
     parser.add_argument(
@@ -197,7 +198,6 @@ if __name__ == '__main__':
         observation_shape = list(args.state_shape)
         observation_shape[0] = 1 
         observation_shape = tuple(observation_shape)
-    print(args.features_dim)
     encoder = RAE_ENC(args.device, observation_shape, 
             args.features_dim).to(args.device)
     print(encoder)
