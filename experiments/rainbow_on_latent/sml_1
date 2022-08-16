@@ -1,0 +1,4 @@
+  File "/home/marko/MASTER/RLmaster/experiments/rainbow_on_latent/./run_experiments.sh", line 2
+    python atari_rainbow_parallel_training.py --task PongNoFrameskip-v4 --log-name $1
+           ^
+SyntaxError: invalid syntax

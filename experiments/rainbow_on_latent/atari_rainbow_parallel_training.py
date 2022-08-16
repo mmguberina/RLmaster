@@ -27,12 +27,12 @@ def get_args():
     #parser.add_argument('--task', type=str, default='SeaquestNoFrameskip-v4')
     parser.add_argument('--latent-space-type', type=str, default='single-frame-predictor')
     #parser.add_argument('--latent-space-type', type=str, default='forward-frame-predictor')
-    parser.add_argument('--use-reconstruction-loss', type=int, default=True)
+    parser.add_argument('--use-reconstruction-loss', type=int, default=False)
     # ofc we want q loss, this is for testing latent space training in isolation
     parser.add_argument('--use-q-loss', type=bool, default=True)
     #parser.add_argument('--use-reconstruction-loss', type=int, default=False)
     parser.add_argument('--squeeze-latent-into-single-vector', type=bool, default=True)
-    parser.add_argument('--use-pretrained-latent', type=int, default=False)
+    parser.add_argument('--use-pretrained-encoder', type=int, default=True)
     parser.add_argument('--use-pretrained-rl', type=int, default=False)
     parser.add_argument('--pass-q-grads-to-encoder', type=bool, default=True)
     parser.add_argument('--use-regularization-on-unsupervised', type=bool, default=True)
@@ -86,7 +86,7 @@ def get_args():
     #parser.add_argument('--test-num', type=int, default=8)
     parser.add_argument('--test-num', type=int, default=10)
     parser.add_argument('--logdir', type=str, default='log')
-    parser.add_argument('--log-name', type=str, default='test')
+    parser.add_argument('--log-name', type=str, default='rl_only_on_rl_pretrained_encoders')
     parser.add_argument('--render', type=float, default=0.)
     parser.add_argument(
         '--device', type=str, default='cuda' if torch.cuda.is_available() else 'cpu'
@@ -174,12 +174,10 @@ if __name__ == "__main__":
                 n_flatten=encoder.n_flatten, features_dim=args.features_dim).to(args.device)
         #print("encoder.n_flatten")
         #print(encoder.n_flatten)
-#    if args.use_pretrained:
-#        encoder_name = "checkpoint_encoder_epoch_2.pth"
-#        decoder_name = "checkpoint_decoder_epoch_2.pth"
-#        log_path = "./log/PongNoFrameskip-v4/raibow_rae_all_fast/"
-#        encoder.load_state_dict(torch.load(log_path + encoder_name)['encoder'])
-#        decoder.load_state_dict(torch.load(log_path + decoder_name)['decoder'])
+    if args.use_pretrained_encoder:
+        encoder_name = "encoder.pth"
+        log_path = "./log/" + args.task + "/rainbow_only_small_enc_01/pretrained_by_rl_encoders/"
+        encoder.load_state_dict(torch.load(log_path + encoder_name))
 
     print(encoder)
     print(decoder)
