@@ -4,7 +4,7 @@ import pprint
 
 import numpy as np
 import torch
-from RLmaster.network.atari_network import DQNNoEncoder
+from RLmaster.network.atari_network import DQNNoEncoder, RainbowNoConvLayers, Rainbow
 from RLmaster.util.atari_wrapper import wrap_deepmind, make_atari_env, make_atari_env_watch
 from torch.utils.tensorboard import SummaryWriter
 from RLmaster.util.save_load_hyperparameters import save_hyperparameters
@@ -14,11 +14,13 @@ from tianshou.env import ShmemVectorEnv
 # TODO write the autoencoder only policy
 #from RLmaster.policy.autoencoder_only import AutoencoderOnly
 from RLmaster.policy.random import RandomPolicy
+from RLmaster.policy.dqn_fixed import RainbowPolicyFixed
 from RLmaster.latent_representations.autoencoder_learning_as_policy_wrapper import AutoencoderLatentSpacePolicy
 from RLmaster.latent_representations.autoencoder_nn import RAE_ENC, RAE_DEC, CNNEncoderNew, CNNDecoderNew, RAE_predictive_DEC
 from RLmaster.util.collector_on_latent import CollectorOnLatent
 from tianshou.trainer import offpolicy_trainer
 from tianshou.utils import TensorboardLogger
+from RLmaster.util.save_load_hyperparameters import load_hyperparameters
 
 """
 action are all random sampled
@@ -28,35 +30,58 @@ action are all random sampled
 
 def get_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--task', type=str, default='SeaquestNoFrameskip-v4')
+    parser.add_argument('--task', type=str, default='BreakoutNoFrameskip-v4')
     parser.add_argument('--latent-space-type', type=str, default='single-frame-predictor')
     parser.add_argument('--use-reconstruction-loss', type=int, default=True)
+    parser.add_argument('--use-q-loss', type=bool, default=False)
     parser.add_argument('--squeeze-latent-into-single-vector', type=bool, default=True)
-    parser.add_argument('--use-pretrained', type=int, default=False)
+    parser.add_argument('--use-pretrained-latent', type=int, default=False)
+    parser.add_argument('--use-pretrained-rl', type=int, default=True)
+    parser.add_argument('--pretrained-rl-log-name', type=str, default='rainbow_only_small_enc_01')
     parser.add_argument('--pass-q-grads-to-encoder', type=bool, default=False)
-    parser.add_argument('--data-augmentation', type=bool, default=True)
+    #parser.add_argument('--data-augmentation', type=bool, default=True)
+    parser.add_argument('--data-augmentation', type=bool, default=False)
     # NOTE the arg below is not used atm
     parser.add_argument('--forward-prediction-in-latent', type=bool, default=False)
     # TODO implement
     parser.add_argument('--alternating-training-frequency', type=int, default=1)
-    parser.add_argument('--features_dim', type=int, default=50)
+    #parser.add_argument('--features_dim', type=int, default=50)
+    parser.add_argument('--features_dim', type=int, default=100)
     parser.add_argument('--seed', type=int, default=0)
     parser.add_argument("--scale-obs", type=int, default=0)
+    parser.add_argument('--eps-test', type=float, default=0.005)
+    parser.add_argument('--eps-train', type=float, default=0.31)
+    parser.add_argument('--eps-train-final', type=float, default=0.3)
     parser.add_argument('--buffer-size', type=int, default=100000)
-#    parser.add_argument('--buffer-size', type=int, default=100)
-    parser.add_argument('--lr', type=float, default=0.001)
+    parser.add_argument('--lr-rl', type=float, default=0.0000625)
+    parser.add_argument('--lr-unsupervised', type=float, default=0.0001)
     # TODO understand where exactly this is used and why
     # it's probably how often you update the target policy network in deep-Q
-#    parser.add_argument('--target-update-freq', type=int, default=500)
-    parser.add_argument('--target-update-freq', type=int, default=5)
+    parser.add_argument('--target-update-freq', type=int, default=500)
+    #parser.add_argument('--target-update-freq', type=int, default=5)
 #    parser.add_argument('--epoch', type=int, default=100)
-    parser.add_argument('--epoch', type=int, default=15)
+    parser.add_argument('--epoch', type=int, default=50)
+    parser.add_argument('--gamma', type=float, default=0.99)
+    parser.add_argument('--num-atoms', type=int, default=51)
+    parser.add_argument('--v-min', type=float, default=-10.)
+    parser.add_argument('--v-max', type=float, default=10.)
+    parser.add_argument("--noisy-std", type=float, default=0.1)
+    parser.add_argument("--no-dueling", action="store_true", default=False)
+    parser.add_argument("--no-noisy", action="store_true", default=False)
+    parser.add_argument("--no-priority", action="store_true", default=False)
+    parser.add_argument("--alpha", type=float, default=0.5)
+    parser.add_argument("--beta", type=float, default=0.4)
+    parser.add_argument("--beta-final", type=float, default=1.)
+    parser.add_argument("--beta-anneal-step", type=int, default=5000000)
+    parser.add_argument("--no-weight-norm", action="store_true", default=False)
+    parser.add_argument('--n-step', type=int, default=3)
+    #parser.add_argument('--n-step', type=int, default=20)
     parser.add_argument('--step-per-epoch', type=int, default=100000)
     # TODO why 8?
     parser.add_argument('--step-per-collect', type=int, default=8)
     # TODO understand where exactly this is used and why
     # why is this a float?
-    parser.add_argument('--update-per-step', type=float, default=0.1)
+    parser.add_argument('--update-per-step', type=float, default=0.2)
 #    parser.add_argument('--update-per-step', type=float, default=0.6)
     parser.add_argument('--batch-size', type=int, default=64)
     parser.add_argument('--training-num', type=int, default=8)
@@ -66,7 +91,7 @@ def get_args():
 #    parser.add_argument('--test-num', type=int, default=8)
     parser.add_argument('--test-num', type=int, default=1)
     parser.add_argument('--logdir', type=str, default='log')
-    parser.add_argument('--log-name', type=str, default='rae_forward-frame-trained_as_policy_8')
+    parser.add_argument('--log-name', type=str, default='rae_compressor-trained_on-pretrained-rl-big-feature-dim-01')
 #    parser.add_argument('--log-name', type=str, default='inverse_dynamics_model_1')
     parser.add_argument('--render', type=float, default=0.)
     parser.add_argument(
@@ -109,9 +134,10 @@ if __name__ == '__main__':
         scale=args.scale_obs,
         frame_stack=args.frames_stack,
     )
-    # this gives (1,84,84) w/ pixels in 0-1 range, as it should
     args.state_shape = train_envs.observation_space.shape or train_envs.observation_space.n
     args.action_shape = train_envs.action_space.shape or train_envs.action_space.n
+    # TODO deal with this in a proper place
+    observation_shape = args.state_shape
     # should be N_FRAMES x H x W
     print("Observations shape:", args.state_shape)
     print("Actions shape:", args.action_shape)
@@ -122,8 +148,48 @@ if __name__ == '__main__':
     test_envs.seed(args.seed)
     # in this experiment we're using the random policy
     # which is just a placeholder really
-    rl_policy = RandomPolicy(args.action_shape)
-    observation_shape = args.state_shape
+    if not args.use_pretrained_rl:
+        rl_policy = RandomPolicy(args.action_shape)
+
+    else:
+        pretrained_rl_log_path = "../rainbow_on_latent/log/" + args.task + \
+        "/" + args.pretrained_rl_log_name + "/"
+        pretrained_rl_args = load_hyperparameters(pretrained_rl_log_path)
+        encoder_pretrained_rl = CNNEncoderNew(observation_shape=observation_shape, 
+                features_dim=pretrained_rl_args.features_dim, device=pretrained_rl_args.device).to(pretrained_rl_args.device)
+        rl_input_dim = pretrained_rl_args.features_dim 
+        pretrained_rl_net = RainbowNoConvLayers(pretrained_rl_args.action_shape, 
+                                     pretrained_rl_args.num_atoms,
+                                     pretrained_rl_args.noisy_std,
+                                     pretrained_rl_args.device,
+                                     not pretrained_rl_args.no_dueling,
+                                     not pretrained_rl_args.no_noisy,
+                                     rl_input_dim)#.to(pretrained_rl_args.device)
+        pretrained_rl_encoder_name = "encoder.pth"
+        pretrained_rl_net_name = "rainbow_net.pth"
+
+        encoder_pretrained_rl.load_state_dict(torch.load(pretrained_rl_log_path + pretrained_rl_encoder_name, map_location=torch.device('cpu')))
+        #encoder_pretrained_rl.load_state_dict(torch.load(pretrained_rl_log_path + pretrained_rl_encoder_name, map_location=torch.device('cpu'))['encoder'])
+        pretrained_rl_net.load_state_dict(torch.load(pretrained_rl_log_path + pretrained_rl_net_name, map_location=torch.device('cpu')))
+        #pretrained_rl_net.load_state_dict(torch.load(pretrained_rl_log_path + pretrained_rl_net_name, map_location=torch.device('cpu'))['encoder'])
+        encoder_pretrained_rl.to(args.device)
+        encoder_pretrained_rl.requires_grad_(False)
+        pretrained_rl_net.to(args.device)
+        pretrained_rl_net.requires_grad_(False)
+        optim_q = None
+
+        #rl_policy = RainbowPolicy(
+        rl_policy = RainbowPolicyFixed(
+            pretrained_rl_net,
+            optim_q,
+            args.gamma,
+            args.num_atoms,
+            args.v_min,
+            args.v_max,
+            args.n_step,
+            target_update_freq=args.target_update_freq
+        ).to(args.device)
+
 
     if not args.squeeze_latent_into_single_vector:
         # in this case, we don't pass the stacked frames.
@@ -144,12 +210,12 @@ if __name__ == '__main__':
     print(decoder)
 #    encoder = CNNEncoderNew(observation_shape=args.state_shape, features_dim=args.features_dim, device=args.device).to(args.device)
 #    decoder = CNNDecoderNew(observation_shape=args.state_shape, n_flatten=encoder.n_flatten, features_dim=args.features_dim).to(args.device)
-    optim_encoder = torch.optim.Adam(encoder.parameters(), lr=args.lr)
-    optim_decoder = torch.optim.Adam(decoder.parameters(), lr=args.lr, weight_decay=10**-7)
+    optim_encoder = torch.optim.Adam(encoder.parameters(), lr=args.lr_unsupervised)
+    optim_decoder = torch.optim.Adam(decoder.parameters(), lr=args.lr_unsupervised, weight_decay=10**-7)
     reconstruction_criterion = torch.nn.MSELoss()
-    # the rl_policy is then passed into our autoencoder-wrapper policy
-    # it's done this way because the compression to latent spaces
-    # comes before using the rl policy.
+
+
+
     policy = AutoencoderLatentSpacePolicy(
         rl_policy,
         args.latent_space_type,
@@ -164,7 +230,11 @@ if __name__ == '__main__':
         args.squeeze_latent_into_single_vector,
         args.use_reconstruction_loss,
         args.pass_q_grads_to_encoder,
-        args.alternating_training_frequency
+        args.alternating_training_frequency,
+        args.data_augmentation,
+        args.forward_prediction_in_latent,
+        args.use_q_loss,
+        encoder_pretrained_rl
     )
     if args.resume_path:
         policy.load_state_dict(torch.load(args.resume_path, map_location=args.device))

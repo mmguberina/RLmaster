@@ -23,14 +23,17 @@ from tianshou.utils import TensorboardLogger
 
 def get_args():
     parser = argparse.ArgumentParser()
-    #parser.add_argument('--task', type=str, default='PongNoFrameskip-v4')
-    parser.add_argument('--task', type=str, default='SeaquestNoFrameskip-v4')
+    parser.add_argument('--task', type=str, default='PongNoFrameskip-v4')
+    #parser.add_argument('--task', type=str, default='SeaquestNoFrameskip-v4')
     parser.add_argument('--latent-space-type', type=str, default='single-frame-predictor')
     #parser.add_argument('--latent-space-type', type=str, default='forward-frame-predictor')
     parser.add_argument('--use-reconstruction-loss', type=int, default=True)
+    # ofc we want q loss, this is for testing latent space training in isolation
+    parser.add_argument('--use-q-loss', type=bool, default=True)
     #parser.add_argument('--use-reconstruction-loss', type=int, default=False)
     parser.add_argument('--squeeze-latent-into-single-vector', type=bool, default=True)
-    parser.add_argument('--use-pretrained', type=int, default=False)
+    parser.add_argument('--use-pretrained-latent', type=int, default=False)
+    parser.add_argument('--use-pretrained-rl', type=int, default=False)
     parser.add_argument('--pass-q-grads-to-encoder', type=bool, default=True)
     #parser.add_argument('--data-augmentation', type=bool, default=True)
     parser.add_argument('--data-augmentation', type=bool, default=False)
@@ -46,7 +49,8 @@ def get_args():
     parser.add_argument('--eps-train', type=float, default=1.)
     parser.add_argument('--eps-train-final', type=float, default=0.05)
     parser.add_argument('--buffer-size', type=int, default=100000)
-    parser.add_argument('--lr-rl', type=float, default=0.0000625)
+    #parser.add_argument('--lr-rl', type=float, default=0.0000625)
+    parser.add_argument('--lr-rl', type=float, default=0.0001)
     parser.add_argument('--lr-unsupervised', type=float, default=0.0001)
     parser.add_argument('--gamma', type=float, default=0.99)
     parser.add_argument('--num-atoms', type=int, default=51)
@@ -81,7 +85,7 @@ def get_args():
     #parser.add_argument('--test-num', type=int, default=8)
     parser.add_argument('--test-num', type=int, default=10)
     parser.add_argument('--logdir', type=str, default='log')
-    parser.add_argument('--log-name', type=str, default='raibow_small_enc_with_compressor_ae_001')
+    parser.add_argument('--log-name', type=str, default='test')
     parser.add_argument('--render', type=float, default=0.)
     parser.add_argument(
         '--device', type=str, default='cuda' if torch.cuda.is_available() else 'cpu'
@@ -169,12 +173,12 @@ if __name__ == "__main__":
                 n_flatten=encoder.n_flatten, features_dim=args.features_dim).to(args.device)
         #print("encoder.n_flatten")
         #print(encoder.n_flatten)
-    if args.use_pretrained:
-        encoder_name = "checkpoint_encoder_epoch_2.pth"
-        decoder_name = "checkpoint_decoder_epoch_2.pth"
-        log_path = "./log/PongNoFrameskip-v4/raibow_rae_all_fast/"
-        encoder.load_state_dict(torch.load(log_path + encoder_name)['encoder'])
-        decoder.load_state_dict(torch.load(log_path + decoder_name)['decoder'])
+#    if args.use_pretrained:
+#        encoder_name = "checkpoint_encoder_epoch_2.pth"
+#        decoder_name = "checkpoint_decoder_epoch_2.pth"
+#        log_path = "./log/PongNoFrameskip-v4/raibow_rae_all_fast/"
+#        encoder.load_state_dict(torch.load(log_path + encoder_name)['encoder'])
+#        decoder.load_state_dict(torch.load(log_path + decoder_name)['decoder'])
 
     print(encoder)
     print(decoder)
@@ -245,7 +249,8 @@ if __name__ == "__main__":
         args.pass_q_grads_to_encoder,
         args.alternating_training_frequency,
         args.data_augmentation,
-        args.forward_prediction_in_latent
+        args.forward_prediction_in_latent,
+        args.use_q_loss
     )
     # TODO write this out
     if args.resume_path:
