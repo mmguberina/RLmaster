@@ -35,6 +35,7 @@ def get_args():
     parser.add_argument('--use-pretrained-latent', type=int, default=False)
     parser.add_argument('--use-pretrained-rl', type=int, default=False)
     parser.add_argument('--pass-q-grads-to-encoder', type=bool, default=True)
+    parser.add_argument('--use-regularization-on-unsupervised', type=bool, default=True)
     #parser.add_argument('--data-augmentation', type=bool, default=True)
     parser.add_argument('--data-augmentation', type=bool, default=False)
     # TODO implement this lel
@@ -159,7 +160,7 @@ if __name__ == "__main__":
 
     # TODO unify this somehow
     # TODO add the 3rd network
-    if args.features_dim == 50:
+    if args.features_dim != 3136:
         encoder = RAE_ENC(args.device, observation_shape, args.features_dim).to(args.device)
         if args.latent_space_type == "forward-frame-predictor":
             decoder = RAE_predictive_DEC(args.device, observation_shape, 
@@ -183,7 +184,11 @@ if __name__ == "__main__":
     print(encoder)
     print(decoder)
     optim_encoder = torch.optim.Adam(encoder.parameters(), lr=args.lr_unsupervised)
-    optim_decoder = torch.optim.Adam(decoder.parameters(), lr=args.lr_unsupervised, weight_decay=10**-7)
+    if args.use_regularization:
+        optim_decoder = torch.optim.Adam(decoder.parameters(), lr=args.lr_unsupervised, weight_decay=10**-7)
+    else:
+        optim_decoder = torch.optim.Adam(decoder.parameters(), lr=args.lr_unsupervised)
+
     reconstruction_criterion = torch.nn.MSELoss()
 
     # TODO FINISH FIX
@@ -250,7 +255,8 @@ if __name__ == "__main__":
         args.alternating_training_frequency,
         args.data_augmentation,
         args.forward_prediction_in_latent,
-        args.use_q_loss
+        args.use_q_loss,
+        args.use_regularization
     )
     # TODO write this out
     if args.resume_path:

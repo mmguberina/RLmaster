@@ -54,6 +54,7 @@ class AutoencoderLatentSpacePolicy(BasePolicy):
         data_augmentation: bool = True,
         forward_prediction_in_latent: bool = True,
         use_q_loss: bool = True,
+        use_regularization: bool = True,
         encoder_pretrained_rl = None,
         **kwargs: Any,
     ) -> None:
@@ -74,6 +75,7 @@ class AutoencoderLatentSpacePolicy(BasePolicy):
         self.device = device
         self.batch_size = batch_size
         self.frames_stack = frames_stack
+        self.use_regularization = use_regularization
         # you could have an additional randomcrop (80,80) before replicationpad
         self.data_augmentation = data_augmentation
         random_shift = nn.Sequential(nn.ReplicationPad2d(4), 
@@ -347,13 +349,14 @@ class AutoencoderLatentSpacePolicy(BasePolicy):
 #            reconstruction_loss = self.reconstruction_criterion(decoded_obs, batch.obs_next[:, -1, :, :].view(-1, 1, 84, 84) / 255)
         # L2 penalty on latent representation:
         # this is wrong for single-frame-predictor
-        latent_loss = (0.5 * encoded_obs.pow(2).sum(1)).mean()
-        # throwing a sample loss in there to see what happens
-        loss = reconstruction_loss + latent_loss * 10**-6
+        if self.use_regularization:
+            latent_loss = (0.5 * encoded_obs.pow(2).sum(1)).mean()
+            # throwing a sample loss in there to see what happens
+            loss = reconstruction_loss + latent_loss * 10**-6
+            loss.backward()
+        else:
+            regularization_loss.backward()
 
-
-        #reconstruction_loss.backward()
-        loss.backward()
         self.optim_encoder.step()
         self.optim_decoder.step()
         if self.use_q_loss:
