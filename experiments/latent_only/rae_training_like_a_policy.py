@@ -39,14 +39,15 @@ def get_args():
     parser.add_argument('--use-pretrained-rl', type=int, default=True)
     parser.add_argument('--pretrained-rl-log-name', type=str, default='rainbow_only_small_enc_01')
     parser.add_argument('--pass-q-grads-to-encoder', type=bool, default=False)
-    #parser.add_argument('--data-augmentation', type=bool, default=True)
-    parser.add_argument('--data-augmentation', type=bool, default=False)
+    parser.add_argument('--use-regularization-on-unsupervised', type=bool, default=True)
+    parser.add_argument('--data-augmentation', type=bool, default=True)
+    #parser.add_argument('--data-augmentation', type=bool, default=False)
     # NOTE the arg below is not used atm
     parser.add_argument('--forward-prediction-in-latent', type=bool, default=False)
     # TODO implement
     parser.add_argument('--alternating-training-frequency', type=int, default=1)
     #parser.add_argument('--features_dim', type=int, default=50)
-    parser.add_argument('--features_dim', type=int, default=100)
+    parser.add_argument('--features_dim', type=int, default=512)
     parser.add_argument('--seed', type=int, default=0)
     parser.add_argument("--scale-obs", type=int, default=0)
     parser.add_argument('--eps-test', type=float, default=0.005)
@@ -60,7 +61,7 @@ def get_args():
     parser.add_argument('--target-update-freq', type=int, default=500)
     #parser.add_argument('--target-update-freq', type=int, default=5)
 #    parser.add_argument('--epoch', type=int, default=100)
-    parser.add_argument('--epoch', type=int, default=50)
+    parser.add_argument('--epoch', type=int, default=15)
     parser.add_argument('--gamma', type=float, default=0.99)
     parser.add_argument('--num-atoms', type=int, default=51)
     parser.add_argument('--v-min', type=float, default=-10.)
@@ -81,7 +82,7 @@ def get_args():
     parser.add_argument('--step-per-collect', type=int, default=8)
     # TODO understand where exactly this is used and why
     # why is this a float?
-    parser.add_argument('--update-per-step', type=float, default=0.2)
+    parser.add_argument('--update-per-step', type=float, default=0.3)
 #    parser.add_argument('--update-per-step', type=float, default=0.6)
     parser.add_argument('--batch-size', type=int, default=64)
     parser.add_argument('--training-num', type=int, default=8)
@@ -91,7 +92,7 @@ def get_args():
 #    parser.add_argument('--test-num', type=int, default=8)
     parser.add_argument('--test-num', type=int, default=1)
     parser.add_argument('--logdir', type=str, default='log')
-    parser.add_argument('--log-name', type=str, default='rae_compressor-trained_on-pretrained-rl-big-feature-dim-01')
+    parser.add_argument('--log-name', type=str, default='rae_compressor-trained_on-pretrained-rl-feature-dim-512-01')
 #    parser.add_argument('--log-name', type=str, default='inverse_dynamics_model_1')
     parser.add_argument('--render', type=float, default=0.)
     parser.add_argument(
@@ -211,7 +212,11 @@ if __name__ == '__main__':
 #    encoder = CNNEncoderNew(observation_shape=args.state_shape, features_dim=args.features_dim, device=args.device).to(args.device)
 #    decoder = CNNDecoderNew(observation_shape=args.state_shape, n_flatten=encoder.n_flatten, features_dim=args.features_dim).to(args.device)
     optim_encoder = torch.optim.Adam(encoder.parameters(), lr=args.lr_unsupervised)
-    optim_decoder = torch.optim.Adam(decoder.parameters(), lr=args.lr_unsupervised, weight_decay=10**-7)
+
+    if args.use_regularization_on_unsupervised:
+        optim_decoder = torch.optim.Adam(decoder.parameters(), lr=args.lr_unsupervised, weight_decay=10**-7)
+    else:
+        optim_decoder = torch.optim.Adam(decoder.parameters(), lr=args.lr_unsupervised)
     reconstruction_criterion = torch.nn.MSELoss()
 
 
@@ -234,6 +239,7 @@ if __name__ == '__main__':
         args.data_augmentation,
         args.forward_prediction_in_latent,
         args.use_q_loss,
+        args.use_regularization_on_unsupervised,
         encoder_pretrained_rl
     )
     if args.resume_path:

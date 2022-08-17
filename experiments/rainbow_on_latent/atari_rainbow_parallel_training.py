@@ -176,13 +176,13 @@ if __name__ == "__main__":
         #print(encoder.n_flatten)
     if args.use_pretrained_encoder:
         encoder_name = "encoder.pth"
-        log_path = "./log/" + args.task + "/rainbow_only_small_enc_01/pretrained_by_rl_encoders/"
+        log_path = "./log/" + args.task + "/pretrained_by_rl_encoders/"
         encoder.load_state_dict(torch.load(log_path + encoder_name))
 
     print(encoder)
     print(decoder)
     optim_encoder = torch.optim.Adam(encoder.parameters(), lr=args.lr_unsupervised)
-    if args.use_regularization:
+    if args.use_regularization_on_unsupervised:
         optim_decoder = torch.optim.Adam(decoder.parameters(), lr=args.lr_unsupervised, weight_decay=10**-7)
     else:
         optim_decoder = torch.optim.Adam(decoder.parameters(), lr=args.lr_unsupervised)
@@ -254,7 +254,7 @@ if __name__ == "__main__":
         args.data_augmentation,
         args.forward_prediction_in_latent,
         args.use_q_loss,
-        args.use_regularization
+        args.use_regularization_on_unsupervised
     )
     # TODO write this out
     if args.resume_path:
