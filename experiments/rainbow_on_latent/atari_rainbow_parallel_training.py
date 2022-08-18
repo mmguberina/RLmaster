@@ -32,17 +32,18 @@ def get_args():
     parser.add_argument('--use-q-loss', type=bool, default=True)
     #parser.add_argument('--use-reconstruction-loss', type=int, default=False)
     parser.add_argument('--squeeze-latent-into-single-vector', type=bool, default=True)
-    parser.add_argument('--use-pretrained-encoder', type=int, default=True)
+    parser.add_argument('--use-pretrained-rl-encoder', type=int, default=False)
+    parser.add_argument('--use-pretrained-unsupervised-encoder', type=int, default=False)
     parser.add_argument('--use-pretrained-rl', type=int, default=False)
     parser.add_argument('--pass-q-grads-to-encoder', type=bool, default=True)
     parser.add_argument('--use-regularization-on-unsupervised', type=bool, default=True)
-    #parser.add_argument('--data-augmentation', type=bool, default=True)
-    parser.add_argument('--data-augmentation', type=bool, default=False)
+    parser.add_argument('--data-augmentation', type=bool, default=True)
+    #parser.add_argument('--data-augmentation', type=bool, default=False)
     # TODO implement this lel
     parser.add_argument('--forward-prediction-in-latent', type=bool, default=False)
     # TODO implement
     parser.add_argument('--alternating-training-frequency', type=int, default=1)
-    parser.add_argument('--features-dim', type=int, default=3136)
+    parser.add_argument('--features-dim', type=int, default=256)
     #parser.add_argument('--features-dim', type=int, default=50)
     parser.add_argument('--seed', type=int, default=0)
     parser.add_argument("--scale-obs", type=int, default=0)
@@ -86,7 +87,8 @@ def get_args():
     #parser.add_argument('--test-num', type=int, default=8)
     parser.add_argument('--test-num', type=int, default=10)
     parser.add_argument('--logdir', type=str, default='log')
-    parser.add_argument('--log-name', type=str, default='rl_only_on_rl_pretrained_encoders')
+    #parser.add_argument('--log-name', type=str, default='rl_only_on_unsupervised_pretrained_encoders')
+    parser.add_argument('--log-name', type=str, default='rl_with_unsupervised_on_256_bottleneck_01')
     parser.add_argument('--render', type=float, default=0.)
     parser.add_argument(
         '--device', type=str, default='cuda' if torch.cuda.is_available() else 'cpu'
@@ -172,11 +174,13 @@ if __name__ == "__main__":
                 features_dim=args.features_dim, device=args.device).to(args.device)
         decoder = CNNDecoderNew(observation_shape=observation_shape, 
                 n_flatten=encoder.n_flatten, features_dim=args.features_dim).to(args.device)
-        #print("encoder.n_flatten")
-        #print(encoder.n_flatten)
-    if args.use_pretrained_encoder:
+    if args.use_pretrained_rl_encoder:
         encoder_name = "encoder.pth"
         log_path = "./log/" + args.task + "/pretrained_by_rl_encoders/"
+        encoder.load_state_dict(torch.load(log_path + encoder_name))
+    if args.use_pretrained_unsupervised_encoder:
+        encoder_name = "encoder.pth"
+        log_path = "../latent_only/log/" + args.task + "/rae_compressor-trained_on-pretrained-rl-feature-dim-256-01/"
         encoder.load_state_dict(torch.load(log_path + encoder_name))
 
     print(encoder)
