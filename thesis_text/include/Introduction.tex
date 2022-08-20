@@ -15,7 +15,7 @@ the quality of those actions.
 By repeatedly exploring the effects of various sequences of actions, the agent
 can find, i.e. learn, the sequence of actions which lead to its goal.
 
-Here, it is important to discuss what a goal is.
+Here it is important to discuss what a goal is.
 To formalize the process outlined above, one needs to describe it
 in purely mathematical terms.
 Thus, among other things, the goal needs to be described numerically.
@@ -149,7 +149,7 @@ is the ultimate goal in most practical applications.
 \section{Efforts to make reinforcement learning more efficient}
 \label{efforts-in-making-rl-efficient}
 \subsection{Utilizing a world model}
-An important classification of reinforcement learning algorithm is the one between
+An important classification of reinforcement learning algorithms is the one between
 model-based and model-free algorithms.
 As the name suggests, model-free algorithms do not form an explicit model of the environment.
 Instead, they function as black-box optimization algorithms, simply finding actions which maximize
@@ -238,7 +238,7 @@ we constrain ourselves to the problem of learning from images and to problems
 with discrete action spaces in particular.
 To be able to compare our results to those of other researchers,
 we will test our algorithms on the standard benchmark tasks in the field,
-namely Atari-57 games \cite{bellemare13arcade}.
+namely Atari-57 games \cite{bellemare2013arcade}.
 %firstly, we know that in general lower-dimensional optimization problems
 %are easier to solve than higher-dimensional ones.
 %Secondly, it is known that when algorithms learn with direct state access,
@@ -265,8 +265,8 @@ In this thesis, our goal is not to arrive at a new state-of-the-art algorithm,
 but to investigate which properties of both the state representation learning and its integration
 with reinforcement learning yield better results.
 We will not test all of the existing approaches, but rather identify their common properties,
-form hypothesis based on those properties and perform tests on a simple implementation.
-Here we offer our hypothesis:
+form hypotheses based on those properties and perform tests on a simple implementation.
+Here we offer our hypotheses:
 \begin{enumerate}
 		\item State representations found by general unsupervised learning techniques 
 		will not equate to true states, although they will be closer to them than
@@ -304,7 +304,7 @@ In this thesis we provide the following contributions:
 \begin{enumerate}
 	\item A systematic overview of recent works which leverage state representation learning
 		to make model-free reinforcement learning more sample-efficient.
-	\item Extensive testing of our hypothesis which illuminate the problem and pave the wave 
+	\item Extensive testing of our hypotheses which illuminate the problem and pave the wave 
 			for further algorithm development.
 	\item Implementation of our method in a high-quality reinforcement learning library.
 			Despite the fact that our method is not the best available one, its generality
@@ -334,7 +334,7 @@ Here we cover several existing approaches to bolstering the sample-efficiency of
 state representation learning. 
 Having covered the field, in \ref{sec-hypothesis-reasoning} we identify key factors which lead to state representations which 
 can be leveraged by reinforcement learning algorithms.
-In other words, we then form the basis for our hypothesis.
+In other words, we then form the basis for our hypotheses.
 
 
 

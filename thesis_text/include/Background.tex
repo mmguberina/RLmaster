@@ -335,7 +335,7 @@ With these definitions, the reinforcement learning objective may also be written
 
 \section{Classes of reinforcement learning algorithms}
 \label{sec-rl-alg-classes}
-\subsection{Policy gradients}
+\subsection{Policy gradient algorithms}
 \label{sub-policy-gradient}
 Policy gradients are derived by directly solving for
 the reinforcement learning objective using gradient descent,
@@ -585,6 +585,7 @@ to estimate the return. In the bootstrap estimate,
 only a single step in the future was used along with the estimate.
 Instead, a \textbf{n-step} return estimator can used:
 \begin{equation}
+		\label{eq-n-step-return}
 		\hat{A}^\pi_n (\bm{s}_{t}, \bm{a}_{t}) =
 		\sum_{t'=t}^{t+n} \gamma^{t'-t} r(\bm{s}_{t'}, \bm{a}_{t'})
 		- \hat{V}^\pi_\theta(\bm{s}_t) + \gamma^n \hat{V}^\pi_\theta(\bm{s}_{t+n})
@@ -653,6 +654,7 @@ according to the policy $ \pi  $.
 Thus, if provided with the advantage function, a deterministic 
 \textbf{greedy policy} could be construct:
 \begin{equation}
+		\label{eq-greedy-pi}
 		\pi_{ \text{greedy} }(\bm{s}_{t}| \bm{a}_{t}) = \left\{ 
 \begin{matrix}
 		1 & \text{ if } \bm{a}_t = \argmax_{\bm{a}_t} A^\pi (\bm{s}_{t}, \bm{a}_{t}) 		 \\
@@ -674,23 +676,164 @@ they provide an essential foundation for understanding the other methods.
 Usually a finite Markov decision process is assumed. Dynamic programming can be applied to continuous 
 problems as well, but exact solution exist only in special cases.
 
-Value iteration and Q-learning make up two fundamental algorithms of
-Reinforcement Learning.Q learning is an Off policy algorithm, which means it
-uses a different policy for exploring actions from the target policy of being
-optimal.  Many of the amazing feats in RL over the past decade, such as Deep
-Q-Learning for Atari, or AlphaGo, Rainbow were rooted in these foundations. As
-stated in section 2.2.3 value function ,is a measure of the expected reward you
-can receive from any given state  given an MDP and a policy describing which
-actions an agent takes in each state. Value iteration is a computational
-algorithm that provides a means of finding the optimal policy $ \pi^{ * }$ .
-The algorithm works by iteratively determining the value of being in each
-state,  assuming that the agent takes the best possible action in that state
-under the current estimate of the value function.Fitted value iteration
-algorithm  are used for approximating the value function of a continuous state
-MDP.Unlike value iteration over discrete state of states fitted value iteration
-can not always converge.In order for certain dynamic programming algorithms
-(e.g. policy iteration, value iteration) converge to a unique fixed point
-Bellman equation  was rewritten as operator.
+For brevity, dynamic programming will not be fully introduced here.
+The interested reader is referred to \cite{suttonrlbook}.
+Here only the broad idea will be introduced in order to make value iteration intuitive in its own right.
+A problem is said to have optimal substructure if an optimal solution to it can be constructed from
+optimal solutions of its subproblems.
+Value functions have this property: for a single well-defined problem,
+nearby optimal states are not related to optimality of distant states.
+In other words, the value of one state is related only to the value of states to which there are transitions from it.
+This principle is used to derive the \textbf{Bellman equation}.
+In problem with a finite number of states, it can be shown that iterating between evaluating the value function
+with the Bellman equation
+and updating the policy based on the value function leads to the optimal value function and policy.
+
+In particular, the bootstrap update for the value function is:
+\begin{equation}
+		\label{eq-bellman-value-update}
+V^\pi(\bm{s}) \leftarrow E_{\bm{a} \sim \pi(\bm{a}|\bm{s})} \left[ r(\bm{s}_{}, \bm{a}_{}) + \gamma E_{\bm{s}' \sim p(\bm{s}' |\bm{a},\bm{s}  )} [V^\pi(\bm{s}') ] \right] 
+\end{equation}
+where $   V^\pi(\bm{s}') $ is the current estimate (initially set to whatever).
+With \ref{eq-greedy-pi} we can construct the policy iteration algorithm:
+
+\fbox{
+\parbox{\textwidth}{
+\underline{Policy iteration}
+\begin{enumerate}
+		\item evaluate $ V^{ \pi } (\bm{s}_{})  $ with \ref{eq-bellman-value-update}
+\item set $ \pi \leftarrow \pi'  $
+\end{enumerate}
+}}
+
+Upon inspection of the $ \argmax  $ in the advantage function, by skipping the policy update, this produce can be further simplified 
+into the \textbf{value iteration} algorithm:
+\footnote{Here the notation was simplified for readability.}
+\fbox{
+\parbox{\textwidth}{
+		\label{alg-finite-value-iteration}
+\underline{Value iteration}
+\begin{enumerate}
+		\item set $Q(\bm{s}, \bm{a}) \leftarrow r (\bm{s}, \bm{a}) + \gamma E[V(\bm{s}')]$
+		\item set $V(\bm{s}) \leftarrow \max_{\bm{a}} Q(\bm{s}, \bm{a})$
+\end{enumerate}
+}}
+
+
+\subsubsection{Fitted value iteration}
+As mentioned, and as should be clear from the equations, \ref{alg-finite-value-iteration} works only on
+problems with a finite number of states.
+While real-valued problems can be partitioned into discrete ones and limited in scope,
+for most interesting problems this results in an intractable algorithm.
+However, function approximation, in particular nonlinear function approximation through neural networks
+can greatly bolster the capacity of value iteration.
+Another benefit of such an approach is that it is naturally adaptable to being off-policy.
+This is because after collecting samples the goal is to fit the value function, namely the Q-function, 
+to the gathered data.
+In particular, the algorithm template is:
+\footnote{
+A particular implementation called DQN
+will be discussed later.}
+
+\fbox{
+\parbox{\textwidth}{
+		\label{eq:fitted_q_iteration_algorithm}
+\underline{Fitted Q-iteration algorithm}
+\begin{enumerate}
+		\item collect dataset $ \left\{ \left( \bm{s}_i, \bm{a}_i, \bm{s}_i', r_i \right)  \right\}  $ using a 
+				policy based on the value function
+		\item set $ \bm{y}_i \leftarrow r(\bm{s}_{i}, \bm{a}_{i})+ \gamma \max_{\bm{a}_i'} Q_\phi (\bm{s}_{i}', \bm{a}_{i}')   $
+		\item set $\phi \leftarrow \argmin_\phi \frac{1}{2} \sum_{i}^{} || Q_\phi (\bm{s}_{i}, \bm{a}_{i}) - \bm{y}_i||^2 $
+\end{enumerate}
+}}
+By itself, this algorithm does not encourage exploration.
+This is usually fixed by using the \textbf{epsilon-greedy} policy:
+\begin{equation}
+\pi(\bm{a}_{t}| \bm{s}_{t}) = 
+\left\{
+		\begin{array}{ll}
+				1 - \epsilon & \text{if } \bm{a}_t = \argmax_{\bm{a}_t} Q_\phi(\bm{s}_{t}, \bm{a}_{t}) \\
+				\frac{\epsilon}{|\mathcal{A}| - 1} & \text{otherwise}
+\end{array}
+		\right.
+\end{equation}
+In this case $ \epsilon  $ is often set to be large in the beginning of training
+and is decreased over time.
+
+Unfortunately, by using nonlinear function approximators for value functions the convergence 
+guarantees from the finite setting are lost.
+To see why, we first introduce the Bellman operator:
+\begin{equation}
+		\mathcal{B}: \mathcal{B}V = \max_{\bm{a}} r_{\bm{a}} + \gamma \mathcal{T}_{\bm{a}}V
+\end{equation}
+where $r_{\bm{a}}$ is the stacked vector of rewards of all states for action $\bm{a}$,
+and $\mathcal{T}_{\bm{a},i,j} = p (\bm{s}' = i | \bm{s} = j, \bm{a}) $ is the matrix of transitions corresponding to the action $\bm{a}$.
+$V^\star$ is now a \textit{fixed point} of $\mathcal{B}$, 
+meaning that if it is recovered the optimal policy is obtained:
+\begin{equation}
+		V^\star(\bm{s}) = \max_{\bm{a}} r(\bm{s}_{}, \bm{a}_{}) + \gamma E[V^\star(\bm{s}')], \text{ so } V^\star = \mathcal{B}V^\star
+\end{equation}
+It's possible to show that $V^\star$ always exists, is unique and corresponds to the optimal policy.
+This is because
+it can proven that $\mathcal{B}$ is a \textit{contraction}. This means that for any $V$, $\bar{V}$: 
+\begin{equation}
+		|| \mathcal{B}V - \mathcal{B}\bar{V}||_\infty \leq \underbrace{\gamma}_{\text{gap always gets smaller by } \gamma \text{ w.r.t. } \infty \text{-norm}} || V - \bar{V}||_\infty
+\end{equation}
+
+However, if nonlinear function approximation is used the situation changes.
+Namely, in the second step of \ref{alg-finite-value-iteration}:
+\begin{equation}
+		V' \leftarrow \argmin_{V' \in \Omega} \frac{1}{2} \sum_{}^{} ||V'(\bm{s}) - (\mathcal{B}V)(\bm{s})||^2
+\end{equation}
+where $\Omega$ is the hypothesis space (ex. the space of all weights of employed neural network architectures).
+$V'$ will be a projection of $\mathcal{B}V$ back to $\Omega$.
+Let us introduce an operator for this projection:
+\begin{equation}
+		\Pi : \Pi V = \argmin_{V' \in \Omega} \frac{1}{2} \sum_{}^{} ||V'(\bm{s}) - V(\bm{s})||^2
+\end{equation}
+So the fitter value iteration algorithm is:
+\begin{enumerate}
+		\item $V \leftarrow \Pi \mathcal{B} V$
+\end{enumerate}
+and here $\mathcal{B}$ is a contraction (w.r.t. $\infty$-norm (``max'' norm)),
+$\Pi$ is a contraction w.r.t. $l_2$-norm (Euclidean distance), but
+$\Pi \mathcal{B}$ is not a contraction of any kind!
+The same holds for fitted Q-iteration, but we withhold further analysis for 
+sake of brevity.
+Thus fitted value iteration does not converge.
+Additionally, it is interesting that Q-learning is not in fact a 
+derivative of the Q-function:
+\begin{equation}
+	 \phi \leftarrow \phi - \alpha \frac{d Q_\phi}{d\phi} (\bm{s}_{i}, \bm{a}_{i}) \left( Q_\phi(\bm{s}_{i}, \bm{a}_{i}) - 
+	 \underbrace{\left[ r(\bm{s}_{i}, \bm{a}_{i}) + \gamma \max_{\bm{a}'} Q_\phi (\bm{s}_{i}', \bm{a}_{i}') \right] }_{\text{no gradient through target value}}
+\right)  	
+\end{equation}
+As can be seen, the target Q-values themselves depend on Q-values.
+Despite these sad theoretical results,
+fitted value iteration algorithms work surprisingly well in practise.
+In fact, this work uses fitted value iteration algorithms,
+namely DQN and Rainbow, which will be introduced next.
+
+
+%============================================e
+%\newline
+%Value iteration and Q-learning make up two fundamental algorithms of
+%Reinforcement Learning.Q learning is an Off policy algorithm, which means it
+%uses a different policy for exploring actions from the target policy of being
+%optimal.  Many of the amazing feats in RL over the past decade, such as Deep
+%Q-Learning for Atari, or AlphaGo, Rainbow were rooted in these foundations. As
+%stated in section 2.2.3 value function ,is a measure of the expected reward you
+%can receive from any given state  given an MDP and a policy describing which
+%actions an agent takes in each state. Value iteration is a computational
+%algorithm that provides a means of finding the optimal policy $ \pi^{ * }$ .
+%The algorithm works by iteratively determining the value of being in each
+%state,  assuming that the agent takes the best possible action in that state
+%under the current estimate of the value function.Fitted value iteration
+%algorithm  are used for approximating the value function of a continuous state
+%MDP.Unlike value iteration over discrete state of states fitted value iteration
+%can not always converge.In order for certain dynamic programming algorithms
+%(e.g. policy iteration, value iteration) converge to a unique fixed point
+%Bellman equation  was rewritten as operator.
 
 %TODO: 
 %\begin{enumerate}
@@ -701,72 +844,191 @@ Bellman equation  was rewritten as operator.
 %				approximation (introduce the bellman operator as well)
 %\end{enumerate}
 
-\section{Deep Q-networks and their extensions}
+\section{Deep reinforcement learning with Q-functions}
 \label{sec-drl}
+In this section we finally introduce reinforcement learning algorithms
+which are built upon in the thesis.
+As the section title suggests, these algorithms utilize (deep) neural networks.
+While simple feed-forward networks with 2-3 hidden layers suffice for many control problems,
+additional preceding convolutional layers are require form problems with image inputs.
+For problems with long-term temporal dependencies, networks with recurrent layers are often used.
+We are particularly concerned with the DQN algorithm \cite{mnih2013atari} and a series of improvements to it which culminated
+in their combination which is named the Rainbow algorithm.
+There are multiple reasons why Rainbow was chosen.
+Firstly, it and other fitted value iteration algorithms are the best suited ones for
+problems with discrete action spaces to which we restricted ourselves.
+Secondly, leveraging state representation learning is most suitable to
+fitted value iteration algorithms and critics in actor-critic algorithms because 
+they are more stable than policy gradients. 
+As shall be discussed later, stability of state representation learning and of reinforcement learning
+is necessary for successful simultaneous learning of both.
 
+The on-policy version of Q-learning suffers from overfitting to local transitions.
+The problem is further exacerbated because the target values change through time.
+While this problem can be ameliorated by using parallel workers,
+a better solution is to use a \textbf{replay buffer}.
+A replay buffer is simply an array which keeps track of sampled transitions.
+Minibatch updates can be constructed by sampling independent and identically distributed
+transitions from the buffer, thereby remove the problem of overfitting to local transitions.
+Continuous replacement of old samples with new ones ensures continual learning as
+new transitions are collected (the initial epsilon-greedy policy often can not sample all transitions
+because it can not reach states with high rewards).
+Q-learning then becomes:
+
+\fbox{
+\parbox{\textwidth}{
+\label{q-learning-w-replay-buffer}
+\underline{Q-learning with a replay buffer}
+\begin{enumerate}
+		\item[] \textit{repeat until a satisfactory result is reached}:
+		\item collect dataset $\left\{ \left( \bm{s}_i, \bm{a}_i, \bm{s}_i', r_i \right)  \right\} $ using some policy, add it to $\mathcal{B}$
+		\item[] \textit{repeat K times}:
+		\item sample a batch  $\left( \bm{s}_i, \bm{a}_i, \bm{s}_i', r_i \right)$ in i.i.d. fashion from $\mathcal{B}$
+		\item update network weights: \newline $  \phi \leftarrow \phi  - \alpha \sum_{i}^{}  \frac{d Q_\phi}{d\phi} (\bm{s}_{i}, \bm{a}_{i}) \left( Q_\phi(\bm{s}_{i}, \bm{a}_{i}) - 
+			\left[ r(\bm{s}_{i}, \bm{a}_{i}) + \gamma \max_{\bm{a}'} Q_\phi (\bm{s}_{i}', \bm{a}_{i}') \right] 	\right) $ 
+\end{enumerate}
+}}
+%This is the classic DQN algorithm from \cite{mnih2013atari}.
+This algorithm still suffers from the fact that Q-learning is not gradient descent and that 
+it tries to converge to a moving target (which is local overfitting).
+One technique to ameliorate this is to use \textbf{target networks}.
+The idea is to collect transitions with one network, called the target network, 
+and apply updates to another.
+For practical reasons, the two are the same network, where the target network
+is periodically updated with the weights of the other network.
+This can be done by simply copying the weights or doing it more smoothly
+via ex Polyak averaging.
+With this we get the classic DQN algorithm \cite{mnih2013atari}:
+
+\fbox{
+\parbox{\textwidth}{
+		\label{alg-classic-dqn}
+\underline{``Classic'' DQN}
+\begin{enumerate}
+		\item take some action $\bm{a}_i$,  observe $\left( \bm{s}_i, \bm{a}_i, \bm{s}_i', r_i \right)$ and add it to $\mathcal{B}$
+		\item sample a mini-batch  $\left( \bm{s}_j, \bm{a}_j, \bm{s}_j', r_j \right)$  from $\mathcal{B}$ uniformly
+		\item compute $y_j = r_j + \gamma \max_{\bm{a}_j'} Q_{\phi'} (\bm{s}_{j}', \bm{a}_{j}')$ using the \textit{target} network $Q_{\phi'}$
+		\item $  \phi \leftarrow \phi  - \alpha \sum_{j}^{}  \frac{d Q_\phi}{d\phi} (\bm{s}_{j}, \bm{a}_{j}) \left( Q_\phi(\bm{s}_{i}, \bm{a}_{i}) - 
+				y_j 	\right) $ 
+		\item update $\phi'$: copy $\phi$ every $N$ steps
+\end{enumerate}
+}}
+Here the other network is updated at every sample, i.e. $   K=1$ because that was the setting
+in the original paper, but of course it could have any other value.
+
+
+\subsection{Double Q-networks (DDQN)}
+Empiric evidence shows that Q-networks trained with DQN overestimate returns, i.e.
+the true Q-function. The reason for this is the following one:
+\begin{equation}
+		\text{target value } y_j = r_j + \gamma \underbrace{ \max_{\bm{a}_j'} Q_{\phi'}(\bm{s}_{j}', \bm{a}_{j}')}_{\text{herein lies the problem}}
+\end{equation}
+The explanation goes as follows.
+Consider two random variables, $X_1$ and $X_2$, and let them represent a true value obscured by some noise.
+Provably,
+\begin{equation}
+		E \left[ \max (X_1, X_2) \right] \geq \max	\left( E[X_1], E[X_2] \right) 
+\end{equation}
+The relation to Q-learning is the following.
+If we imagine that $Q_{\phi'}(\bm{s}_{}', \bm{a}_{}')$ is not perfect because it has added noise,
+we get exactly the situation in the inequality --- the max over the actions and the expectation
+over it will lead to systematic overestimation.
+Thus $\max_{\bm{a}'} Q_{\phi'}(\bm{s}_{}', \bm{a}_{}')$ \textit{overestimates} the next value.
+Note that $\max_{\bm{a}'} Q_{\phi'}(\bm{s}_{}', \bm{a}_{}') = Q_{\phi'} (\bm{s}', \argmax_{\bm{a}'}Q_{\phi'}(\bm{s}', \bm{a}'))$ .
+If noise in the action selection mechanism and noise in the value evaluation
+mechanism are decorrelated , the problem will go away. In other words, getting both actions and values from $Q_{\phi'}$
+needs to be avoided. This can be done by utilizing another network.
+For practical reasons, the target network and the updating network can serve this purpose.
+Although, not theoretically ideal, this solution works well in practise.
+Thus the only difference to the \ref{alg-classic-dqn} is to change the error calculation in step 3 into
+\begin{equation}
+		y = r + \gamma Q_{\phi'}\left( \bm{s}', \argmax_{\bm{a}'}Q_{\phi}(\bm{s}_{}', \bm{a}_{}') \right)
+\end{equation}
+
+
+\subsection{Q-learning with multi-step returns}
+As discussed in \ref{sub-ac-algs}, n-step returns \ref{eq-n-step-return} offer a better balance better bias and variance 
+than either single-step bootstrap
+estimates or Monte-Carlo estimates.
+They can of course be used in Q-learning as well:
+\begin{equation}
+		y_{j,t} = \sum_{t'=t}^{t+N-1} \gamma^{t-t'}    r_{j,t'} + \gamma^N  \max_{\bm{a}_{j,t+N}}Q_{\phi'}(\bm{s}_{j,t+N}, \bm{a}_{j,t+N}) 
+\end{equation}
+
+
+
+
+\subsection{Prioritized replay}
+As mentioned in \ref{q-learning-w-replay-buffer}, the samples for minibatches are sampled 
+uniformly from the buffer. Depending on the size of the buffer, this slows down progress
+as it takes time for newer transitions to be incorporated into Q-function estimation.
+Alternatively, newer samples could be given priority by being sampled with
+a higher probability, or, better still, also proportionally
+to the size of the TD error:
+\begin{equation}
+	p_{ t } \propto \left| 
+r_{ t+1 } + \gamma_{ t+1 } \max_{a'} Q_{ \phi' } (\bm{s}_{t+1}, a') -
+Q_{ \phi } (\bm{s}_{t}, \bm{a}_{t} )
+	\right|^{ \omega } 	
+\end{equation}
+where $ \omega  $ is a hyper-parameter determining the shape of the distribution.
+%The main use of replay buffer is to sample transitions with maximum probability.Both DQN and DDQN samples experiences uniformly.Prioritized replay [20] samples transitions using the maximum priority ,providing a bias towards recent transitions and stochastic transitions  even when there is little left to learn about them.
 %TODO:
 %\begin{enumerate}
 %		\item Introduce to deep learning and advances in computer vision
 %	\end{enumerate}
 
-The success of a deep neural network in computer vision has introduced a new
-paradigm in learning from raw pixels.   The goal of Deep Reinforcement Learning
-is to connect the reinforcement learning algorithm to a deep neural network
-that operates directly on RGB images and efficiently processes training data
-using stochastic gradient updates \cite{mnih2013atari}. 
+%The success of a deep neural network in computer vision has introduced a new
+%paradigm in learning from raw pixels.   The goal of Deep Reinforcement Learning
+%is to connect the reinforcement learning algorithm to a deep neural network
+%that operates directly on RGB images and efficiently processes training data
+%using stochastic gradient updates \cite{mnih2013atari}. 
+%
+%
+%The use of label data and the assumption that the distribution of data is
+%identical and independent throughout the deep learning training process makes
+%it complex to use it directly in reinforcement learning algorithms, which must
+%be able to learn from sparse,noisy,delayed reward and highly correlated data.
+%To address these issues and successfully apply deep learning to reinforcement
+%learning \cite{mnih2013atari} used the experience replay mechanism
+%\cite{mnih2015humanlevel} which randomly samples previous transitions and
+%thereby smooths the distribution of training over many past behaviors. A
+%convolutional neural network was used to learn successful control policies from
+%raw video data in a complex reinforcement learning environment. The network is
+%trained with a variant of Q-learning algorithm,with stochastic gradient descent
+%to update weights.\\
 
+%This architecture was based on the Tesauro TD-Gammon architecture [17] that
+%updates the parameters of the network that estimate the value function directly
+%from the sampled experience of the policy. Similarly to this approach, the
+%online network in DQN uses a technique known as experience replay [18] where
+%the  agent’s experiences at each time-step, $\mathcal e_t =
+%(s_t,a_t,r_t,s_t+1)$ is stored in a data set $\mathcal D = e1 , ..., e_N $
+%pooled over many  episodes in a replay memory. By drawing random samples from
+%this pool of stored experiences, the Q-learning is updated.After performing the
+%experience replay, the agent selects and executes an action according to a
+%$\epsilon$-greedy policy.
+%The use of experience replay and target networks enables 
+%relatively stable learning of Q values, 
+%and led to super-human performance on several Atari games.
 
-The use of label data and the assumption that the distribution of data is
-identical and independent throughout the deep learning training process makes
-it complex to use it directly in reinforcement learning algorithms, which must
-be able to learn from sparse,noisy,delayed reward and highly correlated data.
-To address these issues and successfully apply deep learning to reinforcement
-learning \cite{mnih2013atari} used the experience replay mechanism
-\cite{mnih2015humanlevel} which randomly samples previous transitions and
-thereby smooths the distribution of training over many past behaviors. A
-convolutional neural network was used to learn successful control policies from
-raw video data in a complex reinforcement learning environment. The network is
-trained with a variant of Q-learning algorithm,with stochastic gradient descent
-to update weights.\\
-
-This architecture was based on the Tesauro TD-Gammon architecture [17] that
-updates the parameters of the network that estimate the value function directly
-from the sampled experience of the policy. Similarly to this approach, the
-online network in DQN uses a technique known as experience replay [18] where
-the  agent’s experiences at each time-step, $\mathcal e_t =
-(s_t,a_t,r_t,s_t+1)$ is stored in a data set $\mathcal D = e1 , ..., e_N $
-pooled over many  episodes in a replay memory. By drawing random samples from
-this pool of stored experiences, the Q-learning is updated.After performing the
-experience replay, the agent selects and executes an action according to a
-$\epsilon$-greedy policy.
-The use of experience replay and target networks enables 
-relatively stable learning of Q values, 
-and led to super-human performance on several Atari games.
-
-The advantage of using deep Q-learning over Q-learning  
-includes allowing  to have greater sample efficiency,
-reduced variance by randomizing the sample bias, and avoiding being 
-stuck in local minimum. 
-The drawbacks of deep Q-learning is that it only handle discrete, 
-low-dimensional action spaces.
+%The advantage of using deep Q-learning over Q-learning  
+%includes allowing  to have greater sample efficiency,
+%reduced variance by randomizing the sample bias, and avoiding being 
+%stuck in local minimum. 
+%The drawbacks of deep Q-learning is that it only handle discrete, 
+%low-dimensional action spaces.
 
 
 %\section{Extension of DQN }
 
-Although the initial architecture of deep Q learning introduced by
-\cite{mnih2013atari} paves the way for the use of deep neural network in
-reinforcement learning, it comes with its own drawbacks;this leads to more
-studies and an improved DQN architecture.In this section, we will discuss these
-extensions of DQN architectures.
+%Although the initial architecture of deep Q learning introduced by
+%\cite{mnih2013atari} paves the way for the use of deep neural network in
+%reinforcement learning, it comes with its own drawbacks;this leads to more
+%studies and an improved DQN architecture.In this section, we will discuss these
+%extensions of DQN architectures.
 
-\subsection{Double Deep Q-networks: DDQN}
 
-DQN suffer from overestimation bias due to due to the maximization step in optimisation function in Q-learning.Q-learning can overestimate actions that have been tried often and the estimations can be higher than any realistic optimistic estimate .Double Q-learning [19], addresses this overestimation by decoupling, in the maximization performed for the bootstrap target, the selection of the action from its evaluation.Double Q-learning stores two Q-functions,The average of the two Q values for each action and then performed $\mathcal{\epsilon}$-greedy exploration with the resulting average Q values.It was successfully combined with DQN to reduce  overestimations.
-%\textbf{ TODOS: DDQN  target equation}
-
-\subsection{Prioritized replay}
-
-The main use of replay buffer is to sample transitions with maximum probability.Both DQN and DDQN samples experiences uniformly.Prioritized replay [20] samples transitions using the maximum priority ,providing a bias towards recent transitions and stochastic transitions  even when there is little left to learn about them.
 
 \subsection{Dueling Network}
 
@@ -778,20 +1040,6 @@ Dueling Network was designed for  value based learning,this architecture separat
 
 %\textbf{if needed TODO ADD EQUATION:factorization of action values}
 
-\subsection{Multi-step learning}
-
-Previously stated extension of DQN have indicated that the use deep learning has enhanced the learning capability of Q-learning.The performance of  Q-learning is still limited by greedy action selection after accumulating a single reward.An alternative approach was multi-step targets:
- 
- \begin{equation}
-		y_{j,t} = \sum_{t'=t}^{t+N-1} \gamma^{t-t'}    r_{j,t'} + \gamma^N  \max_{\bm{a}_{j,t+N}}Q_{\phi'}(\bm{s}_{j,t+N}, \bm{a}_{j,t+N}) 
-\end{equation}
-
-A multi-step variant of DQN is then defined by minimizing
-the alternative loss[16],
-
-\begin{equation}
-	    R_t^{(n)} +  \gamma_t^{(n)}  \max_{a'} q_\theta^{-}(S_{t+n},a') - q_{\theta}(S_t,A_t)
-\end{equation}
   
 
 \subsection{Noisy Nets}
@@ -939,6 +1187,9 @@ it to choose actions based on reduced errors. Another approach is curriculum
 learning, where the agent is presented with various tasks in ascending order of
 complexity. This imitates the learning order of humans. 
 
+=============================================
+\newline
+
 %\section{Unsupervised learning on images}
 %\ref{sec-unsupervised-learning-on-images}
 %TBD - citing papers rl papers cite.
@@ -947,6 +1198,7 @@ complexity. This imitates the learning order of humans.
 %Classifiers can't directly help RL, but things like object detectors might.
 %Also learned models.
 %But then we don't have end-to-end learning (it's important to explain why).
+
 
 \chapter{State representation learning}
 \label{ch-srl-background}
