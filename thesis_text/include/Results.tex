@@ -1,25 +1,54 @@
 % CREATED BY DAVID FRISK, 2016
 \chapter{Results}
-Due to time constraints, we divide our testing in two parts.
-In the first part, we test out the basic hypothesis only on the Pong.
-This is because Pong is 10 faster to train than other games.
-Furthermore, it is the only game in which essentially all states 
-are observable immediately.
-This makes it possible to fully pretrain the autoencoder,
-thus enabling the test \ref{test-ae-fixed}.
-In the second part, we test the best performing unsupervised learning
-strategy on Pong on the other games to see how it fares in sample-efficiency
-against non-augmented reinforcement learning algorithms.
-To focus on the difference caused by state representation learning,
-we keep all non-relevant hyperparameters the same across all tests.
-We also perform tests with a small and a big encoder.
+Due to computational constraints, we constrain ourselves to 7 Atari games.
+All chosen games are solvable by DQN or Rainbow, but vary in visual complexity
+and control problem difficulty.
+In particular, the selected games are: 
+\begin{enumerate}
+		\item Breakout
+		\item Enduro
+		\item Ms Pacman
+		\item Pong
+		\item Qbert
+		\item Seaquest
+		\item Space Invaders
+\end{enumerate}
 
-\section{Testing different training styles on Pong}
-Here we show the results for two-step, parallel and joint training
-of state representations and reinforcement learning on the game Pong.
+Because we can only indirectly gauge the effect of various metrics through 
+final algorithm performance, the primary metric of interest is obtained 
+return in relation to the number of training iterations.
+Due to different reward scaling, we keep results on different games in separate graphs.
+We further divide the results into those pertaining to different hypotheses
+in order to avoid line clutter.
+As a final note, the results for each particular setting are \textbf{single-runs}.
+Generally speaking, this is not adequate due to high pseudorandom number generator seed 
+dependence. Depending on the problem, 3-10 runs are averaged, or the best one is selected,
+in order to tackle the problem.
 
-
-\section{Multi-game comparison}
+\section{Effectiveness of pretrained encoders}
+To begin, we first need to estimate the possible sample-efficiency gains.
+This is done by comparing returns per training step between only reinforcement learning
+and only reinforcement learning where training starts with a encoder
+trained from the first reinforcement learning-only run.
+Because we chose games which can be essentially solved with only reinforcement learning,
+the encoder of a network trained with reinforcement learning should serve
+as an ideal pretrained encoder.
+\begin{figure}[!t]
+  \captionsetup[subfloat]{position=top,labelformat=empty}
+  \centering
+  \subfloat[]{  \resizebox{0.4\textwidth}{!}{\input{figure/pretrained_vs_rl/pong.tex}}} 
+  \subfloat[]{  \resizebox{0.4\textwidth}{!}{\input{figure/pretrained_vs_rl/enduro.tex}}}\\
+  \vspace{-1cm}
+  \subfloat[]{  \resizebox{0.4\textwidth}{!}{\input{figure/pretrained_vs_rl/enduro.tex}}}
+  \subfloat[]{  \resizebox{0.4\textwidth}{!}{\input{figure/pretrained_vs_rl/enduro.tex}}}\\
+  \vspace{-1cm}
+  \subfloat[]{  \resizebox{0.4\textwidth}{!}{\input{figure/pretrained_vs_rl/enduro.tex}}}
+  \subfloat[]{  \resizebox{0.4\textwidth}{!}{\input{figure/pretrained_vs_rl/enduro.tex}}}\\
+  \vspace{-1cm}
+  \subfloat[]{  \resizebox{0.4\textwidth}{!}{\input{figure/pretrained_vs_rl/enduro.tex}}}
+  \caption{caption text 23}
+  \label{fig:compare}
+\end{figure}
 
 
 

@@ -1,0 +1,71 @@
+% This file was created by matlab2tikz.
+%
+%The latest updates can be retrieved from
+%  http://www.mathworks.com/matlabcentral/fileexchange/22022-matlab2tikz-matlab2tikz
+%where you can also make suggestions and rate matlab2tikz.
+%
+\definecolor{blue}{RGB}{76,100,135}
+\definecolor{red}{RGB}{153,0,0}
+\definecolor{yellow}{RGB}{227,178,60}
+\definecolor{mycolor1}{rgb}{0.00000,0.44700,0.74100}%
+\definecolor{mycolor2}{rgb}{0.85000,0.32500,0.09800}%
+\definecolor{mycolor3}{rgb}{0.92900,0.69400,0.12500}%
+%
+\begin{tikzpicture}
+
+\begin{axis}[%
+% width=4.634in,
+width=6.634in,
+height=3.612in,
+at={(2.596in,2.358in)},
+% scale only axis,
+xmin=0,
+xmax=5000000,
+xlabel style={font=\color{white!15!black}},
+xlabel={samples},
+xlabel near ticks,
+ymin=-20,
+ymax=20,
+ylabel style={font=\color{white!15!black}},
+ylabel={Value},
+ylabel near ticks,
+ymajorgrids,
+scale=0.4,
+axis background/.style={fill=white},
+legend style={legend cell align=left, align=left, draw=white!15!black}
+]
+\addplot [color=blue, line width = 0.25mm]
+  table[row sep=crcr]{%
+1	0\\
+0.99	0.0142133212704263\\
+0.98	0.0285709426850902\\
+0.02	5.53243599059204\\
+0.01	6.51269413406059\\
+};
+\addlegendentry{$\sqrt{\xi}$}
+
+\addplot [color=red, line width = 0.25mm]
+  table[row sep=crcr]{%
+1	1\\
+0.99	0.99\\
+0.98	0.98\\
+0.02	0.02\\
+0.01	0.01\\
+};
+\addlegendentry{$m$}
+
+\addplot [color=yellow, line width = 0.25mm]
+  table[row sep=crcr]{%
+1	1\\
+0.99	1\\
+0.98	1\\
+0.97	1\\
+0.96	1\\
+0.03	1\\
+0.02	1\\
+0.01	1\\
+};
+\addlegendentry{$\kappa$}
+
+\end{axis}
+\end{tikzpicture}%
