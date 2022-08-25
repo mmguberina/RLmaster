@@ -323,6 +323,50 @@
       \endverb
       \keyw{deep learning toread}
     \endentry
+    \entry{oh2015action}{article}{}
+      \name{author}{5}{}{%
+        {{hash=d6a1e759373b43eefda2aab3aec6b728}{%
+           family={Oh},
+           familyi={O\bibinitperiod},
+           given={Junhyuk},
+           giveni={J\bibinitperiod}}}%
+        {{hash=755a7561cf689c79634b3b170450d6b1}{%
+           family={Guo},
+           familyi={G\bibinitperiod},
+           given={Xiaoxiao},
+           giveni={X\bibinitperiod}}}%
+        {{hash=d09ea8631bf43468107b5ef02c5195aa}{%
+           family={Lee},
+           familyi={L\bibinitperiod},
+           given={Honglak},
+           giveni={H\bibinitperiod}}}%
+        {{hash=39722b0f7cf3e89609bff256eaec8e94}{%
+           family={Lewis},
+           familyi={L\bibinitperiod},
+           given={Richard\bibnamedelima L},
+           giveni={R\bibinitperiod\bibinitdelim L\bibinitperiod}}}%
+        {{hash=74d941c38e5affcd359ed5814815805f}{%
+           family={Singh},
+           familyi={S\bibinitperiod},
+           given={Satinder},
+           giveni={S\bibinitperiod}}}%
+      }
+      \strng{namehash}{1156c13b5c8c8faa04f4dcbd948d1256}
+      \strng{fullhash}{d488ea55ed242fbaef2f116abc9b59e5}
+      \strng{bibnamehash}{1156c13b5c8c8faa04f4dcbd948d1256}
+      \strng{authorbibnamehash}{1156c13b5c8c8faa04f4dcbd948d1256}
+      \strng{authornamehash}{1156c13b5c8c8faa04f4dcbd948d1256}
+      \strng{authorfullhash}{d488ea55ed242fbaef2f116abc9b59e5}
+      \field{labelalpha}{Oh+15}
+      \field{sortinit}{2}
+      \field{sortinithash}{ed39bb39cf854d5250e95b1c1f94f4ed}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Advances in neural information processing systems}
+      \field{title}{Action-conditional video prediction using deep networks in atari games}
+      \field{volume}{28}
+      \field{year}{2015}
+    \endentry
     \entry{watter2015embed}{article}{}
       \name{author}{4}{}{%
         {{hash=f6ae4590a62da457dc9991d37e10fd44}{%
@@ -728,6 +772,40 @@
       \field{labeltitlesource}{title}
       \field{journaltitle}{arXiv preprint arXiv:1903.12436}
       \field{title}{From variational to deterministic autoencoders}
+      \field{year}{2019}
+    \endentry
+    \entry{efficientrainbow}{article}{}
+      \name{author}{3}{}{%
+        {{hash=019fc96cda01984cac63e49e29d6be9f}{%
+           family={Van\bibnamedelima Hasselt},
+           familyi={V\bibinitperiod\bibinitdelim H\bibinitperiod},
+           given={Hado\bibnamedelima P},
+           giveni={H\bibinitperiod\bibinitdelim P\bibinitperiod}}}%
+        {{hash=1640e78f1e643c3d6f8e8c5b4b50896c}{%
+           family={Hessel},
+           familyi={H\bibinitperiod},
+           given={Matteo},
+           giveni={M\bibinitperiod}}}%
+        {{hash=e99abbc8dd53e5feeb2a428724ce1d2f}{%
+           family={Aslanides},
+           familyi={A\bibinitperiod},
+           given={John},
+           giveni={J\bibinitperiod}}}%
+      }
+      \strng{namehash}{7528b23112d661819e85da4edf87c9c3}
+      \strng{fullhash}{7528b23112d661819e85da4edf87c9c3}
+      \strng{bibnamehash}{7528b23112d661819e85da4edf87c9c3}
+      \strng{authorbibnamehash}{7528b23112d661819e85da4edf87c9c3}
+      \strng{authornamehash}{7528b23112d661819e85da4edf87c9c3}
+      \strng{authorfullhash}{7528b23112d661819e85da4edf87c9c3}
+      \field{labelalpha}{VHA19}
+      \field{sortinit}{2}
+      \field{sortinithash}{ed39bb39cf854d5250e95b1c1f94f4ed}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Advances in Neural Information Processing Systems}
+      \field{title}{When to use parametric models in reinforcement learning?}
+      \field{volume}{32}
       \field{year}{2019}
     \endentry
     \entry{sac+ae}{article}{}

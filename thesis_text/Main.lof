@@ -33,21 +33,69 @@
 \defcounter {refsection}{0}\relax 
 \addvspace {10\p@ }
 \defcounter {refsection}{0}\relax 
-\contentsline {figure}{\numberline {6.1}{\ignorespaces caption text 23\relax }}{44}{figure.caption.16}%
+\contentsline {figure}{\numberline {6.1}{\ignorespaces The graphs of potential efficiency gains. As can be observed from the graphs, if training is started using an encoder which was already trained using only reinforcement learning better results are achieved more quickly. Of course, this does not encompass all potential benefits --- unsupervised learning could make the problem easier overall and thereby allow for both even faster learning and higher final scores.\relax }}{47}{figure.caption.17}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {}}}{44}{subfigure.1.1}%
+\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {}}}{47}{subfigure.1.1}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {}}}{44}{subfigure.1.2}%
+\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {}}}{47}{subfigure.1.2}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subfigure}{\numberline {(c)}{\ignorespaces {}}}{44}{subfigure.1.3}%
+\contentsline {subfigure}{\numberline {(c)}{\ignorespaces {}}}{47}{subfigure.1.3}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subfigure}{\numberline {(d)}{\ignorespaces {}}}{44}{subfigure.1.4}%
+\contentsline {subfigure}{\numberline {(d)}{\ignorespaces {}}}{47}{subfigure.1.4}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subfigure}{\numberline {(e)}{\ignorespaces {}}}{44}{subfigure.1.5}%
+\contentsline {subfigure}{\numberline {(e)}{\ignorespaces {}}}{47}{subfigure.1.5}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subfigure}{\numberline {(f)}{\ignorespaces {}}}{44}{subfigure.1.6}%
+\contentsline {subfigure}{\numberline {(f)}{\ignorespaces {}}}{47}{subfigure.1.6}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subfigure}{\numberline {(g)}{\ignorespaces {}}}{44}{subfigure.1.7}%
+\contentsline {subfigure}{\numberline {(g)}{\ignorespaces {}}}{47}{subfigure.1.7}%
+\defcounter {refsection}{0}\relax 
+\contentsline {figure}{\numberline {6.2}{\ignorespaces Runs with Rainbow only, but with different encoder sizes. As can be seen, some games strongly benefit from having a larger encoder, while learning fails on others.\relax }}{48}{figure.caption.18}%
+\defcounter {refsection}{0}\relax 
+\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {}}}{48}{subfigure.2.1}%
+\defcounter {refsection}{0}\relax 
+\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {}}}{48}{subfigure.2.2}%
+\defcounter {refsection}{0}\relax 
+\contentsline {subfigure}{\numberline {(c)}{\ignorespaces {}}}{48}{subfigure.2.3}%
+\defcounter {refsection}{0}\relax 
+\contentsline {subfigure}{\numberline {(d)}{\ignorespaces {}}}{48}{subfigure.2.4}%
+\defcounter {refsection}{0}\relax 
+\contentsline {subfigure}{\numberline {(e)}{\ignorespaces {}}}{48}{subfigure.2.5}%
+\defcounter {refsection}{0}\relax 
+\contentsline {subfigure}{\numberline {(f)}{\ignorespaces {}}}{48}{subfigure.2.6}%
+\defcounter {refsection}{0}\relax 
+\contentsline {subfigure}{\numberline {(g)}{\ignorespaces {}}}{48}{subfigure.2.7}%
+\defcounter {refsection}{0}\relax 
+\contentsline {figure}{\numberline {6.3}{\ignorespaces Effectiveness of parallel training. Overall the results are negative, some slightly and others strongly. Interestingly, using a pretrained encoder has a negative effect in this case. We suspect that this is due to the fixation on a particular local minimum caused by reconstruction loss. Importantly, the negative effect is present despite regularization maintaining a fixed latent space over a relatively large number of epochs (5-10). Results tend to be worse in games where MSE loss is less suitable and in games with larger visual complexity.\relax }}{49}{figure.caption.19}%
+\defcounter {refsection}{0}\relax 
+\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {}}}{49}{subfigure.3.1}%
+\defcounter {refsection}{0}\relax 
+\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {}}}{49}{subfigure.3.2}%
+\defcounter {refsection}{0}\relax 
+\contentsline {subfigure}{\numberline {(c)}{\ignorespaces {}}}{49}{subfigure.3.3}%
+\defcounter {refsection}{0}\relax 
+\contentsline {subfigure}{\numberline {(d)}{\ignorespaces {}}}{49}{subfigure.3.4}%
+\defcounter {refsection}{0}\relax 
+\contentsline {subfigure}{\numberline {(e)}{\ignorespaces {}}}{49}{subfigure.3.5}%
+\defcounter {refsection}{0}\relax 
+\contentsline {subfigure}{\numberline {(f)}{\ignorespaces {}}}{49}{subfigure.3.6}%
+\defcounter {refsection}{0}\relax 
+\contentsline {subfigure}{\numberline {(g)}{\ignorespaces {}}}{49}{subfigure.3.7}%
+\defcounter {refsection}{0}\relax 
+\contentsline {figure}{\numberline {6.4}{\ignorespaces caption text 23\relax }}{50}{figure.caption.20}%
+\defcounter {refsection}{0}\relax 
+\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {}}}{50}{subfigure.4.1}%
+\defcounter {refsection}{0}\relax 
+\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {}}}{50}{subfigure.4.2}%
+\defcounter {refsection}{0}\relax 
+\contentsline {subfigure}{\numberline {(c)}{\ignorespaces {}}}{50}{subfigure.4.3}%
+\defcounter {refsection}{0}\relax 
+\contentsline {subfigure}{\numberline {(d)}{\ignorespaces {}}}{50}{subfigure.4.4}%
+\defcounter {refsection}{0}\relax 
+\contentsline {subfigure}{\numberline {(e)}{\ignorespaces {}}}{50}{subfigure.4.5}%
+\defcounter {refsection}{0}\relax 
+\contentsline {subfigure}{\numberline {(f)}{\ignorespaces {}}}{50}{subfigure.4.6}%
+\defcounter {refsection}{0}\relax 
+\contentsline {subfigure}{\numberline {(g)}{\ignorespaces {}}}{50}{subfigure.4.7}%
 \defcounter {refsection}{0}\relax 
 \addvspace {10\p@ }
 \defcounter {refsection}{0}\relax 

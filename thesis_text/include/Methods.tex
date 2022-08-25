@@ -126,7 +126,7 @@ In particular this equates to the following:
 						the control case.
 				\item The autoencoder is pretrained, fixed in place, and reinforcement learning
 						algorithm is trained on top of the unsupervised learning features
-						without the ability to updated the encoder. 
+						without the ability to update the encoder. 
 						This roughly tells us the quality of features (state representations) 
 						obtained through unsupervised learning alone. \label{test-ae-fixed}
 				\item Same as before, but now we update the encoder with reinforcement learning loss.
@@ -255,7 +255,7 @@ and can be in fact integrated with it like in \cite{exploratorysrl}.
 %Cropping an 84 x 84 rectangle of the image that nearly 
 %captures the playing area yields the final input representation to encoder part of the auto encoder.
 
-\section{Implementation}
+\section{Module implementation}
 \subsection{Tianshou}
 We implement our approach as a modular extension in \cite{weng2021tianshou}.
 The purpose of this choice is to make our work easily accessible and extendable.
@@ -346,7 +346,112 @@ The user only needs to ensure matching network dimensions to utilize
 state representation learning algorithms and pass the appropriate flag
 to use the one we implemented.
 
+
+\section{Network architectures}
+\label{sec-net-arch}
+As will be further discussed in \ref{ch-results},
+an encoder just large enough to solve the reinforcement learning problem
+by itself does not have the capacity to (also) solve the unsupervised pixel reconstruction
+problem.
+The forward prediction problem is more difficult still.
+In our experiments we used 3 encoders in total, while keeping the fully connected perceptron
+for reinforcement learning the same.
+All decoders are simply mirror images of the corresponding encoders, where
+2-dimensional convolutional layers are replaced with 2-dimensional deconvolutional layers,
+and the order of the layers is flipped.
+
+The smallest encoder is the one used in \cite{mnih2015humanlevel}.
+It has only convolutional layers.
+We will denote a layer's configuration as the following tuple:
+(number of input channels, number of output
+channels, kernel size, stride, padding).
+Our smallest network is thus of the architecture:
+(number of stacked frames, 32, 8, 4, 0), (32, 64, 4, 2, 0), (64, 64, 3, 1, 0).
+The output of the encoder is flattened and passed to the fully connected reinforcement learning
+layers. We use rectified linear units as activation functions after each layer.
+
+In general, and for our purposes in particular, the smaller the bottleneck layer
+of an autoencoder, the better it performs its job of dimensionality reduction.
+For some games we were able to obtain the bottleneck of length 50, while for more visually 
+complex games we used a bottleneck of length 256.
+We are sure that the bottleneck layer could be made smaller with more advanced training
+techniques, but this would further complicate our method and most likely 
+increase the number of parameters which would negatively impact the performance of
+reinforcement learning.
+Furthermore, since our goal is state representation learning and not perfect reconstruction,
+we believe that it is better to opt for a smaller network which compresses well enough.
+Having that said, we would ideally also test the network architecture and
+training procedure proposed in \cite{oh2015action}.
+The architecture of the two bigger encoders differ only in the size of the bottleneck layer.
+In our experiments we refer to the length of the bottleneck layer
+as \textbf{features dimension}.
+Their convolutional layers are the following ones. 
+(number of stacked frames, 32, 3, 2, 0), 
+(32, 32, 3, 2, 0),
+(32, 32, 3, 2, 0),
+(32, 32, 3, 2, 0).
+These convolutional layers are now followed by a linear layer of the size
+($32 * 35 * 35$, features dimension).
+We use rectified linear units as activation functions after each layer but the last
+which is a hyperbolic tangent function.
+
+The both Q and V networks consist of 2 fully connected linear layers
+with sizes of (features dimension, 512) and (512, number of actions $ *  $ number of atoms).
+
 \section{Hyperparameters}
+As our goal was to investigate the effectiveness of leveraging unsupervised learning
+for reinforcement learning, we decided to change the underlying reinforcement learning
+algorithm as little as possible.
+This way we also test the effectiveness of our method as a module which is meant
+to be used as an extension to the underlying algorithm.
+Of course, ideally we would investigate the interplay between the two losses
+to see whether particular configurations work better than others,
+but we had to focus on testing our hypothesis, albeit in a somewhat limited way.
+The reinforcement learning related hyperparameters can be found in \ref{table-rl-hyperparams}. \\
+
+\begin{table}[htpb]
+		\centering
+		\caption{Table of reinforcement learning related hyperparameters.}
+		\label{table-rl-hyperparams}
+		\begin{tabular}{| c | c | }
+\hline \\
+\textbf{parameter} & \textbf{value} \\ \hline
+epsilon test & 0.005 \\
+epsilon train & 1.0 \\
+epsilon train final & 0.05 \\
+buffer size & 100000 \\
+learning rate & 0.0001 \\
+gamma & 0.99 \\
+number of atoms & 51 \\
+$v_{min}$ & -10.0 \\
+$v_{max}$ & 10.0 \\
+noisy std & 0.1 \\
+alpha & 0.5 \\
+beta & 0.4 \\
+beta final & 1.0 \\
+beta anneal steps & 5000000 \\
+n-step & 3 \\
+target update frequency & 500 \\
+epoch & 50 \\
+steps per epoch & 100000 \\
+steps per collect & 10 \\
+updates per step & 0.1 \\
+batch size & 32 \\
+number of workers for training & 10 \\
+number of workers for testing & 10 \\
+number of stacked frames & 4\\
+				\hline
+		\end{tabular}
+\end{table}
+
+Alternatively, we could have opted for hyperparameters suggested by \cite{efficientrainbow}
+which are tailored for sample-efficiency.
+We chose not to due to the fact that, while they are more sample-efficient,
+result in longer training times.
+Since we are not interested in achieving state of the art results nor
+are we thoroughly experiment with reinforcement learning related hyperparameters,
+we chose to perform more tests by selecting a less computationally taxing 
+set of hyperparameters.
 
 %The first step in the process is to collect data to train the auto-encoder. 
 %we run a data collection module to generate the 100000 frame 

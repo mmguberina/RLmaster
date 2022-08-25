@@ -135,7 +135,7 @@
 \defcounter {refsection}{0}\relax 
 \contentsline {section}{\numberline {5.3}Environment and Preprocessing}{40}{section.5.3}%
 \defcounter {refsection}{0}\relax 
-\contentsline {section}{\numberline {5.4}Implementation}{40}{section.5.4}%
+\contentsline {section}{\numberline {5.4}Module implementation}{40}{section.5.4}%
 \defcounter {refsection}{0}\relax 
 \contentsline {subsection}{\numberline {5.4.1}Tianshou}{40}{subsection.5.4.1}%
 \defcounter {refsection}{0}\relax 
@@ -143,16 +143,22 @@
 \defcounter {refsection}{0}\relax 
 \contentsline {subsection}{\numberline {5.4.3}Implementing state representation learning in Tianshou}{42}{subsection.5.4.3}%
 \defcounter {refsection}{0}\relax 
-\contentsline {section}{\numberline {5.5}Hyperparameters}{42}{section.5.5}%
+\contentsline {section}{\numberline {5.5}Network architectures}{42}{section.5.5}%
 \defcounter {refsection}{0}\relax 
-\contentsline {chapter}{\numberline {6}Results}{43}{chapter.6}%
+\contentsline {section}{\numberline {5.6}Hyperparameters}{43}{section.5.6}%
 \defcounter {refsection}{0}\relax 
-\contentsline {section}{\numberline {6.1}Effectiveness of pretrained encoders}{43}{section.6.1}%
+\contentsline {chapter}{\numberline {6}Results}{45}{chapter.6}%
 \defcounter {refsection}{0}\relax 
-\contentsline {chapter}{\numberline {7}Discussion}{45}{chapter.7}%
+\contentsline {section}{\numberline {6.1}Effectiveness of pretrained encoders}{45}{section.6.1}%
 \defcounter {refsection}{0}\relax 
-\contentsline {chapter}{\numberline {8}Conclusion}{47}{chapter.8}%
+\contentsline {section}{\numberline {6.2}Effect of varying network sizes on Rainbow}{46}{section.6.2}%
 \defcounter {refsection}{0}\relax 
-\contentsline {chapter}{Bibliography}{49}{chapter.8}%
+\contentsline {section}{\numberline {6.3}Effectiveness of continuous updates}{46}{section.6.3}%
+\defcounter {refsection}{0}\relax 
+\contentsline {chapter}{\numberline {7}Discussion}{51}{chapter.7}%
+\defcounter {refsection}{0}\relax 
+\contentsline {chapter}{\numberline {8}Conclusion}{53}{chapter.8}%
+\defcounter {refsection}{0}\relax 
+\contentsline {chapter}{Bibliography}{55}{chapter.8}%
 \defcounter {refsection}{0}\relax 
 \contentsline {chapter}{\numberline {A}Appendix 1}{I}{appendix.A}%

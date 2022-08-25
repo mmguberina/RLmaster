@@ -1,8 +1,9 @@
 % CREATED BY DAVID FRISK, 2016
 \chapter{Results}
+\label{ch-results}
 Due to computational constraints, we constrain ourselves to 7 Atari games.
-All chosen games are solvable by DQN or Rainbow, but vary in visual complexity
-and control problem difficulty.
+Both DQN and Rainbow perform well by themselves on the chosen games.
+However, the games vary in visual complexity and control problem difficulty.
 In particular, the selected games are: 
 \begin{enumerate}
 		\item Breakout
@@ -22,34 +23,170 @@ We further divide the results into those pertaining to different hypotheses
 in order to avoid line clutter.
 As a final note, the results for each particular setting are \textbf{single-runs}.
 Generally speaking, this is not adequate due to high pseudorandom number generator seed 
-dependence. Depending on the problem, 3-10 runs are averaged, or the best one is selected,
-in order to tackle the problem.
+dependence and noisiness of reinforcement learning in general. 
+Depending on the problem, 3-10 runs are averaged, or the best one is selected,
+in order to tackle this problem.
 
 \section{Effectiveness of pretrained encoders}
+\label{sec-effectiveness-of-pretrained}
 To begin, we first need to estimate the possible sample-efficiency gains.
 This is done by comparing returns per training step between only reinforcement learning
 and only reinforcement learning where training starts with a encoder
 trained from the first reinforcement learning-only run.
+We will use runs with reinforcement learning only as the baseline for all cases.
 Because we chose games which can be essentially solved with only reinforcement learning,
 the encoder of a network trained with reinforcement learning should serve
 as an ideal pretrained encoder.
+
 \begin{figure}[!t]
   \captionsetup[subfloat]{position=top,labelformat=empty}
   \centering
-  \subfloat[]{  \resizebox{0.4\textwidth}{!}{\input{figure/pretrained_vs_rl/pong.tex}}} 
-  \subfloat[]{  \resizebox{0.4\textwidth}{!}{\input{figure/pretrained_vs_rl/enduro.tex}}}\\
+    \subfloat[]{  \resizebox{0.4\textwidth}{!}{\input{figure/pretrained_rl_vs_rl/BreakoutNoFrameskip.tex}}}
+    \subfloat[]{  \resizebox{0.4\textwidth}{!}{\input{figure/pretrained_rl_vs_rl/EnduroNoFrameskip.tex}}}\\
   \vspace{-1cm}
-  \subfloat[]{  \resizebox{0.4\textwidth}{!}{\input{figure/pretrained_vs_rl/enduro.tex}}}
-  \subfloat[]{  \resizebox{0.4\textwidth}{!}{\input{figure/pretrained_vs_rl/enduro.tex}}}\\
+    \subfloat[]{  \resizebox{0.4\textwidth}{!}{\input{figure/pretrained_rl_vs_rl/MsPacmanNoFrameskip.tex}}}
+    \subfloat[]{  \resizebox{0.4\textwidth}{!}{\input{figure/pretrained_rl_vs_rl/PongNoFrameskip.tex}}}\\
   \vspace{-1cm}
-  \subfloat[]{  \resizebox{0.4\textwidth}{!}{\input{figure/pretrained_vs_rl/enduro.tex}}}
-  \subfloat[]{  \resizebox{0.4\textwidth}{!}{\input{figure/pretrained_vs_rl/enduro.tex}}}\\
+    \subfloat[]{  \resizebox{0.4\textwidth}{!}{\input{figure/pretrained_rl_vs_rl/QbertNoFrameskip.tex}}}
+    \subfloat[]{  \resizebox{0.4\textwidth}{!}{\input{figure/pretrained_rl_vs_rl/SeaquestNoFrameskip.tex}}}\\
   \vspace{-1cm}
-  \subfloat[]{  \resizebox{0.4\textwidth}{!}{\input{figure/pretrained_vs_rl/enduro.tex}}}
+    \subfloat[]{  \resizebox{0.4\textwidth}{!}{\input{figure/pretrained_rl_vs_rl/SpaceInvadersNoFrameskip.tex}}}
+    \\
+
+    \ref{named}
+  \caption{The graphs of potential efficiency gains. As can be observed from the graphs,
+  if training is started using an encoder which was already trained using
+only reinforcement learning better results are achieved more quickly. Of course, this does not
+encompass all potential benefits --- unsupervised learning could make the problem easier overall
+and thereby allow for both even faster learning and higher final scores.}
+  \label{fig:rl-only-vs-pretrained}
+\end{figure}
+
+As can be observed in \ref{fig:rl-only-vs-pretrained}, 
+using a pretrained encoder can be both beneficial
+or detrimental, but it does not seem particularly important, especially long-term.
+We used the smaller encoder for runs consisting only of Rainbow and we used 
+the same architecture for the run with an encoder pretrained with Rainbow.
+Notably, some games systematically suffer when reconstruction loss is applied in any way,
+in particular Breakout . The reason is that MSE loss is not well suited for small 
+details, be they critical or not. In Breakout the ball is not well represented,
+as can be seen in reconstructions.
+\footnote{Interestingly, the same is not the case in Pong because there most of
+the background is black, thereby making the ball a relatively big source of 
+reconstruction error in comparison.}
+This and other problems with the method will be further discussed in 
+\ref{ch-discussion}.
+
+%We next investigate whether it is beneficial to conti
+
+
+
+\section{Effect of varying network sizes on Rainbow}
+\label{sec-effectiveness-of-cont-updating}
+%As seen in the previous section, pretraining is certainly beneficial, 
+%but it is not remarkable.
+As mentioned in \ref{sec-net-arch}, we use a larger encoder when using
+reconstruction loss. Thus we need to observe the effect of using
+different encoder sizes reinforcement learning alone.
+We present this separately in \ref{fig:big-vs-small-enc-rl-only} to avoid clutter.
+
+\begin{figure}[!t]
+  \captionsetup[subfloat]{position=top,labelformat=empty}
+  \centering
+
+    \subfloat[]{  \resizebox{0.4\textwidth}{!}{\input{figure/big-vs-small-encoder-rl-only/BreakoutNoFrameskip.tex}}}
+    \subfloat[]{  \resizebox{0.4\textwidth}{!}{\input{figure/big-vs-small-encoder-rl-only/EnduroNoFrameskip.tex}}}\\
+  \vspace{-1cm}
+    \subfloat[]{  \resizebox{0.4\textwidth}{!}{\input{figure/big-vs-small-encoder-rl-only/MsPacmanNoFrameskip.tex}}}
+    \subfloat[]{  \resizebox{0.4\textwidth}{!}{\input{figure/big-vs-small-encoder-rl-only/PongNoFrameskip.tex}}}\\
+  \vspace{-1cm}
+    \subfloat[]{  \resizebox{0.4\textwidth}{!}{\input{figure/big-vs-small-encoder-rl-only/QbertNoFrameskip.tex}}}
+    \subfloat[]{  \resizebox{0.4\textwidth}{!}{\input{figure/big-vs-small-encoder-rl-only/SeaquestNoFrameskip.tex}}}\\
+  \vspace{-1cm}
+    \subfloat[]{  \resizebox{0.4\textwidth}{!}{\input{figure/big-vs-small-encoder-rl-only/SpaceInvadersNoFrameskip.tex}}}
+    \\
+
+    \ref{named}
+  \caption{Runs with Rainbow only, but with different encoder sizes. As can be seen,
+  some games strongly benefit from having a larger encoder, while learning
+fails on others.}
+  \label{fig:big-vs-small-enc-rl-only}
+\end{figure}
+
+As can be seen in \ref{fig:big-vs-small-enc-rl-only}, some games benefit greatly from
+having a large encoder (ex. Seaquest), while learning completely fails on others 
+(ex. Breakout).
+Despite rising the variance of the final result, the effect seems to be neutral
+overall.
+
+
+
+\section{Effectiveness of continuous updates}
+Having seen the effect of having pretrained encoders, we turn the attention
+to the effect of continuous updating of the encoder with reconstruction loss.
+The results are shown in \ref{fig-parallel}.
+
+\begin{figure}[!t]
+  \captionsetup[subfloat]{position=top,labelformat=empty}
+  \centering
+
+    \subfloat[]{  \resizebox{0.4\textwidth}{!}{\input{figure/parallel-updates/BreakoutNoFrameskip.tex}}}
+    \subfloat[]{  \resizebox{0.4\textwidth}{!}{\input{figure/parallel-updates/EnduroNoFrameskip.tex}}}\\
+  \vspace{-1cm}
+    \subfloat[]{  \resizebox{0.4\textwidth}{!}{\input{figure/parallel-updates/MsPacmanNoFrameskip.tex}}}
+    \subfloat[]{  \resizebox{0.4\textwidth}{!}{\input{figure/parallel-updates/PongNoFrameskip.tex}}}\\
+  \vspace{-1cm}
+    \subfloat[]{  \resizebox{0.4\textwidth}{!}{\input{figure/parallel-updates/QbertNoFrameskip.tex}}}
+    \subfloat[]{  \resizebox{0.4\textwidth}{!}{\input{figure/parallel-updates/SeaquestNoFrameskip.tex}}}\\
+  \vspace{-1cm}
+    \subfloat[]{  \resizebox{0.4\textwidth}{!}{\input{figure/parallel-updates/SpaceInvadersNoFrameskip.tex}}}
+  \\
+
+  \ref{named}
+  \caption{Effectiveness of parallel training. Overall the results are negative, some slightly
+  and others strongly. Interestingly, using a pretrained encoder has a negative effect
+in this case. We suspect that this is due to the fixation on a particular local minimum caused
+by reconstruction loss. Importantly, the negative effect is present despite
+regularization maintaining a fixed latent space over a relatively large number of epochs (5-10).
+Results tend to be worse in games where MSE loss is less suitable and in games
+with larger visual complexity.}
+  \label{fig:parallel}
+\end{figure}
+
+Before continuing the discussion, the effectiveness of regularization needs to be discussed.
+We present runs with both data augmentation and L2 regularization and
+those without either in \ref{fig:reg-vs-no-reg}.
+
+\begin{figure}[!t]
+  \captionsetup[subfloat]{position=top,labelformat=empty}
+  \centering
+
+    \subfloat[]{  \resizebox{0.4\textwidth}{!}{\input{figure/reg-vs-no-reg/BreakoutNoFrameskip.tex}}}
+    \subfloat[]{  \resizebox{0.4\textwidth}{!}{\input{figure/reg-vs-no-reg/EnduroNoFrameskip.tex}}}\\
+  \vspace{-1cm}
+    \subfloat[]{  \resizebox{0.4\textwidth}{!}{\input{figure/reg-vs-no-reg/MsPacmanNoFrameskip.tex}}}
+    \subfloat[]{  \resizebox{0.4\textwidth}{!}{\input{figure/reg-vs-no-reg/PongNoFrameskip.tex}}}\\
+  \vspace{-1cm}
+    \subfloat[]{  \resizebox{0.4\textwidth}{!}{\input{figure/reg-vs-no-reg/QbertNoFrameskip.tex}}}
+    \subfloat[]{  \resizebox{0.4\textwidth}{!}{\input{figure/reg-vs-no-reg/SeaquestNoFrameskip.tex}}}\\
+  \vspace{-1cm}
+    \subfloat[]{  \resizebox{0.4\textwidth}{!}{\input{figure/reg-vs-no-reg/SpaceInvadersNoFrameskip.tex}}}
+  \\
+
+  \ref{named}
   \caption{caption text 23}
-  \label{fig:compare}
+  \label{fig:reg-vs-no-reg}
 \end{figure}
 
 
 
+
+
+
+
+
+
+
+
 \chapter{Discussion}
+\label{ch-discussion}

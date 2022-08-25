@@ -1,0 +1,59 @@
+
+\begin{tikzpicture}
+
+\begin{axis}[%
+title=Pong,
+% %width=4.634in,
+%width=10in,
+%height=5in,
+%at={(2.596in,2.358in)},
+% scale only axis,
+xmin=0,
+xmax=5000000,
+xlabel style={font=\color{white!15!black}},
+xlabel={steps},
+xlabel near ticks,
+ymin=-20,
+ymax=20,
+ylabel style={font=\color{white!15!black}},
+ylabel={Value},
+ylabel near ticks,
+ymajorgrids,
+% %scale=0.5,
+%scale=0.4,
+axis background/.style={fill=white},
+%legend style={legend cell align=left, align=left, draw=white!15!black}
+]
+\addplot [color=blue, line width = 0.25mm]
+                table[row sep=crcr]{
+                  0 -21.0\\ 
+100000 -19.799999237060547\\ 
+200000 -20.700000762939453\\ 
+300000 -15.0\\ 
+400000 -7.0\\ 
+500000 -6.900000095367432\\ 
+600000 -1.899999976158142\\ 
+700000 -7.599999904632568\\ 
+800000 4.0\\ 
+900000 1.5\\ 
+1000000 11.300000190734863\\ 
+1100000 1.2000000476837158\\ 
+1200000 3.700000047683716\\ 
+1300000 11.5\\ 
+1400000 13.600000381469727\\ 
+1500000 5.699999809265137\\ 
+1600000 15.600000381469727\\ 
+1700000 13.5\\ 
+1800000 19.299999237060547\\ 
+1900000 20.799999237060547\\ 
+};
+\addplot [color=red, line width = 0.25mm]
+                table[row sep=crcr]{
+                  0 0.0\\ 
+};
+\addplot [color=yellow, line width = 0.25mm]
+                table[row sep=crcr]{
+                  0 0.0\\ 
+};
+\end{axis}
+\end{tikzpicture}
