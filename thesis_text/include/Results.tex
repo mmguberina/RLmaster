@@ -122,6 +122,7 @@ overall.
 
 
 \section{Effectiveness of continuous updates}
+\label{sec-effectiveness-of-parallel}
 Having seen the effect of having pretrained encoders, we turn the attention
 to the effect of continuous updating of the encoder with reconstruction loss.
 The results are shown in \ref{fig-parallel}.
@@ -150,12 +151,14 @@ by reconstruction loss. Importantly, the negative effect is present despite
 regularization maintaining a fixed latent space over a relatively large number of epochs (5-10).
 Results tend to be worse in games where MSE loss is less suitable and in games
 with larger visual complexity.}
-  \label{fig:parallel}
+  \label{fig-parallel}
 \end{figure}
 
+\section{Effectiveness of regularization}
+\label{sec-effectiveness-of-reg}
 Before continuing the discussion, the effectiveness of regularization needs to be discussed.
-We present runs with both data augmentation and L2 regularization and
-those without either in \ref{fig:reg-vs-no-reg}.
+We present runs with both data augmentation and L2 regularization, runs with either one or the other and
+runs without neither in \ref{fig:reg-vs-no-reg}.
 
 \begin{figure}[!t]
   \captionsetup[subfloat]{position=top,labelformat=empty}
@@ -174,19 +177,197 @@ those without either in \ref{fig:reg-vs-no-reg}.
   \\
 
   \ref{named}
-  \caption{caption text 23}
+  \caption{Comparison of using and L2 latent space regularization and data augmentation in parallel training.
+  L2 regularization helps overall because it helps fix the latent representations in place, thereby stabilizing
+the overall training process. Data augmentation on the other hand clearly hurt across the board.}
   \label{fig:reg-vs-no-reg}
 \end{figure}
 
+As can be seen in the figure \ref{fig:reg-vs-no-reg}, regularization can both benefit and hurt learning.
+L2 regularization forces the latent space to be distributed more closely to the origin. While somewhat arbitrary,
+we checked that it substantially helps in maintaining the same latent vectors for the same inputs
+across updates. This was measured by observing the reconstruction quality over encoders and decoders
+saved at different epochs.
+
+Data augmentation seems to only add noise and therefore hurt learning by destabilizing it.
+This might be due to our particular implementation, but it is more likely due to the fact that 
+the encoder produces different outputs for the same, but differently augmented input.
 
 
+\section{Effectiveness of forward prediction}
+\label{sec-effectiveness-of-forward}
+Finally, we compare the effectiveness of forward prediction, or
+the importance of dynamics for state representations.
+The results can be observed in \ref{fig:forward-vs-compression}.
+
+\begin{figure}[!t]
+  \captionsetup[subfloat]{position=top,labelformat=empty}
+  \centering
+
+    \subfloat[]{  \resizebox{0.4\textwidth}{!}{\input{figure/forward-vs-compression/BreakoutNoFrameskip.tex}}}
+    \subfloat[]{  \resizebox{0.4\textwidth}{!}{\input{figure/forward-vs-compression/EnduroNoFrameskip.tex}}}\\
+  \vspace{-1cm}
+    \subfloat[]{  \resizebox{0.4\textwidth}{!}{\input{figure/forward-vs-compression/MsPacmanNoFrameskip.tex}}}
+    \subfloat[]{  \resizebox{0.4\textwidth}{!}{\input{figure/forward-vs-compression/PongNoFrameskip.tex}}}\\
+  \vspace{-1cm}
+    \subfloat[]{  \resizebox{0.4\textwidth}{!}{\input{figure/forward-vs-compression/QbertNoFrameskip.tex}}}
+    \subfloat[]{  \resizebox{0.4\textwidth}{!}{\input{figure/forward-vs-compression/SeaquestNoFrameskip.tex}}}\\
+  \vspace{-1cm}
+    \subfloat[]{  \resizebox{0.4\textwidth}{!}{\input{figure/forward-vs-compression/SpaceInvadersNoFrameskip.tex}}}
+  \\
+
+  \ref{named}
+  \caption{Comparison between latent representation trained to compress the current frames and 
+  those trained to perform one-step forward predictions. Despite having a significantly higher reconstruction error,
+encoder trained to perform forward prediction perform better.}
+  \label{fig:forward-vs-compression}
+\end{figure}
 
 
-
-
-
+Despite fairly poor reconstruction capabilities and an error larger by an order of magnitude, 
+state representation trained with forward 
+prediction are overall more effective than simple compression.
+As with all results, the effects vary from game to game.
 
 
 
 \chapter{Discussion}
 \label{ch-discussion}
+%\section{}
+Overall, the results are both disappointing and inconclusive.
+%Having that said, there are some clear takeaways to guide further research.
+Both intuitively and by being informed with the relevant literature,
+we expected stronger results. 
+In this section we explore possible explanations for the results
+and use them to suggest promising avenues for further research.
+We break our discussion of the results into answering the following questions:
+\begin{enumerate}
+		\item What are the differences between features and states 
+				and how important are they to the final performance?
+		\item Why is reconstruction loss a particularly bad at representing
+				stateful information?
+		\item What could be the characteristics of more successful approaches
+				to using unsupervised learning for state representation learning?
+		\item What role does regularization play in reinforcement learning,
+				unsupervised learning and their combination?
+\end{enumerate}
+
+Given the generality of our hypothesis, we of course can not answer these questions fully,
+but we can give hints and suggestions.
+
+\section{Differences between features and states}
+We believe that the central idea behind using unsupervised representation learning
+as state representation learning is the one illustrated in \ref{fig-rl-srl-features-space}.
+If the hypothesis behind it is correct, then learning should be faster.
+This is certainly the case in numerous works which use shared layers for actors 
+and critics in actor-critic methods.
+Of course, this only works on the condition that
+the inherent instabilities in training networks with different losses have been taken care of 
+in one way or another.
+The specific differences between our features and states will be further discussed in
+the following subsections, while a more general discussion will be held here.
+
+When looking at simple games such as Pong or Seaquest,
+one can clearly see what constitutes a state.
+The dynamic information primarily consists of the positions and velocities of objects in the image.
+More static information would be the types of objects (the player, projectiles, obstacles etc) and so on.
+For such simple problems, a resourceful engineering could easily craft representations consisting of at most
+a few dozen parameters.
+From our experiments with different autoencoder architectures and sets of hyperparameters,
+we could not obtained such low-dimensional representations through unsupervised learning.
+While deep learning experts could certainly tailor the various parameters and the training process
+for each specific game and thereby obtain lower dimensionality, the point of finding
+general purpose reinforcement learning solutions would be lost.
+After all, one could (relatively) easily hand-craft near-perfect solutions for every
+Atari57 game.
+Thus we are left with the conclusion that even if unsupervised learning methods 
+can help reinforcement learning, they by themselves are not the key to getting (super) human speed in
+acquiring knowledge in control problems.
+
+We therefore propose two avenues toward highly sample-efficient reinforcement learning.
+One is to formulate model or state representation learning which is geared specifically toward learning dynamics
+and to make it more restrictive. In other words to find more inspiration in works such as \cite{pilco}.
+This way single problems can be quickly learned from scratch.
+Another is quite the opposite and more inspired by humans. 
+Humans generalize across all of their experiences, which is what enables them to 
+quickly make sense of novel situations.
+Similarly, very large neural network models could also leverage such broad
+representations to learn quickly. 
+An interesting start would be to see whether a single network could be trained to play most Atari games,
+and other games as well and learn new games quicker than starting from scratch by leveraging
+its implicit representations.
+
+There is another important broad conclusion to be drawn from the gap between our expectations
+and our results.
+We expected the results to be better because our vague sense of what is a feature
+learned through either unsupervised or reinforcement learning led us to believe that they are related.
+This would probably not have happened if we had a better understanding of what these features really are.
+Hence we believe that having tools to investigate the nature of features obtained through deep learning would help
+tremendously in designing unsupervised learning techniques for state representation learning.
+Thus better understanding and explainability of neural networks would help not only
+in safety of systems relying on it, but also in algorithm design ---
+just looking at the final result and other indirect metrics is not good enough.
+
+
+
+
+\section{Reconstruction loss}
+\label{sec-rec-loss-bad}
+Using pixel-reconstruction loss in general, and MSE loss in particular is a very poor choice for state representation learning.
+A good reconstruction contains plenty of non-stateful information, while a poor one
+looses stateful information while still keeping a lot of non-stateful information.
+The reason for this is that lowering pixel-reconstruction loss does not directly incentivize learning
+about states.
+We believed that simply lowering dimensionality would make the reinforcement learning problem easier,
+but this is clearly not the case unless non-stateful information is removed.
+Loosely speaking,
+with encoders trained via pixel-reconstruction the entropy remains roughly the same
+when seen through the lens of reinforcement learning.
+As already mentioned, parallel training objectives make the training process more unstable
+which hinders progress.
+Hence the representation being learned needs to be good enough to overcome this negative effect
+and better still in order to obtain tangible benefits.
+
+Furthermore, having a generative model significantly increases the wall-clock training time (200-400\%)
+due to the networks needing more parameters and due to the existence of the decoder.
+For this reason discriminative models should be preferred for state representation learning
+and as seen in \ref{ch-related-work} this is a clear trend in recent years.
+Generative models still have their place in model-based approaches of course.
+
+
+
+\section{Importance of representing dynamics}
+Forward prediction in pixel-space showed an edge over just compression.
+While theoretically sound, this is somewhat surprising given the fact that 
+the reconstruction error was over a magnitude larger than in the case of just compression.
+This clearly shows the importance of directly incentivizing learning stateful information.
+There are numerous improvements which could be made to improve the quality of predictions:
+\begin{itemize}
+		\item learning to predict further into the future with the help of curriculum learning should
+increase the accuracy on shorter time scale
+\item more specialized architectures like using temporal-convolutions, having separate parameters 
+		for each action in the decoder,...
+\end{itemize}
+We refrain from suggesting further improvements because as discussed in \ref{sec-rec-loss-bad},
+we believe that reconstruction loss is a bad choice for state representation learning 
+and that an all together different approach should be taken, ex. self-predictive bootstrapped latent
+representations.
+
+
+\section{Not all regularization is the same}
+As shown in \ref{sec-effectiveness-of-reg}, improper regularization hurts learning, while
+meaningful regularization helps.
+In our context regularization serves to stabilize the learning process.
+This mainly refers to preventing the latent representations to shift over time,
+i.e. to produce the same latent representations when given the same frames.
+Since L2 regularization constricts the manifold of latent representations,
+it serves this purpose well.
+
+In our implementation, data augmentation seems to only introduce noise because it makes
+the encoder produce
+different latent vectors when given the same frame.
+Interestingly, it had a positive effect on learning in runs with 10 times more frequent
+network updates (compared to environment steps), but as we performed these runs
+on a limited number of games this claim can not be further corroborated with substantial evidence.
+
+%\section{}

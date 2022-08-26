@@ -75,7 +75,13 @@
 \BOOKMARK [1][-]{section.6.1}{Effectiveness of pretrained encoders}{chapter.6}% 75
 \BOOKMARK [1][-]{section.6.2}{Effect of varying network sizes on Rainbow}{chapter.6}% 76
 \BOOKMARK [1][-]{section.6.3}{Effectiveness of continuous updates}{chapter.6}% 77
-\BOOKMARK [0][-]{chapter.7}{Discussion}{}% 78
-\BOOKMARK [0][-]{chapter.8}{Conclusion}{}% 79
-\BOOKMARK [0][-]{chapter.8}{Bibliography}{}% 80
-\BOOKMARK [0][-]{appendix.A}{Appendix 1}{}% 81
+\BOOKMARK [1][-]{section.6.4}{Effectiveness of regularization}{chapter.6}% 78
+\BOOKMARK [1][-]{section.6.5}{Effectiveness of forward prediction}{chapter.6}% 79
+\BOOKMARK [0][-]{chapter.7}{Discussion}{}% 80
+\BOOKMARK [1][-]{section.7.1}{Differences between features and states}{chapter.7}% 81
+\BOOKMARK [1][-]{section.7.2}{Reconstruction loss}{chapter.7}% 82
+\BOOKMARK [1][-]{section.7.3}{Importance of representing dynamics}{chapter.7}% 83
+\BOOKMARK [1][-]{section.7.4}{Not all regularization is the same}{chapter.7}% 84
+\BOOKMARK [0][-]{chapter.8}{Conclusion}{}% 85
+\BOOKMARK [0][-]{chapter.8}{Bibliography}{}% 86
+\BOOKMARK [0][-]{appendix.A}{Appendix 1}{}% 87

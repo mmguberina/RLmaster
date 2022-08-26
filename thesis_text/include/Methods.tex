@@ -82,7 +82,7 @@ sample-efficiency than other training approaches.
     \end{scope}
     \draw \setA;
     \draw \setB;
-    \node at (-1,0) [left, text width=3.5cm] {unsupervised learning (partially stateful) features};
+    \node at (-1,0) [left, text width=3.5cm] {unsupervised learning (stateful noisy) features};
     \node at (5,0) [right, text width=3.5cm] {reinforcement learning (stateful) features};
 	\node at (11,3) [below left, text width=7cm] {\underline{latent representation space}};
 \end{tikzpicture}
@@ -142,12 +142,12 @@ In particular this equates to the following:
 						Since we can not pass the actions before they have been selected by the policy network,
 						they are passed in the decoder (the generative part of the autoencoder).
 						This thus constitutes forward prediction in pixel space.
-				\item Instead of performing forward prediction in pixel space, we now do it in latent space.
-						The autoencoder is trained with reconstructive loss as before, but we introduce
-						an additional network which predicts the latent observation. Thus this loss is calculated
-						separately and it updates the encoder along the other two losses.
-						This serves as a potentially superior version of the previous task as predictions
-						in latent space should be easier to learn that predictions in pixel space.
+%				\item Instead of performing forward prediction in pixel space, we now do it in latent space.
+%						The autoencoder is trained with reconstructive loss as before, but we introduce
+%						an additional network which predicts the latent observation. Thus this loss is calculated
+%						separately and it updates the encoder along the other two losses.
+%						This serves as a potentially superior version of the previous task as predictions
+%						in latent space should be easier to learn that predictions in pixel space.
 				\item Finally, we add inverse dynamics loss on top of the reconstruction, forward predictive 
 						and reinforcement learning loss. As shown in \cite{icm}, this should encourage
 						the state representation to focus the parts of the observation related to the agent
@@ -391,7 +391,7 @@ Their convolutional layers are the following ones.
 (32, 32, 3, 2, 0),
 (32, 32, 3, 2, 0).
 These convolutional layers are now followed by a linear layer of the size
-($32 * 35 * 35$, features dimension).
+($32 \times 35 \times 35$, features dimension).
 We use rectified linear units as activation functions after each layer but the last
 which is a hyperbolic tangent function.
 

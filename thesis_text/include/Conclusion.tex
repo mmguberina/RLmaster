@@ -1,5 +1,27 @@
 % CREATED BY DAVID FRISK, 2016
 \chapter{Conclusion}
+The idea behind this thesis is simple and straightforward:
+using autoencoders trained with pixel-reconstruction loss 
+to lower the dimensionality of images 
+should make the reinforcement learning problem on images easier.
+As it turns out, this is not necessarily the case.
+It, although unremarkably, works on visually simple games like Pong where
+all important details can be capture by MSE loss, i.e. by formulating pixel reconstruction loss
+on a pixel-by-pixel basis.
+Simultaneously, the same method completely stunts learning on games such as Breakout
+where the ball, a crucial element of the state, is captured poorly.
+
+We conclude that and pixel reconstruction loss should be avoided for the purposes of state representation learning
+as it does not directly incentivize learning stateful information, but only serve to lower dimensionality,
+sometimes even at the expense of stateful information.
+This is most exemplified by the fact that forward prediction in pixel space supports learning better,
+despite the fact that it maintains an order of magnitude bigger error,
+just because it more strongly encourages embedding of stateful information (velocities in particular).
+Given the listed reasons, and the gap between our expectations and the obtained results, we recommend 
+more research into the nature of features obtained through both unsupervised and reinforcement learning 
+so that beneficial combinations can be deduced, rather than guessed.
+On a shorter time scale, we recommend discriminative models as both seem more promising 
+and are faster in terms of wall-clock time. 
 
 
 %You may consider to instead divide this chapter into discussion of the results and a summary. 
