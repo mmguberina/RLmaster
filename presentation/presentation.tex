@@ -1,0 +1,978 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Focus Beamer Presentation
+% LaTeX Template
+% Version 1.0 (8/8/18)
+%
+% This template has been downloaded from:
+% http://www.LaTeXTemplates.com
+%
+% Original author:
+% Pasquale Africa (https://github.com/elauksap/focus-beamertheme) with modifications by 
+% Vel (vel@LaTeXTemplates.com)
+%
+% Template license:
+% GNU GPL v3.0 License
+%
+% Important note:
+% The bibliography/references need to be compiled with bibtex.
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%----------------------------------------------------------------------------------------
+%	PACKAGES AND OTHER DOCUMENT CONFIGURATIONS
+%----------------------------------------------------------------------------------------
+
+\documentclass{beamer}
+
+\usetheme{focus} % Use the Focus theme supplied with the template
+% Add option [numbering=none] to disable the footer progress bar
+% Add option [numbering=fullbar] to show the footer progress bar as always full with a slide count
+
+% Uncomment to enable the ice-blue theme
+%\definecolor{main}{RGB}{92, 138, 168}
+%\definecolor{background}{RGB}{240, 247, 255}
+
+%------------------------------------------------
+
+\usepackage{booktabs} % Required for better table rules
+%\usepackage{amsmath}
+%\usepackage{bm}
+%\usepackage{array}
+%\usepackage{amssymb}
+
+%\usepackage{moreverb}								% List settings
+%\usepackage{textcomp}								% Fonts, symbols etc.
+%\usepackage{lmodern}								% Latin modern font
+%\usepackage{helvet}									% Enables font switching
+%\usepackage[T1]{fontenc}							% Output settings
+%\usepackage[english]{babel}							% Language settings
+%\usepackage[utf8]{inputenc}							% Input settings
+\usepackage{amsmath}								% Mathematical expressions (American mathematical society)
+\usepackage{bm}
+\usepackage{array}
+\usepackage{amssymb}								% Mathematical symbols (American mathematical society)
+\usepackage{graphicx}								% Figures
+\usepackage{subfig}									% Enables subfigures
+%\numberwithin{equation}{chapter}					% Numbering order for equations
+%\numberwithin{figure}{chapter}						% Numbering order for figures
+%\numberwithin{table}{chapter}						% Numbering order for tables
+%\usepackage{minted}						    		% Enables source code listings
+%\usepackage{chemfig}								% Chemical structures
+%\usepackage[top=3cm, bottom=3cm,
+%			inner=3cm, outer=3cm]{geometry}			% Page margin lengths			
+%\usepackage{eso-pic}								% Create cover page background
+\newcommand{\backgroundpic}[3]{
+	\put(#1,#2){
+	\parbox[b][\paperheight]{\paperwidth}{
+	\centering
+	\includegraphics[width=\paperwidth,height=\paperheight,keepaspectratio]{#3}}}}
+\usepackage{float} 									% Enables object position enforcement using [H]
+\usepackage{parskip}								% Enables vertical spaces correctly 
+\usepackage{datetime} %date formatting tools
+
+% cleaner math
+\newcommand{\argmin}{\arg\!\min} 
+\newcommand{\argmax}{\arg\!\max} 
+\usepackage[makeroom]{cancel}
+
+\usepackage{tikz}
+\usepackage{pgfplots}
+\usetikzlibrary {fit}
+\usetikzlibrary{arrows.meta}
+\usetikzlibrary{shapes.geometric, arrows}
+%\usepackage{tikz-graph}
+%\usetikzlibrary{bayesnet}
+%\usetikzlibrary{shapes.geometric}
+%\usetikzlibrary{trees}
+\usetikzlibrary{positioning}
+\tikzstyle{rec} = [rectangle,  minimum width=2cm, minimum height=1cm, text centered, draw=black]
+\tikzstyle{arrow} = [thick,->,>=stealth]
+\tikzstyle{arrow_red} = [thick,->,>=stealth, color=red]
+\tikzstyle{mcs} = [circle, draw=black] 
+\tikzstyle{mcsb} = [circle, draw=black, fill=black!20] 
+
+
+% bibtex
+\usepackage[
+backend=biber,
+style=alphabetic,
+sorting=ynt
+]{biblatex}
+
+\addbibresource{../thesis_text/bibliography.bib}
+
+%----------------------------------------------------------------------------------------
+%	 TITLE SLIDE
+%----------------------------------------------------------------------------------------
+
+\title{Improving sample-efficiency of model-free reinforcement learning algorithms 
+		on image inputs with representation learning}
+
+%\subtitle{Subtitle}
+
+\author{Marko Guberina \\ Betelhem Dejene Desta}
+
+\titlegraphic{\includegraphics[scale=0.55]{Images/ChGULogoHog.pdf}} % Optional title page image, comment this line to remove it
+
+\institute{Department of Computer Science and Engineering \\ Chalmers University of Technology \\
+University of Gothenburg }
+
+\date{Gothenburg, Sweden 2022}
+
+%------------------------------------------------
+
+\begin{document}
+
+%------------------------------------------------
+
+\begin{frame}
+	\maketitle % Automatically created using the information in the commands above
+\end{frame}
+
+%\begin{frame}[noframenumbering]{Presentation structure}
+\begin{frame}{Presentation structure}
+	\tableofcontents
+\end{frame}
+
+\section{Project overview} 
+
+\section{Hypothesis} 
+\begin{frame}{RL on pixels problem decomposition}
+	\begin{itemize}
+			\item state (feature) extraction
+			\item dynamics modelling
+			\item reward dynamics modelling
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{Hypotheses}
+	\begin{exampleblock}{Joint training hypothesis}
+			Joint training is better than pretraining.
+	\end{exampleblock}
+	\pause
+	\begin{exampleblock}{Better features hypothesis.}
+			The more features are aligned with the underlying Markov chain,
+			the better they work as state representations.
+	\end{exampleblock}
+	\pause
+	\begin{exampleblock}{Regularization hypothesis.}
+			Proper regularization helps when learning different objectives.
+	\end{exampleblock}
+\end{frame}
+
+
+\section{Reinforcement learning} 
+\begin{frame}{What is reinforcement learning?}
+\begin{columns}
+\column{0.5\textwidth}
+\begin{itemize}
+	\item formalized ``trial-and-error'' learning
+	\item needs a \textbf{reward function}
+	\item trade-off between exploration and exploitation
+\end{itemize}
+\column{0.5\textwidth}
+\begin{figure}[htpb]
+\begin{center}
+\begin{tikzpicture}[scale=1, transform shape, node distance=2.0cm]
+\node (agent) [rec] {agent};
+\node (environment) [rec, right of=agent, xshift=1.5cm] {environment};
+\draw [arrow, xshift=0.5cm]  (environment.240) to [bend left=30] node [midway, below, yshift=-0.2cm] (textnode1) {observation, reward}  (agent.300);
+\draw [arrow, xshift=0.5cm]  (agent.70) to [bend left=30] node [midway, above, yshift=0.2cm] (textnode2) {action} (environment.100);
+\end{tikzpicture}
+\end{center}
+%\caption{Conceptual schematic of reinforcement learning.}
+\label{fig:rl-shematic}
+\end{figure}
+\end{columns}
+\end{frame}
+
+
+\begin{frame}{Markov chain}
+\begin{figure}[htpb]
+\begin{center}
+\begin{tikzpicture}[scale=1, transform shape, node distance=1.5cm]
+		\node (s1) [mcs] {$\bm{s}_{1} $};
+		\node (s2) [mcs, right of=s1, xshift=1cm] { $ \bm{s}_{2}  $};
+		\draw [arrow] (s1) -- node [below, midway] {$ p(\bm{s}_{t+1}|\bm{s}_{t}) $} (s2);
+		\node (s3) [mcs, right of=s2, xshift=1cm] { $ \bm{s}_{3}  $};
+		\draw [arrow] (s2) -- node [below, midway] {$ p(\bm{s}_{t+1}|\bm{s}_{t}) $} (s3);
+\end{tikzpicture}
+\end{center}
+\caption{Schematic of a Markov chain.}
+\label{fig:markov-chain}
+\end{figure}
+\end{frame}
+
+
+\begin{frame}{Markov decision process}
+\begin{figure}[htpb]
+\begin{center}
+\begin{tikzpicture}[scale=1, transform shape, node distance=1.5cm]
+		\node (s1) [mcs] {$\bm{s}_{1} $};
+		\node (a1) [mcs, above right of=s1] { $ \bm{a}_{1}  $};
+		\node (s2) [mcs, right of=s1, xshift=1.5cm] { $ \bm{s}_{2}  $};
+		\draw [arrow] (a1) -- (s2);
+		\draw [arrow] (s1) -- node [below, midway] {$ p(\bm{s}_{t+1}|\bm{s}_{t}, \bm{a}_{t}) $} (s2);
+		\node (s3) [mcs, right of=s2, xshift=1.5cm] { $ \bm{s}_{3}  $};
+		\node (a2) [mcs, above right of=s2] { $ \bm{a}_{2}  $};
+		\draw [arrow] (s2) -- node [below, midway] {$ p(\bm{s}_{t+1}|\bm{s}_{t}, \bm{a}_{t}) $} (s3);
+		\draw [arrow] (a2) -- (s3);
+\end{tikzpicture}
+\end{center}
+\caption{Schematic of a Markov decision process.}
+\label{fig:mdp}
+\end{figure}
+\end{frame}
+
+
+\begin{frame}{Partially observable Markov decision processes}
+\begin{figure}[htpb]
+\begin{center}
+\begin{tikzpicture}[scale=1, transform shape, node distance=1.5cm]
+		\node (s1) [mcs] {$\bm{s}_{1} $};
+		\node (a1) [mcs, above right of=s1] { $ \bm{a}_{1}  $};
+		\node (o1) [mcs, above of=s1] { $ \bm{o}_{1}  $};
+		\draw [arrow] (s1) -- (o1);
+		\node (s2) [mcs, right of=s1, xshift=1.5cm] { $ \bm{s}_{2}  $};
+		\node (o2) [mcs, above of=s2] { $ \bm{o}_{2}  $};
+		\draw [arrow] (s2) -- (o2);
+		\draw [arrow] (a1) -- (s2);
+		\draw [arrow] (s1) --  (s2);
+		\node (s3) [mcs, right of=s2, xshift=1.5cm] { $ \bm{s}_{3}  $};
+		\node (o3) [mcs, above of=s3] { $ \bm{o}_{3}  $};
+		\draw [arrow] (s3) -- (o3);
+		\node (a2) [mcs, above right of=s2] { $ \bm{a}_{2}  $};
+		\draw [arrow] (s2) -- (s3);
+		\draw [arrow] (a2) -- (s3);
+\end{tikzpicture}
+\end{center}
+\caption{Schematic of a partially observable Markov decision process.}
+\label{fig:pomdp}
+\end{figure}
+
+\end{frame}
+
+\begin{frame}{Markov decision process with a policy}
+\begin{figure}[htpb]
+\begin{center}
+\begin{tikzpicture}[scale=1, transform shape, node distance=2.5cm]
+		\node (s1) [mcs] {$\bm{s}_{1} $};
+		\node (a1) [mcs, above right of=s1] { $ \bm{a}_{1}  $};
+		\node (s2) [mcs, right of=s1, xshift=1.5cm] { $ \bm{s}_{2}  $};
+		\draw [arrow] (a1) -- (s2);
+		\draw [arrow] (s1) -- node [below, midway] {$ p(\bm{s}_{t+1}|\bm{s}_{t}, \bm{a}_{t}) $} (s2);
+		\node (s3) [mcs, right of=s2, xshift=1.5cm] { $ \bm{s}_{3}  $};
+		\node (a2) [mcs, above right of=s2] { $ \bm{a}_{2}  $};
+		\draw [arrow] (s2) -- node [below, midway] {$ p(\bm{s}_{t+1}|\bm{s}_{t}, \bm{a}_{t}) $} (s3);
+		\draw [arrow] (a2) -- (s3);
+		\draw [arrow] (s1) -- node [above, midway, sloped] {$\pi_{ \theta } (\bm{a}_{t}| \bm{s}_{t} )  $} (a1);
+		\draw [arrow] (s2) -- node [above, midway, sloped] {$\pi_{ \theta } (\bm{a}_{t}| \bm{s}_{t} )  $} (a2);
+\end{tikzpicture}
+\end{center}
+\caption{Schematic of a Markov decision process with a policy $ \pi  $.}
+\label{fig:policy-in-mdp}
+\end{figure}
+\end{frame}
+
+\begin{frame}{Markov decision process in equation form}
+\begin{equation*}
+\underbrace{p_\theta(\bm{s}_1, \bm{a}_1, \dots, \bm{s}_T, \bm{a}_T)}_{p_\theta(\tau)} = p(\bm{s}_1) \prod^{T}_{t=1} 
+\underbrace{\pi_{\theta} (\bm{a}_t | \bm{s}_t) p (\bm{s}_{t+1} | \bm{s}_t, \bm{a}_t)}_{\text{Markov chain on } (\bm{s}, \bm{a})}
+\end{equation*}
+		
+\end{frame}
+
+\begin{frame}{The goal of reinforcement learning}
+Find policy parameters $ \theta^{ \star }  $ such that:
+\begin{align*}
+		\theta^\star &= \argmax_{\theta} \mathbb{E}_{\tau \sim p_\theta(\tau)} \left[ \sum_{t}^{} r(\bm{s}_t, \bm{a}_t) \right] \\
+	 &= \argmax_{\theta} \sum_{t}^{T} \mathbb{E}_{(\bm{s}_t, \bm{a}_t) \sim p_\theta(\bm{s}_t, \bm{a}_t)} \left[  r(\bm{s}_t, \bm{a}_t) \right]
+\end{align*}
+\end{frame}
+
+\begin{frame}{Value functions}
+		Q-function:
+\begin{equation*}
+		\label{eq:q-function}
+		Q^\pi (\bm{s}_t, \bm{a}_t) = \sum_{t'=t}^{T} \mathbb{E}_{\pi_\theta}
+		\left[ r(\bm{s}_{t'}, \bm{a}_{t'} )| \bm{s}_t, \bm{a}_t \right] 
+\end{equation*}
+State value function:
+\begin{equation*}
+		\label{eq:value-function}
+		V^\pi (\bm{s}_t) = \sum_{t'=t}^{T} \mathbb{E}_{\pi_\theta}
+		\left[ r(\bm{s}_{t'}, \bm{a}_{t'} | \bm{s}_t) \right] 
+\end{equation*}
+Their connection:
+\begin{equation*}
+		V^\pi (\bm{s}_t) = \mathbb{E}_{\bm{a}_t \sim \pi(\bm{s}_t, \bm{a}_t)}
+		\left[ Q^\pi(\bm{s}_t, \bm{a}_t) \right] 
+\end{equation*}
+
+\end{frame}
+
+\begin{frame}{Classes of reinforcement learning algorithms}
+		\underline{Based on objective}:
+	\begin{itemize}
+			\item policy gradient algorithms 
+			\item actor-critic algorithms
+			\item value iteration algorithms
+	\end{itemize}
+	\underline{Based on sampling strategy}:
+	\begin{itemize}
+			\item on-policy
+			\item off-policy
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{Policy gradient algorithms}
+\fbox{
+		\parbox{\textwidth}{
+				\underline{REINFORCE algorithm:}
+\begin{enumerate}
+		\item sample $\{\tau^i\}$ from $\pi_\theta(\bm{a}_t | \bm{s}_t)$ by running the policy
+		\item use the samples to estimate the gradient of the objective: \newline $\nabla_\theta J(\theta) \approx   \sum_{i}^{} 
+		\left ( \sum_{t}^{T} \nabla_\theta \log \pi_\theta (\bm{a}_{i,t} | \bm{s}_{i,t} ) \right )
+		\left ( \sum_{t}^{} r(\bm{s}_{i,t}, \bm{a}_{i,t}) \right )$
+\item update the policy function by performing a step of gradient ascent: \newline 
+		$\theta \leftarrow \theta + \alpha \nabla_\theta J(\theta) $
+\end{enumerate}
+}}
+		
+\end{frame}
+
+
+\begin{frame}{Actor critic algorithms}
+\fbox{
+\parbox{\textwidth}{
+\underline{Actor-critic algorithm template}
+\begin{enumerate}
+		\item take action $\bm{a} \sim \pi_\theta(\bm{a}|\bm{s})$, observe transition
+				$(\bm{s}, \bm{a},\bm{s'},r)$ and store it in the replay buffer $\mathcal{R}$ 
+		\item sample a batch $\left\{  (\bm{s}_i, \bm{a}_i,\bm{s'}_i,r_i) \right\} $ from buffer $\mathcal{R}$
+		\item update the Q-value estimator $\hat{Q}^\pi_\theta$ by using the target: \newline
+				$y_i = r_i + \gamma \hat{Q}^\pi_\theta(\bm{s}_i', \bm{a}_i') \forall \bm{s}_i, \bm{a}_i$
+		\item compute the policy gradient estimate with: \newline
+				$\nabla_\theta J(\theta) \approx  \frac{1}{N} \sum_{i}^{}  \nabla_{\theta} \log \pi_\theta(\bm{a}^\pi_i|\bm{s}_i)\hat{Q}^\pi(\bm{s}_{i}, \bm{a}^\pi_{i})$,
+				where $\bm{a}_i^\pi \sim \pi_\theta(\bm{a} | \bm{s}_i)$
+		\item update the policy function by performing a gradient step: \newline
+				$\theta \leftarrow \theta  + \alpha \nabla_\theta J(\theta)$
+\end{enumerate}
+}}
+\end{frame}
+
+\begin{frame}{epsilon-greedy policy}
+\begin{equation}
+		\label{eq-greedy-pi}
+		\pi_{ \text{greedy} }(\bm{s}_{t}| \bm{a}_{t}) = \left\{ 
+\begin{matrix}
+		1 & \text{ if } \bm{a}_t = \argmax_{\bm{a}_t} A^\pi (\bm{s}_{t}, \bm{a}_{t}) 		 \\
+		0 & \text{ otherwise}
+\end{matrix}
+		\right.
+\end{equation}
+\end{frame}
+
+\begin{frame}{Value iteration}
+Bootstrap update for the value function:
+\begin{equation}
+		\label{eq-bellman-value-update}
+V^\pi(\bm{s}) \leftarrow E_{\bm{a} \sim \pi(\bm{a}|\bm{s})} \left[ r(\bm{s}_{}, \bm{a}_{}) + \gamma E_{\bm{s}' \sim p(\bm{s}' |\bm{a},\bm{s}  )} [V^\pi(\bm{s}') ] \right] 
+\end{equation}
+
+\fbox{
+\parbox{\textwidth}{
+		\label{alg-finite-value-iteration}
+\underline{Value iteration}
+\begin{enumerate}
+		\item set $Q(\bm{s}, \bm{a}) \leftarrow r (\bm{s}, \bm{a}) + \gamma E[V(\bm{s}')]$
+		\item set $V(\bm{s}) \leftarrow \max_{\bm{a}} Q(\bm{s}, \bm{a})$
+\end{enumerate}
+}}
+
+\end{frame}
+
+\begin{frame}{DQN}
+\fbox{
+\parbox{\textwidth}{
+		\label{alg-classic-dqn}
+\underline{``Classic'' DQN}
+\begin{enumerate}
+		\item take some action $\bm{a}_i$,  observe $\left( \bm{s}_i, \bm{a}_i, \bm{s}_i', r_i \right)$ and add it to $\mathcal{B}$
+		\item sample a mini-batch  $\left( \bm{s}_j, \bm{a}_j, \bm{s}_j', r_j \right)$  from $\mathcal{B}$ uniformly
+		\item compute $y_j = r_j + \gamma \max_{\bm{a}_j'} Q_{\phi'} (\bm{s}_{j}', \bm{a}_{j}')$ using the \textit{target} network $Q_{\phi'}$
+		\item $  \phi \leftarrow \phi  - \alpha \sum_{j}^{}  \frac{d Q_\phi}{d\phi} (\bm{s}_{j}, \bm{a}_{j}) \left( Q_\phi(\bm{s}_{i}, \bm{a}_{i}) - 
+				y_j 	\right) $ 
+		\item update $\phi'$: copy $\phi$ every $N$ steps
+\end{enumerate}
+}}
+		
+\end{frame}
+
+\begin{frame}{Rainbow}
+DQN with the following improvements:
+\begin{itemize}
+		\item double Q-networks 
+		\item multi-step returns
+		\item prioritized replay buffer
+		\item dueling network
+		\item noisy networks
+\end{itemize}
+\end{frame}
+
+
+\section{Representation learning} 
+
+\begin{frame}{General remarks}
+		\begin{itemize}
+				\item goal is to learn a parametric mapping from raw input data
+						to a feature vector in order to capture and extract useful
+						abstract information
+				\item works with unsupervised learning 
+				\item generative and discriminative models
+		\end{itemize}
+\end{frame}
+
+\begin{frame}{Generative models}
+		\begin{itemize}
+				\item deterministic:
+						\begin{itemize}
+								\item autoencoders (AEs)
+						\end{itemize}
+				\item probabilistic:
+						\begin{itemize}
+								\item variational autoencoders (VAEs)
+								\item generative adversarial networks (GANs)
+						\end{itemize}
+		\end{itemize}
+\end{frame}
+
+\begin{frame}{Discriminative models}
+		\begin{itemize}
+				\item have only encoders
+				\item trained with:
+						\begin{itemize}
+								\item contrastive learning
+								\item bootstrapping
+						\end{itemize}
+		\end{itemize}
+\end{frame}
+
+
+\begin{frame}{Regularization for autoencoders}
+		Known from \cite{bengio2013representation}, \cite{ghosh2019variational} and others:
+		\begin{itemize}
+				\item on input: 
+						\begin{itemize}
+								\item denoising autoencoders
+						\end{itemize}
+				\item on bottleneck:
+						\begin{itemize}
+								\item noise injection
+								\item Tikhonov regularization (L2 regularization)
+						\end{itemize}
+				\item other:
+						\begin{itemize}
+								\item gradient penalty (weight decay)
+								\item spectral normalization
+						\end{itemize}
+		\end{itemize}
+\end{frame}
+
+
+\section{Representation learning for control} 
+
+\begin{frame}{Desirable properties}
+		On top of general desirable properties for representations:
+		\begin{itemize}
+				\item having the Markov property
+				\item represent states well enough for policy improvement
+				\item generalize in the stateful sense
+%				\item be low dimensional
+		\end{itemize}
+\end{frame}
+
+
+\begin{frame}{Types of models}
+		\begin{itemize}
+				\item autoencoders
+				\item forward models
+				\item inverse models
+				\item hybrid models
+		\end{itemize}
+\end{frame}
+
+
+\begin{frame}{Autoencoders}
+\begin{figure}[htpb]
+\begin{center}
+\begin{tikzpicture}[scale=1, transform shape, node distance=1.5cm]
+		\node (st) [mcsb] {$\bm{s}_{t} $};
+		\node (ot) [mcs, below of=st] {$\bm{o}_{t}$};
+		\node (othat) [mcsb, right of=ot] {$\hat{\bm{o}}_{t} $};
+		\draw [arrow] (ot) -- (st);
+		\draw [arrow] (st) -- (othat);
+		\node[draw,dashed,inner sep=1.5mm,fit=(ot) (othat) ] {};
+\end{tikzpicture}
+\end{center}
+		\caption{Auto-encoder: learned by reconstructing the observation (one-to-one).
+				The observation is the input and the computed state is the vector at
+				the auto-encoder's bottleneck layer.}
+\end{figure}
+\end{frame}
+
+
+\begin{frame}{Forward models}
+\begin{figure}[htpb]
+\begin{center}
+\begin{tikzpicture}[scale=1, transform shape, node distance=1.5cm]
+		\node (at) [mcs] {$\bm{a}_{t} $};
+		\node (st) [mcsb, below of=at] {$\tilde{\bm{s}}_{t} $};
+		\node (sthatplus1) [mcsb, right of=at] {$\hat{\tilde{\bm{s}}}_{t+1} $};
+		\node (stplus1) [mcsb, right of=st] {$\tilde{\bm{s}}_{t+1} $};
+		\node (ot) [mcs, below of=st] {$\bm{o}_{t}$};
+		\node (otplus1) [mcs, right of=ot] {$\hat{\bm{o}}_{t} $};
+		\draw [arrow] (at) -- (sthatplus1);
+		\draw [arrow] (st) -- (sthatplus1);
+		\draw [arrow] (ot) -- (st);
+		\draw [arrow] (otplus1) -- (stplus1);
+		\node[draw,dashed,inner sep=1.5mm,fit=(sthatplus1) (stplus1) ] {};
+\end{tikzpicture}
+\end{center}
+		\caption{Forward model: predicting the future state from the state-action pair.
+				}
+\end{figure}
+\end{frame}
+
+
+\begin{frame}{Inverse models}
+\begin{figure}[htpb]
+\begin{center}
+\begin{tikzpicture}[scale=1, transform shape, node distance=1.5cm]
+		\node (at) [mcs] {$\bm{a}_{t} $};
+		\node (athat) [mcsb, below of=at] {$\hat{\bm{a}}_{t} $};
+		\node (nothing) [below of=st] {};
+		\node (sttilde) [mcsb, left of=nothing] {$\tilde{\bm{s}}_{t} $};
+		\node (stildetplus1) [mcsb, right of=nothing] {$\tilde{\bm{s}}_{t+1} $};
+		\node (ot) [mcs, below of=sttilde] {$\bm{o}_{t}$};
+		\node (otplus1) [mcs, below of=stildetplus1] {$\bm{o}_{t+1} $};
+		\draw [arrow] (ot) -- (sttilde);
+		\draw [arrow] (otplus1) -- (stildetplus1);
+		\draw [arrow] (sttilde) -- (athat);
+		\draw [arrow] (stildetplus1) -- (athat);
+		\node[draw,dashed,inner sep=1.5mm,fit=(at) (athat) ] {};
+\end{tikzpicture}
+\end{center}
+		\caption{Inverse model: predicting the action between two consecutive states.
+				}
+\end{figure}
+\end{frame}
+
+
+\section{Related work} 
+
+\begin{frame}{Reinforcement learning on Atari games}
+		\begin{itemize}
+				\item started with DQN \cite{mnih2013atari}
+				\item many improvements:
+				\begin{itemize}
+						\item algorithm fundamentals, combination in \cite{rainbow}
+						\item exploration schemes: \cite{icm}, \cite{ecoffet2021first}
+						\item better sampling: \cite{andrychowicz2017hindsight},
+								\cite{kapturowski2018recurrent}
+				\end{itemize}
+		\item model based algorithms: \cite{schrittwieser2020mastering}
+				\item all solved on human level in \cite{agent57}
+%				\item leveraging unsupervised state representation learning
+		\end{itemize}
+
+	\pause % Automatically creates a new "page" split between the above and above + below
+	\begin{alertblock}{Next challenge}
+		Making reinforcement learning \alert{more sample-efficient}.
+	\end{alertblock}
+		
+\end{frame}
+
+\begin{frame}{Using data augmentation for regularization}
+	\begin{itemize}
+			\item simply adding data augmentation to RL: \cite{rad}
+			\item using it to regularize RL: \cite{drqv1}, \cite{drqv2}
+	\end{itemize}	
+\end{frame}
+
+
+\begin{frame}{Leveraging unsupervised representation learning}
+	\begin{itemize}
+			\item early efforts for state representation learning did not work well
+			\item initially used to help exploration:
+\cite{lossisitsownreward}, \cite{rlwauxloss} or \cite{icm}
+\item recent efforts use both deterministic and stochastic generative models (mostly
+		stochastic)
+\item most recent works focus on using discriminative models 
+\item ideally obtained solely via pretrainining; recent efforts include 
+		\cite{seo2022reinforcement}
+	\end{itemize}	
+\end{frame}
+
+\begin{frame}{Deterministic generative models}
+	Idea introduced in \cite{lange2010deep}.
+	Most importantly used in \cite{sac+ae}.
+	Authors identify the following for success:
+	\begin{itemize}
+			\item only value function gradients update the encoder
+			\item same update rate for autoencoder and RL updates
+			\item using L2 regularization
+	\end{itemize}
+	Possible improvements:
+	\begin{itemize}
+			\item prediction architecture from \cite{oh2015action}
+			\item optical or latent flow: \cite{flow}
+	\end{itemize}
+\end{frame}
+
+
+\begin{frame}{Stochastic generative models}
+		Theoretically more interesting because:
+		\begin{itemize}
+				\item can be integrated into the underlying Markov chain: \cite{slac}
+				\item can be used as models in model-based RL
+		\end{itemize}
+		Despite large interest they are hard to get to work due to 
+		their stochasticity (elaborated and tested in \cite{sac+ae}).
+\end{frame}
+
+
+\begin{frame}{Discriminative models}
+		More practical as there is no decoder (which is unnecessary for the purpose).
+		Trained using different objectives:
+		\begin{itemize}
+				\item contrastive loss: \cite{curl}
+				\item mutual information: \cite{rakelly2021mutual}, 
+						\cite{anand2019unsupervised}, \cite{mazoure2020deep}
+				\item bisimulation metrics: \cite{invariantrepwithoutreconstruction}
+				\item bootstrapped self-predictions (introduced in \cite{grill2020bootstrap}):
+\cite{schwarzer2020data}, and in \cite{merckling2022exploratory}
+		\end{itemize}
+\end{frame}
+
+\section{Methods}
+
+\begin{frame}{Our hypotheses}
+		We want to test the following claims:
+		\begin{enumerate}
+				\item joint representation and reinforcement training 
+						performs better than pretraining 
+				\item representation better incentivised to learn stateful information
+						will yield better features
+				\item regularization is important for joint training stabilization
+						and final effectiveness
+		\end{enumerate}
+		
+\end{frame}
+
+\begin{frame}{Implicit feature spaces hypothesis}
+
+\begin{figure}[htpb]
+\begin{center}
+
+\def\setA{(1.0,0) circle (2)}%
+\def\setB{(2.7,0) circle (1.5)}%
+% define the bounding box
+\def\boundb{(-5,3) rectangle (9,-3)}%
+\begin{tikzpicture}[scale=0.75]
+    \draw \boundb;
+    % intersection
+    \begin{scope}
+    \clip \setA;
+    \fill[black!20] \setB;
+    \end{scope}
+    \begin{scope}[even odd rule]% first circle without the second
+    \clip \setB \boundb;
+    \fill[red!20] \setA;
+    \end{scope}
+    \begin{scope}[even odd rule]% first circle without the second
+    \clip \setA \boundb;
+    \fill[blue!20] \setB;
+    \end{scope}
+    \draw \setA;
+    \draw \setB;
+    \node at (-1,0) [left, text width=2.5cm] {unsupervised learning (stateful noisy) features};
+    \node at (5,0) [right, text width=2.5cm] {reinforcement learning (stateful) features};
+	\node at (11,3) [below left, text width=7cm] {\underline{latent representation space}};
+\end{tikzpicture}
+\end{center}
+\caption{Schematic of the latent representation space. }
+\label{fig-rl-srl-features-space}
+\end{figure}
+\end{frame}
+
+
+\begin{frame}{Testing hypothesis 1}
+We can only indirectly test the hypothesis by observing the obtained returns
+on different games. We run the following experiments and observe the results:
+\begin{enumerate}
+		\item only RL
+		\item only RL, but on encoders from a finished RL run
+		\item only RL, but on encoders pretrained with pixel reconstruction loss
+		\item joint training from scratch
+\end{enumerate}
+\end{frame}
+
+
+\begin{frame}{Testing hypothesis 2}
+\begin{enumerate}
+		\item joint training where unsupervised learning task is only compression
+		\item joint training where unsupervised learning task is compression 
+				and one-step forward prediction in pixel space
+\end{enumerate}
+\end{frame}
+
+
+\begin{frame}{Testing hypothesis 3}
+\begin{enumerate}
+		\item joint training with no regularization
+		\item joint training with L2 regularization
+		\item joint training with L2 regularization and data augmentation
+\end{enumerate}
+\end{frame}
+
+
+\begin{frame}{Module implementation}
+We really implement our add-on module as an add-on module in 
+the reinforcement learning library Tianshou. \\
+This is possible because Tianshou abstract different parts of reinforcement learning.\\
+We implement our module as a policy wrapper.
+\end{frame}
+
+\begin{frame}{Tianshou abstractions}
+\begin{figure}[htpb]
+		\centering
+		\includegraphics[width=0.8\textwidth]{"../thesis_text/figure/concepts_arch2.png"}
+		\caption{Tianshou abstractions.}
+		\label{tianshouconcepts}
+\end{figure}
+\end{frame}
+
+\begin{frame}{Network architectures and hyperparameters}
+\begin{itemize}
+\item all reinforcement learning parameters are kept equal and correspond 
+		to those in \cite{rainbow}
+\item two sized encoders, 2-D convolutional layers specified as\\
+		(number of input channels, number of output
+channels, kernel size, stride, padding):
+		\begin{itemize}
+				\item smaller, same as in \cite{mnih2015humanlevel}: \\
+(number of stacked frames, 32, 8, 4, 0), (32, 64, 4, 2, 0), (64, 64, 3, 1, 0)
+\item bigger, same as in \cite{sac+ae}:\\
+(number of stacked frames, 32, 3, 2, 0), 
+(32, 32, 3, 2, 0),
+(32, 32, 3, 2, 0),
+(32, 32, 3, 2, 0) \\
+followed by a linear layer of shape ($32 \times 35 \times 35$, features dimension)
+		\end{itemize}
+\end{itemize}
+\end{frame}
+
+\section{Results}
+
+\begin{frame}{Games}
+\begin{enumerate}
+		\item Breakout
+		\item Enduro
+		\item Ms Pacman
+		\item Pong
+		\item Qbert
+		\item Seaquest
+		\item Space Invaders
+\end{enumerate}
+\end{frame}
+
+
+\begin{frame}[plain]
+		%{Effectiveness of pretraining}
+\begin{figure}[!t]
+  \captionsetup[subfloat]{position=top,labelformat=empty}
+  \centering
+    \subfloat[]{  \resizebox{0.4\textwidth}{!}{\input{../thesis_text/figure/pretrained_rl_vs_rl/BreakoutNoFrameskip.tex}}}
+    \subfloat[]{  \resizebox{0.4\textwidth}{!}{\input{../thesis_text/figure/pretrained_rl_vs_rl/EnduroNoFrameskip.tex}}}\\
+  \vspace{-1cm}
+    \subfloat[]{  \resizebox{0.4\textwidth}{!}{\input{../thesis_text/figure/pretrained_rl_vs_rl/MsPacmanNoFrameskip.tex}}}
+    \subfloat[]{  \resizebox{0.4\textwidth}{!}{\input{../thesis_text/figure/pretrained_rl_vs_rl/PongNoFrameskip.tex}}}\\
+    \ref{named}
+%  \label{fig:rl-only-vs-pretrained}
+\end{figure}
+\end{frame}
+
+
+\begin{frame}[plain]
+%{Effectiveness of pretraining --- continued}
+\begin{figure}[!t]
+  \captionsetup[subfloat]{position=top,labelformat=empty}
+  \centering
+    \subfloat[]{  \resizebox{0.4\textwidth}{!}{\input{../thesis_text/figure/pretrained_rl_vs_rl/QbertNoFrameskip.tex}}}
+    \subfloat[]{  \resizebox{0.4\textwidth}{!}{\input{../thesis_text/figure/pretrained_rl_vs_rl/SeaquestNoFrameskip.tex}}}\\
+  \vspace{-1cm}
+    \subfloat[]{  \resizebox{0.4\textwidth}{!}{\input{../thesis_text/figure/pretrained_rl_vs_rl/SpaceInvadersNoFrameskip.tex}}} \\
+    \ref{named}
+\end{figure}
+\end{frame}
+%  \caption{The graphs of potential efficiency gains. As can be observed from the graphs,
+%  if training is started using an encoder which was already trained using
+%only reinforcement learning better results are achieved more quickly. Of course, this does not
+%encompass all potential benefits --- unsupervised learning could make the problem easier overall
+%and thereby allow for both even faster learning and higher final scores.}
+
+\begin{frame}[plain]{Plain Slide}
+	This is a slide with the plain style and it is numbered.
+\end{frame}
+
+%------------------------------------------------
+
+\begin{frame}[t]
+	This slide has an empty title and is aligned to top.
+\end{frame}
+
+%------------------------------------------------
+
+\begin{frame}[noframenumbering]{No Slide Numbering}
+	This slide is not numbered and is citing reference \cite{knuth74}.
+\end{frame}
+
+%------------------------------------------------
+
+\begin{frame}{Typesetting and Math}
+	The packages \texttt{inputenc} and \texttt{FiraSans}\footnote{\url{https://fonts.google.com/specimen/Fira+Sans}}\textsuperscript{,}\footnote{\url{http://mozilla.github.io/Fira/}} are used to properly set the main fonts.
+	\vfill
+	This theme provides styling commands to typeset \emph{emphasized}, \alert{alerted}, \textbf{bold}, \textcolor{example}{example text}, \dots
+	\vfill
+	\texttt{FiraSans} also provides support for mathematical symbols:
+	\begin{equation*}
+		e^{i\pi} + 1 = 0.
+	\end{equation*}
+\end{frame}
+
+
+\section{Section 2}
+
+%------------------------------------------------
+
+\begin{frame}{Blocks}
+	These blocks are part of 1 slide, to be displayed consecutively.
+	\begin{block}{Block}
+		Text.
+	\end{block}
+	\pause % Automatically creates a new "page" split between the above and above + below
+	\begin{alertblock}{Alert block}
+		Alert \alert{text}.
+	\end{alertblock}
+	\pause % Automatically creates a new "page" split between the above and above + below
+	\begin{exampleblock}{Example block}
+		Example \textcolor{example}{text}.
+	\end{exampleblock}
+\end{frame}
+
+%------------------------------------------------
+
+\begin{frame}{Columns}
+	\begin{columns}
+		\column{0.5\textwidth}
+			This text appears in the left column and wraps neatly with a margin between columns.
+		
+		\column{0.5\textwidth}
+			\includegraphics[width=\linewidth]{Images/placeholder.jpg}
+	\end{columns}
+\end{frame}
+
+%------------------------------------------------
+
+\begin{frame}{Lists}
+	\begin{columns}[T, onlytextwidth] % T for top align, onlytextwidth to suppress the margin between columns
+		\column{0.33\textwidth}
+			Items:
+			\begin{itemize}
+				\item Item 1
+				\begin{itemize}
+					\item Subitem 1.1
+					\item Subitem 1.2
+				\end{itemize}
+				\item Item 2
+				\item Item 3
+			\end{itemize}
+		
+		\column{0.33\textwidth}
+			Enumerations:
+			\begin{enumerate}
+				\item First
+				\item Second
+				\begin{enumerate}
+					\item Sub-first
+					\item Sub-second
+				\end{enumerate}
+				\item Third
+			\end{enumerate}
+		
+		\column{0.33\textwidth}
+			Descriptions:
+			\begin{description}
+				\item[First] Yes.
+				\item[Second] No.
+			\end{description}
+	\end{columns}
+\end{frame}
+
+%------------------------------------------------
+
+\begin{frame}{Table}
+	\begin{table}
+		\centering % Centre the table on the slide
+		\begin{tabular}{l c}
+			\toprule
+			Discipline & Avg. Salary \\
+			\toprule
+			\textbf{Engineering} & \textbf{\$66,521} \\
+			Computer Sciences & \$60,005\\
+			Mathematics and Sciences & \$61,867\\
+			Business & \$56,720\\
+			Humanities \& Social Sciences & \$56,669\\
+			Agriculture and Natural Resources & \$53,565\\
+			Communications & \$51,448\\
+			\midrule
+			\textbf{Average for All Disciplines} & \textbf{\$58,114}\\
+			\bottomrule
+		\end{tabular}
+	\caption{Table caption}
+	\end{table}
+\end{frame}
+
+%------------------------------------------------
+
+\begin{frame}[focus]
+	Thank you for your attention!
+\end{frame}
+
+%----------------------------------------------------------------------------------------
+%	 CLOSING/SUPPLEMENTARY SLIDES
+%----------------------------------------------------------------------------------------
+
+%\appendix
+
+%\begin{frame}{References}
+%%	\bibliography{../thesis_text/bibliography.bib}
+%%	\bibliographystyle{plain}
+%
+%%\addcontentsline{toc}
+%\addcontentsline{toc}{chapter}{Bibliography}
+%\printbibliography
+%\end{frame}
+
+%------------------------------------------------
+
+%\begin{frame}{Backup Slide}
+%	This is a backup slide, useful to include additional materials to answer questions from the audience.
+%	\vfill
+%	The package \texttt{appendixnumberbeamer} is used to refrain from numbering appendix slides.
+%\end{frame}
+
+%----------------------------------------------------------------------------------------
+
+\end{document}
