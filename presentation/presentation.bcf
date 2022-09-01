@@ -2392,7 +2392,6 @@
     <bcf:citekey order="40">rainbow</bcf:citekey>
     <bcf:citekey order="41">mnih2015humanlevel</bcf:citekey>
     <bcf:citekey order="42">sac+ae</bcf:citekey>
-    <bcf:citekey order="43">knuth74</bcf:citekey>
   </bcf:section>
   <!-- SORTING TEMPLATES -->
   <bcf:sortingtemplate name="ynt">

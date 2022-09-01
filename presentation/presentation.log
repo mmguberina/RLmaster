@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.21 (TeX Live 2020) (preloaded format=pdflatex 2020.9.19)  31 AUG 2022 21:18
+This is pdfTeX, Version 3.14159265-2.6-1.40.21 (TeX Live 2020) (preloaded format=pdflatex 2020.9.19)  1 SEP 2022 09:59
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1481,7 +1481,32 @@ Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
 
 \@quotelevel=\count496
 \@quotereset=\count497
-(./presentation.aux)
+(./presentation.aux
+
+LaTeX Warning: Label `named' multiply defined.
+
+
+LaTeX Warning: Label `sub@named' multiply defined.
+
+
+LaTeX Warning: Label `named' multiply defined.
+
+
+LaTeX Warning: Label `sub@named' multiply defined.
+
+
+LaTeX Warning: Label `named' multiply defined.
+
+
+LaTeX Warning: Label `sub@named' multiply defined.
+
+
+LaTeX Warning: Label `named' multiply defined.
+
+
+LaTeX Warning: Label `sub@named' multiply defined.
+
+)
 \openout1 = `presentation.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 124.
@@ -1776,7 +1801,7 @@ able
 put line 130.
 LaTeX Font Info:    Font shape `T1/FiraSans-OsF/regular/sc' will be
 (Font)              scaled to size 10.95pt on input line 130.
-<Images/ChGULogoHog.pdf, id=49, 142.26349pt x 199.1691pt>
+<Images/ChGULogoHog.pdf, id=53, 142.26349pt x 199.1691pt>
 File: Images/ChGULogoHog.pdf Graphic file (type pdf)
 <use Images/ChGULogoHog.pdf>
 Package pdftex.def Info: Images/ChGULogoHog.pdf  used on input line 130.
@@ -2080,7 +2105,7 @@ Overfull \vbox (18.59999pt too high) detected at line 424
 ] [29
 
 ]
-Overfull \vbox (18.59999pt too high) detected at line 483
+Overfull \vbox (18.59999pt too high) detected at line 484
  []
 
 [30
@@ -2096,7 +2121,7 @@ Overfull \vbox (18.59999pt too high) detected at line 483
 ] [35
 
 ]
-Overfull \vbox (18.59999pt too high) detected at line 572
+Overfull \vbox (18.59999pt too high) detected at line 573
  []
 
 [36
@@ -2108,7 +2133,7 @@ Overfull \vbox (18.59999pt too high) detected at line 572
 ] [39
 
 ]
-Underfull \hbox (badness 10000) in paragraph at lines 615--615
+Underfull \hbox (badness 10000) in paragraph at lines 616--616
  []|\T1/FiraSans-OsF/regular/sc/14.4 Leveraging un-su-per-vised rep-re-sen-ta-t
 ion 
  []
@@ -2122,7 +2147,7 @@ ion
 ] [43
 
 ]
-Overfull \vbox (18.59999pt too high) detected at line 658
+Overfull \vbox (18.59999pt too high) detected at line 659
  []
 
 [44
@@ -2130,7 +2155,7 @@ Overfull \vbox (18.59999pt too high) detected at line 658
 ] [45
 
 ]
-Overfull \hbox (19.91666pt too wide) in paragraph at lines 707--707
+Overfull \hbox (19.91666pt too wide) in paragraph at lines 708--708
  [] 
  []
 
@@ -2145,11 +2170,11 @@ Overfull \hbox (19.91666pt too wide) in paragraph at lines 707--707
 ] [50
 
 ]
-<../thesis_text/figure/concepts_arch2.png, id=441, 743.77875pt x 343.2825pt>
+<../thesis_text/figure/concepts_arch2.png, id=447, 743.77875pt x 343.2825pt>
 File: ../thesis_text/figure/concepts_arch2.png Graphic file (type png)
 <use ../thesis_text/figure/concepts_arch2.png>
 Package pdftex.def Info: ../thesis_text/figure/concepts_arch2.png  used on inpu
-t line 754.
+t line 755.
 (pdftex.def)             Requested size: 257.21397pt x 118.71544pt.
  [51
 
@@ -2157,111 +2182,160 @@ t line 754.
 [52
 
 ]
-Overfull \vbox (18.59999pt too high) detected at line 776
+Overfull \vbox (18.59999pt too high) detected at line 777
  []
 
 [53
 
 ] [54
 
-] (../thesis_text/figure/pretrained_rl_vs_rl/BreakoutNoFrameskip.tex)
+] (./figure/pretrained_rl_vs_rl/BreakoutNoFrameskip.tex)
 LaTeX Font Info:    Font shape `T1/FiraSans-OsF/m/n' in size <9> not available
 (Font)              Font shape `T1/FiraSans-OsF/regular/n' tried instead on inp
-ut line 804.
+ut line 807.
 LaTeX Font Info:    Font shape `T1/FiraSans-OsF/regular/n' will be
-(Font)              scaled to size 9.0pt on input line 804.
+(Font)              scaled to size 9.0pt on input line 807.
 LaTeX Font Info:    Font shape `T1/FiraSans-OsF/b/n' in size <9> not available
 (Font)              Font shape `T1/FiraSans-OsF/bold/n' tried instead on input 
-line 804.
+line 807.
 LaTeX Font Info:    Font shape `T1/FiraSans-OsF/bold/n' will be
-(Font)              scaled to size 9.0pt on input line 804.
+(Font)              scaled to size 9.0pt on input line 807.
 
-(../thesis_text/figure/pretrained_rl_vs_rl/EnduroNoFrameskip.tex)
-(../thesis_text/figure/pretrained_rl_vs_rl/MsPacmanNoFrameskip.tex)
-(../thesis_text/figure/pretrained_rl_vs_rl/PongNoFrameskip.tex)
-Overfull \vbox (18.76643pt too high) detected at line 804
+(./figure/pretrained_rl_vs_rl/EnduroNoFrameskip.tex)
+(./figure/pretrained_rl_vs_rl/MsPacmanNoFrameskip.tex)
+(./figure/pretrained_rl_vs_rl/PongNoFrameskip.tex)
+Overfull \vbox (15.24146pt too high) detected at line 807
  []
 
 [55
 
-] (../thesis_text/figure/pretrained_rl_vs_rl/QbertNoFrameskip.tex)
-(../thesis_text/figure/pretrained_rl_vs_rl/SeaquestNoFrameskip.tex)
-(../thesis_text/figure/pretrained_rl_vs_rl/SpaceInvadersNoFrameskip.tex)
-Overfull \vbox (18.21272pt too high) detected at line 818
+] (./figure/pretrained_rl_vs_rl/QbertNoFrameskip.tex)
+(./figure/pretrained_rl_vs_rl/SeaquestNoFrameskip.tex)
+(./figure/pretrained_rl_vs_rl/SpaceInvadersNoFrameskip.tex)
+Overfull \vbox (14.68774pt too high) detected at line 824
  []
 
 [56
 
-] [57
+] (./figure/big-vs-small-encoder-rl-only/BreakoutNoFrameskip.texpdfTeX warning 
+(ext4): destination with the same identifier (name{named}) has been already use
+d, duplicate ignored
+<to be read again> 
+                   \relax 
+l.187 \end{axis}
+                ) (./figure/big-vs-small-encoder-rl-only/EnduroNoFrameskip.tex)
+(./figure/big-vs-small-encoder-rl-only/MsPacmanNoFrameskip.tex)
+(./figure/big-vs-small-encoder-rl-only/PongNoFrameskip.tex)
+Overfull \vbox (12.82205pt too high) detected at line 849
+ []
 
-] [58
+[57
 
-] [59
+] (./figure/big-vs-small-encoder-rl-only/QbertNoFrameskip.tex)
+(./figure/big-vs-small-encoder-rl-only/SeaquestNoFrameskip.tex)
+(./figure/big-vs-small-encoder-rl-only/SpaceInvadersNoFrameskip.tex)
+Overfull \vbox (12.26834pt too high) detected at line 867
+ []
 
-]
-LaTeX Font Info:    Trying to load font information for T1+FiraMono-TOsF on inp
-ut line 852.
+[58
 
-(/mnt/bigp/texlive/texcopy/texlive/2020/texmf-dist/tex/latex/fira/T1FiraMono-TO
-sF.fd
-File: T1FiraMono-TOsF.fd 2019/10/10 (autoinst) Font definitions for T1/FiraMono
--TOsF.
-)
-LaTeX Font Info:    Font shape `T1/FiraMono-TOsF/m/n' in size <10.95> not avail
-able
-(Font)              Font shape `T1/FiraMono-TOsF/regular/n' tried instead on in
-put line 852.
-LaTeX Font Info:    Font shape `T1/FiraMono-TOsF/regular/n' will be
-(Font)              scaled to size 10.95pt on input line 852.
-LaTeX Font Info:    Font shape `T1/FiraSans-OsF/m/it' in size <9> not available
+] (./figure/parallel-updates/BreakoutNoFrameskip.texpdfTeX warning (ext4): dest
+ination with the same identifier (name{named}) has been already used, duplicate
+ ignored
+<to be read again> 
+                   \relax 
+l.180 \end{axis}
+                ) (./figure/parallel-updates/EnduroNoFrameskip.tex)
+(./figure/parallel-updates/MsPacmanNoFrameskip.tex)
+(./figure/parallel-updates/PongNoFrameskip.tex)
+Overfull \vbox (14.81549pt too high) detected at line 885
+ []
 
-(Font)              Font shape `T1/FiraSans-OsF/regular/it' tried instead on in
-put line 852.
-LaTeX Font Info:    Font shape `T1/FiraSans-OsF/regular/it' will be
-(Font)              scaled to size 9.0pt on input line 852.
-LaTeX Font Info:    Font shape `T1/FiraSans-OsF/bx/it' in size <9> not availabl
-e
-(Font)              Font shape `T1/FiraSans-OsF/b/it' tried instead on input li
-ne 852.
-LaTeX Font Info:    Font shape `T1/FiraSans-OsF/b/it' in size <9> not available
+[59
 
-(Font)              Font shape `T1/FiraSans-OsF/bold/it' tried instead on input
- line 852.
-LaTeX Font Info:    Font shape `T1/FiraSans-OsF/bold/it' will be
-(Font)              scaled to size 9.0pt on input line 852.
-LaTeX Font Info:    Font shape `T1/FiraMono-TOsF/m/n' in size <9> not available
+] (./figure/parallel-updates/QbertNoFrameskip.tex)
+(./figure/parallel-updates/SeaquestNoFrameskip.tex)
+(./figure/parallel-updates/SpaceInvadersNoFrameskip.tex)
+Overfull \vbox (14.26178pt too high) detected at line 902
+ []
 
-(Font)              Font shape `T1/FiraMono-TOsF/regular/n' tried instead on in
-put line 852.
-LaTeX Font Info:    Font shape `T1/FiraMono-TOsF/regular/n' will be
-(Font)              scaled to size 9.0pt on input line 852.
- [60
+[60
 
-]
-Overfull \vbox (18.59999pt too high) detected at line 855
+] (./figure/reg-vs-no-reg/BreakoutNoFrameskip.texpdfTeX warning (ext4): destina
+tion with the same identifier (name{named}) has been already used, duplicate ig
+nored
+<to be read again> 
+                   \relax 
+l.275 \end{axis}
+                ) (./figure/reg-vs-no-reg/EnduroNoFrameskip.tex)
+(./figure/reg-vs-no-reg/MsPacmanNoFrameskip.tex)
+(./figure/reg-vs-no-reg/PongNoFrameskip.tex)
+Overfull \vbox (14.50348pt too high) detected at line 920
  []
 
 [61
 
-] [62
+] (./figure/reg-vs-no-reg/QbertNoFrameskip.tex)
+(./figure/reg-vs-no-reg/SeaquestNoFrameskip.tex)
+(./figure/reg-vs-no-reg/SpaceInvadersNoFrameskip.tex)
+Overfull \vbox (13.94977pt too high) detected at line 937
+ []
 
-] [63
+[62
 
-] [64
+] (./figure/forward-vs-compression/BreakoutNoFrameskip.texpdfTeX warning (ext4)
+: destination with the same identifier (name{named}) has been already used, dup
+licate ignored
+<to be read again> 
+                   \relax 
+l.237 \end{axis}
+                ) (./figure/forward-vs-compression/EnduroNoFrameskip.tex)
+(./figure/forward-vs-compression/MsPacmanNoFrameskip.tex)
+(./figure/forward-vs-compression/PongNoFrameskip.tex)
+Overfull \vbox (15.24146pt too high) detected at line 955
+ []
+
+[63
+
+] (./figure/forward-vs-compression/QbertNoFrameskip.tex)
+(./figure/forward-vs-compression/SeaquestNoFrameskip.tex)
+(./figure/forward-vs-compression/SpaceInvadersNoFrameskip.tex)
+Overfull \vbox (14.68774pt too high) detected at line 972
+ []
+
+[64
 
 ]
-<Images/placeholder.jpg, id=526, 351.3125pt x 193.72375pt>
-File: Images/placeholder.jpg Graphic file (type jpg)
-<use Images/placeholder.jpg>
-Package pdftex.def Info: Images/placeholder.jpg  used on input line 884.
-(pdftex.def)             Requested size: 160.75812pt x 88.6499pt.
- [65
+Overfull \vbox (18.59999pt too high) detected at line 975
+ []
 
- <./Images/placeholder.jpg>] [66
+[65
+
+] [66
 
 ] [67
 
 ] [68
+
+] [69
+
+] [70
+
+] [71
+
+] [72
+
+]
+Overfull \vbox (18.59999pt too high) detected at line 1043
+ []
+
+[73
+
+] [74
+
+] [75
+
+] [76
 
 ]
 \tf@nav=\write7
@@ -2273,26 +2347,38 @@ Package pdftex.def Info: Images/placeholder.jpg  used on input line 884.
 \tf@snm=\write9
 \openout9 = `presentation.snm'.
 
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 978.
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 978.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 1217.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 1217.
+ (./presentation.aux)
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 1217.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 1217.
 
-(./presentation.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 978.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 978.
 Package rerunfilecheck Info: File `presentation.out' has not changed.
-(rerunfilecheck)             Checksum: 3ABA904FECC3E7483118942226FB8B31;456.
+(rerunfilecheck)             Checksum: 352341864A6C35E6AF2FA5E6F4EFBFCC;504.
+
+
+LaTeX Warning: There were undefined references.
+
+
+LaTeX Warning: There were multiply-defined labels.
+
+
+Package biblatex Warning: Please (re)run Biber on the file:
+(biblatex)                presentation
+(biblatex)                and rerun LaTeX afterwards.
+
 Package logreq Info: Writing requests to 'presentation.run.xml'.
 \openout1 = `presentation.run.xml'.
 
  ) 
 Here is how much of TeX's memory you used:
- 44237 strings out of 480876
- 1040137 string characters out of 5907582
- 1791950 words of memory out of 5000000
- 58786 multiletter control sequences out of 15000+600000
- 1079118 words of font info for 146 fonts, out of 8000000 for 9000
+ 44460 strings out of 480876
+ 1046630 string characters out of 5907582
+ 1796800 words of memory out of 5000000
+ 58948 multiletter control sequences out of 15000+600000
+ 1046741 words of font info for 131 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 71i,16n,118p,6771b,2139s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 71i,16n,118p,6771b,2147s stack positions out of 5000i,500n,10000p,200000b,80000s
 pdfTeX warning (dest): name{cite.0@mnih2015humanlevel} has been referenced bu
 t does not exist, replaced by a fixed one
 
@@ -2383,34 +2469,32 @@ t does not exist, replaced by a fixed one
 pdfTeX warning (dest): name{cite.0@bengio2013representation} has been reference
 d but does not exist, replaced by a fixed one
 
-{/mnt/bigp/texlive/texcopy/texlive/2020/texmf-dist/fonts/enc/dvips/fira/fir_d4q
-673.enc}{/mnt/bigp/texlive/texcopy/texlive/2020/texmf-dist/fonts/enc/dvips/fira
-/fir_iln36p.enc}{/mnt/bigp/texlive/texcopy/texlive/2020/texmf-dist/fonts/enc/dv
-ips/fira/fir_2mfh3o.enc}</mnt/bigp/texlive/texcopy/texlive/2020/texmf-dist/font
-s/type1/public/fira/FiraMono-Regular.pfb></mnt/bigp/texlive/texcopy/texlive/202
-0/texmf-dist/fonts/type1/public/fira/FiraSans-Bold.pfb></mnt/bigp/texlive/texco
-py/texlive/2020/texmf-dist/fonts/type1/public/fira/FiraSans-BoldItalic.pfb></mn
-t/bigp/texlive/texcopy/texlive/2020/texmf-dist/fonts/type1/public/fira/FiraSans
--Italic.pfb></mnt/bigp/texlive/texcopy/texlive/2020/texmf-dist/fonts/type1/publ
-ic/fira/FiraSans-Regular.pfb></mnt/bigp/texlive/texcopy/texlive/2020/texmf-dist
-/fonts/type1/public/amsfonts/cmextra/cmbsy8.pfb></mnt/bigp/texlive/texcopy/texl
-ive/2020/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></mnt/bigp/texliv
-e/texcopy/texlive/2020/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></m
-nt/bigp/texlive/texcopy/texlive/2020/texmf-dist/fonts/type1/public/amsfonts/cm/
-cmmi6.pfb></mnt/bigp/texlive/texcopy/texlive/2020/texmf-dist/fonts/type1/public
-/amsfonts/cm/cmmi8.pfb></mnt/bigp/texlive/texcopy/texlive/2020/texmf-dist/fonts
-/type1/public/amsfonts/cm/cmss10.pfb></mnt/bigp/texlive/texcopy/texlive/2020/te
-xmf-dist/fonts/type1/public/amsfonts/cm/cmss8.pfb></mnt/bigp/texlive/texcopy/te
-xlive/2020/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></mnt/bigp/texl
-ive/texcopy/texlive/2020/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy6.pfb></
+{/mnt/bigp/texlive/texcopy/texlive/2020/texmf-dist/fonts/enc/dvips/fira/fir_iln
+36p.enc}{/mnt/bigp/texlive/texcopy/texlive/2020/texmf-dist/fonts/enc/dvips/fira
+/fir_2mfh3o.enc}</mnt/bigp/texlive/texcopy/texlive/2020/texmf-dist/fonts/type1/
+public/fira/FiraSans-Bold.pfb></mnt/bigp/texlive/texcopy/texlive/2020/texmf-dis
+t/fonts/type1/public/fira/FiraSans-BoldItalic.pfb></mnt/bigp/texlive/texcopy/te
+xlive/2020/texmf-dist/fonts/type1/public/fira/FiraSans-Italic.pfb></mnt/bigp/te
+xlive/texcopy/texlive/2020/texmf-dist/fonts/type1/public/fira/FiraSans-Regular.
+pfb></mnt/bigp/texlive/texcopy/texlive/2020/texmf-dist/fonts/type1/public/amsfo
+nts/cmextra/cmbsy8.pfb></mnt/bigp/texlive/texcopy/texlive/2020/texmf-dist/fonts
+/type1/public/amsfonts/cm/cmex10.pfb></mnt/bigp/texlive/texcopy/texlive/2020/te
+xmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></mnt/bigp/texlive/texcopy/t
+exlive/2020/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi6.pfb></mnt/bigp/texl
+ive/texcopy/texlive/2020/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb></
 mnt/bigp/texlive/texcopy/texlive/2020/texmf-dist/fonts/type1/public/amsfonts/cm
-/cmsy8.pfb></mnt/bigp/texlive/texcopy/texlive/2020/texmf-dist/fonts/type1/publi
-c/amsfonts/symbols/msam10.pfb></mnt/bigp/texlive/texcopy/texlive/2020/texmf-dis
-t/fonts/type1/public/amsfonts/symbols/msbm10.pfb>
-Output written on presentation.pdf (68 pages, 1185370 bytes).
+/cmss10.pfb></mnt/bigp/texlive/texcopy/texlive/2020/texmf-dist/fonts/type1/publ
+ic/amsfonts/cm/cmss8.pfb></mnt/bigp/texlive/texcopy/texlive/2020/texmf-dist/fon
+ts/type1/public/amsfonts/cm/cmsy10.pfb></mnt/bigp/texlive/texcopy/texlive/2020/
+texmf-dist/fonts/type1/public/amsfonts/cm/cmsy6.pfb></mnt/bigp/texlive/texcopy/
+texlive/2020/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb></mnt/bigp/tex
+live/texcopy/texlive/2020/texmf-dist/fonts/type1/public/amsfonts/symbols/msam10
+.pfb></mnt/bigp/texlive/texcopy/texlive/2020/texmf-dist/fonts/type1/public/amsf
+onts/symbols/msbm10.pfb>
+Output written on presentation.pdf (76 pages, 1197581 bytes).
 PDF statistics:
- 652 PDF objects out of 1000 (max. 8388607)
- 536 compressed objects within 6 object streams
- 190 named destinations out of 1000 (max. 500000)
- 130 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 702 PDF objects out of 1000 (max. 8388607)
+ 580 compressed objects within 6 object streams
+ 207 named destinations out of 1000 (max. 500000)
+ 133 words of extra memory for PDF output out of 10000 (max. 10000000)
 

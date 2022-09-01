@@ -454,6 +454,7 @@ DQN with the following improvements:
 						\begin{itemize}
 								\item contrastive learning
 								\item bootstrapping
+								\item ...
 						\end{itemize}
 		\end{itemize}
 \end{frame}
@@ -789,15 +790,17 @@ followed by a linear layer of shape ($32 \times 35 \times 35$, features dimensio
 
 
 \begin{frame}[plain]
-		%{Effectiveness of pretraining}
+		\centering
+		\underline{Effectiveness of pretraining}
+		\vspace{-1cm}
 \begin{figure}[!t]
   \captionsetup[subfloat]{position=top,labelformat=empty}
   \centering
-    \subfloat[]{  \resizebox{0.4\textwidth}{!}{\input{../thesis_text/figure/pretrained_rl_vs_rl/BreakoutNoFrameskip.tex}}}
-    \subfloat[]{  \resizebox{0.4\textwidth}{!}{\input{../thesis_text/figure/pretrained_rl_vs_rl/EnduroNoFrameskip.tex}}}\\
+    \subfloat[]{  \resizebox{0.4\textwidth}{!}{\input{./figure/pretrained_rl_vs_rl/BreakoutNoFrameskip.tex}}}
+    \subfloat[]{  \resizebox{0.4\textwidth}{!}{\input{./figure/pretrained_rl_vs_rl/EnduroNoFrameskip.tex}}}\\
   \vspace{-1cm}
-    \subfloat[]{  \resizebox{0.4\textwidth}{!}{\input{../thesis_text/figure/pretrained_rl_vs_rl/MsPacmanNoFrameskip.tex}}}
-    \subfloat[]{  \resizebox{0.4\textwidth}{!}{\input{../thesis_text/figure/pretrained_rl_vs_rl/PongNoFrameskip.tex}}}\\
+    \subfloat[]{  \resizebox{0.4\textwidth}{!}{\input{./figure/pretrained_rl_vs_rl/MsPacmanNoFrameskip.tex}}}
+    \subfloat[]{  \resizebox{0.4\textwidth}{!}{\input{./figure/pretrained_rl_vs_rl/PongNoFrameskip.tex}}}\\
     \ref{named}
 %  \label{fig:rl-only-vs-pretrained}
 \end{figure}
@@ -806,13 +809,16 @@ followed by a linear layer of shape ($32 \times 35 \times 35$, features dimensio
 
 \begin{frame}[plain]
 %{Effectiveness of pretraining --- continued}
+		\centering
+		\underline{Effectiveness of pretraining --- continued}
+		\vspace{-1cm}
 \begin{figure}[!t]
   \captionsetup[subfloat]{position=top,labelformat=empty}
   \centering
-    \subfloat[]{  \resizebox{0.4\textwidth}{!}{\input{../thesis_text/figure/pretrained_rl_vs_rl/QbertNoFrameskip.tex}}}
-    \subfloat[]{  \resizebox{0.4\textwidth}{!}{\input{../thesis_text/figure/pretrained_rl_vs_rl/SeaquestNoFrameskip.tex}}}\\
+    \subfloat[]{  \resizebox{0.4\textwidth}{!}{\input{./figure/pretrained_rl_vs_rl/QbertNoFrameskip.tex}}}
+    \subfloat[]{  \resizebox{0.4\textwidth}{!}{\input{./figure/pretrained_rl_vs_rl/SeaquestNoFrameskip.tex}}}\\
   \vspace{-1cm}
-    \subfloat[]{  \resizebox{0.4\textwidth}{!}{\input{../thesis_text/figure/pretrained_rl_vs_rl/SpaceInvadersNoFrameskip.tex}}} \\
+    \subfloat[]{  \resizebox{0.4\textwidth}{!}{\input{./figure/pretrained_rl_vs_rl/SpaceInvadersNoFrameskip.tex}}} \\
     \ref{named}
 \end{figure}
 \end{frame}
@@ -822,133 +828,366 @@ followed by a linear layer of shape ($32 \times 35 \times 35$, features dimensio
 %encompass all potential benefits --- unsupervised learning could make the problem easier overall
 %and thereby allow for both even faster learning and higher final scores.}
 
-\begin{frame}[plain]{Plain Slide}
-	This is a slide with the plain style and it is numbered.
-\end{frame}
 
-%------------------------------------------------
 
-\begin{frame}[t]
-	This slide has an empty title and is aligned to top.
-\end{frame}
-
-%------------------------------------------------
-
-\begin{frame}[noframenumbering]{No Slide Numbering}
-	This slide is not numbered and is citing reference \cite{knuth74}.
-\end{frame}
-
-%------------------------------------------------
-
-\begin{frame}{Typesetting and Math}
-	The packages \texttt{inputenc} and \texttt{FiraSans}\footnote{\url{https://fonts.google.com/specimen/Fira+Sans}}\textsuperscript{,}\footnote{\url{http://mozilla.github.io/Fira/}} are used to properly set the main fonts.
-	\vfill
-	This theme provides styling commands to typeset \emph{emphasized}, \alert{alerted}, \textbf{bold}, \textcolor{example}{example text}, \dots
-	\vfill
-	\texttt{FiraSans} also provides support for mathematical symbols:
-	\begin{equation*}
-		e^{i\pi} + 1 = 0.
-	\end{equation*}
+\begin{frame}[plain]
+		\centering
+		\underline{Effect of different encoder sizes on RL}
+		\vspace{-1cm}
+\begin{figure}[!t]
+  \captionsetup[subfloat]{position=top,labelformat=empty}
+  \centering
+    \subfloat[]{  \resizebox{0.4\textwidth}{!}{\input{figure/big-vs-small-encoder-rl-only/BreakoutNoFrameskip.tex}}}
+    \subfloat[]{  \resizebox{0.4\textwidth}{!}{\input{figure/big-vs-small-encoder-rl-only/EnduroNoFrameskip.tex}}}\\
+  \vspace{-1cm}
+    \subfloat[]{  \resizebox{0.4\textwidth}{!}{\input{figure/big-vs-small-encoder-rl-only/MsPacmanNoFrameskip.tex}}}
+    \subfloat[]{  \resizebox{0.4\textwidth}{!}{\input{figure/big-vs-small-encoder-rl-only/PongNoFrameskip.tex}}}\\
+%  \vspace{-1cm}
+    \ref{named}
+%  \label{fig:rl-only-vs-pretrained}
+\end{figure}
 \end{frame}
 
 
-\section{Section 2}
+\begin{frame}[plain]
+%{Effectiveness of pretraining --- continued}
+		\centering
+		\underline{Effect of different encoder sizes on RL --- continued}
+		\vspace{-1cm}
+\begin{figure}[!t]
+  \captionsetup[subfloat]{position=top,labelformat=empty}
+  \centering
+    \subfloat[]{  \resizebox{0.4\textwidth}{!}{\input{figure/big-vs-small-encoder-rl-only/QbertNoFrameskip.tex}}}
+    \subfloat[]{  \resizebox{0.4\textwidth}{!}{\input{figure/big-vs-small-encoder-rl-only/SeaquestNoFrameskip.tex}}}\\
+  \vspace{-1cm}
+    \subfloat[]{  \resizebox{0.4\textwidth}{!}{\input{figure/big-vs-small-encoder-rl-only/SpaceInvadersNoFrameskip.tex}}}
+    \\
+    \ref{named}
+\end{figure}
+\end{frame}
 
-%------------------------------------------------
 
-\begin{frame}{Blocks}
-	These blocks are part of 1 slide, to be displayed consecutively.
-	\begin{block}{Block}
-		Text.
-	\end{block}
-	\pause % Automatically creates a new "page" split between the above and above + below
-	\begin{alertblock}{Alert block}
-		Alert \alert{text}.
+\begin{frame}[plain]
+		\centering
+		\underline{Effectiveness of parallel training}
+		\vspace{-1cm}
+\begin{figure}[!t]
+  \captionsetup[subfloat]{position=top,labelformat=empty}
+  \centering
+    \subfloat[]{  \resizebox{0.4\textwidth}{!}{\input{figure/parallel-updates/BreakoutNoFrameskip.tex}}}
+    \subfloat[]{  \resizebox{0.4\textwidth}{!}{\input{figure/parallel-updates/EnduroNoFrameskip.tex}}}\\
+  \vspace{-1cm}
+    \subfloat[]{  \resizebox{0.4\textwidth}{!}{\input{figure/parallel-updates/MsPacmanNoFrameskip.tex}}}
+    \subfloat[]{  \resizebox{0.4\textwidth}{!}{\input{figure/parallel-updates/PongNoFrameskip.tex}}}\\
+    \ref{named}
+%  \label{fig:rl-only-vs-pretrained}
+\end{figure}
+\end{frame}
+
+
+\begin{frame}[plain]
+		\centering
+		\underline{Effectiveness of parallel training --- continued}
+		\vspace{-1cm}
+\begin{figure}[!t]
+  \captionsetup[subfloat]{position=top,labelformat=empty}
+  \centering
+    \subfloat[]{  \resizebox{0.4\textwidth}{!}{\input{figure/parallel-updates/QbertNoFrameskip.tex}}}
+    \subfloat[]{  \resizebox{0.4\textwidth}{!}{\input{figure/parallel-updates/SeaquestNoFrameskip.tex}}}\\
+  \vspace{-1cm}
+    \subfloat[]{  \resizebox{0.4\textwidth}{!}{\input{figure/parallel-updates/SpaceInvadersNoFrameskip.tex}}}
+  \\
+    \ref{named}
+\end{figure}
+\end{frame}
+
+
+\begin{frame}[plain]
+		\centering
+		\underline{Effectiveness of regularization}
+		\vspace{-1cm}
+\begin{figure}[!t]
+  \captionsetup[subfloat]{position=top,labelformat=empty}
+  \centering
+    \subfloat[]{  \resizebox{0.4\textwidth}{!}{\input{figure/reg-vs-no-reg/BreakoutNoFrameskip.tex}}}
+    \subfloat[]{  \resizebox{0.4\textwidth}{!}{\input{figure/reg-vs-no-reg/EnduroNoFrameskip.tex}}}\\
+  \vspace{-1cm}
+    \subfloat[]{  \resizebox{0.4\textwidth}{!}{\input{figure/reg-vs-no-reg/MsPacmanNoFrameskip.tex}}}
+    \subfloat[]{  \resizebox{0.4\textwidth}{!}{\input{figure/reg-vs-no-reg/PongNoFrameskip.tex}}}\\
+    \ref{named}
+%  \label{fig:rl-only-vs-pretrained}
+\end{figure}
+\end{frame}
+
+
+\begin{frame}[plain]
+		\centering
+		\underline{Effectiveness of regularization --- continued}
+		\vspace{-1cm}
+\begin{figure}[!t]
+  \captionsetup[subfloat]{position=top,labelformat=empty}
+  \centering
+    \subfloat[]{  \resizebox{0.4\textwidth}{!}{\input{figure/reg-vs-no-reg/QbertNoFrameskip.tex}}}
+    \subfloat[]{  \resizebox{0.4\textwidth}{!}{\input{figure/reg-vs-no-reg/SeaquestNoFrameskip.tex}}}\\
+  \vspace{-1cm}
+    \subfloat[]{  \resizebox{0.4\textwidth}{!}{\input{figure/reg-vs-no-reg/SpaceInvadersNoFrameskip.tex}}}
+  \\
+    \ref{named}
+\end{figure}
+\end{frame}
+
+
+\begin{frame}[plain]
+		\centering
+		\underline{Effectiveness of predicting}
+		\vspace{-1cm}
+\begin{figure}[!t]
+  \captionsetup[subfloat]{position=top,labelformat=empty}
+  \centering
+    \subfloat[]{  \resizebox{0.4\textwidth}{!}{\input{figure/forward-vs-compression/BreakoutNoFrameskip.tex}}}
+    \subfloat[]{  \resizebox{0.4\textwidth}{!}{\input{figure/forward-vs-compression/EnduroNoFrameskip.tex}}}\\
+  \vspace{-1cm}
+    \subfloat[]{  \resizebox{0.4\textwidth}{!}{\input{figure/forward-vs-compression/MsPacmanNoFrameskip.tex}}}
+    \subfloat[]{  \resizebox{0.4\textwidth}{!}{\input{figure/forward-vs-compression/PongNoFrameskip.tex}}}\\
+    \ref{named}
+%  \label{fig:rl-only-vs-pretrained}
+\end{figure}
+\end{frame}
+
+
+\begin{frame}[plain]
+		\centering
+		\underline{Effectiveness of predicting --- continued}
+		\vspace{-1cm}
+\begin{figure}[!t]
+  \captionsetup[subfloat]{position=top,labelformat=empty}
+  \centering
+    \subfloat[]{  \resizebox{0.4\textwidth}{!}{\input{figure/forward-vs-compression/QbertNoFrameskip.tex}}}
+    \subfloat[]{  \resizebox{0.4\textwidth}{!}{\input{figure/forward-vs-compression/SeaquestNoFrameskip.tex}}}\\
+  \vspace{-1cm}
+    \subfloat[]{  \resizebox{0.4\textwidth}{!}{\input{figure/forward-vs-compression/SpaceInvadersNoFrameskip.tex}}}
+  \\
+    \ref{named}
+\end{figure}
+\end{frame}
+
+
+\section{Discussion}
+
+\begin{frame}{Key questions}
+		\begin{itemize}
+		\item What are the differences between features and states 
+				and how important are they to the final performance?
+		\item Why is reconstruction loss particularly bad at representing
+				stateful information?
+		\item What could be the characteristics of more successful approaches
+				to using unsupervised learning for state representation learning?
+		\item What role does regularization play in reinforcement learning,
+				unsupervised learning and their combination?
+		\end{itemize}
+\end{frame}
+
+
+\begin{frame}{Differences between features and states}
+		\begin{itemize}
+				\item in Atari games states are primarily positions and velocities of objects
+		\end{itemize}
+
+	\begin{alertblock}{Representation learning methods do not learn this}
+			Thus, to work as intended they should either be specialized to the problem,
+			or truly made general across many problems.
+		%Alert \alert{text}.
 	\end{alertblock}
-	\pause % Automatically creates a new "page" split between the above and above + below
-	\begin{exampleblock}{Example block}
-		Example \textcolor{example}{text}.
+		\begin{itemize}
+				\item better understanding of what neural network features are 
+						would greatly help in designing them
+		\end{itemize}
+\pause
+	\begin{exampleblock}{Incentivising learning stateful information helps}
+			Despite an order of magnitude large unsupervised loss (also destabilizes),
+			forward prediction makes a difference.
 	\end{exampleblock}
+	
 \end{frame}
 
-%------------------------------------------------
-
-\begin{frame}{Columns}
-	\begin{columns}
-		\column{0.5\textwidth}
-			This text appears in the left column and wraps neatly with a margin between columns.
-		
-		\column{0.5\textwidth}
-			\includegraphics[width=\linewidth]{Images/placeholder.jpg}
-	\end{columns}
-\end{frame}
-
-%------------------------------------------------
-
-\begin{frame}{Lists}
-	\begin{columns}[T, onlytextwidth] % T for top align, onlytextwidth to suppress the margin between columns
-		\column{0.33\textwidth}
-			Items:
+\begin{frame}{Reconstruction loss is bad}
+	\begin{alertblock}{Reconstruction loss is ill-suited for state representation learning}
 			\begin{itemize}
-				\item Item 1
-				\begin{itemize}
-					\item Subitem 1.1
-					\item Subitem 1.2
-				\end{itemize}
-				\item Item 2
-				\item Item 3
+					\item MSE loss misses important details
+					\item MSE loss learns unimportant details
 			\end{itemize}
-		
-		\column{0.33\textwidth}
-			Enumerations:
-			\begin{enumerate}
-				\item First
-				\item Second
-				\begin{enumerate}
-					\item Sub-first
-					\item Sub-second
-				\end{enumerate}
-				\item Third
-			\end{enumerate}
-		
-		\column{0.33\textwidth}
-			Descriptions:
-			\begin{description}
-				\item[First] Yes.
-				\item[Second] No.
-			\end{description}
-	\end{columns}
+	\end{alertblock}
+	\pause
+	\begin{exampleblock}{Discriminative models are more promising}
+			\begin{itemize}
+					\item they allow for better losses
+					\item are less computationally expensive
+			\end{itemize}
+	\end{exampleblock}
+	
 \end{frame}
 
-%------------------------------------------------
-
-\begin{frame}{Table}
-	\begin{table}
-		\centering % Centre the table on the slide
-		\begin{tabular}{l c}
-			\toprule
-			Discipline & Avg. Salary \\
-			\toprule
-			\textbf{Engineering} & \textbf{\$66,521} \\
-			Computer Sciences & \$60,005\\
-			Mathematics and Sciences & \$61,867\\
-			Business & \$56,720\\
-			Humanities \& Social Sciences & \$56,669\\
-			Agriculture and Natural Resources & \$53,565\\
-			Communications & \$51,448\\
-			\midrule
-			\textbf{Average for All Disciplines} & \textbf{\$58,114}\\
-			\bottomrule
-		\end{tabular}
-	\caption{Table caption}
-	\end{table}
+\begin{frame}{Not all regularization is the same}
+	\begin{alertblock}{Data augmentation hurt joint learning}
+			Although it, interestingly, did not hurt either reinforcement 
+			nor representation learning individually.
+	\end{alertblock}
+	\pause
+	\begin{exampleblock}{L2 regularization provided a small benefit}
+			 Tested separately, it made the reconstruction features more stable,
+			 but that was not crucial.
+	\end{exampleblock}
+	
 \end{frame}
 
-%------------------------------------------------
+\section{Conclusion}
+
+\begin{frame}{Conclusion}
+	\begin{alertblock}{Our approach did not work}
+			Simply adding pixel reconstruction, and other naive approaches 
+			do not increase sample-efficiency.
+	\end{alertblock}
+	\pause
+	\begin{exampleblock}{Our implementation and takeaways help further research}
+			The pull request will be made once code is cleaned up.
+	\end{exampleblock}
+		
+\end{frame}
 
 \begin{frame}[focus]
 	Thank you for your attention!
 \end{frame}
+
+
+
+
+
+
+
+%\begin{frame}[plain]{Plain Slide}
+%	This is a slide with the plain style and it is numbered.
+%\end{frame}
+%
+%%------------------------------------------------
+%
+%\begin{frame}[t]
+%	This slide has an empty title and is aligned to top.
+%\end{frame}
+%
+%%------------------------------------------------
+%
+%\begin{frame}[noframenumbering]{No Slide Numbering}
+%	This slide is not numbered and is citing reference \cite{knuth74}.
+%\end{frame}
+%
+%%------------------------------------------------
+%
+%\begin{frame}{Typesetting and Math}
+%	The packages \texttt{inputenc} and \texttt{FiraSans}\footnote{\url{https://fonts.google.com/specimen/Fira+Sans}}\textsuperscript{,}\footnote{\url{http://mozilla.github.io/Fira/}} are used to properly set the main fonts.
+%	\vfill
+%	This theme provides styling commands to typeset \emph{emphasized}, \alert{alerted}, \textbf{bold}, \textcolor{example}{example text}, \dots
+%	\vfill
+%	\texttt{FiraSans} also provides support for mathematical symbols:
+%	\begin{equation*}
+%		e^{i\pi} + 1 = 0.
+%	\end{equation*}
+%\end{frame}
+%
+%
+%\section{Section 2}
+%
+%%------------------------------------------------
+%
+%\begin{frame}{Blocks}
+%	These blocks are part of 1 slide, to be displayed consecutively.
+%	\begin{block}{Block}
+%		Text.
+%	\end{block}
+%	\pause % Automatically creates a new "page" split between the above and above + below
+%	\begin{alertblock}{Alert block}
+%		Alert \alert{text}.
+%	\end{alertblock}
+%	\pause % Automatically creates a new "page" split between the above and above + below
+%	\begin{exampleblock}{Example block}
+%		Example \textcolor{example}{text}.
+%	\end{exampleblock}
+%\end{frame}
+%
+%%------------------------------------------------
+%
+%\begin{frame}{Columns}
+%	\begin{columns}
+%		\column{0.5\textwidth}
+%			This text appears in the left column and wraps neatly with a margin between columns.
+%		
+%		\column{0.5\textwidth}
+%			\includegraphics[width=\linewidth]{Images/placeholder.jpg}
+%	\end{columns}
+%\end{frame}
+%
+%%------------------------------------------------
+%
+%\begin{frame}{Lists}
+%	\begin{columns}[T, onlytextwidth] % T for top align, onlytextwidth to suppress the margin between columns
+%		\column{0.33\textwidth}
+%			Items:
+%			\begin{itemize}
+%				\item Item 1
+%				\begin{itemize}
+%					\item Subitem 1.1
+%					\item Subitem 1.2
+%				\end{itemize}
+%				\item Item 2
+%				\item Item 3
+%			\end{itemize}
+%		
+%		\column{0.33\textwidth}
+%			Enumerations:
+%			\begin{enumerate}
+%				\item First
+%				\item Second
+%				\begin{enumerate}
+%					\item Sub-first
+%					\item Sub-second
+%				\end{enumerate}
+%				\item Third
+%			\end{enumerate}
+%		
+%		\column{0.33\textwidth}
+%			Descriptions:
+%			\begin{description}
+%				\item[First] Yes.
+%				\item[Second] No.
+%			\end{description}
+%	\end{columns}
+%\end{frame}
+%
+%%------------------------------------------------
+%
+%\begin{frame}{Table}
+%	\begin{table}
+%		\centering % Centre the table on the slide
+%		\begin{tabular}{l c}
+%			\toprule
+%			Discipline & Avg. Salary \\
+%			\toprule
+%			\textbf{Engineering} & \textbf{\$66,521} \\
+%			Computer Sciences & \$60,005\\
+%			Mathematics and Sciences & \$61,867\\
+%			Business & \$56,720\\
+%			Humanities \& Social Sciences & \$56,669\\
+%			Agriculture and Natural Resources & \$53,565\\
+%			Communications & \$51,448\\
+%			\midrule
+%			\textbf{Average for All Disciplines} & \textbf{\$58,114}\\
+%			\bottomrule
+%		\end{tabular}
+%	\caption{Table caption}
+%	\end{table}
+%\end{frame}
+%
+%%------------------------------------------------
+
 
 %----------------------------------------------------------------------------------------
 %	 CLOSING/SUPPLEMENTARY SLIDES
