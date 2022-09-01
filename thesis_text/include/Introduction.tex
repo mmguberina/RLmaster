@@ -1,4 +1,3 @@
-% CREATED BY DAVID FRISK, 2016
 \chapter{Introduction}
 \label{ch-introduction}
 \section{What is reinforcement learning?}
@@ -207,7 +206,7 @@ and learning a policy in this space.
 
 The benefits of this approach are two-fold:
  \begin{itemize}
-    \item It is know that, in general, lower-dimensional optimization 
+    \item In general, lower-dimensional optimization 
 			problems are easier to solve than higher-dimensional ones.
     \item Empirical findings show that when reinforcement algorithms have direct state access, 
 			they learn much faster and often achieve better final results.
@@ -220,8 +219,8 @@ unsupervised learning techniques should aid in
 feature extraction and thus make learning more sample-efficient.
 This is the approach investigated in this thesis.
 Since the goal is not to learn the dynamics of the environment,
-but simply to find an equivalent, but lower-dimensional representation of it,
-it is this approach should not suffer from the problems faced
+but simply to find an equivalent lower-dimensional representation of it,
+this approach should not suffer from the problems faced
 by model-based approaches.
 
 
@@ -266,7 +265,7 @@ but to investigate which properties of both the state representation learning an
 with reinforcement learning yield better results.
 We will not test all of the existing approaches, but rather identify their common properties,
 form hypotheses based on those properties and perform tests on a simple implementation.
-Here we offer our hypotheses:
+Here we offer our hypotheses which we elaborate on in \ref{sec-hypothesis-reasoning}:
 \begin{enumerate}
 		\item State representations found by general unsupervised learning techniques 
 		will not equate to true states, although they will be closer to them than

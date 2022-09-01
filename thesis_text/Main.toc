@@ -145,7 +145,7 @@
 \defcounter {refsection}{0}\relax 
 \contentsline {section}{\numberline {5.5}Network architectures}{42}{section.5.5}%
 \defcounter {refsection}{0}\relax 
-\contentsline {section}{\numberline {5.6}Hyperparameters}{43}{section.5.6}%
+\contentsline {section}{\numberline {5.6}Hyperparameters}{42}{section.5.6}%
 \defcounter {refsection}{0}\relax 
 \contentsline {chapter}{\numberline {6}Results}{45}{chapter.6}%
 \defcounter {refsection}{0}\relax 

@@ -49,10 +49,10 @@ Started with \cite{mnih2013atari}. We already discussed \cite{rainbow}.
 %by \cite{agent57}.
 Agent 57 \cite{agent57}  was the first deep RL agent that out performs 
 the standard human benchmark on all 57 Atari games.
-It was built on  on top of the Never Give Up (NGU) agent which utilizes a model-based approach.
+It was built on  on top of the Never Give Up (NGU) \cite{badia2020never} agent which utilizes a model-based approach.
 It combines two ideas: first, 
 the curiosity-driven exploration, and second, 
-distributed deep RL agents, in particular R2D2.
+distributed deep RL agents, in particular R2D2 \cite{kapturowski2018recurrent}.
 The agent was able to balance the learning of different 
 skills that are required to perform well on such diverse set of games: 
 exploration and exploitation and long-term credit assignment.
@@ -130,6 +130,8 @@ through the course of autoencoder training.
 To solve this problem, regularization needs to used.
 In \cite{sac+ae}, this was solved by employing the regularizations
 introduced in \cite{ghosh2019variational}, which were already discussed in \ref{ae-regularization}.
+Improvements such as using optical or latent flow \cite{flow} can be introduced
+to get the objective more stateful.
 
 A mayor flaw of this approach is the fact that reconstructive loss
 incentivizes reconstruction of the entire image which contains information
@@ -169,8 +171,9 @@ Thus it is natural to opt for a discriminative model.
 Discriminative models can be trained in different ways.
 In \cite{curl}, contrastive loss is employed.
 Another common choice, theoretically investigated in \cite{rakelly2021mutual},
-(TODO:check these 2)
+%(TODO:check these 2)
 is used in \cite{anand2019unsupervised} and \cite{mazoure2020deep} is to use mutual information.
+Another option is to use bisimulation metrics \cite{invariantrepwithoutreconstruction}.
 A particularly promising avenue is to learn discriminative representation models
 though bootstrapping as introduced in \cite{grill2020bootstrap}.
 This has been employed to learn state representations in \cite{schwarzer2020data}, and in \cite{merckling2022exploratory}

@@ -87,7 +87,7 @@ sample-efficiency than other training approaches.
 	\node at (11,3) [below left, text width=7cm] {\underline{latent representation space}};
 \end{tikzpicture}
 \end{center}
-\caption{Schematic of the feature extractor neural network parameter space. Since unsupervised learning
+\caption{Schematic of the latent representation space. Since unsupervised learning
 		converges much faster, it constricts the search space for the features extracted through reinforcement learning.
 		This constriction is enforced joint training
 of both unsupervised state representation and reinforcement learning.}
@@ -135,7 +135,8 @@ In particular this equates to the following:
 						reinforcement learning loss. The encoder continues to be updated
 						even after the unsupervised learning loss diminishes.
 		\end{enumerate}
-\item We test hypothesis \ref{good-features-hypothesis} with the following additional losses.
+%\item We test hypothesis \ref{good-features-hypothesis} with the following additional losses.
+\item We test hypothesis \ref{good-features-hypothesis} by reformulating the unsupervised learning objective.
 		\begin{enumerate}
 				\item Instead of doing unsupervised learning to reconstruct the given observations,
 						we also pass it action and predict the following observations.
@@ -148,23 +149,24 @@ In particular this equates to the following:
 %						separately and it updates the encoder along the other two losses.
 %						This serves as a potentially superior version of the previous task as predictions
 %						in latent space should be easier to learn that predictions in pixel space.
-				\item Finally, we add inverse dynamics loss on top of the reconstruction, forward predictive 
-						and reinforcement learning loss. As shown in \cite{icm}, this should encourage
-						the state representation to focus the parts of the observation related to the agent
-						and thus further condition state representations. As argued
-						in \cite{rakelly2021mutual}, this loss alone can not be represent the MDP so it is not 
-						considered in isolation.
+%				\item Finally, we add inverse dynamics loss on top of the reconstruction, forward predictive 
+%						and reinforcement learning loss. As shown in \cite{icm}, this should encourage
+%						the state representation to focus the parts of the observation related to the agent
+%						and thus further condition state representations. As argued
+%						in \cite{rakelly2021mutual}, this loss alone can not be represent the MDP so it is not 
+%						considered in isolation.
 		\end{enumerate}
 \item We test hypothesis \ref{regularization-hypothesis} with the following regularization techniques.
 		\begin{enumerate}
 				\item Following the analysis carrier out in \cite{sac+ae}, we begin by using
 						regularization techniques introduced in \cite{ghosh2019variational}.
-					Since we found that joint training of state representations and reinforcement learning
-					does not work without at least L2 latent space loss, we use it all joint training tests.
+						In particular we use the L2 latent space loss.
+%					Since we found that joint training of state representations and reinforcement learning
+%					does not work without at least L2 latent space loss, we use it all joint training tests.
 			\item Informed by regularization effects of denoising autoencoders, and by great success achieved
 					with the random shift augmentation in \cite{drqv1, drqv2} and other recent work,
 					we too use random shift augmentation on observations in unsupervised learning updates.
-					This serves as our test.
+%					This serves as our test.
 		\end{enumerate}
 \end{enumerate}
 
@@ -278,13 +280,13 @@ This is done by splitting reinforcement learning algorithms into the following m
 		\item \fbox{\texttt{Trainer}}
 \end{itemize}
 
-These modules interact in the way depicted in \ref{tianshou-concepts}.
+These modules interact in the way depicted in \ref{tianshouconcepts}.
 
 \begin{figure}[htpb]
 		\centering
 		\includegraphics[width=0.8\textwidth]{"./figure/concepts_arch2.png"}
-		\label{tianshou-concepts}
 		\caption{Tianshou concepts}
+		\label{tianshouconcepts}
 \end{figure}
 
 

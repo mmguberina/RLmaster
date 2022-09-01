@@ -22,18 +22,20 @@ result in higher sample-efficiency if adequate regularization is provided.
 We further hypothesize that representations which correlate more strongly
 with the underlying Markov decision process result in additional sample-efficiency.
 These hypotheses are tested through a simple deterministic generative 
-representation learning model trained with image reconstruction loss
+representation learning model (autoencoder) trained with image reconstruction loss
 and additional forward and inverse auxiliary losses.
 While our algorithm does not reach state-of-the-art performance,
 its modular implementation integrated in the reinforcement learning library Tianshou
 enables easy use to reinforcement learning practitioners,
 and thus also accelerates further research.
+We also identify which aspects of our solution are most important 
+and use them to formulate promising research directions.
 In our tests we limited ourselves to Atari environments
 and primarily used Rainbow as the underlying reinforcement learning algorithm.
 
 % KEYWORDS (MAXIMUM 10 WORDS)
 \vfill
-Keywords: sample-efficient reinforcement learning, state representation learning, unsupervised learning
+Keywords: sample-efficient reinforcement learning, state representation learning, unsupervised learning,
 autoencoder
 
 

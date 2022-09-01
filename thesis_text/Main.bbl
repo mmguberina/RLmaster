@@ -52,6 +52,39 @@
       \field{pages}{1\bibrangedash 8}
       \range{pages}{8}
     \endentry
+    \entry{pilco}{inproceedings}{}
+      \name{author}{2}{}{%
+        {{hash=74f38b41d3c1199abc243147c58d6d8e}{%
+           family={Deisenroth},
+           familyi={D\bibinitperiod},
+           given={Marc},
+           giveni={M\bibinitperiod}}}%
+        {{hash=bbec4caec3f553671700b51cb05faecc}{%
+           family={Rasmussen},
+           familyi={R\bibinitperiod},
+           given={Carl\bibnamedelima E},
+           giveni={C\bibinitperiod\bibinitdelim E\bibinitperiod}}}%
+      }
+      \list{organization}{1}{%
+        {Citeseer}%
+      }
+      \strng{namehash}{4bdbd5226217600533cf4625f456ba1d}
+      \strng{fullhash}{4bdbd5226217600533cf4625f456ba1d}
+      \strng{bibnamehash}{4bdbd5226217600533cf4625f456ba1d}
+      \strng{authorbibnamehash}{4bdbd5226217600533cf4625f456ba1d}
+      \strng{authornamehash}{4bdbd5226217600533cf4625f456ba1d}
+      \strng{authorfullhash}{4bdbd5226217600533cf4625f456ba1d}
+      \field{labelalpha}{DR11}
+      \field{sortinit}{2}
+      \field{sortinithash}{ed39bb39cf854d5250e95b1c1f94f4ed}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{booktitle}{Proceedings of the 28th International Conference on machine learning (ICML-11)}
+      \field{title}{PILCO: A model-based and data-efficient approach to policy search}
+      \field{year}{2011}
+      \field{pages}{465\bibrangedash 472}
+      \range{pages}{8}
+    \endentry
     \entry{bellemare2013arcade}{article}{}
       \name{author}{4}{}{%
         {{hash=eae3aa0ab9cb8b33a1ade80739e79e57}{%
@@ -540,6 +573,56 @@
       \field{pages}{2778\bibrangedash 2787}
       \range{pages}{10}
     \endentry
+    \entry{drlthatmatters}{inproceedings}{}
+      \name{author}{6}{}{%
+        {{hash=50374f86d34cc54b8a5788ccbcce4cfe}{%
+           family={Henderson},
+           familyi={H\bibinitperiod},
+           given={Peter},
+           giveni={P\bibinitperiod}}}%
+        {{hash=227ede2745d597df1564e6adddb6ee97}{%
+           family={Islam},
+           familyi={I\bibinitperiod},
+           given={Riashat},
+           giveni={R\bibinitperiod}}}%
+        {{hash=799d66480d783672ee2f29b7fb418229}{%
+           family={Bachman},
+           familyi={B\bibinitperiod},
+           given={Philip},
+           giveni={P\bibinitperiod}}}%
+        {{hash=5b77dedc7f77ff84caad46064e6e3cbb}{%
+           family={Pineau},
+           familyi={P\bibinitperiod},
+           given={Joelle},
+           giveni={J\bibinitperiod}}}%
+        {{hash=4428b76e1301b2db58587fb18bb59a38}{%
+           family={Precup},
+           familyi={P\bibinitperiod},
+           given={Doina},
+           giveni={D\bibinitperiod}}}%
+        {{hash=a5137015bf373eff6cd1b6a96b145c3c}{%
+           family={Meger},
+           familyi={M\bibinitperiod},
+           given={David},
+           giveni={D\bibinitperiod}}}%
+      }
+      \strng{namehash}{cd6d7b6a5792cd65837937431682a57e}
+      \strng{fullhash}{544816e5c32b50b66b251a8291da223d}
+      \strng{bibnamehash}{cd6d7b6a5792cd65837937431682a57e}
+      \strng{authorbibnamehash}{cd6d7b6a5792cd65837937431682a57e}
+      \strng{authornamehash}{cd6d7b6a5792cd65837937431682a57e}
+      \strng{authorfullhash}{544816e5c32b50b66b251a8291da223d}
+      \field{labelalpha}{Hen+18}
+      \field{sortinit}{2}
+      \field{sortinithash}{ed39bb39cf854d5250e95b1c1f94f4ed}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{booktitle}{Proceedings of the AAAI conference on artificial intelligence}
+      \field{number}{1}
+      \field{title}{Deep reinforcement learning that matters}
+      \field{volume}{32}
+      \field{year}{2018}
+    \endentry
     \entry{rainbow}{inproceedings}{}
       \name{author}{10}{}{%
         {{hash=1640e78f1e643c3d6f8e8c5b4b50896c}{%
@@ -606,6 +689,49 @@
       \field{labeltitlesource}{title}
       \field{booktitle}{Thirty-second AAAI conference on artificial intelligence}
       \field{title}{Rainbow: Combining improvements in deep reinforcement learning}
+      \field{year}{2018}
+    \endentry
+    \entry{kapturowski2018recurrent}{inproceedings}{}
+      \name{author}{5}{}{%
+        {{hash=a99525ff7f511e216bf0509d375a9691}{%
+           family={Kapturowski},
+           familyi={K\bibinitperiod},
+           given={Steven},
+           giveni={S\bibinitperiod}}}%
+        {{hash=46cc21fb5dec973c05ceb0f321e02ca0}{%
+           family={Ostrovski},
+           familyi={O\bibinitperiod},
+           given={Georg},
+           giveni={G\bibinitperiod}}}%
+        {{hash=d1c6b8444cb95e400ca38d5ae5c5afd3}{%
+           family={Quan},
+           familyi={Q\bibinitperiod},
+           given={John},
+           giveni={J\bibinitperiod}}}%
+        {{hash=ce2c8d8bf1e96e9845a930fb6264204f}{%
+           family={Munos},
+           familyi={M\bibinitperiod},
+           given={Remi},
+           giveni={R\bibinitperiod}}}%
+        {{hash=d5a44cbf0d05e4c50b512bb0c1368d2f}{%
+           family={Dabney},
+           familyi={D\bibinitperiod},
+           given={Will},
+           giveni={W\bibinitperiod}}}%
+      }
+      \strng{namehash}{be96f00d5c117f33999ddd52e3a39b06}
+      \strng{fullhash}{e3d2d839327a4cab8bf30f7e8df3ad06}
+      \strng{bibnamehash}{be96f00d5c117f33999ddd52e3a39b06}
+      \strng{authorbibnamehash}{be96f00d5c117f33999ddd52e3a39b06}
+      \strng{authornamehash}{be96f00d5c117f33999ddd52e3a39b06}
+      \strng{authorfullhash}{e3d2d839327a4cab8bf30f7e8df3ad06}
+      \field{labelalpha}{Kap+18}
+      \field{sortinit}{2}
+      \field{sortinithash}{ed39bb39cf854d5250e95b1c1f94f4ed}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{booktitle}{International conference on learning representations}
+      \field{title}{Recurrent experience replay in distributed reinforcement learning}
       \field{year}{2018}
     \endentry
     \entry{srloverview}{article}{}
@@ -904,9 +1030,11 @@
       \strng{authorbibnamehash}{8efc73701d6c33e4a657b6716f9f406f}
       \strng{authornamehash}{8efc73701d6c33e4a657b6716f9f406f}
       \strng{authorfullhash}{06b077e1368aeeb016149ea6700a7cf0}
+      \field{extraname}{1}
       \field{labelalpha}{Bad+20}
       \field{sortinit}{2}
       \field{sortinithash}{ed39bb39cf854d5250e95b1c1f94f4ed}
+      \field{extraalpha}{1}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{booktitle}{International Conference on Machine Learning}
@@ -914,6 +1042,78 @@
       \field{year}{2020}
       \field{pages}{507\bibrangedash 517}
       \range{pages}{11}
+    \endentry
+    \entry{badia2020never}{article}{}
+      \true{moreauthor}
+      \true{morelabelname}
+      \name{author}{10}{}{%
+        {{hash=db6afdf70ea61bf8ed973a75b90ff818}{%
+           family={Badia},
+           familyi={B\bibinitperiod},
+           given={Adrià\bibnamedelima Puigdomènech},
+           giveni={A\bibinitperiod\bibinitdelim P\bibinitperiod}}}%
+        {{hash=7bc3f033798ee7b02f35410a4dca1e30}{%
+           family={Sprechmann},
+           familyi={S\bibinitperiod},
+           given={Pablo},
+           giveni={P\bibinitperiod}}}%
+        {{hash=bdc16300b676174e42fb52f6bd46e0ba}{%
+           family={Vitvitskyi},
+           familyi={V\bibinitperiod},
+           given={Alex},
+           giveni={A\bibinitperiod}}}%
+        {{hash=3c364e4c999f5f070d8e69cdb72fa5bb}{%
+           family={Guo},
+           familyi={G\bibinitperiod},
+           given={Daniel},
+           giveni={D\bibinitperiod}}}%
+        {{hash=f31963abd2aa43dd3aafc40aa1252a05}{%
+           family={Piot},
+           familyi={P\bibinitperiod},
+           given={Bilal},
+           giveni={B\bibinitperiod}}}%
+        {{hash=a99525ff7f511e216bf0509d375a9691}{%
+           family={Kapturowski},
+           familyi={K\bibinitperiod},
+           given={Steven},
+           giveni={S\bibinitperiod}}}%
+        {{hash=ba1d4f04789f2b5c907b23f0b0ac1912}{%
+           family={Tieleman},
+           familyi={T\bibinitperiod},
+           given={Olivier},
+           giveni={O\bibinitperiod}}}%
+        {{hash=19bf729970d675638d9c57c3bc6076a7}{%
+           family={Arjovsky},
+           familyi={A\bibinitperiod},
+           given={Martı́n},
+           giveni={M\bibinitperiod}}}%
+        {{hash=4295e4094c426f01903ac60155866130}{%
+           family={Pritzel},
+           familyi={P\bibinitperiod},
+           given={Alexander},
+           giveni={A\bibinitperiod}}}%
+        {{hash=3138c5cdf79a36c2f4d4e8b16f06b504}{%
+           family={Bolt},
+           familyi={B\bibinitperiod},
+           given={Andew},
+           giveni={A\bibinitperiod}}}%
+      }
+      \strng{namehash}{8efc73701d6c33e4a657b6716f9f406f}
+      \strng{fullhash}{1d24337e8553f5fac49ce1cb3d8c9106}
+      \strng{bibnamehash}{8efc73701d6c33e4a657b6716f9f406f}
+      \strng{authorbibnamehash}{8efc73701d6c33e4a657b6716f9f406f}
+      \strng{authornamehash}{8efc73701d6c33e4a657b6716f9f406f}
+      \strng{authorfullhash}{1d24337e8553f5fac49ce1cb3d8c9106}
+      \field{extraname}{2}
+      \field{labelalpha}{Bad+20}
+      \field{sortinit}{2}
+      \field{sortinithash}{ed39bb39cf854d5250e95b1c1f94f4ed}
+      \field{extraalpha}{2}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{arXiv preprint arXiv:2002.06038}
+      \field{title}{Never give up: Learning directed exploration strategies}
+      \field{year}{2020}
     \endentry
     \entry{grill2020bootstrap}{article}{}
       \true{moreauthor}

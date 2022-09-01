@@ -1143,49 +1143,65 @@ selected according to the online network as the bootstrap action $a \cdot t+n,$ 
 
 \section{Problems with RL}
 \label{sec-rl-problems}
+At the moment of writing reinforcement learning is rapidly evolving, but it is plagued
+by problems which prevent it from widespread adoption in practical applications
+like robot control.
+Here we list the most fundamental problems:
+\begin{itemize}
+		\item high random seed dependence
+		\item high variance of final algorithm performance across different tasks ---
+		no algorithm is universally better than all others at every problem,
+		despite the aim toward generality
+\item sensitivity to hyperparameters
+\item brittleness of solutions to changes in the environment
+\end{itemize}
+
+These problems also result in ambiguities in research, as discussed in
+\cite{drlthatmatters}.
+
+
 %ex. drl that matters paper
-%\cite{drlthatmatters}
 
-In previous studies presented in Chapter 3 we see some successful application
-of unsupervised learning techniques applied to improve the performance of the
-underlying RL algorithms, even though these and other studies conducted
-previously have shown remarkable results. RL comes with the following
-challenges. \\
-
-One of the most difficult aspects of RL is learning efficiently with little
-data. The term "sample efficiency" refers to an algorithm that makes the most
-of a given sample. To put it another way, it's the amount of experience the
-algorithm has to gain during training in order to achieve efficient
-performance. The difficulty is that the RL system takes a long time to become
-efficient.
-
-Neural networks are opaque black boxes whose workings are mysteries to even the
-creators. They are also increasing in size and complexity, backed by huge data
-sets, computing power and hours of training.This referred to as Reproducibility
-crisis, These factors make RL models very difficult to replicate.  
-
-Another major challenge in Rl is agents are trained in simulated environment
-;In this environment they can fail and learn, but they do not have the
-opportunity to fail and learn in real-life scenarios. Usually, in real
-environments, the agent lacks the space to observe the environment well enough
-to use past training data to decide on a winning strategy. This also includes
-the reality gap, where the agent cannot gauge the difference between the
-learning simulation and the real world.\\
-
-The reward technique discussed in the previous sections is not foolproof. Since
-the rewards are sparsely distributed in the environment, a possible issue is an
-agent not observing the situation enough to notice the reward signals and
-maximise specific actions. This also occurs when the environment cannot provide
-reward signals in time; for instance, in many situations, the agent receives a
-green flag only when it is close enough to the target. 
-
-Curiosity-driven methods are widely used to encourage the agent to explore the
-environment and learn to tackle tasks in it. The researchers in the paper
-‘Curiosity-driven exploration by self-supervised prediction’ proposed an
-Intrinsic Curiosity Module (ICM) to support the agent in exploration and prompt
-it to choose actions based on reduced errors. Another approach is curriculum
-learning, where the agent is presented with various tasks in ascending order of
-complexity. This imitates the learning order of humans. 
+%In previous studies presented in Chapter 3 we see some successful application
+%of unsupervised learning techniques applied to improve the performance of the
+%underlying RL algorithms, even though these and other studies conducted
+%previously have shown remarkable results. RL comes with the following
+%challenges. \\
+%
+%One of the most difficult aspects of RL is learning efficiently with little
+%data. The term "sample efficiency" refers to an algorithm that makes the most
+%of a given sample. To put it another way, it's the amount of experience the
+%algorithm has to gain during training in order to achieve efficient
+%performance. The difficulty is that the RL system takes a long time to become
+%efficient.
+%
+%Neural networks are opaque black boxes whose workings are mysteries to even the
+%creators. They are also increasing in size and complexity, backed by huge data
+%sets, computing power and hours of training.This referred to as Reproducibility
+%crisis, These factors make RL models very difficult to replicate.  
+%
+%Another major challenge in Rl is agents are trained in simulated environment
+%;In this environment they can fail and learn, but they do not have the
+%opportunity to fail and learn in real-life scenarios. Usually, in real
+%environments, the agent lacks the space to observe the environment well enough
+%to use past training data to decide on a winning strategy. This also includes
+%the reality gap, where the agent cannot gauge the difference between the
+%learning simulation and the real world.\\
+%
+%The reward technique discussed in the previous sections is not foolproof. Since
+%the rewards are sparsely distributed in the environment, a possible issue is an
+%agent not observing the situation enough to notice the reward signals and
+%maximise specific actions. This also occurs when the environment cannot provide
+%reward signals in time; for instance, in many situations, the agent receives a
+%green flag only when it is close enough to the target. 
+%
+%Curiosity-driven methods are widely used to encourage the agent to explore the
+%environment and learn to tackle tasks in it. The researchers in the paper
+%‘Curiosity-driven exploration by self-supervised prediction’ proposed an
+%Intrinsic Curiosity Module (ICM) to support the agent in exploration and prompt
+%it to choose actions based on reduced errors. Another approach is curriculum
+%learning, where the agent is presented with various tasks in ascending order of
+%complexity. This imitates the learning order of humans. 
 
 %=============================================
 %\newline

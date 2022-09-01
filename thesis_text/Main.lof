@@ -27,9 +27,9 @@
 \defcounter {refsection}{0}\relax 
 \addvspace {10\p@ }
 \defcounter {refsection}{0}\relax 
-\contentsline {figure}{\numberline {5.1}{\ignorespaces Schematic of the feature extractor neural network parameter space. Since unsupervised learning converges much faster, it constricts the search space for the features extracted through reinforcement learning. This constriction is enforced joint training of both unsupervised state representation and reinforcement learning.\relax }}{38}{figure.caption.14}%
+\contentsline {figure}{\numberline {5.1}{\ignorespaces Schematic of the latent representation space. Since unsupervised learning converges much faster, it constricts the search space for the features extracted through reinforcement learning. This constriction is enforced joint training of both unsupervised state representation and reinforcement learning.\relax }}{38}{figure.caption.14}%
 \defcounter {refsection}{0}\relax 
-\contentsline {figure}{\numberline {5.2}{\ignorespaces Tianshou concepts\relax }}{41}{figure.caption.15}%
+\contentsline {figure}{\numberline {5.2}{\ignorespaces Tianshou concepts\relax }}{40}{figure.caption.15}%
 \defcounter {refsection}{0}\relax 
 \addvspace {10\p@ }
 \defcounter {refsection}{0}\relax 

@@ -40,6 +40,7 @@ as an ideal pretrained encoder.
 
 \begin{figure}[!t]
   \captionsetup[subfloat]{position=top,labelformat=empty}
+  \vspace{-1.5cm}
   \centering
     \subfloat[]{  \resizebox{0.4\textwidth}{!}{\input{figure/pretrained_rl_vs_rl/BreakoutNoFrameskip.tex}}}
     \subfloat[]{  \resizebox{0.4\textwidth}{!}{\input{figure/pretrained_rl_vs_rl/EnduroNoFrameskip.tex}}}\\
@@ -92,6 +93,7 @@ We present this separately in \ref{fig:big-vs-small-enc-rl-only} to avoid clutte
 
 \begin{figure}[!t]
   \captionsetup[subfloat]{position=top,labelformat=empty}
+  \vspace{-1.5cm}
   \centering
 
     \subfloat[]{  \resizebox{0.4\textwidth}{!}{\input{figure/big-vs-small-encoder-rl-only/BreakoutNoFrameskip.tex}}}
@@ -129,6 +131,7 @@ The results are shown in \ref{fig-parallel}.
 
 \begin{figure}[!t]
   \captionsetup[subfloat]{position=top,labelformat=empty}
+  \vspace{-1.5cm}
   \centering
 
     \subfloat[]{  \resizebox{0.4\textwidth}{!}{\input{figure/parallel-updates/BreakoutNoFrameskip.tex}}}
@@ -162,6 +165,7 @@ runs without neither in \ref{fig:reg-vs-no-reg}.
 
 \begin{figure}[!t]
   \captionsetup[subfloat]{position=top,labelformat=empty}
+  \vspace{-1.5cm}
   \centering
 
     \subfloat[]{  \resizebox{0.4\textwidth}{!}{\input{figure/reg-vs-no-reg/BreakoutNoFrameskip.tex}}}
@@ -202,6 +206,7 @@ The results can be observed in \ref{fig:forward-vs-compression}.
 
 \begin{figure}[!t]
   \captionsetup[subfloat]{position=top,labelformat=empty}
+  \vspace{-1.5cm}
   \centering
 
     \subfloat[]{  \resizebox{0.4\textwidth}{!}{\input{figure/forward-vs-compression/BreakoutNoFrameskip.tex}}}
@@ -230,6 +235,33 @@ prediction are overall more effective than simple compression.
 As with all results, the effects vary from game to game.
 
 
+%++++++++++++++++++++++++++++
+%TEST
+%++++++++++++++++++++++++++
+%
+%\begin{figure}[!t]
+%  \captionsetup[subfloat]{position=top,labelformat=empty}
+%  \centering
+%
+%    \subfloat[]{  \resizebox{0.4\textwidth}{!}{\input{figure/test/BreakoutNoFrameskip.tex}}}
+%    \subfloat[]{  \resizebox{0.4\textwidth}{!}{\input{figure/test/EnduroNoFrameskip.tex}}}\\
+%  \vspace{-1cm}
+%    \subfloat[]{  \resizebox{0.4\textwidth}{!}{\input{figure/test/MsPacmanNoFrameskip.tex}}}
+%    \subfloat[]{  \resizebox{0.4\textwidth}{!}{\input{figure/test/PongNoFrameskip.tex}}}\\
+%  \vspace{-1cm}
+%    \subfloat[]{  \resizebox{0.4\textwidth}{!}{\input{figure/test/QbertNoFrameskip.tex}}}
+%    \subfloat[]{  \resizebox{0.4\textwidth}{!}{\input{figure/test/SeaquestNoFrameskip.tex}}}\\
+%  \vspace{-1cm}
+%    \subfloat[]{  \resizebox{0.4\textwidth}{!}{\input{figure/test/SpaceInvadersNoFrameskip.tex}}}
+%  \\
+%
+%  \ref{named}
+%  \caption{caption text 23}
+%  \label{fig:compare}
+%\end{figure}
+
+
+
 
 \chapter{Discussion}
 \label{ch-discussion}
@@ -244,7 +276,7 @@ We break our discussion of the results into answering the following questions:
 \begin{enumerate}
 		\item What are the differences between features and states 
 				and how important are they to the final performance?
-		\item Why is reconstruction loss a particularly bad at representing
+		\item Why is reconstruction loss particularly bad at representing
 				stateful information?
 		\item What could be the characteristics of more successful approaches
 				to using unsupervised learning for state representation learning?
@@ -270,7 +302,8 @@ the following subsections, while a more general discussion will be held here.
 When looking at simple games such as Pong or Seaquest,
 one can clearly see what constitutes a state.
 The dynamic information primarily consists of the positions and velocities of objects in the image.
-More static information would be the types of objects (the player, projectiles, obstacles etc) and so on.
+More static information would be the types of objects, for example the player, projectiles, obstacles etc., 
+and similar information.
 For such simple problems, a resourceful engineering could easily craft representations consisting of at most
 a few dozen parameters.
 From our experiments with different autoencoder architectures and sets of hyperparameters,
